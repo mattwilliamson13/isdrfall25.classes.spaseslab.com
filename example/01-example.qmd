@@ -1,0 +1,14 @@
+---
+title: "Testing GitHub Classroom"
+---
+
+
+1.  Login to `Rstudio` server
+2.  Introduce yourself to `git` on your server instance
+3.  Update your token cache
+4.  Click [this link](https://classroom.github.com/a/G97Lk0bf) to access the first in-class example
+5.  Take a screenshot of your GitHub page with the example in it.
+6.  Post it to our class [slack channel](https://ecostatsbsu.slack.com/archives/C098TRHPRT5])
+
+
+

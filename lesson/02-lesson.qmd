@@ -1,0 +1,16 @@
+---
+title: "Generic Lesson"
+---
+
+## The git workflow
+
+* Make sure to **pull** everytime you start working on a project
+
+* Make some changes to code
+
+* Save those changes
+
+* Commit your changes
+
+* Push your work to the remote!
+
