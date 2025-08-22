@@ -61,6 +61,9 @@ ul.task-list li input[type="checkbox"] {
   }
 }</script>
 
+<script src="site_libs/kePrint-0.0.1/kePrint.js"></script>
+<link href="site_libs/lightable-0.0.1/lightable.css" rel="stylesheet">
+
 
 <meta property="og:title" content="Intro to Spatial Data in R - Syllabus">
 <meta property="og:description" content="">
@@ -322,8 +325,49 @@ Tip
 </section>
 <section id="assignments-and-grades" class="level2">
 <h2 class="anchored" data-anchor-id="assignments-and-grades">Assignments and Grades</h2>
-<p><strong>NEED TO ADJUST THIS</strong> - Points for course - Assignments/exercises complete/not - Revisions based on Goals from self assessment - Final Project based on goals from self assessment - Need to rework</p>
 <p>I teach this course because I believe that a) we can learn a lot about social and ecological processes by studying <em>where</em> they happen, b) integrating spatial analysis directly into statistical workflows makes those analyses more robust and reproducible, and c) overcoming coding challenges can provide a profound sense of accomplishment. That said, I recognize that there are many reasons that <em>you</em> are taking this course and that my objectives may differ from yours. In order to make sure that you get what you need out of this class, we’ll be using a mix of approaches for determining your grade in this course.</p>
+<div class="cell">
+<div class="cell-output-display">
+<table class="lightable-classic-2 table table-sm table-striped small" data-quarto-postprocess="true">
+<thead>
+<tr class="header">
+<th style="text-align: left;" data-quarto-table-cell-role="th">Assignment Group</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">Points Possible</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">Percentage of Grade</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Self Reflection</td>
+<td style="text-align: right;">25</td>
+<td style="text-align: right;">4</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Class Exercises</td>
+<td style="text-align: right;">81</td>
+<td style="text-align: right;">15</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Unit Homework</td>
+<td style="text-align: right;">100</td>
+<td style="text-align: right;">18</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Homework Revision</td>
+<td style="text-align: right;">200</td>
+<td style="text-align: right;">36</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Final Project</td>
+<td style="text-align: right;">150</td>
+<td style="text-align: right;">27</td>
+</tr>
+</tbody>
+</table>
+
+
+</div>
+</div>
 <p><strong>Self-assessment (12.5 pts x 2): </strong> During the first week of the course, I’m going to ask you to reflect on what you want out of this course (concepts, skills, practice, etc.). This assessment will help me do a better job of aligning the content of the course to your specific needs. Grading for the self-assessment is described on the <a href="./assignment/">assignments page</a>.</p>
 <p><strong>In-Class Excercises (3pts x 30):</strong> The latter part of each class session will involve some hands-on practice in the form of in-class excercises. These exercises are designed to encourage you to work with your peers to practice different skills in class, allow me to identify any challenges you’re experiencing, and encourage attendance. <strong>Exercises are due at 3:00PM after each class period. I will not accept submissions after the deadline as these are about in-class participation.</strong> If you turn the assignment in on-time you’ll recieve full credit.</p>
 <div class="callout callout-style-default callout-tip callout-titled">
@@ -340,24 +384,104 @@ Tip
 </div>
 </div>
 <p><strong>Unit Homework (20pts x 5):</strong> There are five homework assignments, one at the end of each section. These exercises are designed to reinforce the material we cover in lecture, give you practice designing and implementing your own workflows, and build habits that promote reproducibility in science. They also allow me get a sense for your engagement in the course. <strong>Exercises are due at 11:59PM on their due date (generally Thursdays). I will post the “key” within 3 days of the due date and will not accept submissions after the key is posted.</strong> If you turn the assignment in on-time with the required number of commits, you’ll recieve full credit.</p>
-<p><strong>Assignment Revisions (40pts x 5):</strong> We will have three “assignment revisions” due during the course. These provide an opportunity for me to check in and see how things are going. You’ll be able to update your responses to the homeworks based on the keys and reflect on what you’ve learned throughout the course of the assignments. You’ll also be able to provide additional feedback on how the course is going for you. Rather than assign arbitrary points to each assignment, I’m going to grade your assignment revisions using the following ‘levels’ (inspired by Sarah K. Johnson’s <a href="https://sites.tufts.edu/teaching/2022/03/10/ungrading-a-graduate-data-analysis-course/">description</a> of her graduate data analysis course at Tufts):</p>
+<p><strong>Assignment Revisions (50pts x 5):</strong> We will have five “assignment revisions” due during the course. These provide an opportunity for me to check in and see how things are going. You’ll be able to update your responses to the homeworks based on the keys and reflect on what you’ve learned throughout the course of the assignments. You’ll also be able to provide additional feedback on how the course is going for you. Rather than assign arbitrary points to each assignment, I’m going to grade your assignment revisions using the following ‘levels’ (inspired by Sarah K. Johnson’s <a href="https://sites.tufts.edu/teaching/2022/03/10/ungrading-a-graduate-data-analysis-course/">description</a> of her graduate data analysis course at Tufts):</p>
 <ul>
 <li><p><strong>Please Resubmit:</strong> This indicates that either your code does not run as written (i.e., your Quarto document will not compile on my computer), you did not use Git as instructed, and/or that your responses to the questions I posed indicate that you do not quite understand the material as well as I would like. You’ll need to schedule an appointment to talk with me and we’ll work out what you need to do to get credit for the assignment. Although there isn’t a hard deadline for this resubmission, the assignments build on each other so it’s in your best interest to complete the resubmission before you get to the next assessment. Failure to resubmit will result in no credit for the assessment.</p></li>
 <li><p><strong>Resubmit If You Like:</strong> This indicates that all of the code works as written and that you used Git, but that you may have missed some important concepts. Your are welcome to resubmit the assignment and address my comments to help polish the final product, but it is not required for you to get credit for the assignment.</p></li>
 <li><p><strong>Good To Go:</strong> All of your code works, you completed the necessary Git steps, and all of the pieces are there and polished. I may have some minor comments, but I don’t need you to address them for this assignment.</p></li>
 </ul>
-<p><strong>Final Project (150pts): </strong> The final project asks you to conduct an entire spatial analysis from layout to results. Grades on the final project are based on your objectives and your self-assessment of whether or not you achieved those objectives. Your first draft of the final project will be due <strong>December 5</strong>. I’ll make comments based on the same categories for the homework revision and you’ll have time to revise your submission prior to the final deadline of <strong>December 14</strong>.</p>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Tip
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>You can miss 1 assignment revision and still receive full-credit for this portion of the course.</p>
+</div>
+</div>
+<p><strong>Final Project (150pts): </strong> The final project asks you to conduct an entire spatial analysis from layout to results. Grades on the final project are based on your objectives and your self-assessment of whether or not you achieved those objectives.</p>
+<div class="callout callout-style-default callout-tip callout-titled" title="Final Project Deadlines and Points">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Final Project Deadlines and Points
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Points for the project are broken down by:</p>
+<ul>
+<li><p>Grading Contract Submitted (October 1): 10 pts (full credit if submitted)</p></li>
+<li><p>Proposed Project Description (November 1): 15 pts (full credit if submitted)</p></li>
+<li><p>First Draft Submitted (December 9): 25 pts (full credit if submitted)</p></li>
+<li><p>Final Draft Submitted with Self Evaluation (December 19): 100 pts (based on contract grade and self-evaluation)</p></li>
+</ul>
+</div>
+</div>
 <p>You can find descriptions for all the assignments on the <a href="./assignment/">assignments page</a>.</p>
 <section id="grades" class="level3">
 <h3 class="anchored" data-anchor-id="grades">Grades</h3>
-<p>We’ll use a form of <a href="https://en.wikipedia.org/wiki/Contract_grading#:~:text=Contract%20grading%20is%20a%20form,correspond%20to%20specific%20letter%20grades.">contract grading</a> to determine your grades in the course. Contract grading allows us to have a conversation about what you want out of the course, what you expect to put into it, and what I think you need to be successful in deploying the skills we learn here. Based on your goals for course, we’ll sign a contract that instantiates your objectives into the grade you’ll receive for the course. Complete the assignments and meet your objectives and you’ll get the grade you chose.</p>
-<p>The expectations for the grades are:</p>
-<ul>
-<li><p><strong>A</strong> You complete all of the self-assessments and at least 8 of the exercises. All of the assignment revisions achieve the “Good to Go” level. Your final project achieves the “Good to Go” level. My assessment of the various levels will be based on your objectives for the course and your ability to follow instructions.</p></li>
-<li><p><strong>B</strong> You complete all of the self-assessments and at least 8 of the exercises. At least one of the assignment revisions achieves the “Good to Go” level with the remainder achieving “Resubmit if you like”. Your final project achieves the “Resubmit if you like” level. My assessment of the various levels will be based on your objectives for the course and your ability to follow instructions.</p></li>
-<li><p><strong>C</strong> You complete all of the self-assessments and at least 6 of the exercises. All of your assignment revisions achieve the “Resubmit if you like” level. Your final project achieves the “Resubmit if you like” level. My assessment of the various levels will be based on your objectives for the course and your ability to follow instructions.</p></li>
-<li><p><strong>D</strong> You complete all of the self-assessments and at least 4 of the exercises. At least one of your assignment revisions achieves the “Resubmit if you like” level. Your final project achieves the “Resubmit if you like” level. My assessment of the various levels will be based on your objectives for the course and your ability to follow instructions.</p></li>
-</ul>
+<div class="cell">
+<div class="cell-output-display">
+<table class="lightable-classic-2 table table-sm table-striped small" data-quarto-postprocess="true">
+<thead>
+<tr class="header">
+<th style="text-align: left;" data-quarto-table-cell-role="th">Grade</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">Total Points</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">A</td>
+<td style="text-align: right;">517</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">A-</td>
+<td style="text-align: right;">500</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">B+</td>
+<td style="text-align: right;">484</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">B</td>
+<td style="text-align: right;">461</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">B-</td>
+<td style="text-align: right;">445</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">C+</td>
+<td style="text-align: right;">428</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">C</td>
+<td style="text-align: right;">406</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">C-</td>
+<td style="text-align: right;">389</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">D+</td>
+<td style="text-align: right;">373</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">D</td>
+<td style="text-align: right;">350</td>
+</tr>
+</tbody>
+</table>
+
+
+</div>
+</div>
 </section>
 <section id="attendance-and-incomplete-assignments" class="level3">
 <h3 class="anchored" data-anchor-id="attendance-and-incomplete-assignments">Attendance and incomplete assignments</h3>
