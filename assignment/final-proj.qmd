@@ -4,7 +4,7 @@ title: "Final Project"
 
 ## Overview
 
-The final project is an opportunity to bring all of the things you've learned in the course into a single reproducible workflow to answer a question of your choosing. Because each of you are in different stages of collecting your own data and because confronting datasets that aren’t yours can help clarify important concepts and design elements, I’m asking you to **develop an analysis of data that isn’t yours**. This final project should help you demonstrate:
+The [final project](https://classroom.github.com/a/y5OH1_Up) is an opportunity to bring all of the things you've learned in the course into a single reproducible workflow to answer a question of your choosing. Because each of you are in different stages of collecting your own data and because confronting datasets that aren’t yours can help clarify important concepts and design elements, I’m asking you to **develop an analysis of data that isn’t yours**. This final project should help you demonstrate:
 
 * Proper data management, cleaning, and manipulation technques
 
@@ -37,7 +37,13 @@ You can generate a 'manuscript' style document (using Quarto) or a flexdashboard
 
 ## Assessment
 
-You'll submit a draft of the final report on **December 7**. I'll give you feedback based on your project and on your objectives for the course. You'll then have a chance to address my feedback before turning in your final draft on **December 14**. Your final self-assessment will ask you to reflect on your objectives for the course and evaluate the degree to which your final project demonstrates that you achieved your objectives. *Thus, when you are designing your project, make sure that you have your initial objectives in mind.*
+This is the final project, but there are several steps along the way! First, you'll need to submit objectives (`docs/grading_contract.qmd`) which form the basis for assessment of the project. This is due **October 1**. Then, you'll need to submit a brief description of your project (`docs/project_description.qmd`) on **November 1**. 
+
+::: {.callout-important}
+You'll submit each of these documents by making commits prior to the deadline. After the deadline passes I'll add my comments to the documents.
+:::
+
+You'll submit a draft of the final report (`docs/main_project_doc.qmd`) on **December 9**. I'll give you feedback based on your project and on your objectives for the course. You'll then have a chance to address my feedback before turning in your final draft on **December 18**. Your final self-assessment will ask you to reflect on your objectives for the course and evaluate the degree to which your final project demonstrates that you achieved your objectives. *Thus, when you are designing your project, make sure that you have your initial objectives in mind.*
 
 
 We'll use a form of [contract grading](https://en.wikipedia.org/wiki/Contract_grading#:~:text=Contract%20grading%20is%20a%20form,correspond%20to%20specific%20letter%20grades.) to determine your grades on the final. Contract grading allows us to have a conversation about what you want out of the course, what you expect to put into it, and what I think you need to be successful in deploying the skills we learn here. Based on your goals for course, we'll sign a contract that instantiates your objectives into the grade you'll receive for the final. Complete the final and meet your objectives and you'll get the grade you chose. 
@@ -46,6 +52,6 @@ Scoring for the final project will be based on the percentage of the objectives 
 
 
 
-:::{.callout-tip}
+:::{.callout-note}
 **A note on grades**: You will be responsible for assessing how well your assignment demonstrates that you achieved your objectives. I reserve the right to change the grade you've given yourself, but will provide clear justification for why I'm doing that. _Without a completed self-assessment there is no grade for your final project_, so please make sure you complete it.
 :::
