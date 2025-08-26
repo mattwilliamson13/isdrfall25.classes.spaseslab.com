@@ -2,6 +2,10 @@
 title: "Is this thing on?"
 ---
 
+
+<iframe src="https://boisestate.hosted.panopto.com/Panopto/Pages/Embed.aspx?id=92cd9991-9b83-478a-a894-b34501568dff&autoplay=false&offerviewer=true&showtitle=true&showbrand=true&captions=true&interactivity=all" height="253" width="450" style="border: 1px solid #464646;" allowfullscreen allow="autoplay" aria-label="Panopto Embedded Video Player" aria-description="Tue Aug 26 2025 1:33:48 PM" ></iframe>
+
+
 This class relies on several tools that you may not be used to: an online instance of RStudio, git, and GitHub classroom. We'll talk more about about git and GitHub in our next class. For now the focus is on getting you familiar with the RStudio server and the way that GitHub classroom works.
 
 ## Orientation to RStudio and our RStudio server
