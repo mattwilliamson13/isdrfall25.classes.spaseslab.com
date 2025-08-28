@@ -1,5 +1,0 @@
----
-title: "Examples"
----
-
-This section has the code and description from the live-coding exercises that we'll do in class.
