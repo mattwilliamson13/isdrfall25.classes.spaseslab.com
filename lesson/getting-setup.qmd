@@ -1,0 +1,11 @@
+---
+title: "Get(git)ting Setup"
+---
+
+This class relies on several tools that you may not be used to: an online instance of RStudio, git, and GitHub classroom.
+
+## Logging into your RStudio instance
+
+## Introducing yourself to git
+
+## Using GitHub classroom
