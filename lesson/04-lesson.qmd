@@ -1,4 +1,177 @@
 ---
-title: "Generic Lesson"
+title: "Introducing your Data"
 ---
+
+## Objectives
+
+1. Practice getting data into `R` from different sources
+2. Learn to identify common import errors
+3. Generate summaries of imported data
+
+## A Note about Project Management
+
+You'll notice that every repository we use for assignments in this class has a set folder structure (with `data`, `docs`, etc.). This helps ensure that once anyone has cloned the repository all of the paths to files, code, etc will be the same regardless of who's running the code. For this lesson, we'll be working within the `data` folder. You'll notice that within the `data` folder, there is a subfolder for `original` and one for `processed`. **The `original` folder is reserved for unmodified data.** This could be your initial spreadsheet of data, the version of a dataset that you downloaded for an analysis, or any other file that you will eventually modify for your analysis. If you make any changes (rename variables, filter observations, modify values), those changes should be saved to an object in the `processed` folder
+
+::: {.callout-warning}
+For your analysis to be reproducible, any filtering, cleaning, or modification of that original data should be documented in your scripts or Quarto document and the outputs stored in the `processed` folder.
+
+:::
+
+### Let's load some packages
+
+Before you get too far into this, it's a good idea to load all of your packages.
+
+```{r}
+library(tidyverse)
+library(tigris)
+library(sf)
+```
+
+
+### Common Sources of Data
+
+There are, in general, three types of data that you will encounter that meet our `original` data criteria. Data you've collected, data you've downloaded from somehere else, or data you've accessed via a package.
+
+#### It's yours!
+
+So far, this is the type of data that most students bring into class. It's usually some sort of spreadsheet that contains all of that hard-earned field data. Although there are `R` packages for dealing with Microsoft Excel spreadsheets, we won't focus on those for two reasons: 1) Excel is a proprietary software and so may not be available to all users and 2) Excel makes a lot of formatting choices for you that may not actually be helpful in your analysis.
+
+Instead, we'll focus on a more general idea, the "delimited" text file. A delimited text file is flat (i.e., there's only one "sheet") and uses a consistent character (like a `,` or a `tab`) to denote when column breaks should occur. Delimited text files can be created and read in a variety of free software making them more accessible to others. It's also a fairly trivial exercise to save an Excel spreadsheet into a `.csv`.
+
+There are a variety of functions in base `R` that will read delimited files (`read.csv`, `read.table`, and `read.delim` are just a few examples), but we're going to use the `readr` package from the `tidyverse` because it will help you get used to some of the `tidyverse` conventions and because it automates more of the data import process. 
+
+We'll talk more about the `tidyverse` next week, but for the time being it's worth knowing that the general structure of `tidyverse` functions is to combine a `verb` with and `object`. So in order to read a delimited file, we might use the `read_delim()` function where `read` is the `verb` and `delim` is the `object`
+
+For this example, I've downloaded a file from the [Federal Elections Committee](www.fec.gov) depicting the campaign contributions to one of our Congressman in the 2025-2026 fiscal year. It's located in your `data/original` folder. You can read it into your environment using `read_delim` and specifying a `,` for the `delim` argument (if you have tab delimited `.txt` file you would use `\\t`). Because we'll want to look at this data later, I'm assigning it to an object called `election_data` using the assignment operator `<-`. If you look at the help file for `read_delim` (by typing `?read_delim`), you'll see that there are a variety of other options (like `read_csv` or `read_tsv`) that allow you to eliminate specifying the `delim` argument. I'll demonstrate that here, too.
+
+```{r}
+election_data_1 <- read_delim("data/original/fec_reciepts.csv", 
+                            delim = ",")
+
+election_data_2 <- read_csv("data/original/fec_reciepts.csv")
+
+```
+**A Note About Parsing**
+
+
+You'll notice that both `read_` functions return a bit of output telling you the names and [data types](/resource/dataclasses.html) of each column in the dataset. This is one of the features of using `readr::read_` - it attempts to guess what datatype each column should be based on the value you give to the `guess_max` argument. You can see from the helpfile that the default value for guess_max is `min(1000, n_max)` meaning that it will look at the first `n_max` or 1000 rows, whichever is smaller. This can be helpful for large datasets, but it can also introduce some challenges as the different versions of `read_` assign column types a little differently. You can see this by running:
+
+```{r}
+identical(election_data_1, election_data_2)
+all.equal(election_data_1, election_data_2)
+
+```
+
+Despite the fact that the two objects were created from exactly the same file, `identical` returns `FALSE` while `all.equal ` returns `TRUE`. This is an indication that while the data is exactly the same between both objects, there is something a little different about how `R` is storing the objects (`identical` is very strict). We don't need to worry about that now, but I'm pointing it out as you may run into places where this causes errors that are difficult to interpret. For now, we'll just be excited that the data is in `R`!
+
+#### You download it
+
+Occasionally, you'll find data that is directly downloadable from a webpage (meaning the webaddress points directly to a `.csv` or `.txt` file). When that's the case, you can still use the `read_` functions to download and assign the data to an object. Like this:
+
+```{r}
+election_data_web <- read_csv("https://raw.githubusercontent.com/BSU-Spatial-Data-In-R-Fall2025/inclass-04/refs/heads/main/data/original/fec_reciepts.csv")
+
+```
+
+::: {.callout-note}
+When you call the webpage inside of `read_` the data is not automatically saved. If you've assigned it to an object (like `election_data_web`) it will be stored there until you decide to save it (which we'll do next week). If you haven't assigned it to an object, the data will just be printed to the screen.
+:::
+
+There are more complicated workflows for `.zip` files (using `download.file`) or Google Drive files (using the `googledrive` package) which we'll introduce later in the course. Those approaches add a bit more syntax on the front-end to get the file into your `data/original` folder, but after that the `read_` step is the same.
+
+
+The more common way of downloading data from the web is via Application Programming Interfaces (APIs). Although there are lots of APIs in the world, the typical application for getting data is a web-service that expects a particular set of inputs and then returns (possibly for download) a set of outputs matching your query. For example, the US Census has an API that allows you to access all of the Decennial Census and American Community Survey data by providing the state, county, year, and dataset that your are interested in. There are a lot of `R` packages designed to make these API calls easier. For example, the `tidycensus` package in `R` allows easy downloading of Census data, the `FedData` package allows you to download a variety of federally created spatial datasets, and the `elevatr` package allows easy download of global elevation datasets. We'll explore these more in the future, but for now, we'll use a simple example with the `tigris` package. The `tigris` package is a means of accessing the US TIGER (Topologically Integrated Geographic and Referencing System) files. The TIGER datsets contains US roads, state and county boundaries, and a variety of other data related to the US Census. Here's a simple bit of code to download Idaho county boundaries.
+
+```{r}
+
+
+id_counties <- counties(state="ID", year = 2024, progress_bar = FALSE)
+
+id_counties
+```
+Here we are providing the API with a state and a year which `counties` converts into an API call to the census page. There are more complicated versions of this that we'll explore down the road once you're more comfortable with the spatial packages.
+
+
+#### It comes with a package
+
+One final option for obtaining data is that it "ships" with a package. That is, when you install the package, you get the data along with the functions. You're not likely to use this much for your own analysis, but it can be critical when you're trying to get help with a coding problem. Most help sites (e.g., StackOverflow, Posit Community) require a [minimally reproducible example](https://forum.posit.co/t/faq-how-to-do-a-minimal-reproducible-example-reprex-for-beginners/23061). Minimally reproducible examples allow others to diagnose your coding problem without you having to share your dataset and without them needing to run all of the cleanup steps.  You can type `library(help = "datasets")` to get a list of a variety of example datasets. We'll load the `iris` dataset here just so you can see how it works should you need it.
+
+```{r}
+data(iris)
+head(iris)
+```
+
+### Checking yourself (or at least `R`)
+
+Ok, so you've got your data into `R`, the first thing you need to do is to make sure that the import was successful. Before you do anything in `R` it's worth familiarizing yourself with the metadata (data about the data) and building your intuition for how the data _should_ look. Let's take a look at the [page](https://www.fec.gov/data/receipts/?data_type=processed&committee_id=C00331397&two_year_transaction_period=2026) where the data was exported. 
+
+#### Did you get it all?
+
+The first thing we might want to check is whether we actually got all of the date. Based on a quick look at the data it appears that there are 233 observations and columns. We can check that our data matches that by using the `dim` function (short for "dimensions").
+
+```{r}
+dim(election_data_1)
+```
+
+This returns the number of rows and then columns. Based on this we can see that are 233 observations (rows) and 78(!) columns. Where did all of these columns come from??  It's not immediately obvious. You'll notice that if you click on an individual record there's an option to "View Image". If you do that, you'll see the actual tax form that is entered into the database. That form actually has 78 boxes so it would appear that we're good on that front.
+
+#### Is it meaningful?
+
+One of the things that `readr::read_` does is to try and parse the column names in your data and assign it to a particular [data types](/resource/dataclasses.html). That doesn't guarantee, however, that it got it right. We should inspect that. The first thing we might do is take a look at the column names (using the `colnames` function from base `R`). 
+
+```{r}
+colnames(election_data_1)
+
+```
+
+Nothing seems obviously wrong here. The names all seem readable and broken into distinct categories which suggests taht the delimitter worked and we didn't end up with oddball columns.
+
+#### Does `R` recognize it?
+
+Now to take a look at whether `readr::read_` correctly guessed the type of data contained in each column. We can use `dplyr::glimpse` from the `tidyverse` or `str` (short for structure) from base `R` to get a quick look at the data.
+
+```{r}
+glimpse(election_data_1)
+
+```
+
+You'll notice that each column shows up after the `$` operator, followed by the datatype enclosed in `<>`, followed by the first few observations from the dataset. The nice part about `glimpse` is the colored highlighting of `NA` values which can help draw your attention to potential mistakes. For now, we're going to focus on the data types. You'll see `<chr>` for many of the columns indicating that the data in those columns is of the `character` data type, you'll also see `<dbl>` indicating that the column is a `numeric` data type with a "double float" precision which refers to the number of decimal points `R` will track for a numeric value. You'll also notice the `<lgl>` or `logical` datatype referring to data that is either `TRUE/FALSE` and the `<dttm>` for dates and times. One thing you might also notice is that for many columns the first set of entries that `glimpse` shows us are entirely `NA`.   When you're working with your own data, hopefully you'll know whether or not `NA`s are appropriate, but here, because this is "found" data, it's a good idea here to check a few of the images to see whether these `NA`s are expected. The other thing you'll notice is that a variety of "ID" fields (e.g., `sub_id`, `file_id`, `image_id`) were parsed as a `double` data type. This could be a problem as id columns are often meant to denote individuals and so act as a label (i.e., `character`) rather than a number. If there are leading 0's (i.e., 00134) `R` will drop those when converting it to a `numeric` data type. Because we're just looking at the data, we won't worry about it now, but I wanted to draw your attention to it.
+
+### Exploring your new data
+
+Okay, you've got the data into `R` and you've checked that things look correct. Now it's time to get a sense for what the data actually has in it. We might want some information of the distribution of numeric values, frequencies of categorical values, and maybe to look for values that fall outside of the expected range.
+
+
+#### Basic stats
+
+One quick (and ugly) way to get a sense for the range of values in your data (along with summary stats for numeric data) is to use the `summary` function.
+
+```{r}
+summary(election_data_1)
+```
+
+We can look at the `contribution_receipt_amount` and the `contributor_aggregate_ytd` columns as those are the only true `numeric` values. We can see that the `Max` contribution amount for any single observation is 5000 whereas the `Max` aggregate amount is 55400. Looking at the aggregate value a bit more you'll see that the `Mean` is actually larger than the 3rd quartile values which suggests that there are a handful of very larger contributors relative to the rest. If you were planning to analyze this data, you'll have to think about how to deal with those observations carefully.
+
+#### Oddballs
+
+The other thing that `summary` can help with is identifying places where data is incorrect. For example, this should only be for this FY so the fact that all of the `report_year`values are the same is not surprising. Another thing you might now is that individual contributions are capped at 5000, which we know to be true from the previous check. Finally, `summary` returns the number of `NA`s in each column.
+
+#### Data frequency
+
+One last thing we might check before we decide what we want to do with this data is to look at the frequency of different categories. We can use `table`to look at a few of those things. We might take a look at how many of these contributions are from individuals. 
+
+```{r}
+table(election_data_1$is_individual)
+```
+
+Based on this we can see that the number of contributions by groups outnumbers individuals by almost 2:1. What other categorical variables might you look at?
+
+
+That's all for now. We'll learn more complicated ways to evaluate and modify data in the coming weeks, but this is a standard "gut-check" anytime you're bringing data into `R`. 
+
+
+
+
+
+
 

@@ -1,4 +1,11 @@
 ---
-title: "Generic"
+title: "Meeting Your Data"
 ---
 
+1. Join the [in-class example repo from github classroom](https://classroom.github.com/a/kusvB7ks) using the project setup we've introduced.
+
+2. Read the data into `R` and floow the steps in today's lesson
+
+3. Use `table()` to identify the number of contributions from each state.
+
+4. Post a screeenhot of the result in slack.
