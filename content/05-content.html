@@ -20,7 +20,26 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
-</style>
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
 
 
 <script src="../site_libs/quarto-nav/quarto-nav.js"></script>
@@ -364,7 +383,11 @@ ul.task-list li input[type="checkbox"] {
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#readings" id="toc-readings" class="nav-link active" data-scroll-target="#readings">Readings</a></li>
+  <li><a href="#readings" id="toc-readings" class="nav-link active" data-scroll-target="#readings">Readings</a>
+  <ul class="collapse">
+  <li><a href="#setting-the-stage" id="toc-setting-the-stage" class="nav-link" data-scroll-target="#setting-the-stage">Setting the Stage</a></li>
+  <li><a href="#technical-details" id="toc-technical-details" class="nav-link" data-scroll-target="#technical-details">Technical Details</a></li>
+  </ul></li>
   <li><a href="#objectives" id="toc-objectives" class="nav-link" data-scroll-target="#objectives">Objectives</a></li>
   <li><a href="#slides" id="toc-slides" class="nav-link" data-scroll-target="#slides">Slides</a></li>
   </ul>
@@ -384,9 +407,17 @@ ul.task-list li input[type="checkbox"] {
 <p>We’ve established some of the reasons why data reproducibility and transparency are important. We’ve even gotten to the point where you can bring data into <code>R</code> from a variety of sources. Now we’ve actually got to start wrangling it into the sorts of things we can use for analysis. For a variety of reasons, this course relies on the <code>tidyverse</code> family of packages and its extensions into the spatial realm. Today, we’ll talk about why and begin to develop some intuition for building an analysis using the functions contained in the <code>tidyverse</code> family of packages.</p>
 <section id="readings" class="level2">
 <h2 class="anchored" data-anchor-id="readings">Readings</h2>
-<p><i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i></p>
-<p><i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i></p>
-<p><i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i></p>
+<section id="setting-the-stage" class="level3">
+<h3 class="anchored" data-anchor-id="setting-the-stage">Setting the Stage</h3>
+<p><i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i> <a href="https://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1005510">Good enough practices in scientific computing</a> by Wilson et al. <span class="citation" data-cites="wilson2017">(<a href="#ref-wilson2017" role="doc-biblioref">2017</a>)</span>. Provides some helpful guidance on organizing projects for people that aren’t necessarily computer scientists.</p>
+<p><i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i> <a href="https://builtin.com/data-science/pseudocode">Pseudocode: what it is and how to write it</a> - A nice blogpost by Sara Metawalli the sketches out the logic of pseudocode and why it can be helpful.</p>
+</section>
+<section id="technical-details" class="level3">
+<h3 class="anchored" data-anchor-id="technical-details">Technical Details</h3>
+<p><i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i> <a href="https://r4ds.hadley.nz/data-tidy.html">Data Tidying from R. for Data Science</a>from Wickham <span class="citation" data-cites="wickham2016r">(<a href="#ref-wickham2016r" role="doc-biblioref">2016</a>)</span> provides the logic behind tidy data and how it works in the <code>tidyverse</code>.</p>
+<p><i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i> <a href="https://r4ds.hadley.nz/data-transform.html">Data Transformation</a> from the same book introduces <code>dplyr</code> and the various functions for altering, summarizing, and reshaping data.</p>
+<p><i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i> <a href="https://r4ds.hadley.nz/joins.html">Joins</a> introduces relational databases and a tidy approach for merging datasets. <strong>This one will prove to be important when we start working with spatial data.</strong></p>
+</section>
 </section>
 <section id="objectives" class="level2">
 <h2 class="anchored" data-anchor-id="objectives">Objectives</h2>
@@ -401,16 +432,24 @@ ul.task-list li input[type="checkbox"] {
 <h2 class="anchored" data-anchor-id="slides">Slides</h2>
 <p>The slides for today’s lesson are available online as an HTML file. Use the buttons below to open the slides either as an interactive website or as a static PDF (for printing or storing for later). You can also click in the slides below and navigate through them with your left and right arrow keys.</p>
 <p class="text-center buttons">
-<a class="btn btn-danger" target="_blank" href="../slides/03-slides.html"><i class="fa-solid fa-arrow-up-right-from-square"></i> View all slides in new window</a> <a class="btn btn-danger" target="_blank" href="../slides/03-slides.pdf" role="button"><i class="fa-solid fa-file-pdf"></i> Download PDF of all slides</a>
+<a class="btn btn-danger" target="_blank" href="../slides/05-slides.html"><i class="fa-solid fa-arrow-up-right-from-square"></i> View all slides in new window</a> <a class="btn btn-danger" target="_blank" href="../slides/05-slides.pdf" role="button"><i class="fa-solid fa-file-pdf"></i> Download PDF of all slides</a>
 </p>
 <div>
 <iframe class="slide-deck" src="../slides/03-slides.html"></iframe>
 </div>
 
 
+
 </section>
 
-</main> <!-- /main -->
+<div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" role="doc-bibliography"><h2 class="anchored quarto-appendix-heading">References</h2><div id="refs" class="references csl-bib-body hanging-indent" data-line-spacing="2" role="list">
+<div id="ref-wickham2016r" class="csl-entry" role="listitem">
+Wickham, H., and G. Grolemund. 2016. R for data science: Import, tidy, transform, visualize, and model data. " O’Reilly Media, Inc.".
+</div>
+<div id="ref-wilson2017" class="csl-entry" role="listitem">
+Wilson, J. A. C., Greg AND Bryan. 2017. <a href="https://doi.org/10.1371/journal.pcbi.1005510">Good enough practices in scientific computing</a>. PLOS Computational Biology 13:1–20.
+</div>
+</div></section></div></main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
 window.document.addEventListener("DOMContentLoaded", function (event) {
   const toggleBodyColorMode = (bsSheetEl) => {

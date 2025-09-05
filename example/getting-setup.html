@@ -346,10 +346,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stderr">
+<pre><code>Warning: package 'ggplot2' was built under R version 4.4.1</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
 <pre><code>── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──
 ✔ dplyr     1.1.4     ✔ readr     2.1.5
 ✔ forcats   1.0.0     ✔ stringr   1.5.1
-✔ ggplot2   3.5.1     ✔ tibble    3.2.1
+✔ ggplot2   3.5.2     ✔ tibble    3.2.1
 ✔ lubridate 1.9.3     ✔ tidyr     1.3.1
 ✔ purrr     1.0.2     
 ── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
@@ -365,9 +368,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div class="cell">
 <details open="">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>filepath <span class="ot">&lt;-</span> <span class="st">"/Users/mattwilliamson/Google Drive/My Drive/TEACHING/Intro_Spatial_Data_R/Data/2022/assignment01/"</span></span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="co">#READ</span></span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>santa <span class="ot">&lt;-</span> <span class="fu">read_table</span>(<span class="fu">paste0</span>(filepath, <span class="st">"isthereasanta.txt"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>filepath <span class="ot">&lt;-</span> <span class="st">"/Users/mattwilliamson/Google Drive/My Drive/TEACHING/Intro_Spatial_Data_R/Data/2022/assignment01/"</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="co">#READ</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>santa <span class="ot">&lt;-</span> <span class="fu">read_table</span>(<span class="fu">paste0</span>(filepath, <span class="st">"isthereasanta.txt"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
 </section>
@@ -377,23 +380,23 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div class="cell">
 <details open="">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(santa)</span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(santa)</span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="fu">any</span>(<span class="fu">is.na</span>(santa))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(santa)</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(santa)</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="fu">any</span>(<span class="fu">is.na</span>(santa))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
 <p>You’ll notice a few things. First, because we read this in using the <code>read_table</code> function, the result is a <code>tibble</code>. As such, <code>head()</code> returns both the data and the classes. This makes the result of <code>str()</code> largely redundant (note that if <code>santa</code> were a <code>data.frame</code> this would not be true). The combination of <code>any()</code> with <code>is.na()</code> asks whether any of the cells in <code>santa</code> have an <code>NA</code> value. You can see that there are <code>NA</code>s. Most statistical modeling functions in <code>R</code> don’t like <code>NA</code>s so we’ll try to clean those up here. Before we clean them, let’s try to learn what they are. We can use <code>which()</code> to identify the locations of the <code>NA</code>s.</p>
 <div class="cell">
 <details open="">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">which</span>(<span class="fu">is.na</span>(santa), <span class="at">arr.ind =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">which</span>(<span class="fu">is.na</span>(santa), <span class="at">arr.ind =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
 <p>We see that all of them are in the <code>age</code> column (our key predictor variable!). We could also have discovered this using <code>summary()</code>.</p>
 <div class="cell">
 <details open="">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(santa)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(santa)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
 </section>
@@ -403,18 +406,18 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div class="cell">
 <details open="">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>santa_complete_cases <span class="ot">&lt;-</span> santa[<span class="fu">complete.cases</span>(santa),]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>santa_complete_cases <span class="ot">&lt;-</span> santa[<span class="fu">complete.cases</span>(santa),]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
 <p>Dropping the incomplete cases may seem like a “safe” approach, but what if there is some systematic reason for the data to be incomplete. Maybe older people are less likely to provide their age? If that’s the case, then dropping these cases may bias our dataset and the models that result. In that case, we may decide to “impute” values for the <code>NA</code>s based on some principled approach. We’ll talk more about what it means to take a principled approach to imputation later in this class. For now, let’s just try to strategies: 1 where we assign the <code>mean()</code> value of age and one where we assign the <code>max()</code> value (to reflect our hypothesis that older people may not provide their age). We’ll do this by using the <code>ifelse()</code> function. Note that we can only do this because all of the <code>NA</code>s are in a single column.</p>
 <div class="cell">
 <details open="">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>santa_mean <span class="ot">&lt;-</span> santa</span>
-<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>santa_mean<span class="sc">$</span>Age <span class="ot">&lt;-</span> <span class="fu">ifelse</span>(<span class="fu">is.na</span>(santa_mean<span class="sc">$</span>Age), <span class="fu">round</span>(<span class="fu">mean</span>(santa_mean<span class="sc">$</span>Age, <span class="at">na.rm=</span><span class="cn">TRUE</span>),<span class="at">digits=</span><span class="dv">0</span>), santa_mean<span class="sc">$</span>Age)</span>
-<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>santa_max <span class="ot">&lt;-</span> santa</span>
-<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>santa_max<span class="sc">$</span>Age <span class="ot">&lt;-</span> <span class="fu">ifelse</span>(<span class="fu">is.na</span>(santa_max<span class="sc">$</span>Age), <span class="fu">max</span>(santa_max<span class="sc">$</span>Age, <span class="at">na.rm=</span><span class="cn">TRUE</span>), santa_max<span class="sc">$</span>Age)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>santa_mean <span class="ot">&lt;-</span> santa</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>santa_mean<span class="sc">$</span>Age <span class="ot">&lt;-</span> <span class="fu">ifelse</span>(<span class="fu">is.na</span>(santa_mean<span class="sc">$</span>Age), <span class="fu">round</span>(<span class="fu">mean</span>(santa_mean<span class="sc">$</span>Age, <span class="at">na.rm=</span><span class="cn">TRUE</span>),<span class="at">digits=</span><span class="dv">0</span>), santa_mean<span class="sc">$</span>Age)</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>santa_max <span class="ot">&lt;-</span> santa</span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>santa_max<span class="sc">$</span>Age <span class="ot">&lt;-</span> <span class="fu">ifelse</span>(<span class="fu">is.na</span>(santa_max<span class="sc">$</span>Age), <span class="fu">max</span>(santa_max<span class="sc">$</span>Age, <span class="at">na.rm=</span><span class="cn">TRUE</span>), santa_max<span class="sc">$</span>Age)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
 </section>
@@ -424,11 +427,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div class="cell">
 <details open="">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(Believe <span class="sc">~</span> Age, <span class="at">data=</span>santa_complete_cases, <span class="at">main=</span><span class="st">"Age vs. Belief in Santa (complete cases)"</span>)</span>
-<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(Believe <span class="sc">~</span> Age, <span class="at">data=</span>santa_mean, <span class="at">main=</span><span class="st">"Age vs. Belief in Santa (Age at mean)"</span>)</span>
-<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(Believe <span class="sc">~</span> Age, <span class="at">data=</span>santa_max, <span class="at">main=</span><span class="st">"Age vs. Belief in Santa (Age at max)"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(Believe <span class="sc">~</span> Age, <span class="at">data=</span>santa_complete_cases, <span class="at">main=</span><span class="st">"Age vs. Belief in Santa (complete cases)"</span>)</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(Believe <span class="sc">~</span> Age, <span class="at">data=</span>santa_mean, <span class="at">main=</span><span class="st">"Age vs. Belief in Santa (Age at mean)"</span>)</span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(Believe <span class="sc">~</span> Age, <span class="at">data=</span>santa_max, <span class="at">main=</span><span class="st">"Age vs. Belief in Santa (Age at max)"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
 <p>These plots highlight two things. First, because <code>Believe</code> is a <code>logical</code> variable, the only possible outcomes are 0 and 1. This means we can’t fit a typical linear regression (we’ll use a logistic regression instead). Also, we notice that our choice of imputation strategy makes a difference! Let’s fit some models and see what kind of difference it makes.</p>
@@ -439,13 +442,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div class="cell">
 <details open="">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>fit_complete_cases <span class="ot">&lt;-</span> <span class="fu">glm</span>(Believe <span class="sc">~</span> Age, <span class="at">family=</span><span class="fu">binomial</span>(<span class="at">link=</span><span class="st">"logit"</span>), <span class="at">data=</span>santa_complete_cases)</span>
-<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>fit_mean <span class="ot">&lt;-</span> <span class="fu">glm</span>(Believe <span class="sc">~</span> Age, <span class="at">family=</span><span class="fu">binomial</span>(<span class="at">link=</span><span class="st">"logit"</span>), <span class="at">data=</span>santa_mean)</span>
-<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>fit_max <span class="ot">&lt;-</span> <span class="fu">glm</span>(Believe <span class="sc">~</span> Age, <span class="at">family=</span><span class="fu">binomial</span>(<span class="at">link=</span><span class="st">"logit"</span>), <span class="at">data=</span>santa_max)</span>
-<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(fit_complete_cases)<span class="sc">$</span>coef</span>
-<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(fit_mean)<span class="sc">$</span>coef</span>
-<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(fit_max)<span class="sc">$</span>coef</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>fit_complete_cases <span class="ot">&lt;-</span> <span class="fu">glm</span>(Believe <span class="sc">~</span> Age, <span class="at">family=</span><span class="fu">binomial</span>(<span class="at">link=</span><span class="st">"logit"</span>), <span class="at">data=</span>santa_complete_cases)</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>fit_mean <span class="ot">&lt;-</span> <span class="fu">glm</span>(Believe <span class="sc">~</span> Age, <span class="at">family=</span><span class="fu">binomial</span>(<span class="at">link=</span><span class="st">"logit"</span>), <span class="at">data=</span>santa_mean)</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>fit_max <span class="ot">&lt;-</span> <span class="fu">glm</span>(Believe <span class="sc">~</span> Age, <span class="at">family=</span><span class="fu">binomial</span>(<span class="at">link=</span><span class="st">"logit"</span>), <span class="at">data=</span>santa_max)</span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(fit_complete_cases)<span class="sc">$</span>coef</span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(fit_mean)<span class="sc">$</span>coef</span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(fit_max)<span class="sc">$</span>coef</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
 <p>We see the older a person is, the less likely they are to believe in Santa! We also see that the choice of how we handle <code>NA</code>s affects the size of the effect, but not the direction. In class, we’ll write a function to simulate some new data based on this model and see if our results are robust to different assumptions.</p>
@@ -746,215 +749,215 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
   }
 });
 </script><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Source Code</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">
-<div class="sourceCode" id="cb16" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
-<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="an">title:</span><span class="co"> "Getting Setup"</span></span>
-<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
-<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a><span class="fu">## Let's "git" started</span></span>
-<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>We are using GitHub classroom for all of the assignments in this course. This allows each of you to have your own repositories for version control and backup of your code without the worries of stepping on someone else toes. The goal of this class is not to have you become a 'master' of all things git, but I am hoping you'll learn the utility of version control and adopt as much of it as make sense for you and your workflows. </span>
-<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a><span class="fu">### Accept the invitation to the assignment repo</span></span>
-<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a>The first thing you'll need to do is accept the invitation to 'assignment-1` repository (repo). This _should_ automatically clone (make an exact copy) of the assignment repo in your personal account. </span>
-<span id="cb16-12"><a href="#cb16-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-13"><a href="#cb16-13" aria-hidden="true" tabindex="-1"></a><span class="fu">### Making sure Rstudio server can access your GitHub account</span></span>
-<span id="cb16-14"><a href="#cb16-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-15"><a href="#cb16-15" aria-hidden="true" tabindex="-1"></a>Unfortunately, GitHub has ended its support for username/password remote authentication. Instead, it uses something called a Personal Access Token. You can read more about it <span class="co">[</span><span class="ot">here</span><span class="co">](https://docs.github.com/en/github/authenticating-to-github/keeping-your-account-and-data-secure/creating-a-personal-access-token)</span> if you are interested, but the easiest way to deal with this is by following Jenny Bryan's <span class="co">[</span><span class="ot">happygitwithr</span><span class="co">](https://happygitwithr.com/credential-caching.html#credential-caching)</span> recommended approach:</span>
-<span id="cb16-16"><a href="#cb16-16" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-17"><a href="#cb16-17" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>Introduce yourself to git: </span>
-<span id="cb16-18"><a href="#cb16-18" aria-hidden="true" tabindex="-1"></a>There are a number of ways to do this, but I find this to be the easiest</span>
-<span id="cb16-19"><a href="#cb16-19" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-20"><a href="#cb16-20" aria-hidden="true" tabindex="-1"></a><span class="in">```{r introgit, eval=FALSE}</span></span>
-<span id="cb16-21"><a href="#cb16-21" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(usethis) <span class="co">#you may need to install this using install.packages('usethis')</span></span>
-<span id="cb16-22"><a href="#cb16-22" aria-hidden="true" tabindex="-1"></a><span class="fu">use_git_config</span>(<span class="at">user.name =</span> <span class="st">"Matt Williamson"</span>, <span class="at">user.email =</span> <span class="st">"mattwilliamson@boisestate.edu"</span>) <span class="co">#your info here</span></span>
-<span id="cb16-23"><a href="#cb16-23" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb16-24"><a href="#cb16-24" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-25"><a href="#cb16-25" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>Get a PAT if you don't have one already (make sure you save it somewhere)</span>
-<span id="cb16-26"><a href="#cb16-26" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-27"><a href="#cb16-27" aria-hidden="true" tabindex="-1"></a><span class="in">```{r getpat, eval=FALSE}</span></span>
-<span id="cb16-28"><a href="#cb16-28" aria-hidden="true" tabindex="-1"></a>usethis<span class="sc">::</span><span class="fu">create_github_token</span>()</span>
-<span id="cb16-29"><a href="#cb16-29" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb16-30"><a href="#cb16-30" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-31"><a href="#cb16-31" aria-hidden="true" tabindex="-1"></a><span class="ss">3. </span>Store your credential for use in RStudio</span>
-<span id="cb16-32"><a href="#cb16-32" aria-hidden="true" tabindex="-1"></a><span class="in">```{r storepat, eval=FALSE}</span></span>
-<span id="cb16-33"><a href="#cb16-33" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(gitcreds) <span class="co">#may need to install this too</span></span>
-<span id="cb16-34"><a href="#cb16-34" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-35"><a href="#cb16-35" aria-hidden="true" tabindex="-1"></a><span class="fu">gitcreds_set</span>() <span class="co">#should prompt you for your pat - paste it here</span></span>
-<span id="cb16-36"><a href="#cb16-36" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-37"><a href="#cb16-37" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb16-38"><a href="#cb16-38" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-39"><a href="#cb16-39" aria-hidden="true" tabindex="-1"></a><span class="ss">4. </span>Verify that Rstudio has saved your credential</span>
-<span id="cb16-40"><a href="#cb16-40" aria-hidden="true" tabindex="-1"></a><span class="in">```{r patverify, eval=FALSE}</span></span>
-<span id="cb16-41"><a href="#cb16-41" aria-hidden="true" tabindex="-1"></a><span class="fu">gitcreds_get</span>()</span>
-<span id="cb16-42"><a href="#cb16-42" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-43"><a href="#cb16-43" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb16-44"><a href="#cb16-44" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-45"><a href="#cb16-45" aria-hidden="true" tabindex="-1"></a>R should return something that looks like this:</span>
-<span id="cb16-46"><a href="#cb16-46" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-47"><a href="#cb16-47" aria-hidden="true" tabindex="-1"></a><span class="in">```{r gitsuccess, echo=FALSE, out.width="70%"}</span></span>
-<span id="cb16-48"><a href="#cb16-48" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">include_graphics</span>(<span class="st">"img/01/credentialsuccess.png"</span>, <span class="at">error =</span> <span class="cn">FALSE</span>)</span>
-<span id="cb16-49"><a href="#cb16-49" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb16-50"><a href="#cb16-50" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-51"><a href="#cb16-51" aria-hidden="true" tabindex="-1"></a><span class="fu">### Bring the project into RStudio</span></span>
-<span id="cb16-52"><a href="#cb16-52" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-53"><a href="#cb16-53" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>Go to File&gt;New Project and choose the "Version Control" option</span>
-<span id="cb16-54"><a href="#cb16-54" aria-hidden="true" tabindex="-1"></a><span class="ss">3. </span>Select "Git" (Not Subversion)</span>
-<span id="cb16-55"><a href="#cb16-55" aria-hidden="true" tabindex="-1"></a><span class="ss">4. </span>paste the link from the "Clone Repository" button into the "Repository URL" space</span>
-<span id="cb16-56"><a href="#cb16-56" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-57"><a href="#cb16-57" aria-hidden="true" tabindex="-1"></a><span class="fu">### Verify that the "Git" tab is available and that your project is shown in the upper right-hand corner</span></span>
-<span id="cb16-58"><a href="#cb16-58" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-59"><a href="#cb16-59" aria-hidden="true" tabindex="-1"></a>Assuming all this has worked, you should be able to click on the "Git" tab and see something like this:</span>
-<span id="cb16-60"><a href="#cb16-60" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-61"><a href="#cb16-61" aria-hidden="true" tabindex="-1"></a><span class="in">```{r gittab, echo=FALSE, out.width="70%"}</span></span>
-<span id="cb16-62"><a href="#cb16-62" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">include_graphics</span>(<span class="st">"img/01/gittab.png"</span>, <span class="at">error =</span> <span class="cn">FALSE</span>)</span>
-<span id="cb16-63"><a href="#cb16-63" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb16-64"><a href="#cb16-64" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-65"><a href="#cb16-65" aria-hidden="true" tabindex="-1"></a><span class="fu">### Basic workflow</span></span>
-<span id="cb16-66"><a href="#cb16-66" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-67"><a href="#cb16-67" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>Everytime you begin working on code, make sure you "Pull" from the remote repository to make sure you have the most recent version of things (this is especially important when you are collaborating with people).</span>
-<span id="cb16-68"><a href="#cb16-68" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-69"><a href="#cb16-69" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>Make some changes to code</span>
-<span id="cb16-70"><a href="#cb16-70" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-71"><a href="#cb16-71" aria-hidden="true" tabindex="-1"></a><span class="ss">3. </span>Save those changes</span>
-<span id="cb16-72"><a href="#cb16-72" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-73"><a href="#cb16-73" aria-hidden="true" tabindex="-1"></a><span class="ss">4. </span>"Commit" those changes - Think of commits as 'breadcrumbs' they help you remember where you were in the coding process in case you need to revert back to a previous version. Your commit messages should help you remember what was 'happening' in the code when you made the commit. In general, you should save and commit fairly frequently and especially everytime you do something 'consequential'. Git allows you to 'turn back time', but that's only useful if you left enough information to get back to where you want to be.</span>
-<span id="cb16-74"><a href="#cb16-74" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-75"><a href="#cb16-75" aria-hidden="true" tabindex="-1"></a><span class="ss">5. </span>Push your work to the remote - when you're done working on the project for the day, push your local changes to the remote. This will ensure that if you switch computers or if someone else is going to work on the project, you (or they) will have the most recent version. Plus, if you don't do this, step 1 will really mess you up.</span>
-<span id="cb16-76"><a href="#cb16-76" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-77"><a href="#cb16-77" aria-hidden="true" tabindex="-1"></a><span class="fu">## Quarto</span></span>
-<span id="cb16-78"><a href="#cb16-78" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-79"><a href="#cb16-79" aria-hidden="true" tabindex="-1"></a>This is a <span class="co">[</span><span class="ot">Quarto document</span><span class="co">](https://quarto.org/docs/get-started/authoring/rstudio.html)</span> (in fact, this whole webpage and all of the slides were built with Quarto). Quarto uses the <span class="in">`knitr`</span> package to render files containing <span class="in">`R`</span>, <span class="in">`python`</span>, and <span class="in">`julia`</span> to  <span class="co">[</span><span class="ot">Markdown</span><span class="co">](https://daringfireball.net/projects/markdown/)</span> as a means of rendering code, text, math, figures, and tables to a variety of formats.</span>
-<span id="cb16-80"><a href="#cb16-80" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-81"><a href="#cb16-81" aria-hidden="true" tabindex="-1"></a><span class="al">![](/example/img/01/rstudio_qmd_workflow.png)</span>{.border fig-alt="Workflow diagram starting with a qmd file, then knitr, then md, then pandoc, then PDF, MS Word, or HTML." fig-align="center"}</span>
-<span id="cb16-82"><a href="#cb16-82" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-83"><a href="#cb16-83" aria-hidden="true" tabindex="-1"></a>Markdown is a simple formatting syntax for authoring HTML documents (it's the basis for the Readme docs that GitHub creates for you). From there, <span class="in">`RStudio`</span> calls <span class="co">[</span><span class="ot">pandoc</span><span class="co">](https://pandoc.org/)</span> to render the markdown file into your chosen output format. **I'm telling you this because there will be times when some part of this pipeline may break and you'll need to know where the errors might be coming from.**</span>
-<span id="cb16-84"><a href="#cb16-84" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-85"><a href="#cb16-85" aria-hidden="true" tabindex="-1"></a>You can create new Quarto documents by going to File &gt;&gt; New File &gt;&gt; New Quarto Document (or Presentation). There are lots of new documents devoted to <span class="co">[</span><span class="ot">Quarto</span><span class="co">](https://quarto.org/)</span>, but some of them may assume you have some familiarity with <span class="in">`Markdown`</span> or <span class="in">`Rmarkdown`</span>. As such, I'm keeping this links to helpful Rmarkdown resources like this <span class="co">[</span><span class="ot">cheatsheet</span><span class="co">](https://www.rstudio.com/wp-content/uploads/2015/02/rmarkdown-cheatsheet.pdf)</span> and a much longer <span class="co">[</span><span class="ot">user's guide</span><span class="co">](https://bookdown.org/yihui/rmarkdown/)</span> in case you need more in-depth discussion of some of the ideas behind authoring in Quarto. I don't expect you to become an expert in Quarto, but it is a helpful way to keep all of your thoughts and code together in a single, coherent document. Getting proficient in Quarto and git allows you to work with collaborators on an analysis, graphics, and manuscript all within a single platform. This fully-integrated workflow takes practice and patience (especially when you have collaborators that are new to this approach), this course is just an initial step down that path. I'll do my best to keep it simple - please let me know if you have questions! </span>
-<span id="cb16-86"><a href="#cb16-86" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-87"><a href="#cb16-87" aria-hidden="true" tabindex="-1"></a><span class="fu">## The Example</span></span>
-<span id="cb16-88"><a href="#cb16-88" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-89"><a href="#cb16-89" aria-hidden="true" tabindex="-1"></a><span class="fu">### Setup </span></span>
-<span id="cb16-90"><a href="#cb16-90" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-91"><a href="#cb16-91" aria-hidden="true" tabindex="-1"></a>The University of Exeter has been conducting an <span class="co">[</span><span class="ot">ongoing survey</span><span class="co">](https://exeterssis.eu.qualtrics.com/jfe/form/SV_3fOLbEP4wVLDn2R)</span> to understand the age at which the belief in Santa Claus begins to drop off. A sample of the data is located in your <span class="in">`assignment01`</span> folder. Our task is to bring the data into R, conduct some preliminary exploration of the data, and then fit a model to the data to see if age predicts belief in Santa. We'll start by branching off of the <span class="in">`master`</span> Quarto doc in our GitHub repo and then work through the steps together. </span>
-<span id="cb16-92"><a href="#cb16-92" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-93"><a href="#cb16-93" aria-hidden="true" tabindex="-1"></a><span class="fu">### Pseudocode</span></span>
-<span id="cb16-94"><a href="#cb16-94" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-95"><a href="#cb16-95" aria-hidden="true" tabindex="-1"></a>Before we get started, let's sketch out the steps in our analysis using pseudocode. If you take a look at the tasks I've outlined above, you might construct your pseudocode like this:</span>
-<span id="cb16-96"><a href="#cb16-96" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-99"><a href="#cb16-99" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb16-100"><a href="#cb16-100" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: false</span></span>
-<span id="cb16-101"><a href="#cb16-101" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
-<span id="cb16-102"><a href="#cb16-102" aria-hidden="true" tabindex="-1"></a>LOAD<span class="sc">:</span> all packages that we need <span class="cf">for</span> the analysis</span>
-<span id="cb16-103"><a href="#cb16-103" aria-hidden="true" tabindex="-1"></a>READ<span class="sc">:</span> Data located <span class="cf">in</span> isthereasanta.txt</span>
-<span id="cb16-104"><a href="#cb16-104" aria-hidden="true" tabindex="-1"></a>CHECK<span class="sc">:</span> Data structure and values</span>
-<span id="cb16-105"><a href="#cb16-105" aria-hidden="true" tabindex="-1"></a>CLEAN<span class="sc">:</span> Are there odd values?</span>
-<span id="cb16-106"><a href="#cb16-106" aria-hidden="true" tabindex="-1"></a>PLOT<span class="sc">:</span> Age vs Belief</span>
-<span id="cb16-107"><a href="#cb16-107" aria-hidden="true" tabindex="-1"></a>MODEL<span class="sc">:</span> GLM of Age vs. belief</span>
-<span id="cb16-108"><a href="#cb16-108" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb16-109"><a href="#cb16-109" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-110"><a href="#cb16-110" aria-hidden="true" tabindex="-1"></a><span class="fu">### Programming</span></span>
-<span id="cb16-111"><a href="#cb16-111" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-112"><a href="#cb16-112" aria-hidden="true" tabindex="-1"></a>Now that we have the basic steps in place, let's transform the pseudocode into a repeatable Quarto document that explains what we're doing, why, and what we found.</span>
-<span id="cb16-113"><a href="#cb16-113" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-114"><a href="#cb16-114" aria-hidden="true" tabindex="-1"></a><span class="fu">#### Load the packages</span></span>
-<span id="cb16-115"><a href="#cb16-115" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-116"><a href="#cb16-116" aria-hidden="true" tabindex="-1"></a>Part of what makes <span class="in">`R`</span> so powerful for data analysis is the number of ready-made functions and packages that are designed for _all the things_. That said, you can't take advantage of that power if you don't load them into your session so that their functions become available. In general, it's best to do that first thing your document so that other folks can see what packages are necessary before you start running analyses. If you pay attention when these packages load, you may see warnings that a function is <span class="in">`masked`</span>. This happens because two (or more) packages have functions with the same name. We can be explicit about which version we want by using <span class="in">`packagename::functionname()`</span>. You'll see that more later this semester.</span>
-<span id="cb16-117"><a href="#cb16-117" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-120"><a href="#cb16-120" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb16-121"><a href="#cb16-121" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
-<span id="cb16-122"><a href="#cb16-122" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb16-123"><a href="#cb16-123" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-124"><a href="#cb16-124" aria-hidden="true" tabindex="-1"></a><span class="fu">#### Read the Data</span></span>
-<span id="cb16-125"><a href="#cb16-125" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-126"><a href="#cb16-126" aria-hidden="true" tabindex="-1"></a>Based on our pseudocode our first step is the read the data. We can create headings in Quarto using different numbers of <span class="in">`#`</span> symbols to keep things organized. The code below uses ` ``<span class="in">` `</span> to create the code chunk and then <span class="in">`{r}`</span> to tell Quarto which environment to use when running it. I'm specifying a filepath because I'm not working within our git repo, this isn't great practice, but it's necessary for the webpage to render correctly. We use <span class="in">`paste0`</span> to combine the <span class="in">`filepath`</span> with the file name (<span class="in">`isthereasanta.txt`</span>) then read in the data using <span class="in">`read_table`</span>.</span>
-<span id="cb16-127"><a href="#cb16-127" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-130"><a href="#cb16-130" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb16-131"><a href="#cb16-131" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: false</span></span>
-<span id="cb16-132"><a href="#cb16-132" aria-hidden="true" tabindex="-1"></a>filepath <span class="ot">&lt;-</span> <span class="st">"/Users/mattwilliamson/Google Drive/My Drive/TEACHING/Intro_Spatial_Data_R/Data/2022/assignment01/"</span></span>
-<span id="cb16-133"><a href="#cb16-133" aria-hidden="true" tabindex="-1"></a><span class="co">#READ</span></span>
-<span id="cb16-134"><a href="#cb16-134" aria-hidden="true" tabindex="-1"></a>santa <span class="ot">&lt;-</span> <span class="fu">read_table</span>(<span class="fu">paste0</span>(filepath, <span class="st">"isthereasanta.txt"</span>))</span>
-<span id="cb16-135"><a href="#cb16-135" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb16-136"><a href="#cb16-136" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-137"><a href="#cb16-137" aria-hidden="true" tabindex="-1"></a><span class="fu">#### Check out the Data</span></span>
-<span id="cb16-138"><a href="#cb16-138" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-139"><a href="#cb16-139" aria-hidden="true" tabindex="-1"></a>Now that we've got the data loaded and assigned it to the <span class="in">`santa`</span> object. It's always a good idea to take a look and make sure things look the way you expect, check for <span class="in">`NA`</span>s, and get a basic understanding of the way your data is being represented by <span class="in">`R`</span>. This process will get more involved once we start working with spatial data, but it's good to get in the habit now. We'll start by looking at the first few rows (using <span class="in">`head()`</span>), then get a sense for the classes of data using <span class="in">`str()`</span>, and check for any <span class="in">`NA`</span>s. </span>
-<span id="cb16-140"><a href="#cb16-140" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-143"><a href="#cb16-143" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb16-144"><a href="#cb16-144" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: false</span></span>
-<span id="cb16-145"><a href="#cb16-145" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(santa)</span>
-<span id="cb16-146"><a href="#cb16-146" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(santa)</span>
-<span id="cb16-147"><a href="#cb16-147" aria-hidden="true" tabindex="-1"></a><span class="fu">any</span>(<span class="fu">is.na</span>(santa))</span>
-<span id="cb16-148"><a href="#cb16-148" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb16-149"><a href="#cb16-149" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-150"><a href="#cb16-150" aria-hidden="true" tabindex="-1"></a>You'll notice a few things. First, because we read this in using the <span class="in">`read_table`</span> function, the result is a <span class="in">`tibble`</span>. As such, <span class="in">`head()`</span> returns both the data and the classes. This makes the result of <span class="in">`str()`</span> largely redundant (note that if <span class="in">`santa`</span> were a <span class="in">`data.frame`</span> this would not be true). The combination of <span class="in">`any()`</span> with <span class="in">`is.na()`</span> asks whether any of the cells in <span class="in">`santa`</span> have an <span class="in">`NA`</span> value. You can see that there are <span class="in">`NA`</span>s. Most statistical modeling functions in <span class="in">`R`</span> don't like <span class="in">`NA`</span>s so we'll try to clean those up here. Before we clean them, let's try to learn what they are. We can use <span class="in">`which()`</span> to identify the locations of the <span class="in">`NA`</span>s. </span>
-<span id="cb16-151"><a href="#cb16-151" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-154"><a href="#cb16-154" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb16-155"><a href="#cb16-155" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: false</span></span>
-<span id="cb16-156"><a href="#cb16-156" aria-hidden="true" tabindex="-1"></a><span class="fu">which</span>(<span class="fu">is.na</span>(santa), <span class="at">arr.ind =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb16-157"><a href="#cb16-157" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb16-158"><a href="#cb16-158" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-159"><a href="#cb16-159" aria-hidden="true" tabindex="-1"></a>We see that all of them are in the <span class="in">`age`</span> column (our key predictor variable!). We could also have discovered this using <span class="in">`summary()`</span>.</span>
-<span id="cb16-160"><a href="#cb16-160" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-163"><a href="#cb16-163" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb16-164"><a href="#cb16-164" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: false</span></span>
-<span id="cb16-165"><a href="#cb16-165" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(santa)</span>
-<span id="cb16-166"><a href="#cb16-166" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb16-167"><a href="#cb16-167" aria-hidden="true" tabindex="-1"></a><span class="fu">#### Clean the data</span></span>
-<span id="cb16-168"><a href="#cb16-168" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-169"><a href="#cb16-169" aria-hidden="true" tabindex="-1"></a>Deciding how to clean <span class="in">`NA`</span>s is an important decision. Many people choose to drop any incomplete records. We can do that with <span class="in">`complete.cases()`</span> and see that the resulting object now has only 47 rows.</span>
-<span id="cb16-170"><a href="#cb16-170" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-173"><a href="#cb16-173" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb16-174"><a href="#cb16-174" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: false</span></span>
-<span id="cb16-175"><a href="#cb16-175" aria-hidden="true" tabindex="-1"></a>santa_complete_cases <span class="ot">&lt;-</span> santa[<span class="fu">complete.cases</span>(santa),]</span>
-<span id="cb16-176"><a href="#cb16-176" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb16-177"><a href="#cb16-177" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-178"><a href="#cb16-178" aria-hidden="true" tabindex="-1"></a>Dropping the incomplete cases may seem like a "safe" approach, but what if there is some systematic reason for the data to be incomplete. Maybe older people are less likely to provide their age? If that's the case, then dropping these cases may bias our dataset and the models that result. In that case, we may decide to "impute" values for the <span class="in">`NA`</span>s based on some principled approach. We'll talk more about what it means to take a principled approach to imputation later in this class. For now, let's just try to strategies: 1 where we assign the <span class="in">`mean()`</span> value of age and one where we assign the <span class="in">`max()`</span> value (to reflect our hypothesis that older people may not provide their age). We'll do this by using the <span class="in">`ifelse()`</span> function. Note that we can only do this because all of the <span class="in">`NA`</span>s are in a single column.</span>
-<span id="cb16-179"><a href="#cb16-179" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-182"><a href="#cb16-182" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb16-183"><a href="#cb16-183" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: false</span></span>
-<span id="cb16-184"><a href="#cb16-184" aria-hidden="true" tabindex="-1"></a>santa_mean <span class="ot">&lt;-</span> santa</span>
-<span id="cb16-185"><a href="#cb16-185" aria-hidden="true" tabindex="-1"></a>santa_mean<span class="sc">$</span>Age <span class="ot">&lt;-</span> <span class="fu">ifelse</span>(<span class="fu">is.na</span>(santa_mean<span class="sc">$</span>Age), <span class="fu">round</span>(<span class="fu">mean</span>(santa_mean<span class="sc">$</span>Age, <span class="at">na.rm=</span><span class="cn">TRUE</span>),<span class="at">digits=</span><span class="dv">0</span>), santa_mean<span class="sc">$</span>Age)</span>
-<span id="cb16-186"><a href="#cb16-186" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-187"><a href="#cb16-187" aria-hidden="true" tabindex="-1"></a>santa_max <span class="ot">&lt;-</span> santa</span>
-<span id="cb16-188"><a href="#cb16-188" aria-hidden="true" tabindex="-1"></a>santa_max<span class="sc">$</span>Age <span class="ot">&lt;-</span> <span class="fu">ifelse</span>(<span class="fu">is.na</span>(santa_max<span class="sc">$</span>Age), <span class="fu">max</span>(santa_max<span class="sc">$</span>Age, <span class="at">na.rm=</span><span class="cn">TRUE</span>), santa_max<span class="sc">$</span>Age)</span>
-<span id="cb16-189"><a href="#cb16-189" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb16-190"><a href="#cb16-190" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-191"><a href="#cb16-191" aria-hidden="true" tabindex="-1"></a><span class="fu">#### Plot the Data</span></span>
-<span id="cb16-192"><a href="#cb16-192" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-193"><a href="#cb16-193" aria-hidden="true" tabindex="-1"></a>Now that we have a few clean datasets, let's just take a quick look to see if our intuition is correct about the relationship between age and belief in santa. The idea isn't so much to "prove" your hypothesis, but rather to get to know your data better as a means of identifying potential outliers and thinking about the distribution of your data.</span>
-<span id="cb16-194"><a href="#cb16-194" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-197"><a href="#cb16-197" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb16-198"><a href="#cb16-198" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: false</span></span>
-<span id="cb16-199"><a href="#cb16-199" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(Believe <span class="sc">~</span> Age, <span class="at">data=</span>santa_complete_cases, <span class="at">main=</span><span class="st">"Age vs. Belief in Santa (complete cases)"</span>)</span>
-<span id="cb16-200"><a href="#cb16-200" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-201"><a href="#cb16-201" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(Believe <span class="sc">~</span> Age, <span class="at">data=</span>santa_mean, <span class="at">main=</span><span class="st">"Age vs. Belief in Santa (Age at mean)"</span>)</span>
-<span id="cb16-202"><a href="#cb16-202" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-203"><a href="#cb16-203" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(Believe <span class="sc">~</span> Age, <span class="at">data=</span>santa_max, <span class="at">main=</span><span class="st">"Age vs. Belief in Santa (Age at max)"</span>)</span>
-<span id="cb16-204"><a href="#cb16-204" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb16-205"><a href="#cb16-205" aria-hidden="true" tabindex="-1"></a>These plots highlight two things. First, because <span class="in">`Believe`</span> is a <span class="in">`logical`</span> variable, the only possible outcomes are 0 and 1. This means we can't fit a typical linear regression (we'll use a logistic regression instead). Also, we notice that our choice of imputation strategy makes a difference! Let's fit some models and see what kind of difference it makes.</span>
-<span id="cb16-206"><a href="#cb16-206" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-207"><a href="#cb16-207" aria-hidden="true" tabindex="-1"></a><span class="fu">#### Fit Some Models</span></span>
-<span id="cb16-208"><a href="#cb16-208" aria-hidden="true" tabindex="-1"></a>We'll be using a generalized linear model for this analysis. The details will come up later, but for now, let's keep it simple. The syntax for the <span class="in">`glm()`</span> function is relatively straightforward. First we specify the model <span class="in">`Believe ~ Age`</span>, then we tell it what family <span class="in">`binomial(link="logit")`</span>, then we remind <span class="in">`R`</span> of the data. We use the <span class="in">`binomial`</span> family because there are only 2 possible outcomes (<span class="in">`TRUE`</span> and <span class="in">`FALSE`</span>).</span>
-<span id="cb16-209"><a href="#cb16-209" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-212"><a href="#cb16-212" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb16-213"><a href="#cb16-213" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: false</span></span>
-<span id="cb16-214"><a href="#cb16-214" aria-hidden="true" tabindex="-1"></a>fit_complete_cases <span class="ot">&lt;-</span> <span class="fu">glm</span>(Believe <span class="sc">~</span> Age, <span class="at">family=</span><span class="fu">binomial</span>(<span class="at">link=</span><span class="st">"logit"</span>), <span class="at">data=</span>santa_complete_cases)</span>
-<span id="cb16-215"><a href="#cb16-215" aria-hidden="true" tabindex="-1"></a>fit_mean <span class="ot">&lt;-</span> <span class="fu">glm</span>(Believe <span class="sc">~</span> Age, <span class="at">family=</span><span class="fu">binomial</span>(<span class="at">link=</span><span class="st">"logit"</span>), <span class="at">data=</span>santa_mean)</span>
-<span id="cb16-216"><a href="#cb16-216" aria-hidden="true" tabindex="-1"></a>fit_max <span class="ot">&lt;-</span> <span class="fu">glm</span>(Believe <span class="sc">~</span> Age, <span class="at">family=</span><span class="fu">binomial</span>(<span class="at">link=</span><span class="st">"logit"</span>), <span class="at">data=</span>santa_max)</span>
-<span id="cb16-217"><a href="#cb16-217" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-218"><a href="#cb16-218" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(fit_complete_cases)<span class="sc">$</span>coef</span>
-<span id="cb16-219"><a href="#cb16-219" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(fit_mean)<span class="sc">$</span>coef</span>
-<span id="cb16-220"><a href="#cb16-220" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(fit_max)<span class="sc">$</span>coef</span>
-<span id="cb16-221"><a href="#cb16-221" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb16-222"><a href="#cb16-222" aria-hidden="true" tabindex="-1"></a>We see the older a person is, the less likely they are to believe in Santa! We also see that the choice of how we handle <span class="in">`NA`</span>s affects the size of the effect, but not the direction. In class, we'll write a function to simulate some new data based on this model and see if our results are robust to different assumptions.</span>
-<span id="cb16-223"><a href="#cb16-223" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-224"><a href="#cb16-224" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-225"><a href="#cb16-225" aria-hidden="true" tabindex="-1"></a><span class="fu">### Rendering the document</span></span>
-<span id="cb16-226"><a href="#cb16-226" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-227"><a href="#cb16-227" aria-hidden="true" tabindex="-1"></a>When you click the **Render** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. </span>
-<span id="cb16-228"><a href="#cb16-228" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-229"><a href="#cb16-229" aria-hidden="true" tabindex="-1"></a></span>
+<div class="sourceCode" id="cb17" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="an">title:</span><span class="co"> "Getting Setup"</span></span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a><span class="fu">## Let's "git" started</span></span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a>We are using GitHub classroom for all of the assignments in this course. This allows each of you to have your own repositories for version control and backup of your code without the worries of stepping on someone else toes. The goal of this class is not to have you become a 'master' of all things git, but I am hoping you'll learn the utility of version control and adopt as much of it as make sense for you and your workflows. </span>
+<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a><span class="fu">### Accept the invitation to the assignment repo</span></span>
+<span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-11"><a href="#cb17-11" aria-hidden="true" tabindex="-1"></a>The first thing you'll need to do is accept the invitation to 'assignment-1` repository (repo). This _should_ automatically clone (make an exact copy) of the assignment repo in your personal account. </span>
+<span id="cb17-12"><a href="#cb17-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-13"><a href="#cb17-13" aria-hidden="true" tabindex="-1"></a><span class="fu">### Making sure Rstudio server can access your GitHub account</span></span>
+<span id="cb17-14"><a href="#cb17-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-15"><a href="#cb17-15" aria-hidden="true" tabindex="-1"></a>Unfortunately, GitHub has ended its support for username/password remote authentication. Instead, it uses something called a Personal Access Token. You can read more about it <span class="co">[</span><span class="ot">here</span><span class="co">](https://docs.github.com/en/github/authenticating-to-github/keeping-your-account-and-data-secure/creating-a-personal-access-token)</span> if you are interested, but the easiest way to deal with this is by following Jenny Bryan's <span class="co">[</span><span class="ot">happygitwithr</span><span class="co">](https://happygitwithr.com/credential-caching.html#credential-caching)</span> recommended approach:</span>
+<span id="cb17-16"><a href="#cb17-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-17"><a href="#cb17-17" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>Introduce yourself to git: </span>
+<span id="cb17-18"><a href="#cb17-18" aria-hidden="true" tabindex="-1"></a>There are a number of ways to do this, but I find this to be the easiest</span>
+<span id="cb17-19"><a href="#cb17-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-20"><a href="#cb17-20" aria-hidden="true" tabindex="-1"></a><span class="in">```{r introgit, eval=FALSE}</span></span>
+<span id="cb17-21"><a href="#cb17-21" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(usethis) <span class="co">#you may need to install this using install.packages('usethis')</span></span>
+<span id="cb17-22"><a href="#cb17-22" aria-hidden="true" tabindex="-1"></a><span class="fu">use_git_config</span>(<span class="at">user.name =</span> <span class="st">"Matt Williamson"</span>, <span class="at">user.email =</span> <span class="st">"mattwilliamson@boisestate.edu"</span>) <span class="co">#your info here</span></span>
+<span id="cb17-23"><a href="#cb17-23" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb17-24"><a href="#cb17-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-25"><a href="#cb17-25" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>Get a PAT if you don't have one already (make sure you save it somewhere)</span>
+<span id="cb17-26"><a href="#cb17-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-27"><a href="#cb17-27" aria-hidden="true" tabindex="-1"></a><span class="in">```{r getpat, eval=FALSE}</span></span>
+<span id="cb17-28"><a href="#cb17-28" aria-hidden="true" tabindex="-1"></a>usethis<span class="sc">::</span><span class="fu">create_github_token</span>()</span>
+<span id="cb17-29"><a href="#cb17-29" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb17-30"><a href="#cb17-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-31"><a href="#cb17-31" aria-hidden="true" tabindex="-1"></a><span class="ss">3. </span>Store your credential for use in RStudio</span>
+<span id="cb17-32"><a href="#cb17-32" aria-hidden="true" tabindex="-1"></a><span class="in">```{r storepat, eval=FALSE}</span></span>
+<span id="cb17-33"><a href="#cb17-33" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(gitcreds) <span class="co">#may need to install this too</span></span>
+<span id="cb17-34"><a href="#cb17-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-35"><a href="#cb17-35" aria-hidden="true" tabindex="-1"></a><span class="fu">gitcreds_set</span>() <span class="co">#should prompt you for your pat - paste it here</span></span>
+<span id="cb17-36"><a href="#cb17-36" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-37"><a href="#cb17-37" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb17-38"><a href="#cb17-38" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-39"><a href="#cb17-39" aria-hidden="true" tabindex="-1"></a><span class="ss">4. </span>Verify that Rstudio has saved your credential</span>
+<span id="cb17-40"><a href="#cb17-40" aria-hidden="true" tabindex="-1"></a><span class="in">```{r patverify, eval=FALSE}</span></span>
+<span id="cb17-41"><a href="#cb17-41" aria-hidden="true" tabindex="-1"></a><span class="fu">gitcreds_get</span>()</span>
+<span id="cb17-42"><a href="#cb17-42" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-43"><a href="#cb17-43" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb17-44"><a href="#cb17-44" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-45"><a href="#cb17-45" aria-hidden="true" tabindex="-1"></a>R should return something that looks like this:</span>
+<span id="cb17-46"><a href="#cb17-46" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-47"><a href="#cb17-47" aria-hidden="true" tabindex="-1"></a><span class="in">```{r gitsuccess, echo=FALSE, out.width="70%"}</span></span>
+<span id="cb17-48"><a href="#cb17-48" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">include_graphics</span>(<span class="st">"img/01/credentialsuccess.png"</span>, <span class="at">error =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb17-49"><a href="#cb17-49" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb17-50"><a href="#cb17-50" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-51"><a href="#cb17-51" aria-hidden="true" tabindex="-1"></a><span class="fu">### Bring the project into RStudio</span></span>
+<span id="cb17-52"><a href="#cb17-52" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-53"><a href="#cb17-53" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>Go to File&gt;New Project and choose the "Version Control" option</span>
+<span id="cb17-54"><a href="#cb17-54" aria-hidden="true" tabindex="-1"></a><span class="ss">3. </span>Select "Git" (Not Subversion)</span>
+<span id="cb17-55"><a href="#cb17-55" aria-hidden="true" tabindex="-1"></a><span class="ss">4. </span>paste the link from the "Clone Repository" button into the "Repository URL" space</span>
+<span id="cb17-56"><a href="#cb17-56" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-57"><a href="#cb17-57" aria-hidden="true" tabindex="-1"></a><span class="fu">### Verify that the "Git" tab is available and that your project is shown in the upper right-hand corner</span></span>
+<span id="cb17-58"><a href="#cb17-58" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-59"><a href="#cb17-59" aria-hidden="true" tabindex="-1"></a>Assuming all this has worked, you should be able to click on the "Git" tab and see something like this:</span>
+<span id="cb17-60"><a href="#cb17-60" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-61"><a href="#cb17-61" aria-hidden="true" tabindex="-1"></a><span class="in">```{r gittab, echo=FALSE, out.width="70%"}</span></span>
+<span id="cb17-62"><a href="#cb17-62" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">include_graphics</span>(<span class="st">"img/01/gittab.png"</span>, <span class="at">error =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb17-63"><a href="#cb17-63" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb17-64"><a href="#cb17-64" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-65"><a href="#cb17-65" aria-hidden="true" tabindex="-1"></a><span class="fu">### Basic workflow</span></span>
+<span id="cb17-66"><a href="#cb17-66" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-67"><a href="#cb17-67" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>Everytime you begin working on code, make sure you "Pull" from the remote repository to make sure you have the most recent version of things (this is especially important when you are collaborating with people).</span>
+<span id="cb17-68"><a href="#cb17-68" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-69"><a href="#cb17-69" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>Make some changes to code</span>
+<span id="cb17-70"><a href="#cb17-70" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-71"><a href="#cb17-71" aria-hidden="true" tabindex="-1"></a><span class="ss">3. </span>Save those changes</span>
+<span id="cb17-72"><a href="#cb17-72" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-73"><a href="#cb17-73" aria-hidden="true" tabindex="-1"></a><span class="ss">4. </span>"Commit" those changes - Think of commits as 'breadcrumbs' they help you remember where you were in the coding process in case you need to revert back to a previous version. Your commit messages should help you remember what was 'happening' in the code when you made the commit. In general, you should save and commit fairly frequently and especially everytime you do something 'consequential'. Git allows you to 'turn back time', but that's only useful if you left enough information to get back to where you want to be.</span>
+<span id="cb17-74"><a href="#cb17-74" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-75"><a href="#cb17-75" aria-hidden="true" tabindex="-1"></a><span class="ss">5. </span>Push your work to the remote - when you're done working on the project for the day, push your local changes to the remote. This will ensure that if you switch computers or if someone else is going to work on the project, you (or they) will have the most recent version. Plus, if you don't do this, step 1 will really mess you up.</span>
+<span id="cb17-76"><a href="#cb17-76" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-77"><a href="#cb17-77" aria-hidden="true" tabindex="-1"></a><span class="fu">## Quarto</span></span>
+<span id="cb17-78"><a href="#cb17-78" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-79"><a href="#cb17-79" aria-hidden="true" tabindex="-1"></a>This is a <span class="co">[</span><span class="ot">Quarto document</span><span class="co">](https://quarto.org/docs/get-started/authoring/rstudio.html)</span> (in fact, this whole webpage and all of the slides were built with Quarto). Quarto uses the <span class="in">`knitr`</span> package to render files containing <span class="in">`R`</span>, <span class="in">`python`</span>, and <span class="in">`julia`</span> to  <span class="co">[</span><span class="ot">Markdown</span><span class="co">](https://daringfireball.net/projects/markdown/)</span> as a means of rendering code, text, math, figures, and tables to a variety of formats.</span>
+<span id="cb17-80"><a href="#cb17-80" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-81"><a href="#cb17-81" aria-hidden="true" tabindex="-1"></a><span class="al">![](/example/img/01/rstudio_qmd_workflow.png)</span>{.border fig-alt="Workflow diagram starting with a qmd file, then knitr, then md, then pandoc, then PDF, MS Word, or HTML." fig-align="center"}</span>
+<span id="cb17-82"><a href="#cb17-82" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-83"><a href="#cb17-83" aria-hidden="true" tabindex="-1"></a>Markdown is a simple formatting syntax for authoring HTML documents (it's the basis for the Readme docs that GitHub creates for you). From there, <span class="in">`RStudio`</span> calls <span class="co">[</span><span class="ot">pandoc</span><span class="co">](https://pandoc.org/)</span> to render the markdown file into your chosen output format. **I'm telling you this because there will be times when some part of this pipeline may break and you'll need to know where the errors might be coming from.**</span>
+<span id="cb17-84"><a href="#cb17-84" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-85"><a href="#cb17-85" aria-hidden="true" tabindex="-1"></a>You can create new Quarto documents by going to File &gt;&gt; New File &gt;&gt; New Quarto Document (or Presentation). There are lots of new documents devoted to <span class="co">[</span><span class="ot">Quarto</span><span class="co">](https://quarto.org/)</span>, but some of them may assume you have some familiarity with <span class="in">`Markdown`</span> or <span class="in">`Rmarkdown`</span>. As such, I'm keeping this links to helpful Rmarkdown resources like this <span class="co">[</span><span class="ot">cheatsheet</span><span class="co">](https://www.rstudio.com/wp-content/uploads/2015/02/rmarkdown-cheatsheet.pdf)</span> and a much longer <span class="co">[</span><span class="ot">user's guide</span><span class="co">](https://bookdown.org/yihui/rmarkdown/)</span> in case you need more in-depth discussion of some of the ideas behind authoring in Quarto. I don't expect you to become an expert in Quarto, but it is a helpful way to keep all of your thoughts and code together in a single, coherent document. Getting proficient in Quarto and git allows you to work with collaborators on an analysis, graphics, and manuscript all within a single platform. This fully-integrated workflow takes practice and patience (especially when you have collaborators that are new to this approach), this course is just an initial step down that path. I'll do my best to keep it simple - please let me know if you have questions! </span>
+<span id="cb17-86"><a href="#cb17-86" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-87"><a href="#cb17-87" aria-hidden="true" tabindex="-1"></a><span class="fu">## The Example</span></span>
+<span id="cb17-88"><a href="#cb17-88" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-89"><a href="#cb17-89" aria-hidden="true" tabindex="-1"></a><span class="fu">### Setup </span></span>
+<span id="cb17-90"><a href="#cb17-90" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-91"><a href="#cb17-91" aria-hidden="true" tabindex="-1"></a>The University of Exeter has been conducting an <span class="co">[</span><span class="ot">ongoing survey</span><span class="co">](https://exeterssis.eu.qualtrics.com/jfe/form/SV_3fOLbEP4wVLDn2R)</span> to understand the age at which the belief in Santa Claus begins to drop off. A sample of the data is located in your <span class="in">`assignment01`</span> folder. Our task is to bring the data into R, conduct some preliminary exploration of the data, and then fit a model to the data to see if age predicts belief in Santa. We'll start by branching off of the <span class="in">`master`</span> Quarto doc in our GitHub repo and then work through the steps together. </span>
+<span id="cb17-92"><a href="#cb17-92" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-93"><a href="#cb17-93" aria-hidden="true" tabindex="-1"></a><span class="fu">### Pseudocode</span></span>
+<span id="cb17-94"><a href="#cb17-94" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-95"><a href="#cb17-95" aria-hidden="true" tabindex="-1"></a>Before we get started, let's sketch out the steps in our analysis using pseudocode. If you take a look at the tasks I've outlined above, you might construct your pseudocode like this:</span>
+<span id="cb17-96"><a href="#cb17-96" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-99"><a href="#cb17-99" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb17-100"><a href="#cb17-100" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: false</span></span>
+<span id="cb17-101"><a href="#cb17-101" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb17-102"><a href="#cb17-102" aria-hidden="true" tabindex="-1"></a>LOAD<span class="sc">:</span> all packages that we need <span class="cf">for</span> the analysis</span>
+<span id="cb17-103"><a href="#cb17-103" aria-hidden="true" tabindex="-1"></a>READ<span class="sc">:</span> Data located <span class="cf">in</span> isthereasanta.txt</span>
+<span id="cb17-104"><a href="#cb17-104" aria-hidden="true" tabindex="-1"></a>CHECK<span class="sc">:</span> Data structure and values</span>
+<span id="cb17-105"><a href="#cb17-105" aria-hidden="true" tabindex="-1"></a>CLEAN<span class="sc">:</span> Are there odd values?</span>
+<span id="cb17-106"><a href="#cb17-106" aria-hidden="true" tabindex="-1"></a>PLOT<span class="sc">:</span> Age vs Belief</span>
+<span id="cb17-107"><a href="#cb17-107" aria-hidden="true" tabindex="-1"></a>MODEL<span class="sc">:</span> GLM of Age vs. belief</span>
+<span id="cb17-108"><a href="#cb17-108" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb17-109"><a href="#cb17-109" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-110"><a href="#cb17-110" aria-hidden="true" tabindex="-1"></a><span class="fu">### Programming</span></span>
+<span id="cb17-111"><a href="#cb17-111" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-112"><a href="#cb17-112" aria-hidden="true" tabindex="-1"></a>Now that we have the basic steps in place, let's transform the pseudocode into a repeatable Quarto document that explains what we're doing, why, and what we found.</span>
+<span id="cb17-113"><a href="#cb17-113" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-114"><a href="#cb17-114" aria-hidden="true" tabindex="-1"></a><span class="fu">#### Load the packages</span></span>
+<span id="cb17-115"><a href="#cb17-115" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-116"><a href="#cb17-116" aria-hidden="true" tabindex="-1"></a>Part of what makes <span class="in">`R`</span> so powerful for data analysis is the number of ready-made functions and packages that are designed for _all the things_. That said, you can't take advantage of that power if you don't load them into your session so that their functions become available. In general, it's best to do that first thing your document so that other folks can see what packages are necessary before you start running analyses. If you pay attention when these packages load, you may see warnings that a function is <span class="in">`masked`</span>. This happens because two (or more) packages have functions with the same name. We can be explicit about which version we want by using <span class="in">`packagename::functionname()`</span>. You'll see that more later this semester.</span>
+<span id="cb17-117"><a href="#cb17-117" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-120"><a href="#cb17-120" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb17-121"><a href="#cb17-121" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb17-122"><a href="#cb17-122" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb17-123"><a href="#cb17-123" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-124"><a href="#cb17-124" aria-hidden="true" tabindex="-1"></a><span class="fu">#### Read the Data</span></span>
+<span id="cb17-125"><a href="#cb17-125" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-126"><a href="#cb17-126" aria-hidden="true" tabindex="-1"></a>Based on our pseudocode our first step is the read the data. We can create headings in Quarto using different numbers of <span class="in">`#`</span> symbols to keep things organized. The code below uses ` ``<span class="in">` `</span> to create the code chunk and then <span class="in">`{r}`</span> to tell Quarto which environment to use when running it. I'm specifying a filepath because I'm not working within our git repo, this isn't great practice, but it's necessary for the webpage to render correctly. We use <span class="in">`paste0`</span> to combine the <span class="in">`filepath`</span> with the file name (<span class="in">`isthereasanta.txt`</span>) then read in the data using <span class="in">`read_table`</span>.</span>
+<span id="cb17-127"><a href="#cb17-127" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-130"><a href="#cb17-130" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb17-131"><a href="#cb17-131" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: false</span></span>
+<span id="cb17-132"><a href="#cb17-132" aria-hidden="true" tabindex="-1"></a>filepath <span class="ot">&lt;-</span> <span class="st">"/Users/mattwilliamson/Google Drive/My Drive/TEACHING/Intro_Spatial_Data_R/Data/2022/assignment01/"</span></span>
+<span id="cb17-133"><a href="#cb17-133" aria-hidden="true" tabindex="-1"></a><span class="co">#READ</span></span>
+<span id="cb17-134"><a href="#cb17-134" aria-hidden="true" tabindex="-1"></a>santa <span class="ot">&lt;-</span> <span class="fu">read_table</span>(<span class="fu">paste0</span>(filepath, <span class="st">"isthereasanta.txt"</span>))</span>
+<span id="cb17-135"><a href="#cb17-135" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb17-136"><a href="#cb17-136" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-137"><a href="#cb17-137" aria-hidden="true" tabindex="-1"></a><span class="fu">#### Check out the Data</span></span>
+<span id="cb17-138"><a href="#cb17-138" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-139"><a href="#cb17-139" aria-hidden="true" tabindex="-1"></a>Now that we've got the data loaded and assigned it to the <span class="in">`santa`</span> object. It's always a good idea to take a look and make sure things look the way you expect, check for <span class="in">`NA`</span>s, and get a basic understanding of the way your data is being represented by <span class="in">`R`</span>. This process will get more involved once we start working with spatial data, but it's good to get in the habit now. We'll start by looking at the first few rows (using <span class="in">`head()`</span>), then get a sense for the classes of data using <span class="in">`str()`</span>, and check for any <span class="in">`NA`</span>s. </span>
+<span id="cb17-140"><a href="#cb17-140" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-143"><a href="#cb17-143" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb17-144"><a href="#cb17-144" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: false</span></span>
+<span id="cb17-145"><a href="#cb17-145" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(santa)</span>
+<span id="cb17-146"><a href="#cb17-146" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(santa)</span>
+<span id="cb17-147"><a href="#cb17-147" aria-hidden="true" tabindex="-1"></a><span class="fu">any</span>(<span class="fu">is.na</span>(santa))</span>
+<span id="cb17-148"><a href="#cb17-148" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb17-149"><a href="#cb17-149" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-150"><a href="#cb17-150" aria-hidden="true" tabindex="-1"></a>You'll notice a few things. First, because we read this in using the <span class="in">`read_table`</span> function, the result is a <span class="in">`tibble`</span>. As such, <span class="in">`head()`</span> returns both the data and the classes. This makes the result of <span class="in">`str()`</span> largely redundant (note that if <span class="in">`santa`</span> were a <span class="in">`data.frame`</span> this would not be true). The combination of <span class="in">`any()`</span> with <span class="in">`is.na()`</span> asks whether any of the cells in <span class="in">`santa`</span> have an <span class="in">`NA`</span> value. You can see that there are <span class="in">`NA`</span>s. Most statistical modeling functions in <span class="in">`R`</span> don't like <span class="in">`NA`</span>s so we'll try to clean those up here. Before we clean them, let's try to learn what they are. We can use <span class="in">`which()`</span> to identify the locations of the <span class="in">`NA`</span>s. </span>
+<span id="cb17-151"><a href="#cb17-151" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-154"><a href="#cb17-154" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb17-155"><a href="#cb17-155" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: false</span></span>
+<span id="cb17-156"><a href="#cb17-156" aria-hidden="true" tabindex="-1"></a><span class="fu">which</span>(<span class="fu">is.na</span>(santa), <span class="at">arr.ind =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb17-157"><a href="#cb17-157" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb17-158"><a href="#cb17-158" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-159"><a href="#cb17-159" aria-hidden="true" tabindex="-1"></a>We see that all of them are in the <span class="in">`age`</span> column (our key predictor variable!). We could also have discovered this using <span class="in">`summary()`</span>.</span>
+<span id="cb17-160"><a href="#cb17-160" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-163"><a href="#cb17-163" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb17-164"><a href="#cb17-164" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: false</span></span>
+<span id="cb17-165"><a href="#cb17-165" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(santa)</span>
+<span id="cb17-166"><a href="#cb17-166" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb17-167"><a href="#cb17-167" aria-hidden="true" tabindex="-1"></a><span class="fu">#### Clean the data</span></span>
+<span id="cb17-168"><a href="#cb17-168" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-169"><a href="#cb17-169" aria-hidden="true" tabindex="-1"></a>Deciding how to clean <span class="in">`NA`</span>s is an important decision. Many people choose to drop any incomplete records. We can do that with <span class="in">`complete.cases()`</span> and see that the resulting object now has only 47 rows.</span>
+<span id="cb17-170"><a href="#cb17-170" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-173"><a href="#cb17-173" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb17-174"><a href="#cb17-174" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: false</span></span>
+<span id="cb17-175"><a href="#cb17-175" aria-hidden="true" tabindex="-1"></a>santa_complete_cases <span class="ot">&lt;-</span> santa[<span class="fu">complete.cases</span>(santa),]</span>
+<span id="cb17-176"><a href="#cb17-176" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb17-177"><a href="#cb17-177" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-178"><a href="#cb17-178" aria-hidden="true" tabindex="-1"></a>Dropping the incomplete cases may seem like a "safe" approach, but what if there is some systematic reason for the data to be incomplete. Maybe older people are less likely to provide their age? If that's the case, then dropping these cases may bias our dataset and the models that result. In that case, we may decide to "impute" values for the <span class="in">`NA`</span>s based on some principled approach. We'll talk more about what it means to take a principled approach to imputation later in this class. For now, let's just try to strategies: 1 where we assign the <span class="in">`mean()`</span> value of age and one where we assign the <span class="in">`max()`</span> value (to reflect our hypothesis that older people may not provide their age). We'll do this by using the <span class="in">`ifelse()`</span> function. Note that we can only do this because all of the <span class="in">`NA`</span>s are in a single column.</span>
+<span id="cb17-179"><a href="#cb17-179" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-182"><a href="#cb17-182" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb17-183"><a href="#cb17-183" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: false</span></span>
+<span id="cb17-184"><a href="#cb17-184" aria-hidden="true" tabindex="-1"></a>santa_mean <span class="ot">&lt;-</span> santa</span>
+<span id="cb17-185"><a href="#cb17-185" aria-hidden="true" tabindex="-1"></a>santa_mean<span class="sc">$</span>Age <span class="ot">&lt;-</span> <span class="fu">ifelse</span>(<span class="fu">is.na</span>(santa_mean<span class="sc">$</span>Age), <span class="fu">round</span>(<span class="fu">mean</span>(santa_mean<span class="sc">$</span>Age, <span class="at">na.rm=</span><span class="cn">TRUE</span>),<span class="at">digits=</span><span class="dv">0</span>), santa_mean<span class="sc">$</span>Age)</span>
+<span id="cb17-186"><a href="#cb17-186" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-187"><a href="#cb17-187" aria-hidden="true" tabindex="-1"></a>santa_max <span class="ot">&lt;-</span> santa</span>
+<span id="cb17-188"><a href="#cb17-188" aria-hidden="true" tabindex="-1"></a>santa_max<span class="sc">$</span>Age <span class="ot">&lt;-</span> <span class="fu">ifelse</span>(<span class="fu">is.na</span>(santa_max<span class="sc">$</span>Age), <span class="fu">max</span>(santa_max<span class="sc">$</span>Age, <span class="at">na.rm=</span><span class="cn">TRUE</span>), santa_max<span class="sc">$</span>Age)</span>
+<span id="cb17-189"><a href="#cb17-189" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb17-190"><a href="#cb17-190" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-191"><a href="#cb17-191" aria-hidden="true" tabindex="-1"></a><span class="fu">#### Plot the Data</span></span>
+<span id="cb17-192"><a href="#cb17-192" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-193"><a href="#cb17-193" aria-hidden="true" tabindex="-1"></a>Now that we have a few clean datasets, let's just take a quick look to see if our intuition is correct about the relationship between age and belief in santa. The idea isn't so much to "prove" your hypothesis, but rather to get to know your data better as a means of identifying potential outliers and thinking about the distribution of your data.</span>
+<span id="cb17-194"><a href="#cb17-194" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-197"><a href="#cb17-197" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb17-198"><a href="#cb17-198" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: false</span></span>
+<span id="cb17-199"><a href="#cb17-199" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(Believe <span class="sc">~</span> Age, <span class="at">data=</span>santa_complete_cases, <span class="at">main=</span><span class="st">"Age vs. Belief in Santa (complete cases)"</span>)</span>
+<span id="cb17-200"><a href="#cb17-200" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-201"><a href="#cb17-201" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(Believe <span class="sc">~</span> Age, <span class="at">data=</span>santa_mean, <span class="at">main=</span><span class="st">"Age vs. Belief in Santa (Age at mean)"</span>)</span>
+<span id="cb17-202"><a href="#cb17-202" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-203"><a href="#cb17-203" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(Believe <span class="sc">~</span> Age, <span class="at">data=</span>santa_max, <span class="at">main=</span><span class="st">"Age vs. Belief in Santa (Age at max)"</span>)</span>
+<span id="cb17-204"><a href="#cb17-204" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb17-205"><a href="#cb17-205" aria-hidden="true" tabindex="-1"></a>These plots highlight two things. First, because <span class="in">`Believe`</span> is a <span class="in">`logical`</span> variable, the only possible outcomes are 0 and 1. This means we can't fit a typical linear regression (we'll use a logistic regression instead). Also, we notice that our choice of imputation strategy makes a difference! Let's fit some models and see what kind of difference it makes.</span>
+<span id="cb17-206"><a href="#cb17-206" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-207"><a href="#cb17-207" aria-hidden="true" tabindex="-1"></a><span class="fu">#### Fit Some Models</span></span>
+<span id="cb17-208"><a href="#cb17-208" aria-hidden="true" tabindex="-1"></a>We'll be using a generalized linear model for this analysis. The details will come up later, but for now, let's keep it simple. The syntax for the <span class="in">`glm()`</span> function is relatively straightforward. First we specify the model <span class="in">`Believe ~ Age`</span>, then we tell it what family <span class="in">`binomial(link="logit")`</span>, then we remind <span class="in">`R`</span> of the data. We use the <span class="in">`binomial`</span> family because there are only 2 possible outcomes (<span class="in">`TRUE`</span> and <span class="in">`FALSE`</span>).</span>
+<span id="cb17-209"><a href="#cb17-209" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-212"><a href="#cb17-212" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb17-213"><a href="#cb17-213" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: false</span></span>
+<span id="cb17-214"><a href="#cb17-214" aria-hidden="true" tabindex="-1"></a>fit_complete_cases <span class="ot">&lt;-</span> <span class="fu">glm</span>(Believe <span class="sc">~</span> Age, <span class="at">family=</span><span class="fu">binomial</span>(<span class="at">link=</span><span class="st">"logit"</span>), <span class="at">data=</span>santa_complete_cases)</span>
+<span id="cb17-215"><a href="#cb17-215" aria-hidden="true" tabindex="-1"></a>fit_mean <span class="ot">&lt;-</span> <span class="fu">glm</span>(Believe <span class="sc">~</span> Age, <span class="at">family=</span><span class="fu">binomial</span>(<span class="at">link=</span><span class="st">"logit"</span>), <span class="at">data=</span>santa_mean)</span>
+<span id="cb17-216"><a href="#cb17-216" aria-hidden="true" tabindex="-1"></a>fit_max <span class="ot">&lt;-</span> <span class="fu">glm</span>(Believe <span class="sc">~</span> Age, <span class="at">family=</span><span class="fu">binomial</span>(<span class="at">link=</span><span class="st">"logit"</span>), <span class="at">data=</span>santa_max)</span>
+<span id="cb17-217"><a href="#cb17-217" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-218"><a href="#cb17-218" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(fit_complete_cases)<span class="sc">$</span>coef</span>
+<span id="cb17-219"><a href="#cb17-219" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(fit_mean)<span class="sc">$</span>coef</span>
+<span id="cb17-220"><a href="#cb17-220" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(fit_max)<span class="sc">$</span>coef</span>
+<span id="cb17-221"><a href="#cb17-221" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb17-222"><a href="#cb17-222" aria-hidden="true" tabindex="-1"></a>We see the older a person is, the less likely they are to believe in Santa! We also see that the choice of how we handle <span class="in">`NA`</span>s affects the size of the effect, but not the direction. In class, we'll write a function to simulate some new data based on this model and see if our results are robust to different assumptions.</span>
+<span id="cb17-223"><a href="#cb17-223" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-224"><a href="#cb17-224" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-225"><a href="#cb17-225" aria-hidden="true" tabindex="-1"></a><span class="fu">### Rendering the document</span></span>
+<span id="cb17-226"><a href="#cb17-226" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-227"><a href="#cb17-227" aria-hidden="true" tabindex="-1"></a>When you click the **Render** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. </span>
+<span id="cb17-228"><a href="#cb17-228" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-229"><a href="#cb17-229" aria-hidden="true" tabindex="-1"></a></span>
 </code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div></div></div></div></div>
 </div> <!-- /content -->
