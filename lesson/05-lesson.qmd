@@ -242,7 +242,12 @@ ggplot(data = top10_receipts,
 
 ## Final Thoughts
 
-Based on these graphs, you can see that very few of our top donors contribute to more than one candidate. You'll also notice that some folks give consistently (and sometimes consistently more), while others seem to drop out at various times. Interesting! While none of us may be experts at campaign finance, we have certainly gotten better at data-wrangling with `dplyr`!!
+Based on these graphs, you can see that very few of our top donors contribute to more than one candidate. You'll also notice that some folks give consistently (and sometimes consistently more), while others seem to drop out at various times. Interesting! While none of us may be experts at campaign finance, we have certainly gotten better at data-wrangling with `dplyr`!! Now that you've gotten your clean dataset, let's save it for future use! You'll notice that instead of `read_` we use `write_` (because we're saving something). You'll also notice that we've changed the folder to the `processed` folder so that we don't confuse this with the original data!
+
+```{r}
+write_csv(top10_receipts, "data/processed/id_fec_top10.csv")
+
+```
 
 
 ## A Note on Long and Wide Format

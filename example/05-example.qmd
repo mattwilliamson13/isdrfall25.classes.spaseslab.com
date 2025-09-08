@@ -1,4 +1,9 @@
 ---
-title: "Generic"
+title: "Data Manipulation with the `tidyverse`"
 ---
 
+1. Join the in-class example repository (I'll be able to make sure you can do this)
+
+2. Work through the lesson
+
+3. Look at the help files (`?`) for the `scale_color_` and `facet_` arguments to `ggplot`. Try a different color scale and faceting approach for the figure we made in the lesson. Post your figure to the slack channel.
