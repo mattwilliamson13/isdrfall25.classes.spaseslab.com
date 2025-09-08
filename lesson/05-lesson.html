@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Generic Lesson – Intro to Spatial Data in R</title>
+<title>Cleaning up Election (Data) – Intro to Spatial Data in R</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -73,7 +73,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
 <script src="../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../site_libs/bootstrap/bootstrap-20e1c2340d6ef20406948785740699ce.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-48ee983aae8769e41560f015be0e627d.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <link href="../site_libs/quarto-contrib/fontawesome6-0.1.0/all.css" rel="stylesheet">
 <link href="../site_libs/quarto-contrib/fontawesome6-0.1.0/latex-fontsize.css" rel="stylesheet">
 <script id="quarto-search-options" type="application/json">{
@@ -105,7 +105,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 }</script>
 
 
-<meta property="og:title" content="Generic Lesson – Intro to Spatial Data in R">
+<meta property="og:title" content="Cleaning up Election (Data) – Intro to Spatial Data in R">
+<meta property="og:description" content="Use R to load, visualize, and analyze spatial data">
 <meta property="og:image" content="https://isdrfall25.classes.spaseslab.com/files/social-image-f22.png">
 <meta property="og:site_name" content="Intro to Spatial Data in R">
 <meta property="og:locale" content="en_US">
@@ -182,15 +183,32 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
 <!-- margin-sidebar -->
-    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
-        
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#objectives" id="toc-objectives" class="nav-link active" data-scroll-target="#objectives">Objectives</a></li>
+  <li><a href="#getting-set-up" id="toc-getting-set-up" class="nav-link" data-scroll-target="#getting-set-up">Getting Set Up</a></li>
+  <li><a href="#reading-in-the-data" id="toc-reading-in-the-data" class="nav-link" data-scroll-target="#reading-in-the-data">Reading in the Data</a></li>
+  <li><a href="#focusing-on-relevant-columns" id="toc-focusing-on-relevant-columns" class="nav-link" data-scroll-target="#focusing-on-relevant-columns">Focusing on Relevant Columns</a></li>
+  <li><a href="#finding-the-top-5-donors" id="toc-finding-the-top-5-donors" class="nav-link" data-scroll-target="#finding-the-top-5-donors">Finding the Top 5 Donors</a></li>
+  <li><a href="#relational-data-for-fun-and-donations" id="toc-relational-data-for-fun-and-donations" class="nav-link" data-scroll-target="#relational-data-for-fun-and-donations">Relational Data for Fun (and Donations)</a>
+  <ul class="collapse">
+  <li><a href="#identifying-nonoverlapping-data" id="toc-identifying-nonoverlapping-data" class="nav-link" data-scroll-target="#identifying-nonoverlapping-data">Identifying (non)Overlapping Data</a></li>
+  </ul></li>
+  <li><a href="#donations-through-time" id="toc-donations-through-time" class="nav-link" data-scroll-target="#donations-through-time">Donations Through Time</a></li>
+  <li><a href="#final-thoughts" id="toc-final-thoughts" class="nav-link" data-scroll-target="#final-thoughts">Final Thoughts</a></li>
+  <li><a href="#a-note-on-long-and-wide-format" id="toc-a-note-on-long-and-wide-format" class="nav-link" data-scroll-target="#a-note-on-long-and-wide-format">A Note on Long and Wide Format</a></li>
+  </ul>
+</nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<div class="quarto-title-block"><div><h1 class="title">Generic Lesson</h1><button type="button" class="btn code-tools-button" id="quarto-code-tools-source"><i class="bi"></i> Code</button></div></div>
+<div class="quarto-title-block"><div><h1 class="title">Cleaning up Election (Data)</h1><button type="button" class="btn code-tools-button dropdown-toggle" id="quarto-code-tools-menu" data-bs-toggle="dropdown" aria-expanded="false"><i class="bi"></i> Code</button><ul class="dropdown-menu dropdown-menu-end" aria-labelelledby="quarto-code-tools-menu"><li><a id="quarto-show-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Show All Code</a></li><li><a id="quarto-hide-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Hide All Code</a></li><li><hr class="dropdown-divider"></li><li><a id="quarto-view-source" class="dropdown-item" href="javascript:void(0)" role="button">View Source</a></li></ul></div></div>
 </div>
 
 
@@ -207,10 +225,524 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </header>
 
 
+<section id="objectives" class="level2">
+<h2 class="anchored" data-anchor-id="objectives">Objectives</h2>
+<p>We’re going practice using the <strong>tidyverse</strong> — especially <code>dplyr</code> and <code>tidyr</code> — to clean, summarize, and join datasets to answer this question:</p>
+<blockquote class="blockquote">
+<p><strong>Who are the five biggest individual donors for each representative, and how do their giving patterns compare over time?</strong></p>
+</blockquote>
+<p>You will work with the <a href="https://www.fec.gov/data/">FEC contribution receipts</a> for our four member of Congress.</p>
+</section>
+<section id="getting-set-up" class="level2">
+<h2 class="anchored" data-anchor-id="getting-set-up">Getting Set Up</h2>
+<p>First, <a href="https://classroom.github.com/a/X4ivBDX3">join the repository</a>. Then, we’ll have to <a href="https://rstudio.aws.boisestate.edu/">get our credentials</a> and login to a <a href="https://rstudio.apps.aws.boisestate.edu/">new RStudio session</a>. Finally, create a new, version control, git-based project (using the link to the repo you just created).</p>
+<p>Once you’ve done that, you’ll need to load your packages. In this case, it’s just the <code>tidyverse</code>.</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stderr">
+<pre><code>── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──
+✔ dplyr     1.1.4     ✔ readr     2.1.5
+✔ forcats   1.0.0     ✔ stringr   1.5.1
+✔ ggplot2   3.5.2     ✔ tibble    3.3.0
+✔ lubridate 1.9.4     ✔ tidyr     1.3.1
+✔ purrr     1.0.4     
+── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
+✖ dplyr::filter() masks stats::filter()
+✖ dplyr::lag()    masks stats::lag()
+ℹ Use the conflicted package (&lt;http://conflicted.r-lib.org/&gt;) to force all conflicts to become errors</code></pre>
+</div>
+</div>
+</section>
+<section id="reading-in-the-data" class="level2">
+<h2 class="anchored" data-anchor-id="reading-in-the-data">Reading in the Data</h2>
+<p>Following up on our last lesson, we’ll use <code>read_delim</code> to bring in each dataset. You should use <code>glimpse</code> and <code>summary</code> to check out each dataset, but I’ll skip that here so we can focus on the new stuff.</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>simpson_receipts <span class="ot">&lt;-</span> <span class="fu">read_delim</span>(<span class="st">"data/original/simpson_fec_17_26.csv"</span>,</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>                               <span class="at">delim =</span> <span class="st">","</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stderr">
+<pre><code>Rows: 4257 Columns: 78
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: ","
+chr  (50): committee_id, committee_name, report_type, filing_form, line_numb...
+dbl  (10): report_year, image_number, link_id, file_number, contribution_rec...
+lgl  (16): recipient_committee_org_type, is_individual, memo_code_full, cand...
+dttm  (2): contribution_receipt_date, load_date
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
+</div>
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>fulcher_receipts <span class="ot">&lt;-</span> <span class="fu">read_delim</span>(<span class="st">"data/original/fulcher_fec_17_26.csv"</span>,</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>                               <span class="at">delim =</span> <span class="st">","</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: One or more parsing issues, call `problems()` on your data frame for details,
+e.g.:
+  dat &lt;- vroom(...)
+  problems(dat)</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Rows: 3732 Columns: 78
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: ","
+chr  (50): committee_id, committee_name, report_type, filing_form, line_numb...
+dbl   (9): report_year, image_number, link_id, file_number, contribution_rec...
+lgl  (17): contributor_prefix, recipient_committee_org_type, is_individual, ...
+dttm  (2): contribution_receipt_date, load_date
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
+</div>
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>crapo_receipts <span class="ot">&lt;-</span> <span class="fu">read_delim</span>(<span class="st">"data/original/crapo_fec_17_26.csv"</span>,</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>                               <span class="at">delim =</span> <span class="st">","</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stderr">
+<pre><code>Rows: 8124 Columns: 78
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: ","
+chr  (51): committee_id, committee_name, report_type, filing_form, line_numb...
+dbl  (10): report_year, image_number, link_id, file_number, contribution_rec...
+lgl  (15): recipient_committee_org_type, is_individual, memo_code_full, cand...
+dttm  (2): contribution_receipt_date, load_date
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
+</div>
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>risch_receipts <span class="ot">&lt;-</span> <span class="fu">read_delim</span>(<span class="st">"data/original/risch_fec_17_26.csv"</span>,</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>                               <span class="at">delim =</span> <span class="st">","</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: One or more parsing issues, call `problems()` on your data frame for details,
+e.g.:
+  dat &lt;- vroom(...)
+  problems(dat)</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Rows: 4001 Columns: 78
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: ","
+chr  (51): committee_id, committee_name, report_type, filing_form, line_numb...
+dbl   (9): report_year, image_number, link_id, file_number, contribution_rec...
+lgl  (16): recipient_committee_org_type, is_individual, memo_code_full, cand...
+dttm  (2): contribution_receipt_date, load_date
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
+</div>
+</div>
+<p>You’ll notice that both the <code>risch_receipts</code> and <code>fulcher_receipts</code> return a parsing problem. We can inspect that by calling:</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">problems</span>(risch_receipts)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 5 × 5
+    row   col expected           actual file                                    
+  &lt;int&gt; &lt;int&gt; &lt;chr&gt;              &lt;chr&gt;  &lt;chr&gt;                                   
+1  2348    17 1/0/T/F/TRUE/FALSE C      /Users/matt/Website/isdrfall2025backend…
+2  2349    17 1/0/T/F/TRUE/FALSE C      /Users/matt/Website/isdrfall2025backend…
+3  2448    17 1/0/T/F/TRUE/FALSE C      /Users/matt/Website/isdrfall2025backend…
+4  2500    17 1/0/T/F/TRUE/FALSE C      /Users/matt/Website/isdrfall2025backend…
+5  2543    17 1/0/T/F/TRUE/FALSE C      /Users/matt/Website/isdrfall2025backend…</code></pre>
+</div>
+</div>
+<p>You’ll see that the errors correspond to column 17. We can figure out what that is by using the <code>names</code> function and providing an index. We can use <code>[</code> notation to index specific locations in a dataset (you can <a href="https://rspatial.org/intr/4-indexing.html">learn more about indexing here</a>. So to figure out what the 17th column is and why it might be causing problems we can run:</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(risch_receipts)[<span class="dv">17</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "recipient_committee_org_type"</code></pre>
+</div>
+</div>
+<p>If you use <code>glimpse</code> you’ll see that <code>read_</code> interpreted the <code>recipient_committee_org_type</code> column as <code>logical</code> (probably because there were so many <code>NA</code>) and that the problem is flagged for the <code>character</code> entries that did show up in the data. We’re not particularly worried about this (or the ones in the <code>fulcher_receipts</code> data) so we’ll move on, but you should use this workflow to check problems anytime you bring new data in via the <code>read_</code> family of functions.</p>
+</section>
+<section id="focusing-on-relevant-columns" class="level2">
+<h2 class="anchored" data-anchor-id="focusing-on-relevant-columns">Focusing on Relevant Columns</h2>
+<p>This dataset has a ton of columns, many of which are unnecessary for this analysis. When datasets have this many columns, it can be easy to get lost in the data. Not only that, but these columns can often create unanticipated problems for things like calculations and joins. I find it’s best to focus only on the parts of the data that I need for the analysis. Our interest is in <em>individual donors</em>, <em>their annual contribution over time</em>, and the <em>recipient</em>. We’ll combine the <code>select</code> and <code>filter</code> functions from <code>dplyr</code> to create that dataset now. I create a vector (<code>select_vars</code>) with the column names that I want and use the <code>all_of</code> helper inside <code>select</code> to let <code>R</code> know that I want all of the columns that match the names in my vector. I then use <code>filter</code> to subset the rows to only those where <code>is_individual</code> is <code>TRUE</code> so that I only have the individual donors. We use the <code>%&gt;%</code> operator to <code>pipe</code> the data frame returned from each function into the next one so we don’t have to create a bunch of intermediate objects.</p>
+<p>You’ll notice that one of the benefits of this approach is that you can use the order of the variables in your <code>select_vars</code> to order the columns in the way that you want them to appear in the final dataframe. Once we’ve <em>selected</em> the right columns and <em>filtered</em> the to the individual donors, we can use glimpse to make sure that things look right (in this case we only kept 1933 of the 4257 donations and 5 of the 78 columns).</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>select_vars <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"is_individual"</span>, <span class="st">"contributor_name"</span>,  <span class="st">"contribution_receipt_amount"</span>, <span class="st">"committee_name"</span>, <span class="st">"report_year"</span>)</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>simpson_subset <span class="ot">&lt;-</span> simpson_receipts <span class="sc">%&gt;%</span> </span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="fu">all_of</span>(select_vars)) <span class="sc">%&gt;%</span> </span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(is_individual <span class="sc">==</span> <span class="cn">TRUE</span>)</span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a>fulcher_subset <span class="ot">&lt;-</span> fulcher_receipts <span class="sc">%&gt;%</span> </span>
+<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="fu">all_of</span>(select_vars)) <span class="sc">%&gt;%</span> </span>
+<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(is_individual <span class="sc">==</span> <span class="cn">TRUE</span>)</span>
+<span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-11"><a href="#cb17-11" aria-hidden="true" tabindex="-1"></a>crapo_subset <span class="ot">&lt;-</span> crapo_receipts <span class="sc">%&gt;%</span> </span>
+<span id="cb17-12"><a href="#cb17-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="fu">all_of</span>(select_vars)) <span class="sc">%&gt;%</span> </span>
+<span id="cb17-13"><a href="#cb17-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(is_individual <span class="sc">==</span> <span class="cn">TRUE</span>)</span>
+<span id="cb17-14"><a href="#cb17-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-15"><a href="#cb17-15" aria-hidden="true" tabindex="-1"></a>risch_subset <span class="ot">&lt;-</span> risch_receipts <span class="sc">%&gt;%</span> </span>
+<span id="cb17-16"><a href="#cb17-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="fu">all_of</span>(select_vars)) <span class="sc">%&gt;%</span> </span>
+<span id="cb17-17"><a href="#cb17-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(is_individual <span class="sc">==</span> <span class="cn">TRUE</span>)</span>
+<span id="cb17-18"><a href="#cb17-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-19"><a href="#cb17-19" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(simpson_subset)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Rows: 1,933
+Columns: 5
+$ is_individual               &lt;lgl&gt; TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, …
+$ contributor_name            &lt;chr&gt; "DONOVAN, WALTER J", "MCFARLANE, HAROLD F"…
+$ contribution_receipt_amount &lt;dbl&gt; 50, 50, 50, 100, 100, 150, 150, 150, 150, …
+$ committee_name              &lt;chr&gt; "SIMPSON FOR CONGRESS", "SIMPSON FOR CONGR…
+$ report_year                 &lt;dbl&gt; 2018, 2018, 2017, 2018, 2017, 2018, 2018, …</code></pre>
+</div>
+</div>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>In this exercise, I’m just copying the code for each dataset and replacing the relevant object names. This is <strong>NOT</strong> a great approach as it can lead to errors. I’ll show you the cleaner way in our next example on functions and iteration.</p>
+</div>
+</div>
+</section>
+<section id="finding-the-top-5-donors" class="level2">
+<h2 class="anchored" data-anchor-id="finding-the-top-5-donors">Finding the Top 5 Donors</h2>
+<p>To find the Top 5 Donors, we first have to figure out how much each person has given and then find the 5 highest values within the reciepts for that Congressman. We’ll do that by using <code>group_by</code> and <code>summarize</code> calculate a new, aggregated value (called <code>total_given</code>). Then we’ll use a special version of <code>filter</code> called <code>slice_</code> to find the correct donors. Finally, we use <code>mutate</code> to create a new column that denotes which person the data came from.</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>simpson_top5 <span class="ot">&lt;-</span> simpson_subset <span class="sc">%&gt;%</span> </span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(contributor_name) <span class="sc">%&gt;%</span> </span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">total_given =</span> <span class="fu">sum</span>(contribution_receipt_amount, </span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>                              <span class="at">na.rm =</span> <span class="cn">TRUE</span>)) <span class="sc">%&gt;%</span> </span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">slice_max</span>(<span class="at">order_by =</span> total_given, <span class="at">n =</span> <span class="dv">5</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">recipient =</span> <span class="st">"Simpson"</span>)</span>
+<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a>fulcher_top5 <span class="ot">&lt;-</span> fulcher_subset <span class="sc">%&gt;%</span> </span>
+<span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(contributor_name) <span class="sc">%&gt;%</span> </span>
+<span id="cb19-10"><a href="#cb19-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">total_given =</span> <span class="fu">sum</span>(contribution_receipt_amount, </span>
+<span id="cb19-11"><a href="#cb19-11" aria-hidden="true" tabindex="-1"></a>                              <span class="at">na.rm =</span> <span class="cn">TRUE</span>)) <span class="sc">%&gt;%</span> </span>
+<span id="cb19-12"><a href="#cb19-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">slice_max</span>(<span class="at">order_by =</span> total_given, <span class="at">n =</span> <span class="dv">5</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb19-13"><a href="#cb19-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">recipient =</span> <span class="st">"Fulcher"</span>)</span>
+<span id="cb19-14"><a href="#cb19-14" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb19-15"><a href="#cb19-15" aria-hidden="true" tabindex="-1"></a>crapo_top5 <span class="ot">&lt;-</span> crapo_subset <span class="sc">%&gt;%</span> </span>
+<span id="cb19-16"><a href="#cb19-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(contributor_name) <span class="sc">%&gt;%</span> </span>
+<span id="cb19-17"><a href="#cb19-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">total_given =</span> <span class="fu">sum</span>(contribution_receipt_amount, </span>
+<span id="cb19-18"><a href="#cb19-18" aria-hidden="true" tabindex="-1"></a>                              <span class="at">na.rm =</span> <span class="cn">TRUE</span>)) <span class="sc">%&gt;%</span> </span>
+<span id="cb19-19"><a href="#cb19-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">slice_max</span>(<span class="at">order_by =</span> total_given, <span class="at">n =</span> <span class="dv">5</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb19-20"><a href="#cb19-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">recipient =</span> <span class="st">"Crapo"</span>)</span>
+<span id="cb19-21"><a href="#cb19-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-22"><a href="#cb19-22" aria-hidden="true" tabindex="-1"></a>risch_top5 <span class="ot">&lt;-</span> risch_subset <span class="sc">%&gt;%</span> </span>
+<span id="cb19-23"><a href="#cb19-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(contributor_name) <span class="sc">%&gt;%</span> </span>
+<span id="cb19-24"><a href="#cb19-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">total_given =</span> <span class="fu">sum</span>(contribution_receipt_amount, </span>
+<span id="cb19-25"><a href="#cb19-25" aria-hidden="true" tabindex="-1"></a>                              <span class="at">na.rm =</span> <span class="cn">TRUE</span>)) <span class="sc">%&gt;%</span> </span>
+<span id="cb19-26"><a href="#cb19-26" aria-hidden="true" tabindex="-1"></a>  <span class="fu">slice_max</span>(<span class="at">order_by =</span> total_given, <span class="at">n =</span> <span class="dv">5</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb19-27"><a href="#cb19-27" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">recipient =</span> <span class="st">"Risch"</span>)</span>
+<span id="cb19-28"><a href="#cb19-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-29"><a href="#cb19-29" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(simpson_top5)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Rows: 5
+Columns: 3
+$ contributor_name &lt;chr&gt; "FAISON, JAY", "OF CREEK INDIANS, POARCH BAND", "PARK…
+$ total_given      &lt;dbl&gt; 23400, 23400, 23400, 23400, 22900
+$ recipient        &lt;chr&gt; "Simpson", "Simpson", "Simpson", "Simpson", "Simpson"</code></pre>
+</div>
+</div>
+<p>Because all of these dataframes have the same columns (i.e., the same variables, with the same datatypes), we can combine them into a single top 5 donors dataframe using <code>bind_rows</code>.</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>top5_donors <span class="ot">&lt;-</span> <span class="fu">bind_rows</span>(simpson_top5, fulcher_top5, crapo_top5,</span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>                         risch_top5)</span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>top5_donors</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 20 × 3
+   contributor_name                      total_given recipient
+   &lt;chr&gt;                                       &lt;dbl&gt; &lt;chr&gt;    
+ 1 FAISON, JAY                                 23400 Simpson  
+ 2 OF CREEK INDIANS, POARCH BAND               23400 Simpson  
+ 3 PARKER, SEAN                                23400 Simpson  
+ 4 SIOUX COMMUNITY, SHAKOPEE MDEWAKANTON       23400 Simpson  
+ 5 LAMPTON, ROBERT H                           22900 Simpson  
+ 6 SCOTT, JB                                   25200 Fulcher  
+ 7 KEEN, VICKI                                 21700 Fulcher  
+ 8 ROOPE, CALEB                                20800 Fulcher  
+ 9 VANDERSLOOT, BELINDA                        18500 Fulcher  
+10 VANDERSLOOT, FRANK                          18500 Fulcher  
+11 ZOOK, SUSAN STONER                          15600 Crapo    
+12 DUCHOSSOIS, CRAIG J. MR.                    12800 Crapo    
+13 ARNOLD, JOHN D. MR.                         12400 Crapo    
+14 DWYER, NANCY                                12000 Crapo    
+15 SINGER, PAUL                                11200 Crapo    
+16 KTELEH, TAREK                               16100 Risch    
+17 MOUJTAHED, SAED                             13300 Risch    
+18 BLAVATNIK, LEONARD                          12600 Risch    
+19 PFAUTCH, ROY                                12600 Risch    
+20 SINGER, PAUL                                12600 Risch    </code></pre>
+</div>
+</div>
+</section>
+<section id="relational-data-for-fun-and-donations" class="level2">
+<h2 class="anchored" data-anchor-id="relational-data-for-fun-and-donations">Relational Data for Fun (and Donations)</h2>
+<p>One of the things we’ll use frequently in this class are the <code>_join</code> family of function in <code>dplyr</code>. These functions provide a way of combining datasets based on shared variable attributres. For example, if we wanted to learn more about each of these donors, we might create a single <code>receipts</code> dataframe with all of our individual donations, <code>select</code> all of the variables that contain <code>contributor</code>, filter them using <code>distinct</code> (which keeps unique combinations of the variables), and then join them back to our <code>top5_donors</code> frame.</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>all_contributors <span class="ot">&lt;-</span> <span class="fu">bind_rows</span>(</span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(simpson_receipts, <span class="fu">contains</span>(<span class="st">"contributor"</span>)),</span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(fulcher_receipts, <span class="fu">contains</span>(<span class="st">"contributor"</span>)),</span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(crapo_receipts, <span class="fu">contains</span>(<span class="st">"contributor"</span>)),</span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(risch_receipts, <span class="fu">contains</span>(<span class="st">"contributor"</span>))) <span class="sc">%&gt;%</span> </span>
+<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="fu">all_of</span>(<span class="fu">c</span>(<span class="st">"contributor_name"</span>,<span class="st">"contributor_city"</span>, <span class="st">"contributor_state"</span>, <span class="st">"contributor_employer"</span> ))) <span class="sc">%&gt;%</span> </span>
+<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">distinct</span>()</span>
+<span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-9"><a href="#cb23-9" aria-hidden="true" tabindex="-1"></a>(top5_donors_location <span class="ot">&lt;-</span> top5_donors <span class="sc">%&gt;%</span> </span>
+<span id="cb23-10"><a href="#cb23-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(all_contributors, <span class="at">by =</span> <span class="fu">join_by</span>(contributor_name)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning in left_join(., all_contributors, by = join_by(contributor_name)): Detected an unexpected many-to-many relationship between `x` and `y`.
+ℹ Row 1 of `x` matches multiple rows in `y`.
+ℹ Row 681 of `y` matches multiple rows in `x`.
+ℹ If a many-to-many relationship is expected, set `relationship =
+  "many-to-many"` to silence this warning.</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 39 × 6
+   contributor_name     total_given recipient contributor_city contributor_state
+   &lt;chr&gt;                      &lt;dbl&gt; &lt;chr&gt;     &lt;chr&gt;            &lt;chr&gt;            
+ 1 FAISON, JAY                23400 Simpson   CHARLOTTE        NC               
+ 2 FAISON, JAY                23400 Simpson   CHARLOTTE        NC               
+ 3 FAISON, JAY                23400 Simpson   CHARLOTTE        NC               
+ 4 OF CREEK INDIANS, P…       23400 Simpson   ATMORE           AL               
+ 5 PARKER, SEAN               23400 Simpson   PALO ALTO        CA               
+ 6 SIOUX COMMUNITY, SH…       23400 Simpson   PRIOR LAKE       MN               
+ 7 LAMPTON, ROBERT H          22900 Simpson   JACKSON          MS               
+ 8 SCOTT, JB                  25200 Fulcher   BOISE            ID               
+ 9 SCOTT, JB                  25200 Fulcher   BOISE            ID               
+10 KEEN, VICKI                21700 Fulcher   BOISE            ID               
+# ℹ 29 more rows
+# ℹ 1 more variable: contributor_employer &lt;chr&gt;</code></pre>
+</div>
+</div>
+<p>You’ll get a warning when you do this because some of our top 5 contributors have multiple entries for city and state in the receipts dataset. You’ll also notice that the employer is not uniformly entered. If this were a real analysis, you’d need to decide what to do (if anything) about some of these issues.If you take a look, you might imagine that some of these folks have moved at least once during the period we’re looking at, but is it possible that all of these businesses are different? We aren’t going to try and clean all of this up now (you’ll need some regular expression (regex) skills for that), but I wanted to show you how you might join data (and why having a good relational database structure is important).</p>
+<section id="identifying-nonoverlapping-data" class="level3">
+<h3 class="anchored" data-anchor-id="identifying-nonoverlapping-data">Identifying (non)Overlapping Data</h3>
+<p>Joins are powerful for combining dataets, but they can also be useful for identifying (non)overlapping data between datasets. For example, maybe we want to see if our two Senators recieve donations from any of the same individuals. We can use an <code>inner_join</code> to identify those elements in one dataset that are also in the second.</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>crapo_risch_shared <span class="ot">&lt;-</span> crapo_top5 <span class="sc">%&gt;%</span> </span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">inner_join</span>(risch_top5, <span class="at">by =</span> <span class="st">"contributor_name"</span>)</span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a>crapo_risch_shared</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 1 × 5
+  contributor_name total_given.x recipient.x total_given.y recipient.y
+  &lt;chr&gt;                    &lt;dbl&gt; &lt;chr&gt;               &lt;dbl&gt; &lt;chr&gt;      
+1 SINGER, PAUL             11200 Crapo               12600 Risch      </code></pre>
+</div>
+</div>
+<p>We can also identify which donors are not shared by the two Senators using an <code>anti_join</code></p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>crapo_risch_notshared <span class="ot">&lt;-</span> crapo_top5 <span class="sc">%&gt;%</span> </span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">anti_join</span>(risch_top5, <span class="at">by =</span> <span class="st">"contributor_name"</span>)</span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a>crapo_risch_notshared</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 4 × 3
+  contributor_name         total_given recipient
+  &lt;chr&gt;                          &lt;dbl&gt; &lt;chr&gt;    
+1 ZOOK, SUSAN STONER             15600 Crapo    
+2 DUCHOSSOIS, CRAIG J. MR.       12800 Crapo    
+3 ARNOLD, JOHN D. MR.            12400 Crapo    
+4 DWYER, NANCY                   12000 Crapo    </code></pre>
+</div>
+</div>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Tip
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>The <code>_join</code> family accepts a <code>by</code> argument that tells <code>dplyr</code> which columns it should base the join by. You can supply multiple variables for <code>by</code> and even supply variables that have different names (but the same meaning) in the two datasets. If you don’t supply a <code>by</code> argument <code>dplyr</code> chooses all of the columns that have the same name. Joins can be tricky, you should definitely look at the help file and <a href="https://thomasadventure.blog/posts/r-merging-datasets/">check out this resource</a>.</p>
+</div>
+</div>
+</section>
+</section>
+<section id="donations-through-time" class="level2">
+<h2 class="anchored" data-anchor-id="donations-through-time">Donations Through Time</h2>
+<p>Now that we’ve identified the top 5 donors for each candidate we can return to asking questions about how those contributions have varied through time. Let’s look at the 10 largest donors during our time period. You know all of these commands except <code>pull</code> which takes the variable you give it (<code>contributor_name</code>) and returns a vector with all of the values in the variable. This gives us our vector of names to look for in the dataset.</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>overall_top10_names <span class="ot">&lt;-</span> top5_donors <span class="sc">%&gt;%</span></span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(total_given)) <span class="sc">%&gt;%</span></span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">slice_max</span>(<span class="at">order_by =</span> total_given, <span class="at">n =</span> <span class="dv">10</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pull</span>(contributor_name)</span>
+<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-6"><a href="#cb30-6" aria-hidden="true" tabindex="-1"></a>overall_top10_names</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code> [1] "SCOTT, JB"                            
+ [2] "FAISON, JAY"                          
+ [3] "OF CREEK INDIANS, POARCH BAND"        
+ [4] "PARKER, SEAN"                         
+ [5] "SIOUX COMMUNITY, SHAKOPEE MDEWAKANTON"
+ [6] "LAMPTON, ROBERT H"                    
+ [7] "KEEN, VICKI"                          
+ [8] "ROOPE, CALEB"                         
+ [9] "VANDERSLOOT, BELINDA"                 
+[10] "VANDERSLOOT, FRANK"                   </code></pre>
+</div>
+</div>
+<p>Now we’ll combine all of the individual donor data (with years) that we created earlier.</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>individual_receipts <span class="ot">&lt;-</span> <span class="fu">bind_rows</span>(</span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>  simpson_subset <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">recipient =</span> <span class="st">"Simpson"</span>),</span>
+<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a>  fulcher_subset <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">recipient =</span> <span class="st">"Fulcher"</span>),</span>
+<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a>  crapo_subset <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">recipient =</span> <span class="st">"Crapo"</span>),</span>
+<span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a>  risch_subset <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">recipient =</span> <span class="st">"Risch"</span>)</span>
+<span id="cb32-6"><a href="#cb32-6" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p>Then we’ll <code>filter</code> those for contributors in our top 10 list (notice the use of the <code>%in%</code> operator which tells <code>R</code> to filter rows containing any of the values <em>in</em> our top 10 list). Then we’ll group the data by year, representative, and donor to create an aggregated donation amount for each year, for each representative, from each donor.</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a>top10_receipts <span class="ot">&lt;-</span> individual_receipts <span class="sc">%&gt;%</span></span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(contributor_name <span class="sc">%in%</span> overall_top10_names) <span class="sc">%&gt;%</span> </span>
+<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(report_year, recipient, contributor_name) <span class="sc">%&gt;%</span></span>
+<span id="cb33-4"><a href="#cb33-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">total_given =</span> <span class="fu">sum</span>(contribution_receipt_amount, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb33-5"><a href="#cb33-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stderr">
+<pre><code>`summarise()` has grouped output by 'report_year', 'recipient'. You can
+override using the `.groups` argument.</code></pre>
+</div>
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a>top10_receipts</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 73 × 4
+   report_year recipient contributor_name                      total_given
+         &lt;dbl&gt; &lt;chr&gt;     &lt;chr&gt;                                       &lt;dbl&gt;
+ 1        2017 Fulcher   KEEN, VICKI                                  2700
+ 2        2017 Simpson   FAISON, JAY                                  5400
+ 3        2017 Simpson   LAMPTON, ROBERT H                            2000
+ 4        2017 Simpson   OF CREEK INDIANS, POARCH BAND                2700
+ 5        2017 Simpson   SIOUX COMMUNITY, SHAKOPEE MDEWAKANTON        2700
+ 6        2018 Fulcher   KEEN, VICKI                                  2700
+ 7        2018 Fulcher   ROOPE, CALEB                                 2700
+ 8        2018 Fulcher   SCOTT, JB                                    5400
+ 9        2018 Fulcher   VANDERSLOOT, BELINDA                         5400
+10        2018 Fulcher   VANDERSLOOT, FRANK                           5400
+# ℹ 63 more rows</code></pre>
+</div>
+</div>
+<p>This data is in <strong>long format</strong>. This allows us some flexibility as the numeric values are all in a single column (<code>total_given</code>) and each row corresponds to different observation combinations (like year, donor, and recipient). We can plot that using <code>ggplot</code> (also part of the <code>tidyverse</code>). A few things to point out. Inside the <code>aes</code> call we are telling <code>R</code> which of the variables we want to use for each of the plot aesthetics (like the axes, colors, fills, etc). The <code>geom_</code> tells <code>ggplot</code> what sort of geometry we want to use. The <code>facet_</code> tells <code>R</code> to create small multiples using the variable <code>contributor_name</code>.</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> top10_receipts, </span>
+<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a>       <span class="at">mapping =</span> <span class="fu">aes</span>(<span class="at">x =</span> report_year, </span>
+<span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a>                     <span class="at">y =</span> total_given, </span>
+<span id="cb37-4"><a href="#cb37-4" aria-hidden="true" tabindex="-1"></a>                     <span class="at">color =</span> recipient)) <span class="sc">+</span></span>
+<span id="cb37-5"><a href="#cb37-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>() <span class="sc">+</span> </span>
+<span id="cb37-6"><a href="#cb37-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>()<span class="sc">+</span></span>
+<span id="cb37-7"><a href="#cb37-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="fu">vars</span>(contributor_name), <span class="at">scales =</span> <span class="st">"free_y"</span>) <span class="sc">+</span></span>
+<span id="cb37-8"><a href="#cb37-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb37-9"><a href="#cb37-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Top 5 Donors Over Time by Representative"</span>,</span>
+<span id="cb37-10"><a href="#cb37-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Year"</span>,</span>
+<span id="cb37-11"><a href="#cb37-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Total Contributions ($)"</span></span>
+<span id="cb37-12"><a href="#cb37-12" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb37-13"><a href="#cb37-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="05-lesson_files/figure-html/plot1-1.png" class="img-fluid figure-img" width="1056"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="final-thoughts" class="level2">
+<h2 class="anchored" data-anchor-id="final-thoughts">Final Thoughts</h2>
+<p>Based on these graphs, you can see that very few of our top donors contribute to more than one candidate. You’ll also notice that some folks give consistently (and sometimes consistently more), while others seem to drop out at various times. Interesting! While none of us may be experts at campaign finance, we have certainly gotten better at data-wrangling with <code>dplyr</code>!!</p>
+</section>
+<section id="a-note-on-long-and-wide-format" class="level2">
+<h2 class="anchored" data-anchor-id="a-note-on-long-and-wide-format">A Note on Long and Wide Format</h2>
+<p>While there are lots of reasons to prefer long format, most of our spatial data will be in <strong>wide</strong> format where each row is an individual location that may have multple attributes (in columns). We can use the <code>tidyr</code> (in the <code>tidyverse</code>) <code>pivot_wider</code> function (there’s also a <code>pivot_longer</code>) to take our long data and make it wide. With the <code>names_from</code> argument we’re telling <code>R</code> which column we want the new column names to come from (here it’s our year). With <code>values_from</code> we’re telling <code>R</code> where the numbers (or entries) should come from to fill in the columns. Finally, with <code>values_fill</code> we’re telling R what to do with any missing year/total_given values.</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a>top10_reciepts_wide <span class="ot">&lt;-</span> top10_receipts <span class="sc">%&gt;%</span></span>
+<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_wider</span>(<span class="at">names_from =</span> report_year, <span class="at">values_from =</span> total_given, <span class="at">values_fill =</span> <span class="dv">0</span>)</span>
+<span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-4"><a href="#cb38-4" aria-hidden="true" tabindex="-1"></a>top10_reciepts_wide</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 19 × 11
+   recipient contributor_name   `2017` `2018` `2019` `2020` `2021` `2022` `2023`
+   &lt;chr&gt;     &lt;chr&gt;               &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;
+ 1 Fulcher   KEEN, VICKI          2700   2700      0   4800    500   2000    500
+ 2 Simpson   FAISON, JAY          5400      0   5600      0   5800      0   6600
+ 3 Simpson   LAMPTON, ROBERT H    2000   2500   2500      0   2900   2900   3300
+ 4 Simpson   OF CREEK INDIANS,…   2700   2700   2800   2800   2900   2900   3300
+ 5 Simpson   SIOUX COMMUNITY, …   2700   2700   4150   1450   2900   2900   3300
+ 6 Fulcher   ROOPE, CALEB            0   2700      0   2800   2500   2900      0
+ 7 Fulcher   SCOTT, JB               0   5400   5500      0   5800      0      0
+ 8 Fulcher   VANDERSLOOT, BELI…      0   5400      0   2800      0      0      0
+ 9 Fulcher   VANDERSLOOT, FRANK      0   5400      0   2800      0      0      0
+10 Simpson   PARKER, SEAN            0   5400      0   5600      0   5800      0
+11 Simpson   ROOPE, CALEB            0   2700      0      0      0      0      0
+12 Crapo     FAISON, JAY             0      0   5600      0      0      0      0
+13 Risch     FAISON, JAY             0      0   2000      0      0      0      0
+14 Crapo     ROOPE, CALEB            0      0      0   2700      0    400      0
+15 Risch     ROOPE, CALEB            0      0      0   2500   2900   2900      0
+16 Risch     VANDERSLOOT, BELI…      0      0      0   2800      0      0      0
+17 Risch     VANDERSLOOT, FRANK      0      0      0   2800      0      0      0
+18 Simpson   VANDERSLOOT, BELI…      0      0      0   2800      0   2900      0
+19 Crapo     VANDERSLOOT, FRANK      0      0      0      0      0   5800      0
+# ℹ 2 more variables: `2024` &lt;dbl&gt;, `2025` &lt;dbl&gt;</code></pre>
+</div>
+</div>
+<p>This is less convenient for creating time series style graphs, but if we wanted to geocode each donor’s location to map it, this format would be considerably easier to deal with (with less redundancy in the spatial information). We’ll talk more about this next week.</p>
 
 
 <!-- -->
 
+</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
@@ -663,9 +1195,266 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     }
   });
   </script><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Source Code</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">
-<div class="sourceCode" id="cb1" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="an">title:</span><span class="co"> "Generic Lesson"</span></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span></code><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb40" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a><span class="an">title:</span><span class="co"> "Cleaning up Election (Data)"</span></span>
+<span id="cb40-3"><a href="#cb40-3" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb40-4"><a href="#cb40-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-5"><a href="#cb40-5" aria-hidden="true" tabindex="-1"></a><span class="fu">## Objectives</span></span>
+<span id="cb40-6"><a href="#cb40-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-7"><a href="#cb40-7" aria-hidden="true" tabindex="-1"></a>We're going practice using the **tidyverse** — especially <span class="in">`dplyr`</span> and <span class="in">`tidyr`</span> — to clean, summarize, and join datasets to answer this question:  </span>
+<span id="cb40-8"><a href="#cb40-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-9"><a href="#cb40-9" aria-hidden="true" tabindex="-1"></a><span class="at">&gt; **Who are the five biggest individual donors for each representative, and how do their giving patterns compare over time?**</span></span>
+<span id="cb40-10"><a href="#cb40-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-11"><a href="#cb40-11" aria-hidden="true" tabindex="-1"></a>You will work with the <span class="co">[</span><span class="ot">FEC contribution receipts</span><span class="co">](https://www.fec.gov/data/)</span> for our four member of Congress. </span>
+<span id="cb40-12"><a href="#cb40-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-13"><a href="#cb40-13" aria-hidden="true" tabindex="-1"></a><span class="fu">## Getting Set Up</span></span>
+<span id="cb40-14"><a href="#cb40-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-15"><a href="#cb40-15" aria-hidden="true" tabindex="-1"></a>First, <span class="co">[</span><span class="ot">join the repository</span><span class="co">](https://classroom.github.com/a/X4ivBDX3)</span>. Then, we'll have to <span class="co">[</span><span class="ot">get our credentials</span><span class="co">](https://rstudio.aws.boisestate.edu/)</span> and login to a <span class="co">[</span><span class="ot">new RStudio session</span><span class="co">](https://rstudio.apps.aws.boisestate.edu/)</span>. Finally, create a new, version control, git-based project (using the link to the repo you just created). </span>
+<span id="cb40-16"><a href="#cb40-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-17"><a href="#cb40-17" aria-hidden="true" tabindex="-1"></a>Once you've done that, you'll need to load your packages. In this case, it's just the <span class="in">`tidyverse`</span>.</span>
+<span id="cb40-18"><a href="#cb40-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-19"><a href="#cb40-19" aria-hidden="true" tabindex="-1"></a><span class="in">```{r ldpkg}</span></span>
+<span id="cb40-20"><a href="#cb40-20" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb40-21"><a href="#cb40-21" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb40-22"><a href="#cb40-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-23"><a href="#cb40-23" aria-hidden="true" tabindex="-1"></a><span class="fu">## Reading in the Data</span></span>
+<span id="cb40-24"><a href="#cb40-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-25"><a href="#cb40-25" aria-hidden="true" tabindex="-1"></a>Following up on our last lesson, we'll use <span class="in">`read_delim`</span> to bring in each dataset. You should use <span class="in">`glimpse`</span> and <span class="in">`summary`</span> to check out each dataset, but I'll skip that here so we can focus on the new stuff.</span>
+<span id="cb40-26"><a href="#cb40-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-27"><a href="#cb40-27" aria-hidden="true" tabindex="-1"></a><span class="in">```{r rddata}</span></span>
+<span id="cb40-28"><a href="#cb40-28" aria-hidden="true" tabindex="-1"></a>simpson_receipts <span class="ot">&lt;-</span> <span class="fu">read_delim</span>(<span class="st">"data/original/simpson_fec_17_26.csv"</span>,</span>
+<span id="cb40-29"><a href="#cb40-29" aria-hidden="true" tabindex="-1"></a>                               <span class="at">delim =</span> <span class="st">","</span>)</span>
+<span id="cb40-30"><a href="#cb40-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-31"><a href="#cb40-31" aria-hidden="true" tabindex="-1"></a>fulcher_receipts <span class="ot">&lt;-</span> <span class="fu">read_delim</span>(<span class="st">"data/original/fulcher_fec_17_26.csv"</span>,</span>
+<span id="cb40-32"><a href="#cb40-32" aria-hidden="true" tabindex="-1"></a>                               <span class="at">delim =</span> <span class="st">","</span>)</span>
+<span id="cb40-33"><a href="#cb40-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-34"><a href="#cb40-34" aria-hidden="true" tabindex="-1"></a>crapo_receipts <span class="ot">&lt;-</span> <span class="fu">read_delim</span>(<span class="st">"data/original/crapo_fec_17_26.csv"</span>,</span>
+<span id="cb40-35"><a href="#cb40-35" aria-hidden="true" tabindex="-1"></a>                               <span class="at">delim =</span> <span class="st">","</span>)</span>
+<span id="cb40-36"><a href="#cb40-36" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-37"><a href="#cb40-37" aria-hidden="true" tabindex="-1"></a>risch_receipts <span class="ot">&lt;-</span> <span class="fu">read_delim</span>(<span class="st">"data/original/risch_fec_17_26.csv"</span>,</span>
+<span id="cb40-38"><a href="#cb40-38" aria-hidden="true" tabindex="-1"></a>                               <span class="at">delim =</span> <span class="st">","</span>)</span>
+<span id="cb40-39"><a href="#cb40-39" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-40"><a href="#cb40-40" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb40-41"><a href="#cb40-41" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-42"><a href="#cb40-42" aria-hidden="true" tabindex="-1"></a>You'll notice that both the <span class="in">`risch_receipts`</span> and <span class="in">`fulcher_receipts`</span> return a parsing problem. We can inspect that by calling:</span>
+<span id="cb40-43"><a href="#cb40-43" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-44"><a href="#cb40-44" aria-hidden="true" tabindex="-1"></a><span class="in">```{r probrisch}</span></span>
+<span id="cb40-45"><a href="#cb40-45" aria-hidden="true" tabindex="-1"></a><span class="fu">problems</span>(risch_receipts)</span>
+<span id="cb40-46"><a href="#cb40-46" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb40-47"><a href="#cb40-47" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-48"><a href="#cb40-48" aria-hidden="true" tabindex="-1"></a>You'll see that the errors correspond to column 17. We can figure out what that is by using the <span class="in">`names`</span> function and providing an index. We can use <span class="in">`[`</span> notation to index specific locations in a dataset (you can <span class="co">[</span><span class="ot">learn more about indexing here</span><span class="co">](https://rspatial.org/intr/4-indexing.html)</span>. So to figure out what the 17th column is and why it might be causing problems we can run:</span>
+<span id="cb40-49"><a href="#cb40-49" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-50"><a href="#cb40-50" aria-hidden="true" tabindex="-1"></a><span class="in">```{r colrisch}</span></span>
+<span id="cb40-51"><a href="#cb40-51" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-52"><a href="#cb40-52" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(risch_receipts)[<span class="dv">17</span>]</span>
+<span id="cb40-53"><a href="#cb40-53" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb40-54"><a href="#cb40-54" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-55"><a href="#cb40-55" aria-hidden="true" tabindex="-1"></a>If you use <span class="in">`glimpse`</span> you'll see that <span class="in">`read_`</span> interpreted the <span class="in">`recipient_committee_org_type`</span> column as <span class="in">`logical`</span> (probably because there were so many <span class="in">`NA`</span>) and that the problem is flagged for the <span class="in">`character`</span> entries that did show up in the data. We're not particularly worried about this (or the ones in the <span class="in">`fulcher_receipts`</span> data) so we'll move on, but you should use this workflow to check problems anytime you bring new data in via the <span class="in">`read_`</span> family of functions.</span>
+<span id="cb40-56"><a href="#cb40-56" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-57"><a href="#cb40-57" aria-hidden="true" tabindex="-1"></a><span class="fu">## Focusing on Relevant Columns</span></span>
+<span id="cb40-58"><a href="#cb40-58" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-59"><a href="#cb40-59" aria-hidden="true" tabindex="-1"></a>This dataset has a ton of columns, many of which are unnecessary for this analysis. When datasets have this many columns, it can be easy to get lost in the data. Not only that, but these columns can often create unanticipated problems for things like calculations and joins. I find it's best to focus only on the parts of the data that I need for the analysis. Our interest is in _individual donors_, _their annual contribution over time_, and the _recipient_.  We'll combine the <span class="in">`select`</span> and <span class="in">`filter`</span> functions from <span class="in">`dplyr`</span> to create that dataset now. I create a vector (<span class="in">`select_vars`</span>) with the column names that I want and use the <span class="in">`all_of`</span> helper inside <span class="in">`select`</span> to let <span class="in">`R`</span> know that I want all of the columns that match the names in my vector. I then use <span class="in">`filter`</span> to subset the rows to only those where <span class="in">`is_individual`</span> is <span class="in">`TRUE`</span> so that I only have the individual donors. We use the <span class="in">` %&gt;% `</span> operator to <span class="in">`pipe`</span> the data frame returned from each function into the next one so we don't have to create a bunch of intermediate objects.</span>
+<span id="cb40-60"><a href="#cb40-60" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-61"><a href="#cb40-61" aria-hidden="true" tabindex="-1"></a>You'll notice that one of the benefits of this approach is that you can use the order of the variables in your <span class="in">`select_vars`</span> to order the columns in the way that you want them to appear in the final dataframe. Once we've _selected_ the right columns and _filtered_ the to the individual donors, we can use glimpse to make sure that things look right (in this case we only kept 1933 of the 4257 donations and 5 of the 78 columns).</span>
+<span id="cb40-62"><a href="#cb40-62" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-63"><a href="#cb40-63" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-64"><a href="#cb40-64" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-65"><a href="#cb40-65" aria-hidden="true" tabindex="-1"></a><span class="in">```{r subdata}</span></span>
+<span id="cb40-66"><a href="#cb40-66" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-67"><a href="#cb40-67" aria-hidden="true" tabindex="-1"></a>select_vars <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"is_individual"</span>, <span class="st">"contributor_name"</span>,  <span class="st">"contribution_receipt_amount"</span>, <span class="st">"committee_name"</span>, <span class="st">"report_year"</span>)</span>
+<span id="cb40-68"><a href="#cb40-68" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-69"><a href="#cb40-69" aria-hidden="true" tabindex="-1"></a>simpson_subset <span class="ot">&lt;-</span> simpson_receipts <span class="sc">%&gt;%</span> </span>
+<span id="cb40-70"><a href="#cb40-70" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="fu">all_of</span>(select_vars)) <span class="sc">%&gt;%</span> </span>
+<span id="cb40-71"><a href="#cb40-71" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(is_individual <span class="sc">==</span> <span class="cn">TRUE</span>)</span>
+<span id="cb40-72"><a href="#cb40-72" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-73"><a href="#cb40-73" aria-hidden="true" tabindex="-1"></a>fulcher_subset <span class="ot">&lt;-</span> fulcher_receipts <span class="sc">%&gt;%</span> </span>
+<span id="cb40-74"><a href="#cb40-74" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="fu">all_of</span>(select_vars)) <span class="sc">%&gt;%</span> </span>
+<span id="cb40-75"><a href="#cb40-75" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(is_individual <span class="sc">==</span> <span class="cn">TRUE</span>)</span>
+<span id="cb40-76"><a href="#cb40-76" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-77"><a href="#cb40-77" aria-hidden="true" tabindex="-1"></a>crapo_subset <span class="ot">&lt;-</span> crapo_receipts <span class="sc">%&gt;%</span> </span>
+<span id="cb40-78"><a href="#cb40-78" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="fu">all_of</span>(select_vars)) <span class="sc">%&gt;%</span> </span>
+<span id="cb40-79"><a href="#cb40-79" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(is_individual <span class="sc">==</span> <span class="cn">TRUE</span>)</span>
+<span id="cb40-80"><a href="#cb40-80" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-81"><a href="#cb40-81" aria-hidden="true" tabindex="-1"></a>risch_subset <span class="ot">&lt;-</span> risch_receipts <span class="sc">%&gt;%</span> </span>
+<span id="cb40-82"><a href="#cb40-82" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="fu">all_of</span>(select_vars)) <span class="sc">%&gt;%</span> </span>
+<span id="cb40-83"><a href="#cb40-83" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(is_individual <span class="sc">==</span> <span class="cn">TRUE</span>)</span>
+<span id="cb40-84"><a href="#cb40-84" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-85"><a href="#cb40-85" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(simpson_subset)</span>
+<span id="cb40-86"><a href="#cb40-86" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb40-87"><a href="#cb40-87" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-88"><a href="#cb40-88" aria-hidden="true" tabindex="-1"></a>::: {.callout-note}</span>
+<span id="cb40-89"><a href="#cb40-89" aria-hidden="true" tabindex="-1"></a>In this exercise, I'm just copying the code for each dataset and replacing the relevant object names. This is **NOT** a great approach as it can lead to errors. I'll show you the cleaner way in our next example on functions and iteration.</span>
+<span id="cb40-90"><a href="#cb40-90" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb40-91"><a href="#cb40-91" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-92"><a href="#cb40-92" aria-hidden="true" tabindex="-1"></a><span class="fu">## Finding the Top 5 Donors</span></span>
+<span id="cb40-93"><a href="#cb40-93" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-94"><a href="#cb40-94" aria-hidden="true" tabindex="-1"></a>To find the Top 5 Donors, we first have to figure out how much each person has given and then find the 5 highest values within the reciepts for that Congressman. We'll do that by using <span class="in">`group_by`</span> and <span class="in">`summarize`</span> calculate a new, aggregated value (called <span class="in">`total_given`</span>). Then we'll use a special version of <span class="in">`filter`</span> called <span class="in">`slice_`</span> to find the correct donors. Finally, we use <span class="in">`mutate`</span> to create a new column that denotes which person the data came from. </span>
+<span id="cb40-95"><a href="#cb40-95" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-96"><a href="#cb40-96" aria-hidden="true" tabindex="-1"></a><span class="in">```{r topfive}</span></span>
+<span id="cb40-97"><a href="#cb40-97" aria-hidden="true" tabindex="-1"></a>simpson_top5 <span class="ot">&lt;-</span> simpson_subset <span class="sc">%&gt;%</span> </span>
+<span id="cb40-98"><a href="#cb40-98" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(contributor_name) <span class="sc">%&gt;%</span> </span>
+<span id="cb40-99"><a href="#cb40-99" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">total_given =</span> <span class="fu">sum</span>(contribution_receipt_amount, </span>
+<span id="cb40-100"><a href="#cb40-100" aria-hidden="true" tabindex="-1"></a>                              <span class="at">na.rm =</span> <span class="cn">TRUE</span>)) <span class="sc">%&gt;%</span> </span>
+<span id="cb40-101"><a href="#cb40-101" aria-hidden="true" tabindex="-1"></a>  <span class="fu">slice_max</span>(<span class="at">order_by =</span> total_given, <span class="at">n =</span> <span class="dv">5</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb40-102"><a href="#cb40-102" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">recipient =</span> <span class="st">"Simpson"</span>)</span>
+<span id="cb40-103"><a href="#cb40-103" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-104"><a href="#cb40-104" aria-hidden="true" tabindex="-1"></a>fulcher_top5 <span class="ot">&lt;-</span> fulcher_subset <span class="sc">%&gt;%</span> </span>
+<span id="cb40-105"><a href="#cb40-105" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(contributor_name) <span class="sc">%&gt;%</span> </span>
+<span id="cb40-106"><a href="#cb40-106" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">total_given =</span> <span class="fu">sum</span>(contribution_receipt_amount, </span>
+<span id="cb40-107"><a href="#cb40-107" aria-hidden="true" tabindex="-1"></a>                              <span class="at">na.rm =</span> <span class="cn">TRUE</span>)) <span class="sc">%&gt;%</span> </span>
+<span id="cb40-108"><a href="#cb40-108" aria-hidden="true" tabindex="-1"></a>  <span class="fu">slice_max</span>(<span class="at">order_by =</span> total_given, <span class="at">n =</span> <span class="dv">5</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb40-109"><a href="#cb40-109" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">recipient =</span> <span class="st">"Fulcher"</span>)</span>
+<span id="cb40-110"><a href="#cb40-110" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb40-111"><a href="#cb40-111" aria-hidden="true" tabindex="-1"></a>crapo_top5 <span class="ot">&lt;-</span> crapo_subset <span class="sc">%&gt;%</span> </span>
+<span id="cb40-112"><a href="#cb40-112" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(contributor_name) <span class="sc">%&gt;%</span> </span>
+<span id="cb40-113"><a href="#cb40-113" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">total_given =</span> <span class="fu">sum</span>(contribution_receipt_amount, </span>
+<span id="cb40-114"><a href="#cb40-114" aria-hidden="true" tabindex="-1"></a>                              <span class="at">na.rm =</span> <span class="cn">TRUE</span>)) <span class="sc">%&gt;%</span> </span>
+<span id="cb40-115"><a href="#cb40-115" aria-hidden="true" tabindex="-1"></a>  <span class="fu">slice_max</span>(<span class="at">order_by =</span> total_given, <span class="at">n =</span> <span class="dv">5</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb40-116"><a href="#cb40-116" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">recipient =</span> <span class="st">"Crapo"</span>)</span>
+<span id="cb40-117"><a href="#cb40-117" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-118"><a href="#cb40-118" aria-hidden="true" tabindex="-1"></a>risch_top5 <span class="ot">&lt;-</span> risch_subset <span class="sc">%&gt;%</span> </span>
+<span id="cb40-119"><a href="#cb40-119" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(contributor_name) <span class="sc">%&gt;%</span> </span>
+<span id="cb40-120"><a href="#cb40-120" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">total_given =</span> <span class="fu">sum</span>(contribution_receipt_amount, </span>
+<span id="cb40-121"><a href="#cb40-121" aria-hidden="true" tabindex="-1"></a>                              <span class="at">na.rm =</span> <span class="cn">TRUE</span>)) <span class="sc">%&gt;%</span> </span>
+<span id="cb40-122"><a href="#cb40-122" aria-hidden="true" tabindex="-1"></a>  <span class="fu">slice_max</span>(<span class="at">order_by =</span> total_given, <span class="at">n =</span> <span class="dv">5</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb40-123"><a href="#cb40-123" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">recipient =</span> <span class="st">"Risch"</span>)</span>
+<span id="cb40-124"><a href="#cb40-124" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-125"><a href="#cb40-125" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(simpson_top5)</span>
+<span id="cb40-126"><a href="#cb40-126" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb40-127"><a href="#cb40-127" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-128"><a href="#cb40-128" aria-hidden="true" tabindex="-1"></a>Because all of these dataframes have the same columns (i.e., the same variables, with the same datatypes), we can combine them into a single top 5 donors dataframe using <span class="in">`bind_rows`</span>.</span>
+<span id="cb40-129"><a href="#cb40-129" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-130"><a href="#cb40-130" aria-hidden="true" tabindex="-1"></a><span class="in">```{r combdf}</span></span>
+<span id="cb40-131"><a href="#cb40-131" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-132"><a href="#cb40-132" aria-hidden="true" tabindex="-1"></a>top5_donors <span class="ot">&lt;-</span> <span class="fu">bind_rows</span>(simpson_top5, fulcher_top5, crapo_top5,</span>
+<span id="cb40-133"><a href="#cb40-133" aria-hidden="true" tabindex="-1"></a>                         risch_top5)</span>
+<span id="cb40-134"><a href="#cb40-134" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-135"><a href="#cb40-135" aria-hidden="true" tabindex="-1"></a>top5_donors</span>
+<span id="cb40-136"><a href="#cb40-136" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-137"><a href="#cb40-137" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb40-138"><a href="#cb40-138" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-139"><a href="#cb40-139" aria-hidden="true" tabindex="-1"></a><span class="fu">## Relational Data for Fun (and Donations)</span></span>
+<span id="cb40-140"><a href="#cb40-140" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-141"><a href="#cb40-141" aria-hidden="true" tabindex="-1"></a>One of the things we'll use frequently in this class are the <span class="in">`_join`</span> family of function in <span class="in">`dplyr`</span>. These functions provide a way of combining datasets based on shared variable attributres. For example, if we wanted to learn more about each of these donors, we might create a single <span class="in">`receipts`</span> dataframe with all of our individual donations, <span class="in">`select`</span> all of the variables that contain <span class="in">`contributor`</span>, filter them using <span class="in">`distinct`</span> (which keeps unique combinations of the variables), and then join them back to our <span class="in">`top5_donors`</span> frame.</span>
+<span id="cb40-142"><a href="#cb40-142" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-143"><a href="#cb40-143" aria-hidden="true" tabindex="-1"></a><span class="in">```{r ljoin}</span></span>
+<span id="cb40-144"><a href="#cb40-144" aria-hidden="true" tabindex="-1"></a>all_contributors <span class="ot">&lt;-</span> <span class="fu">bind_rows</span>(</span>
+<span id="cb40-145"><a href="#cb40-145" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(simpson_receipts, <span class="fu">contains</span>(<span class="st">"contributor"</span>)),</span>
+<span id="cb40-146"><a href="#cb40-146" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(fulcher_receipts, <span class="fu">contains</span>(<span class="st">"contributor"</span>)),</span>
+<span id="cb40-147"><a href="#cb40-147" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(crapo_receipts, <span class="fu">contains</span>(<span class="st">"contributor"</span>)),</span>
+<span id="cb40-148"><a href="#cb40-148" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(risch_receipts, <span class="fu">contains</span>(<span class="st">"contributor"</span>))) <span class="sc">%&gt;%</span> </span>
+<span id="cb40-149"><a href="#cb40-149" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="fu">all_of</span>(<span class="fu">c</span>(<span class="st">"contributor_name"</span>,<span class="st">"contributor_city"</span>, <span class="st">"contributor_state"</span>, <span class="st">"contributor_employer"</span> ))) <span class="sc">%&gt;%</span> </span>
+<span id="cb40-150"><a href="#cb40-150" aria-hidden="true" tabindex="-1"></a>  <span class="fu">distinct</span>()</span>
+<span id="cb40-151"><a href="#cb40-151" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-152"><a href="#cb40-152" aria-hidden="true" tabindex="-1"></a>(top5_donors_location <span class="ot">&lt;-</span> top5_donors <span class="sc">%&gt;%</span> </span>
+<span id="cb40-153"><a href="#cb40-153" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(all_contributors, <span class="at">by =</span> <span class="fu">join_by</span>(contributor_name)))</span>
+<span id="cb40-154"><a href="#cb40-154" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-155"><a href="#cb40-155" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-156"><a href="#cb40-156" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-157"><a href="#cb40-157" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb40-158"><a href="#cb40-158" aria-hidden="true" tabindex="-1"></a>You'll get a warning when you do this because some of our top 5 contributors have multiple entries for city and state in the receipts dataset. You'll also notice that the employer is not uniformly entered. If this were a real analysis, you'd need to decide what to do (if anything) about some of these issues.If you take a look, you might imagine that some of these folks have moved at least once during the period we're looking at, but is it possible that all of these businesses are different? We aren't going to try and clean all of this up now (you'll need some regular expression (regex) skills for that), but I wanted to show you how you might join data (and why having a good relational database structure is important).</span>
+<span id="cb40-159"><a href="#cb40-159" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-160"><a href="#cb40-160" aria-hidden="true" tabindex="-1"></a><span class="fu">### Identifying (non)Overlapping Data</span></span>
+<span id="cb40-161"><a href="#cb40-161" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-162"><a href="#cb40-162" aria-hidden="true" tabindex="-1"></a>Joins are powerful for combining dataets, but they can also be useful for identifying (non)overlapping data between datasets. For example, maybe we want to see if our two Senators recieve donations from any of the same individuals. We can use an <span class="in">`inner_join`</span> to identify those elements in one dataset that are also in the second.</span>
+<span id="cb40-163"><a href="#cb40-163" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-164"><a href="#cb40-164" aria-hidden="true" tabindex="-1"></a><span class="in">```{r shared}</span></span>
+<span id="cb40-165"><a href="#cb40-165" aria-hidden="true" tabindex="-1"></a>crapo_risch_shared <span class="ot">&lt;-</span> crapo_top5 <span class="sc">%&gt;%</span> </span>
+<span id="cb40-166"><a href="#cb40-166" aria-hidden="true" tabindex="-1"></a>  <span class="fu">inner_join</span>(risch_top5, <span class="at">by =</span> <span class="st">"contributor_name"</span>)</span>
+<span id="cb40-167"><a href="#cb40-167" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-168"><a href="#cb40-168" aria-hidden="true" tabindex="-1"></a>crapo_risch_shared</span>
+<span id="cb40-169"><a href="#cb40-169" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb40-170"><a href="#cb40-170" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-171"><a href="#cb40-171" aria-hidden="true" tabindex="-1"></a>We can also identify which donors are not shared by the two Senators using an <span class="in">`anti_join`</span></span>
+<span id="cb40-172"><a href="#cb40-172" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-173"><a href="#cb40-173" aria-hidden="true" tabindex="-1"></a><span class="in">```{r notshared}</span></span>
+<span id="cb40-174"><a href="#cb40-174" aria-hidden="true" tabindex="-1"></a>crapo_risch_notshared <span class="ot">&lt;-</span> crapo_top5 <span class="sc">%&gt;%</span> </span>
+<span id="cb40-175"><a href="#cb40-175" aria-hidden="true" tabindex="-1"></a>  <span class="fu">anti_join</span>(risch_top5, <span class="at">by =</span> <span class="st">"contributor_name"</span>)</span>
+<span id="cb40-176"><a href="#cb40-176" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-177"><a href="#cb40-177" aria-hidden="true" tabindex="-1"></a>crapo_risch_notshared</span>
+<span id="cb40-178"><a href="#cb40-178" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb40-179"><a href="#cb40-179" aria-hidden="true" tabindex="-1"></a>::: {.callout-tip}</span>
+<span id="cb40-180"><a href="#cb40-180" aria-hidden="true" tabindex="-1"></a>The <span class="in">`_join`</span> family accepts a <span class="in">`by`</span> argument that tells <span class="in">`dplyr`</span> which columns it should base the join by. You can supply multiple variables for <span class="in">`by`</span> and even supply variables that have different names (but the same meaning) in the two datasets. If you don't supply a <span class="in">`by`</span> argument <span class="in">`dplyr`</span> chooses all of the columns that have the same name. Joins can be tricky, you should definitely look at the help file and <span class="co">[</span><span class="ot">check out this resource</span><span class="co">](https://thomasadventure.blog/posts/r-merging-datasets/)</span>.</span>
+<span id="cb40-181"><a href="#cb40-181" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb40-182"><a href="#cb40-182" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-183"><a href="#cb40-183" aria-hidden="true" tabindex="-1"></a><span class="fu">## Donations Through Time</span></span>
+<span id="cb40-184"><a href="#cb40-184" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-185"><a href="#cb40-185" aria-hidden="true" tabindex="-1"></a>Now that we've identified the top 5 donors for each candidate we can return to asking questions about how those contributions have varied through time. Let's look at the 10 largest donors during our time period. You know all of these commands except <span class="in">`pull`</span> which takes the variable you give it (<span class="in">`contributor_name`</span>) and returns a vector with all of the values in the variable. This gives us our vector of names to look for in the dataset.</span>
+<span id="cb40-186"><a href="#cb40-186" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-187"><a href="#cb40-187" aria-hidden="true" tabindex="-1"></a><span class="in">```{r getnames}</span></span>
+<span id="cb40-188"><a href="#cb40-188" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-189"><a href="#cb40-189" aria-hidden="true" tabindex="-1"></a>overall_top10_names <span class="ot">&lt;-</span> top5_donors <span class="sc">%&gt;%</span></span>
+<span id="cb40-190"><a href="#cb40-190" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(total_given)) <span class="sc">%&gt;%</span></span>
+<span id="cb40-191"><a href="#cb40-191" aria-hidden="true" tabindex="-1"></a>  <span class="fu">slice_max</span>(<span class="at">order_by =</span> total_given, <span class="at">n =</span> <span class="dv">10</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb40-192"><a href="#cb40-192" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pull</span>(contributor_name)</span>
+<span id="cb40-193"><a href="#cb40-193" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-194"><a href="#cb40-194" aria-hidden="true" tabindex="-1"></a>overall_top10_names</span>
+<span id="cb40-195"><a href="#cb40-195" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb40-196"><a href="#cb40-196" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-197"><a href="#cb40-197" aria-hidden="true" tabindex="-1"></a>Now we'll combine all of the individual donor data (with years) that we created earlier.</span>
+<span id="cb40-198"><a href="#cb40-198" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-199"><a href="#cb40-199" aria-hidden="true" tabindex="-1"></a><span class="in">```{r combrec}</span></span>
+<span id="cb40-200"><a href="#cb40-200" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-201"><a href="#cb40-201" aria-hidden="true" tabindex="-1"></a>individual_receipts <span class="ot">&lt;-</span> <span class="fu">bind_rows</span>(</span>
+<span id="cb40-202"><a href="#cb40-202" aria-hidden="true" tabindex="-1"></a>  simpson_subset <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">recipient =</span> <span class="st">"Simpson"</span>),</span>
+<span id="cb40-203"><a href="#cb40-203" aria-hidden="true" tabindex="-1"></a>  fulcher_subset <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">recipient =</span> <span class="st">"Fulcher"</span>),</span>
+<span id="cb40-204"><a href="#cb40-204" aria-hidden="true" tabindex="-1"></a>  crapo_subset <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">recipient =</span> <span class="st">"Crapo"</span>),</span>
+<span id="cb40-205"><a href="#cb40-205" aria-hidden="true" tabindex="-1"></a>  risch_subset <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">recipient =</span> <span class="st">"Risch"</span>)</span>
+<span id="cb40-206"><a href="#cb40-206" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb40-207"><a href="#cb40-207" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb40-208"><a href="#cb40-208" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-209"><a href="#cb40-209" aria-hidden="true" tabindex="-1"></a>Then we'll <span class="in">`filter`</span> those for contributors in our top 10 list (notice the use of the <span class="in">`%in%`</span> operator which tells <span class="in">`R`</span> to filter rows containing any of the values _in_ our top 10 list). Then we'll group the data by year, representative, and donor to create an aggregated donation amount for each year, for each representative, from each donor. </span>
+<span id="cb40-210"><a href="#cb40-210" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-213"><a href="#cb40-213" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb40-214"><a href="#cb40-214" aria-hidden="true" tabindex="-1"></a>top10_receipts <span class="ot">&lt;-</span> individual_receipts <span class="sc">%&gt;%</span></span>
+<span id="cb40-215"><a href="#cb40-215" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(contributor_name <span class="sc">%in%</span> overall_top10_names) <span class="sc">%&gt;%</span> </span>
+<span id="cb40-216"><a href="#cb40-216" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(report_year, recipient, contributor_name) <span class="sc">%&gt;%</span></span>
+<span id="cb40-217"><a href="#cb40-217" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">total_given =</span> <span class="fu">sum</span>(contribution_receipt_amount, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb40-218"><a href="#cb40-218" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>()</span>
+<span id="cb40-219"><a href="#cb40-219" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-220"><a href="#cb40-220" aria-hidden="true" tabindex="-1"></a>top10_receipts</span>
+<span id="cb40-221"><a href="#cb40-221" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb40-222"><a href="#cb40-222" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-223"><a href="#cb40-223" aria-hidden="true" tabindex="-1"></a>This data is in **long format**. This allows us some flexibility as the numeric values are all in a single column (<span class="in">`total_given`</span>) and each row corresponds to different observation combinations (like year, donor, and recipient). We can plot that using <span class="in">`ggplot`</span> (also part of the <span class="in">`tidyverse`</span>). A few things to point out. Inside the <span class="in">`aes`</span> call we are telling <span class="in">`R`</span> which of the variables we want to use for each of the plot aesthetics (like the axes, colors, fills, etc). The <span class="in">`geom_`</span> tells <span class="in">`ggplot`</span> what sort of geometry we want to use. The <span class="in">`facet_`</span> tells <span class="in">`R`</span> to create small multiples using the variable <span class="in">`contributor_name`</span>.</span>
+<span id="cb40-224"><a href="#cb40-224" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-225"><a href="#cb40-225" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-226"><a href="#cb40-226" aria-hidden="true" tabindex="-1"></a><span class="in">```{r plot1}</span></span>
+<span id="cb40-227"><a href="#cb40-227" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-width: 11</span></span>
+<span id="cb40-228"><a href="#cb40-228" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-229"><a href="#cb40-229" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> top10_receipts, </span>
+<span id="cb40-230"><a href="#cb40-230" aria-hidden="true" tabindex="-1"></a>       <span class="at">mapping =</span> <span class="fu">aes</span>(<span class="at">x =</span> report_year, </span>
+<span id="cb40-231"><a href="#cb40-231" aria-hidden="true" tabindex="-1"></a>                     <span class="at">y =</span> total_given, </span>
+<span id="cb40-232"><a href="#cb40-232" aria-hidden="true" tabindex="-1"></a>                     <span class="at">color =</span> recipient)) <span class="sc">+</span></span>
+<span id="cb40-233"><a href="#cb40-233" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>() <span class="sc">+</span> </span>
+<span id="cb40-234"><a href="#cb40-234" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>()<span class="sc">+</span></span>
+<span id="cb40-235"><a href="#cb40-235" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="fu">vars</span>(contributor_name), <span class="at">scales =</span> <span class="st">"free_y"</span>) <span class="sc">+</span></span>
+<span id="cb40-236"><a href="#cb40-236" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb40-237"><a href="#cb40-237" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Top 5 Donors Over Time by Representative"</span>,</span>
+<span id="cb40-238"><a href="#cb40-238" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Year"</span>,</span>
+<span id="cb40-239"><a href="#cb40-239" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Total Contributions ($)"</span></span>
+<span id="cb40-240"><a href="#cb40-240" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb40-241"><a href="#cb40-241" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span>
+<span id="cb40-242"><a href="#cb40-242" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb40-243"><a href="#cb40-243" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-244"><a href="#cb40-244" aria-hidden="true" tabindex="-1"></a><span class="fu">## Final Thoughts</span></span>
+<span id="cb40-245"><a href="#cb40-245" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-246"><a href="#cb40-246" aria-hidden="true" tabindex="-1"></a>Based on these graphs, you can see that very few of our top donors contribute to more than one candidate. You'll also notice that some folks give consistently (and sometimes consistently more), while others seem to drop out at various times. Interesting! While none of us may be experts at campaign finance, we have certainly gotten better at data-wrangling with <span class="in">`dplyr`</span>!!</span>
+<span id="cb40-247"><a href="#cb40-247" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-248"><a href="#cb40-248" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-249"><a href="#cb40-249" aria-hidden="true" tabindex="-1"></a><span class="fu">## A Note on Long and Wide Format</span></span>
+<span id="cb40-250"><a href="#cb40-250" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-251"><a href="#cb40-251" aria-hidden="true" tabindex="-1"></a>While there are lots of reasons to prefer long format, most of our spatial data will be in **wide** format where each row is an individual location that may have multple attributes (in columns). We can use the <span class="in">`tidyr`</span> (in the <span class="in">`tidyverse`</span>) <span class="in">`pivot_wider`</span> function (there's also a <span class="in">`pivot_longer`</span>) to take our long data and make it wide. With the <span class="in">`names_from`</span> argument we're telling <span class="in">`R`</span> which column we want the new column names to come from (here it's our year). With <span class="in">`values_from`</span> we're telling <span class="in">`R`</span> where the numbers (or entries) should come from to fill in the columns. Finally, with <span class="in">`values_fill`</span> we're telling R what to do with any missing year/total_given values.</span>
+<span id="cb40-252"><a href="#cb40-252" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-253"><a href="#cb40-253" aria-hidden="true" tabindex="-1"></a><span class="in">```{r wider}</span></span>
+<span id="cb40-254"><a href="#cb40-254" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-255"><a href="#cb40-255" aria-hidden="true" tabindex="-1"></a>top10_reciepts_wide <span class="ot">&lt;-</span> top10_receipts <span class="sc">%&gt;%</span></span>
+<span id="cb40-256"><a href="#cb40-256" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_wider</span>(<span class="at">names_from =</span> report_year, <span class="at">values_from =</span> total_given, <span class="at">values_fill =</span> <span class="dv">0</span>)</span>
+<span id="cb40-257"><a href="#cb40-257" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-258"><a href="#cb40-258" aria-hidden="true" tabindex="-1"></a>top10_reciepts_wide</span>
+<span id="cb40-259"><a href="#cb40-259" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb40-260"><a href="#cb40-260" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-261"><a href="#cb40-261" aria-hidden="true" tabindex="-1"></a>This is less convenient for creating time series style graphs, but if we wanted to geocode each donor's location to map it, this format would be considerably easier to deal with (with less redundancy in the spatial information). We'll talk more about this next week.</span>
+</code><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></pre></div>
 </div></div></div></div></div>
 </div> <!-- /content -->
 <footer class="footer">
