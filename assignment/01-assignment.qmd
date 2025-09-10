@@ -2,10 +2,34 @@
 title: "Assignment 1: Getting Started"
 ---
 
-### Objectives
 
-### Instructions
+Objective
+This assignment will strengthen your ability to:
+
+1. Build reproducible workflows using Quarto and version control.
+
+2. Import, inspect, and critically evaluate real-world data from multiple sources.
+
+3. Apply `tidyverse` tools to transform and summarize data.
+
+4. Write reusable functions and apply them iteratively to streamline analyses.
+
+5. Reflect on reproducibility, data ethics, and workflow choices as a practicing researcher.
+
+### Submission:
+Join [the assignment repository]. In the `docs` folder, you'll find the instructions and questions for the assignment. Submit a single Quarto document (.qmd) with integrated code, outputs, and written responses. Your document should be written as if it were a lab notebook entry: clear enough that another researcher could reproduce your work without asking you questions. Your assignment will be considered complete if the following are true:
+
+1. You have _at least 3 commits_ in your version history (which I can access in GitHub classroom)
+
+2. You have pushed your final Quarto document
+
+3. You have pushed a rendered `.html` version of your document.
+
+### About the Data
+
+[PurpleAir](https://www2.purpleair.com/?srsltid=AfmBOoqXqBcdHBX_qj2uqp_Zf_JNT19RzCebWmRWQ8gH7agL3_5v3kvO) manufactures air quality sensors that can be deployed by individuals, communities, and government agencies to provide real-time, hyper-local information on the concentration of various air pollutants surrounding the sensors. These sensors are particularly good at detecting concentrations of pm2.5. These ultra-fine particles are a big part of wildfire smoke and air pollution and have been associated with a variety of respiratory health-risks. In addition, these are the primary contributors to the haze that settles in the Treasure Valley during fires and winter inversions.
+
+PurpleAir makes the data from these sensors available via an API that we can access in `R`. I've already done that for you and gathered the monthly average pm2.5 values for 34 sensors in ID, MT, OR, and WA beginning in 2020. We'll use this data as the foundation for demonstrating some of the data wrangling skills you've learned so far.   
 
 
-### Questions to Answer
 

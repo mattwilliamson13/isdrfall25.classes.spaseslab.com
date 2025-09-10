@@ -1,4 +1,194 @@
 ---
-title: "Generic Lesson"
+title: "Iterating with Election Data"
 ---
 
+## Objectives
+
+Last time, we used some "brute force" approaches to cleaning up the election data. Lots of repetition and lots of copy-and-pasting. That's not ideal - it's not particularly readable (think about reading the same sentence over and over again with one word change) and it's pretty error-prone. We're going to clean that up by:
+
+> Develop our own, custom functions and use iteration to eliminate redundancy.
+
+You will still be working with the [FEC contribution receipts](https://www.fec.gov/data/) for our four member of Congress, but this time we'll do it in a more principled way.
+
+## Getting Set Up
+
+First, [join the repository](https://classroom.github.com/a/JFFqRu2D). Then, we'll have to [get our credentials](https://rstudio.aws.boisestate.edu/) and login to a [new RStudio session](https://rstudio.apps.aws.boisestate.edu/). Finally, create a new, version control, git-based project (using the link to the repo you just created). 
+
+Once you've done that, you'll need to load your packages. In this case, it's just the `tidyverse`.
+
+```{r ldpkg}
+library(tidyverse)
+```
+
+
+## Reading in the Data
+
+Last time, we copied the `read_delim` function 4x to read in all the data:
+
+```{r rddata}
+#| echo: true
+#| eval: false
+simpson_receipts <- read_delim("data/original/simpson_fec_17_26.csv",
+                               delim = ",")
+
+fulcher_receipts <- read_delim("data/original/fulcher_fec_17_26.csv",
+                               delim = ",")
+
+crapo_receipts <- read_delim("data/original/crapo_fec_17_26.csv",
+                               delim = ",")
+
+risch_receipts <- read_delim("data/original/risch_fec_17_26.csv",
+                               delim = ",")
+
+```
+
+That's not ideal. We can do the same thing with `map` using two commands. First, we'll use `list.files()` to get a vector of filenames. Then, we'll pass that to `map`
+
+```{r iterread}
+
+contribution_files <- list.files(here::here("data/original/"), pattern = "17_26.csv", full.names = TRUE)
+
+contribution_data <- map(contribution_files,
+                         function(x) read_delim(x, delim=","))
+
+```
+
+I did a few things here. First, I used `here::here()` to make sure that `R` used the correct project directory when looking for my files. Then, I passed "17_26.csv" as the parameter for the `pattern` argument. The `pattern` argument excepts characters and regular expressions as a way to make sure that I only get the files that match our election data (this is why file naming is important!!). Finally, I passed `TRUE` to the `full.names` argument to ensure that I get the entire path (not just the filename). Once I've got the `contribution_files` I pass that to `map`. I had to write out the `function(x)` because I wanted to pass additional arguments to `read_delim`. 
+
+You've probably noticed that there's an even more compact way to do this using a pipe:
+
+```{r iterread2}
+
+contribution_data <- list.files(here::here("data/original/"), 
+                                 pattern = "17_26.csv", 
+                                 full.names = TRUE) %>%  
+  map(.,
+                         function(x) read_delim(x, delim=","))
+
+```
+
+Better still, we can replace `read_delim` with `read_csv` and eliminate the need to pass additional arguments.
+
+```{r iterread3}
+
+contribution_data <- list.files(here::here("data/original/"), 
+                                 pattern = "17_26.csv", 
+                                 full.names = TRUE) %>%  
+  map(., read_csv)
+
+```
+This is helpful, but I would like to keep track of who the data belongs to, so I'm going to step back and write my own 1-time function inside of `map`.
+
+```{r iterread5}
+
+contribution_data <- list.files(here::here("data/original/"), 
+                                 pattern = "17_26.csv", 
+                                 full.names = TRUE) %>%  
+  map(~ read_csv(.x) %>%
+    mutate(representative = str_extract(basename(.x), "^[^_]+(?=_fec_)"))
+  )
+```
+I've added a `mutate` step to the pipeline to create a column that tracks the representative. The `str_extract` function is from `stringr` and relies on regular expressions to decide which characters to keep. This particular expression takes all of the characters before "_fec" in the filename. Regular expressions are often complicated and frustrating, but they can be extremely powerful. One of the places I rely on AI in my coding is to get these right!
+
+
+Now, let's inspect the resulting object:
+
+```{r iterinspect}
+class(contribution_data)
+
+```
+
+This is the first time we've really encountered the `list` data class. Lists can hold multiple data types so long as the data exists in its own `slot`. So a list could have 1 slot that contains a vector, another slot that contains a matrix, and another that contains a dataframe. Lists are extremely flexible, but take a little getting used to.
+
+One of the tricky bits is actually getting to data in each slot. We can do this by using the `[[` notation.
+
+```{r iterinspect2}
+glimpse(contribution_data[[1]])
+
+```
+By using `[[1]]` I'm telling `glimpse` to run on the object that's in the first slot of `contribution_data`. Once we're inside the `list` the data behaves the same way it would if it didn't exist in the list.
+
+## Choosing the Correct Columns
+
+Last time, we used a pretty clunky way to narrow down all of the data.
+
+```{r lasttime}
+#| echo: true
+#| eval: false
+
+select_vars <- c("is_individual", "contributor_name",  "contribution_receipt_amount", "committee_name", "report_year")
+
+simpson_subset <- simpson_receipts %>% 
+  select(all_of(select_vars)) %>% 
+  filter(is_individual == TRUE)
+
+fulcher_subset <- fulcher_receipts %>% 
+  select(all_of(select_vars)) %>% 
+  filter(is_individual == TRUE)
+
+crapo_subset <- crapo_receipts %>% 
+  select(all_of(select_vars)) %>% 
+  filter(is_individual == TRUE)
+
+risch_subset <- risch_receipts %>% 
+  select(all_of(select_vars)) %>% 
+  filter(is_individual == TRUE)
+
+```
+
+Let's clean this up creating our own function:
+
+```{r newfun}
+
+select_ind_donors <- function(df, vars, donor_type){
+  df %>% 
+    select(all_of({{ vars }})) %>% 
+    filter(is_individual == donor_type)
+}
+
+```
+
+Our function `select_ind_donors`, has a descriptive name and takes 3 arguments (`df`, `vars`, and `donor_type`). The one thing to notice is our use of _embracing_ to pass our variables into the function. Let's test it on 1 slot of our list.
+
+```{r testfun}
+select_vars <- c("is_individual", "contributor_name",  "contribution_receipt_amount", "committee_name", "report_year",
+                 "representative")
+
+test_fun <- select_ind_donors(df = contribution_data[[1]],
+                              vars = select_vars,
+                              donor_type = TRUE)
+glimpse(test_fun)
+```
+
+Looks like that worked! Now let's use iteration to do that to all of the slots in our list.
+
+```{r iterfun}
+select_vars <- c("is_individual", "contributor_name",  "contribution_receipt_amount", "committee_name", "report_year",
+                 "representative")
+
+ind_donors <- map(contribution_data, 
+                  \(x) select_ind_donors(df = x,
+                              vars = select_vars,
+                              donor_type = TRUE))
+
+```
+
+Here you can see the power of lists combined with `map`: each slot gets passed to our function so that we don't have to extract each dataframe to run our function.
+
+The only problem left is to get this into a single dataframe. We can do that easily enough using `bind_rows`:
+
+```{r iterfundf}
+select_vars <- c("is_individual", "contributor_name",  "contribution_receipt_amount", "committee_name", "report_year",
+                 "representative")
+
+ind_donors <- map(contribution_data, 
+                  \(x) select_ind_donors(df = x,
+                              vars = select_vars,
+                              donor_type = TRUE)) %>% 
+  bind_rows()
+
+```
+
+## Final Thoughts
+
+This is just the tip of the iceberg. We'll continue practicing building functions and iterating as we move throug the rest of the semester. For now, I just want you to get some practice building intution for how this works.

@@ -1,4 +1,10 @@
 ---
-title: "Generic"
+title: "Iterating with Election Data"
 ---
+
+1. [Join the repository](https://classroom.github.com/a/JFFqRu2D)
+
+2. Write your own function for finding the top 5 donors for each representative. Post it to the slack channel
+
+3. Instead of using `facet_wrap` write a ggplot function that creates a list of plots for each donor. Post the function to the slack channel
 
