@@ -3,21 +3,32 @@ title: "Assignment 1: Getting Started"
 ---
 
 
-Objective
+# Objectives
+
 This assignment will strengthen your ability to:
 
 1. Build reproducible workflows using Quarto and version control.
 
-2. Import, inspect, and critically evaluate real-world data from multiple sources.
+2. Import, inspect, and critically evaluate real-world data.
 
 3. Apply `tidyverse` tools to transform and summarize data.
 
-4. Write reusable functions and apply them iteratively to streamline analyses.
+4. Write reusable functions and iteration to create streamlined, readable analyses.
 
 5. Reflect on reproducibility, data ethics, and workflow choices as a practicing researcher.
 
+### Instructions
+1. Join [the assignment repository](https://classroom.github.com/a/0oLMQjrD). In the `docs` folder, you'll find the instructions and questions for the assignment (assignment01.qmd). 
+
+2. Change the `yaml` header of the document to include your name and the course number as your affiliation
+
+3. Complete the tasks in the assignment making at least 3 commits
+
+4. Render the document and push your final html and quarto documents to your repository.
+
 ### Submission:
-Join [the assignment repository]. In the `docs` folder, you'll find the instructions and questions for the assignment. Submit a single Quarto document (.qmd) with integrated code, outputs, and written responses. Your document should be written as if it were a lab notebook entry: clear enough that another researcher could reproduce your work without asking you questions. Your assignment will be considered complete if the following are true:
+
+Submit a single Quarto document (.qmd) with integrated code, outputs, and written responses. Your document should be written as if it were a lab notebook entry: clear enough that another researcher could reproduce your work without asking you questions. Your assignment will be considered complete if the following are true:
 
 1. You have _at least 3 commits_ in your version history (which I can access in GitHub classroom)
 

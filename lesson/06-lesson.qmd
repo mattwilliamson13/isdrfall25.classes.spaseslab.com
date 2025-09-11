@@ -79,6 +79,7 @@ contribution_data <- list.files(here::here("data/original/"),
 ```
 This is helpful, but I would like to keep track of who the data belongs to, so I'm going to step back and write my own 1-time function inside of `map`.
 
+
 ```{r iterread5}
 
 contribution_data <- list.files(here::here("data/original/"), 
