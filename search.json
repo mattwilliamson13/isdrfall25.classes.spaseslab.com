@@ -84,6 +84,146 @@
     "text": "Footnotes\n\n\nSo seriously, just don’t cheat or plagiarize!↩︎"
   },
   {
+    "objectID": "slides/07-slides.html#todays-plan",
+    "href": "slides/07-slides.html#todays-plan",
+    "title": "Data Models, Coordinates, and Geometries",
+    "section": "Today’s Plan",
+    "text": "Today’s Plan\n\n\nWays to view the world\nWhat makes data (geo)spatial?\nGeometries, support, and spatial messiness"
+  },
+  {
+    "objectID": "slides/07-slides.html#as-a-series-of-objects",
+    "href": "slides/07-slides.html#as-a-series-of-objects",
+    "title": "Data Models, Coordinates, and Geometries",
+    "section": "…As a Series of Objects?",
+    "text": "…As a Series of Objects?\n\n\n\nThe world is a series of entities located in space.\nUsually distinguishable, discrete, and bounded\nSome spaces can hold multiple entities, others are empty\nObjects are digital representations of entities"
+  },
+  {
+    "objectID": "slides/07-slides.html#as-a-continuous-field",
+    "href": "slides/07-slides.html#as-a-continuous-field",
+    "title": "Data Models, Coordinates, and Geometries",
+    "section": "…As a Continuous Field",
+    "text": "…As a Continuous Field\n\n\n\nThe earth is a single entity with properties that vary continuously through space\nSpatial continuity: Every cell has a value (including “no data” or “not here”)\nSelf-definition: the values define the field\nSpace is tessellated: cells are mutually exclusive"
+  },
+  {
+    "objectID": "slides/07-slides.html#what-is-a-data-model",
+    "href": "slides/07-slides.html#what-is-a-data-model",
+    "title": "Data Models, Coordinates, and Geometries",
+    "section": "What is a data model?",
+    "text": "What is a data model?\n\n\nData: a collection of discrete values that describe phenomena\nYour brain stores millions of pieces of data\nComputers are not your brain\n\nNeed to organize data systematically\nBe able to display and access efficiently\nNeed to be able to store and access repeatedly\n\nData models solve this problem"
+  },
+  {
+    "objectID": "slides/07-slides.html#types-of-spatial-data-models",
+    "href": "slides/07-slides.html#types-of-spatial-data-models",
+    "title": "Data Models, Coordinates, and Geometries",
+    "section": "2 Types of Spatial Data Models",
+    "text": "2 Types of Spatial Data Models\n\nRaster: grid-cell tessellation of an area. Each raster describes the value of a single phenomenon. More next week…\nVector: (many) attributes associated with locations defined by coordinates"
+  },
+  {
+    "objectID": "slides/07-slides.html#the-vector-data-model",
+    "href": "slides/07-slides.html#the-vector-data-model",
+    "title": "Data Models, Coordinates, and Geometries",
+    "section": "The Vector Data Model",
+    "text": "The Vector Data Model\n\n\n\n\nVertices (i.e., discrete x-y locations) define the shape of the vector\nThe organization of those vertices define the shape of the vector\nGeneral types: points, lines, polygons\n\n\n\n\n\n\nImage Source: Colin Williams (NEON)"
+  },
+  {
+    "objectID": "slides/07-slides.html#vectors-in-action",
+    "href": "slides/07-slides.html#vectors-in-action",
+    "title": "Data Models, Coordinates, and Geometries",
+    "section": "Vectors in Action",
+    "text": "Vectors in Action\n\n\nUseful for locations with discrete, well-defined boundaries\nVery precise (not necessarily accurate)\n\n\n\nImage Source: QGIS User’s manual"
+  },
+  {
+    "objectID": "slides/07-slides.html#the-raster-data-model",
+    "href": "slides/07-slides.html#the-raster-data-model",
+    "title": "Data Models, Coordinates, and Geometries",
+    "section": "The Raster Data Model",
+    "text": "The Raster Data Model\n\n\n\n\nRaster data represent spatially continuous phenomena (NA is possible)\nDepict the alignment of data on a regular lattice (often a square)\nGeometry is implicit; the spatial extent and number of rows and columns define the cell size"
+  },
+  {
+    "objectID": "slides/07-slides.html#types-of-raster-data",
+    "href": "slides/07-slides.html#types-of-raster-data",
+    "title": "Data Models, Coordinates, and Geometries",
+    "section": "Types of Raster Data",
+    "text": "Types of Raster Data\n\n\n\n\n\n\n\n\n\n\nRegular: constant cell size; axes aligned with Easting and Northing\nRotated: constant cell size; axes not aligned with Easting and Northing\nSheared: constant cell size; axes not parallel\nRectilinear: cell size varies along a dimension\nCurvilinear: cell size and orientation dependent on the other dimension"
+  },
+  {
+    "objectID": "slides/07-slides.html#types-of-raster-data-1",
+    "href": "slides/07-slides.html#types-of-raster-data-1",
+    "title": "Data Models, Coordinates, and Geometries",
+    "section": "Types of Raster Data",
+    "text": "Types of Raster Data\n\nContinuous: numeric data representing a measurement (e.g., elevation, precipitation)\nCategorical: integer data representing factors (e.g., land use, land cover)"
+  },
+  {
+    "objectID": "slides/07-slides.html#location-vs.-place",
+    "href": "slides/07-slides.html#location-vs.-place",
+    "title": "Data Models, Coordinates, and Geometries",
+    "section": "Location vs. Place",
+    "text": "Location vs. Place\n\n\n\n\n\nPlace: an area having unique physical and human characteristics interconnected with other places\nLocation: the actual position on the earth’s surface\nSense of Place: the emotions someone attaches to an area based on experiences\nPlace is location plus meaning\n\n\n\n\n\n\nnominal: (potentially contested) place names\nabsolute: the physical location on the earth’s surface"
+  },
+  {
+    "objectID": "slides/07-slides.html#describing-absolute-locations",
+    "href": "slides/07-slides.html#describing-absolute-locations",
+    "title": "Data Models, Coordinates, and Geometries",
+    "section": "Describing Absolute Locations",
+    "text": "Describing Absolute Locations\n\nCoordinates: 2 or more measurements that specify location relative to a reference system\n\n\n\n\n\nCartesian coordinate system\norigin (O) = the point at which both measurement systems intersect\nAdaptable to multiple dimensions (e.g. z for altitude)\n\n\n\n\n\n\nCartesian Coordinate System"
+  },
+  {
+    "objectID": "slides/07-slides.html#describing-location-extent",
+    "href": "slides/07-slides.html#describing-location-extent",
+    "title": "Data Models, Coordinates, and Geometries",
+    "section": "Describing location: extent",
+    "text": "Describing location: extent\n\n\nHow much of the world does the data cover?\nFor rasters, these are the corners of the lattice\nFor vectors, we call this the bounding box"
+  },
+  {
+    "objectID": "slides/07-slides.html#describing-location-resolution",
+    "href": "slides/07-slides.html#describing-location-resolution",
+    "title": "Data Models, Coordinates, and Geometries",
+    "section": "Describing location: resolution",
+    "text": "Describing location: resolution\n\n\n\n\nResolution: the accuracy that the location and shape of a map’s features can be depicted\nMinimum Mapping Unit: The minimum size and dimensions that can be reliably represented at a given map scale.\nMap scale vs. scale of analysis"
+  },
+  {
+    "objectID": "slides/07-slides.html#geometries",
+    "href": "slides/07-slides.html#geometries",
+    "title": "Data Models, Coordinates, and Geometries",
+    "section": "Geometries",
+    "text": "Geometries\n\n\n\nVectors aggregate the locations of a feature into a geometry\nMost vector operations require simple, valid geometries\n\n\n\n\n\nImage Source: Colin Williams (NEON)"
+  },
+  {
+    "objectID": "slides/07-slides.html#valid-geometries",
+    "href": "slides/07-slides.html#valid-geometries",
+    "title": "Data Models, Coordinates, and Geometries",
+    "section": "Valid Geometries",
+    "text": "Valid Geometries\n\n\nA linestring is simple if it does not intersect\nValid polygons\nAre closed (i.e., the last vertex equals the first)\nHave holes (inner rings) that inside the the exterior boundary\nHave holes that touch the exterior at no more than one vertex (they don’t extend across a line) - For multipolygons, adjacent polygons touch only at points\nDo not repeat their own path"
+  },
+  {
+    "objectID": "slides/07-slides.html#empty-geometries",
+    "href": "slides/07-slides.html#empty-geometries",
+    "title": "Data Models, Coordinates, and Geometries",
+    "section": "Empty Geometries",
+    "text": "Empty Geometries\n\nEmpty geometries arise when an operation produces NULL outcomes (like looking for the intersection between two non-intersecting polygons)\nsf allows empty geometries to make sure that information about the data type is retained\nSimilar to a data.frame with no rows or a list with NULL values\nMost vector operations require simple, valid geometries"
+  },
+  {
+    "objectID": "slides/07-slides.html#support",
+    "href": "slides/07-slides.html#support",
+    "title": "Data Models, Coordinates, and Geometries",
+    "section": "Support",
+    "text": "Support\n\nSupport is the area to which an attribute applies.\n\nFor vectors, the attribute-geometry-relationship can be:\n\n\nconstant = applies to every point in the geometry (lines and polygons are just lots of points)\nidentity = a value unique to a geometry\naggregate = a single value that integrates data across the geometry"
+  },
+  {
+    "objectID": "slides/07-slides.html#support-1",
+    "href": "slides/07-slides.html#support-1",
+    "title": "Data Models, Coordinates, and Geometries",
+    "section": "Support",
+    "text": "Support\n\nSupport is the area to which an attribute applies.\n\nFor rasters:\n\n\npoint = attribute refers to the cell center\ncell = attribute refers to an area similar to the pixel"
+  },
+  {
+    "objectID": "slides/07-slides.html#take-homes",
+    "href": "slides/07-slides.html#take-homes",
+    "title": "Data Models, Coordinates, and Geometries",
+    "section": "Take Homes",
+    "text": "Take Homes\n\nData models translate views of space into analytic tools\nSpatial data requires location\nWe store location in geometries\nWe assign attributes to location based on support"
+  },
+  {
     "objectID": "slides/05-slides.html#what-is-literate-programming",
     "href": "slides/05-slides.html#what-is-literate-programming",
     "title": "Data Manipulation with the tidyverse",
@@ -800,28 +940,28 @@
   {
     "objectID": "content/08-content.html",
     "href": "content/08-content.html",
-    "title": "Areal Data: Vectors",
+    "title": "Projections, Extent, and Resolution",
     "section": "",
     "text": "Now that you have started working with the various components of coordinates and coordinate reference systems, it’s time to start learning the fundamental aspects of working with vector data in sf and R. The syntax is a little confusing at first, but once you’ve gotten a sense for the logic behind it you should be able to start piecing together the functions necessary to implement the pseudocode you write for an analysis. We’ll spend more time on vector manipulation in the coming weeks so you’ll get plenty of practice with the ideas we introduce today."
   },
   {
     "objectID": "content/08-content.html#readings",
     "href": "content/08-content.html#readings",
-    "title": "Areal Data: Vectors",
+    "title": "Projections, Extent, and Resolution",
     "section": "Readings",
-    "text": "Readings\nSame as last class really, but hopefully you’ll begin to understand them better…\n\n The introductory vignette for the sf package has a lot of useful info on sf objects and conventions.\n Section 2.2 on Vector Data and Sections 5.1-5.3 on Geographic Operations in Lovelace et al. (Lovelace et al. 2019) - for more details about vectors and geometric operations on vectors.\n Chapter 2, Sections 1-3 and Chapter 3, Section 1 of Spatial Data Science by Edzer Pebesma and Roger Bivand (of the sf, sp, rgeos, and rgdal packages)"
+    "text": "Readings\n\nSetting the Stage\nScale and Projections by Matson et al. provides an accessible overview to what projections are and why we need them.\n\n Lying With Maps by Nelson et al. provides a nice introduction to the ways that the representation of spatial data can be misleading.\n\n\n\nTechnical Details\n Chapter 2 from Moraga (2023) explores similar topics, but provides more explanation about projections, coordinates, etc.\n\n The introductory vignette for the sf package has a lot of useful info on sf objects and conventions.\n Section 2.2 on Vector Data and Sections 5.1-5.3 on Geographic Operations in Lovelace et al. (Lovelace et al. 2019) - for more details about vectors and geometric operations on vectors.\n Chapter 2, Sections 1-3 and Chapter 3, Section 1 of Spatial Data Science by Edzer Pebesma and Roger Bivand (of the sf, sp, rgeos, and rgdal packages)"
   },
   {
     "objectID": "content/08-content.html#objectives",
     "href": "content/08-content.html#objectives",
-    "title": "Areal Data: Vectors",
+    "title": "Projections, Extent, and Resolution",
     "section": "Objectives",
     "text": "Objectives\nBy the end of today, you should be able to:\n\nImplement approaches for checking and reparing geometries in R\nUnderstand predicates and measures in the context of spatial operations in sf\nUse st_* to evaluate attributes of geometries and calculate measurements"
   },
   {
     "objectID": "content/08-content.html#slides",
     "href": "content/08-content.html#slides",
-    "title": "Areal Data: Vectors",
+    "title": "Projections, Extent, and Resolution",
     "section": "Slides",
     "text": "Slides\nThe slides for today’s lesson are available online as an HTML file. Use the buttons below to open the slides either as an interactive website or as a static PDF (for printing or storing for later). You can also click in the slides below and navigate through them with your left and right arrow keys.\n\n View all slides in new window  Download PDF of all slides\n\n\n\n\nLink to Panopto Recording"
   },
@@ -1430,30 +1570,30 @@
   {
     "objectID": "content/07-content.html",
     "href": "content/07-content.html",
-    "title": "Areal Data: Coordinates and Geometries",
+    "title": "Data Models, Coordinates, and Geometries",
     "section": "",
-    "text": "Now that you have a bit of the fundamentals of geographic data and have had a chance to start using R, it’s time to get into more complicated workflows. To do that, you’ll have to have a bit more of a foundation in coordinates, coordinate reference systems, and geometries and how to access those in R. We’ll start there today and move into functions that change or relate geometries in the next few classes."
+    "text": "Now that you’ve gotten an introduction (or refresher) to the logic of tidy data and the tidyverse, we can move into the actual spatial portion of the class! The first step in doing that is understanding how/why spatial data differs from more traditional tabular datasets."
   },
   {
     "objectID": "content/07-content.html#readings",
     "href": "content/07-content.html#readings",
-    "title": "Areal Data: Coordinates and Geometries",
+    "title": "Data Models, Coordinates, and Geometries",
     "section": "Readings",
-    "text": "Readings\n\n The introductory vignette for the sf package has a lot of useful info on sf objects and conventions.\n Section 2.2 on Vector Data and Sections 5.1-5.3 on Geographic Operations in Lovelace et al. (Lovelace et al. 2019) - for more details about vectors and geometric operations on vectors.\n Chapter 2, Sections 1-3 and Chapter 3, Section 1 of Spatial Data Science by Edzer Pebesma and Roger Bivand (of the sf, sp, rgeos, and rgdal packages)"
+    "text": "Readings\n\nSetting the Stage\nData Types and Spatial Data Models by Skeeter and Pickell provides a general overview of different data types and how we might think about storing them spatially.\n Types of Spatial Data from Paula Moraga’s new book Spatial Statistics for Data Science: Theory and Practice with R provides a nice overview of the types of spatial data from the perspective of a statistical analyst.\n Attributes and Support from Pebesma and Bivand’s Spatial Data Science with Applications in R gives more info and examples on the nature of the relationship between geometries and support.\n\n\nTechnical Details\n\n The introductory vignette for the sf package has a lot of useful info on sf objects and conventions.\n\n Chapter 2 in Geocomputation with R (Lovelace et al. 2019) provides and overview of using sf for vector datasets and terra for raster data."
   },
   {
     "objectID": "content/07-content.html#objectives",
     "href": "content/07-content.html#objectives",
-    "title": "Areal Data: Coordinates and Geometries",
+    "title": "Data Models, Coordinates, and Geometries",
     "section": "Objectives",
-    "text": "Objectives\nBy the end of today, you should be able to:\n\nDefine coordinate, coordinate system, datum, and coordinate reference system\nAccess coordinate and geometry information for simple features in R\nUnderstand the rules for simple feature geometries\nAccess and transform the coordinate reference system for vector and raster data in R"
+    "text": "Objectives\nBy the end of today you should be able to:\n\nContrast the different “views” of spatial data and their incorporation in GIS.\nIdentify key elements that make data “spatial”.\nRecognize the relationship between geometries and support.\nAccess geographic attributes of spatial objects using sf and terra"
   },
   {
     "objectID": "content/07-content.html#slides",
     "href": "content/07-content.html#slides",
-    "title": "Areal Data: Coordinates and Geometries",
+    "title": "Data Models, Coordinates, and Geometries",
     "section": "Slides",
-    "text": "Slides\nThe slides for today’s lesson are available online as an HTML file. Use the buttons below to open the slides either as an interactive website or as a static PDF (for printing or storing for later). You can also click in the slides below and navigate through them with your left and right arrow keys.\n\n View all slides in new window  Download PDF of all slides\n\n\n\n\nLink to Panopto Recording"
+    "text": "Slides\nThe slides for today’s lesson are available online as an HTML file. Use the buttons below to open the slides either as an interactive website or as a static PDF (for printing or storing for later). You can also click in the slides below and navigate through them with your left and right arrow keys.\n\n View all slides in new window  Download PDF of all slides"
   },
   {
     "objectID": "content/09-content.html",
