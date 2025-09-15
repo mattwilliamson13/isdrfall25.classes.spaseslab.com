@@ -1,4 +1,137 @@
 ---
-title: "Generic Lesson"
+title: "Data Models, Coordinates, and Geometries"
 ---
 
+## Objectives
+
+We're going to introduce the `sf`, `terra`, and `tidyterra` packages today as a way of reading and inspecting spatial data. By the end of this lesson, you should be able to:
+
+1. Read in spatial data from both the vector and raster data model.
+
+2. Recognize the required components of a spatial data object
+
+3. Use `plot` as a way to perform a quick check on your data.
+
+
+
+## Getting Started
+
+First, [join the repository](https://classroom.github.com/a/XWzfBM16). Then, we'll have to [get our credentials](https://rstudio.aws.boisestate.edu/) and login to a [new RStudio session](https://rstudio.apps.aws.boisestate.edu/). Finally, create a new, version control, git-based project (using the link to the repo you just created). 
+
+Once you've done that, you'll need to load your packages. We're going to add 3 new packages to the `tidyverse`; the `sf`, `terra`, and `tidyterra` packages. We'll also add the `googledrive` so that we can use a custom function for downloading data from a shared Google Drive folder. Note that when you load these, the conflicts that the `tidyverse` reports will be different. In order to overcome these conflicts, you'll need to use explicit calls like `package::function` so `R` knows which ones to use.
+
+```{r ldpkg}
+library(googledrive)
+library(sf)
+library(terra)
+library(tidyterra)
+library(tidyverse)
+```
+
+## Loading a Custom Function
+
+You'll notice that your `scripts/utilities` folder has a file called `download_utils.R`. This file has some custom functions for downloading data directly from websites and from a Google Drive Folder. In order to give yourself access to these functions you'll need to `source` them into your environment. You can do this by typing:
+
+```{r srcfun}
+source("scripts/utilities/download_utils.R")
+
+```
+
+The first time you run the `gdrive_folder_download` function, you'll be taken to a webpage where you need to give `googledrive` access to your Google Drive folders. Make sure you've checked all the boxes and click Allow. You should get a message saying that authorization is complete and that you can close the tab.
+
+Let's run it now and download the data to our `original` folder. You'll see that it requires two arguments, `filelst` and `dstfldr`. The first is a list of files in the folder, the second is the name of the destination folder. In order to generate the `filelst` we need to do some `googledrive` gymnastics to generate a data frame of the unique google drive id's for each file. We then use `pmap` to download each file. You'll notice that the destination path is printed to the screen.
+
+```{r dldata}
+
+file_list <- drive_ls(drive_get(as_id("https://drive.google.com/drive/u/1/folders/1PwfUX2hnJlbnqBe3qvl33tFBImtNFTuR")))
+
+
+file_list %>% 
+  dplyr::select(id, name) %>%
+  purrr::pmap(function(id, name) {
+    gdrive_folder_download(list(id = id, name = name),
+                           dstfldr = "inclass07")
+  })
+
+```
+
+## Reading Data: Vectors
+
+The vector data (called `cejst`) comes from the Climate and Environmental Justice Screening Tool which is no longer available online. You'll notice that there are multiple files with the same name, but different extensions. We'll talk more about these different files in the next few weeks, but for now, just not that these files exist. 
+
+Because `sf` adheres to the `tidyverse` grammars, we can use a similar intuition to read in the data. You'll note that even though we have all these extra files, we only need the `.shp` file. This is the shapefile which is the "overarching" file for all of the data.
+
+```{r readsf}
+cejst_shp <- read_sf("data/original/inclass07/cejst.shp")
+
+```
+
+Now that you've got the data in, let's take a look at it using `str` and  `glimpse`.
+
+```{r looksf}
+str(cejst_shp)
+```
+
+You'll notice that this is a new data type:
+
+`sf [2,590 × 124] (S3: sf/tbl_df/tbl/data.frame)`
+
+You can read this to yourself as "cejst_shp" is an `sf` object with a `tbl_df` combined with. it. (It's slightly more complicated than that, but this can give you an intuition). 
+
+Now let's look at the output of glimpse:
+
+```{r glimpsf}
+glimpse(cejst_shp)
+```
+
+The key addition here is the `geometry` column. This is where the magic of `tibbles` comes in - it's a `list` column. These sorts of columns aren't allowed in `data.frames` because they entail multiple (and potentially different) data types. They become critical for spatial data (and `sf` objects) as they contain the coordinates for where the object need to go!
+
+In the previous examples, you got used to checking the various columns for (in-)feasible values. You should still do this; however, the introduction of the `geometry` column. **Identifying problematic `geometry` is key component of ensuring your data is valid.** Luckly, you can do this with:
+
+```{r validity}
+all(st_is_valid(cejst_shp))
+```
+
+Things look good for now! We'll talk more about what to do when this returns `FALSE` in future classes.
+
+One final check is to take a look at the data. We'll learn more about how to make fancy maps in the future, but for now, there's a quick check:
+
+```{r}
+plot(st_geometry(cejst_shp))
+
+```
+
+
+## Reading Data: Rasters
+
+Let's switch gears a bit and run through same process with rasters. Unfortunately, the `terra` package uses a different syntax. I'll do my best to highlight those difference as we go, but for now, let's focus on the `terra` version of read.
+
+```{r loadrst}
+fire_prob <- rast("data/original/inclass07/wildfire.tif")
+
+```
+
+Importantly, `rast` does more than just read in data. You can look at `?rast` to learn some more of those functions.
+
+Let's look at the data with `str`
+
+```{r insprst}
+str(fire_prob)
+```
+
+You'll notice a much less verbose response that this is a `SpatRaster` data class. We'll talk more about what this means in the next few weeks, but for now, just notice that this is a distinct class assigned to a very particular package. 
+
+What happens when you look at `glimpse`
+
+```{r rstglimp}
+glimpse(fire_prob)
+```
+
+You get a variety of additional information on the resolution, projection, and extent. What you don't get, however, is a geometry or any info about where each cell should be. This is because for `raster` data, the geometry is **implicit** - if we know where the raster covers, and the cell size, then we know the rest of the information necessary to derie the geometry. The other thing you'll notice is that there's only 1 variable. This is again a function of the raster data type. Each layer can only contain information on one measurement and all of those measurements much be of the same data class. Rasters are essentially matrices where the rows are the x coordinates, the columns are the y coordinates, and the cell values are the measurement.
+
+The last thing we might want to do is plot the raster to quickly make sure it looks like the thing we thought it would. The nice part about `terra` is that there is a basic `plot` function that you can use:
+
+```{r plotrst}
+
+plot(fire_prob)
+```

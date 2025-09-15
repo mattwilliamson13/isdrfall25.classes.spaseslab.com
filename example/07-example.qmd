@@ -1,4 +1,9 @@
 ---
-title: "Generic"
+title: "Data Models, Coordinates, and Geometries"
 ---
 
+1. [Clone the in-class repository](https://classroom.github.com/a/XWzfBM16)
+
+2. Read in both the vector and raster data
+
+3. Post your plots into the slack channel
