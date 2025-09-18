@@ -221,24 +221,7 @@ The process is largely the same for `terra`, but without the `st_` prefix.
 crs(fire_prob)
 ```
 
-Here again, you get the .wkt output, but it's in a slightly different format. This makes difficult to compare projections programmatically. Instead you've got to look to see if things match. One thing you'll notice is that the wkt says "unnamed" suggesting that `R` isn't entirely sure what this is. This can be a bit of a problem because `R` will treat the projection as `NA`. In cases like this, we can manually set the `crs`. **NOTE: You should do this with extreme caution and only when you know what the native projection is.** In this case, we can use the wkt to make a good guess for what the `crs`.
-
-```{r projfire}
-fire_prob_new <- fire_prob
-crs(fire_prob_new) <- "epsg:9001"
-```
-
-
-You can verify that you haven't changed the data's location and orientation by plotting.
-
-```{r plotfire}
-plot(fire_prob)
-
-plot(fire_prob_new)
-
-```
-
-Does this seem reasonable to you?
+Here again, you get the .wkt output, but it's in a slightly different format. This makes difficult to compare projections programmatically. Instead you've got to look to see if things match. One thing you'll notice is that the wkt says "unnamed" suggesting that `R` isn't entirely sure what this is. However, all of the necessary parameters are there, so we'll move on for now.
 
 ## How Can I Change the Projection?
 In order to make sure that our "data sandwich" is lined up that any combinations of data we create truly correspond to the same location. We can **reproject** the data to ensure alignment. In `sf`, we can use `st_transform` to _transform_ the CRS of a spatial layer.
@@ -253,10 +236,10 @@ Let's start by reprojecting the vector dataset.
 ```{r rprjvect}
 
 cejst_reproject <- cejst_shp %>% 
-  st_transform(., st_crs(fire_prob_new))
+  st_transform(., crs = st_crs(fire_prob))
 ```
 
-You'll notice that we used the new version of the raster data. This is because we've given it a complete, intact CRS. Failing to do that would return an error. 
+The `st_transform` function is the reprojection function. The `.` tells `st_transform` to project the object that is piped (` %>% `) in and the `crs` argument tells the function what the new Coordinate Reference System should be. You'll notice here that we used `st_crs` to extract the CRS from our raster dataset. For several common functions (like accessing CRS), `sf` will accept `terra` objects and vice versa. This is not generally the case, though, and if we need to use `terra` to work on vector data we'll need to convert our `sf` object to a `vect` object using `terra`'s `vect()` function.
 
 Now let's look at what's changed about the vector data.
 
@@ -266,4 +249,71 @@ st_crs(cejst_shp)
 st_bbox(cejst_reproject)
 st_bbox(cejst_shp)
 ```
+### Raster Data
 
+Even though it's not a particularly great idea, we can reproject the raster to match our existing shapefile too. You can learn more about this from `?project`. You'll also notice that there are a number of recommendations to help you do this safely and without breaking something.
+
+For this to work, we need to get the crs from our data in a format the `terra` can understand. Unlike `sf`, `terra` relies primarily on the wkt form (instead of epsg), so we get that first. Then we can use `terra`s `project` function. We'll do more projecting and resampling of rasters in the coming weeks, but for now it's worth understanding the mechanics and reading the helpfile to understand the limitations of approaching it this way.
+
+```{r rstprj}
+
+
+target_crs <- st_crs(cejst_shp)$wkt  # WKT string
+
+fire_reproj <- project(fire_prob, target_crs)
+
+crs(fire_reproj)
+crs(fire_prob)
+ext(fire_reproj)
+ext(fire_prob)
+res(fire_reproj)
+res(fire_prob)
+
+```
+
+This is a pretty good indication of the impacts of moving from a degree-based CRS to one that relies on meters. On the one hand, we can express location with smaller values (we learn more from less) with the degree-based CRS. On the other hand, it's almost impossible to reason about how big a 0.002 degree square pixel is....
+
+## A Final Note on Making Tabular Data Spatial
+
+One thing that happens fairly regularly is that we get a spreadsheet with coordinates that isn't otherwise spatial. The PurpleAir data that we used in the last unit is a great example of this. The sensor information data comes with info about the sensors along with the latitude and longitude for each sensor.
+
+We can make this spatial (and maybe even start to think about smoke in the context of both fire probability and social vulnerability). But how do we do that?? The first clue is that the coordinates are in latitude and longitude. This tells us that we are dealing with a geocentric reference system (or datum) - that is, one that has not been projected and provides estimates around the globe. But which one do we use??
+
+As we discussed, NAD83 is a local datum, one designed such that the spheroids (lines of latitude and longitude) fit the earth's surface well in _a particular location_. Alternatively, WGS84 and ITRF2014 are geodetic datums meaning that they offer a more uniform and extensive coverage for the entirety of the globe (even if less accurate for a particular location). 
+
+One of the primary differences in geodetic and local datums is how they account for earth's movement. For the NAD83 datum, the reference point is fixed to the North American tectonic plate and only moves in association with the movement of that plate. WGS84 and ITRF2014 account for the fact that all of the earth's tectonic plates are moving and moving at different rates, hence differences arise (slowly) between the different datums as the earth moves.
+
+![](img/08/itrf.png)
+
+Assigning anyone of of these datums is relatively trivial computationally so we'll try all 3. We'll use `read_csv` to get the tabular data, convert it using `st_as_sf`, provide the columns with the location information for the `coords` argument, and provide the epsg code for each datum to the `crs` argument.
+
+```{r tabdata}
+
+pa_locations_wgs <- read_csv("data/original/inclass08/pa.csv") %>% 
+  st_as_sf(.,
+           coords = c("longitude", "latitude"),
+           crs = 4326) 
+
+
+pa_locations_nad <- read_csv("data/original/inclass08/pa.csv") %>% 
+  st_as_sf(.,
+           coords = c("longitude", "latitude"),
+           crs = 4269)
+
+pa_locations_itrf <- read_csv("data/original/inclass08/pa.csv") %>% 
+  st_as_sf(.,
+           coords = c("longitude", "latitude"),
+           crs = 7789)
+```
+
+It's difficult to inspect these with plots because `ggplot` expects the data to be in a single CRS (because that's how we should make maps). Instead, we can take a look at things like the `bbox` to see how big of a difference this makes.
+
+```{r bboxpts}
+st_bbox(pa_locations_wgs)
+st_bbox(pa_locations_nad)
+st_bbox(pa_locations_itrf)
+
+
+```
+
+As you can see, given the level of precision that we are reporting and the relatively small amount of movement a tectonic plate undergoes in year, the differences are not particularly obvious in the small window that we are looking at. We'll play with these things more in the coming weeks. For now, it should be enough that you've learned to convert the tabular dataset to a set of `POINTS`
