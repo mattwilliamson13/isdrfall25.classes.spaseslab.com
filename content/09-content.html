@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Intro to Spatial Data in R - Areal Data: Rasters</title>
+<title>Intro to Spatial Data in R - Attribute Data Operations</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -20,7 +20,26 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
-</style>
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
 
 
 <script src="../site_libs/quarto-nav/quarto-nav.js"></script>
@@ -62,7 +81,7 @@ ul.task-list li input[type="checkbox"] {
 }</script>
 
 
-<meta property="og:title" content="Intro to Spatial Data in R - Areal Data: Rasters">
+<meta property="og:title" content="Intro to Spatial Data in R - Attribute Data Operations">
 <meta property="og:description" content="">
 <meta property="og:image" content="https://isdrfall25.classes.spaseslab.com/files/social-image-f22.png">
 <meta property="og:site-name" content="Intro to Spatial Data in R">
@@ -364,7 +383,11 @@ ul.task-list li input[type="checkbox"] {
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#readings" id="toc-readings" class="nav-link active" data-scroll-target="#readings">Readings</a></li>
+  <li><a href="#readings" id="toc-readings" class="nav-link active" data-scroll-target="#readings">Readings</a>
+  <ul class="collapse">
+  <li><a href="#setting-the-stage" id="toc-setting-the-stage" class="nav-link" data-scroll-target="#setting-the-stage">Setting the Stage</a></li>
+  <li><a href="#technical-details" id="toc-technical-details" class="nav-link" data-scroll-target="#technical-details">Technical Details</a></li>
+  </ul></li>
   <li><a href="#objectives" id="toc-objectives" class="nav-link" data-scroll-target="#objectives">Objectives</a></li>
   <li><a href="#slides" id="toc-slides" class="nav-link" data-scroll-target="#slides">Slides</a></li>
   </ul>
@@ -374,30 +397,40 @@ ul.task-list li input[type="checkbox"] {
 <main class="content" id="quarto-document-content">
 
 <header id="title-block-header">
-<h1 class="title display-7">Areal Data: Rasters</h1>
+<h1 class="title display-7">Attribute Data Operations</h1>
 
 <div class="date-block bg-content text-white p-2">
-  <p class="date">Content for Monday, September 18, 2023</p>
+  <p class="date">Content for Monday, September 22, 2025</p>
 </div>
 </header>
 
-<p>Now that we’ve learned a bit about how to assess some of the important quantities of vector-based spatial data, we’ll try to apply a bit of the same logic to raster data. We’ll be using the <code>terra</code> package for the majority of raster options in this course primarily because it of its speed. That said, it is not a <code>tidyverse</code> package and so some of the intuition we used to organize the <code>sf</code> functions will be a little harder to extend here. I’ll do my best to help you make the links!!</p>
+<p>At this point, you should be (somewhat) familiar with the <code>dplyr</code> approach to manipulating tabular data. No only that, but you can get spatial data into <code>R</code>!! Now it’s time to start bringing different datasets together to answer our questions. For the next 3 sessions, we’ll be working towards this. Today, the focus is on creating and manipulating attribute data, with a special focus on using spatial location as the foundation for doing that.</p>
 <section id="readings" class="level2">
 <h2 class="anchored" data-anchor-id="readings">Readings</h2>
+<section id="setting-the-stage" class="level3">
+<h3 class="anchored" data-anchor-id="setting-the-stage">Setting the Stage</h3>
 <ul>
-<li><p><i class="fas fa-book"></i> <a href="https://www.paulamoraga.com/book-spatial/the-terra-package-for-raster-and-vector-data.html">Chapter 4</a> from Paula Moraga’s Spatial Statistics for Data Science: Theory and Practice with R provides a quick intro to using <code>terra</code> for raster and vector data.</p></li>
-<li><p><i class="fas fa-book"></i> <a href="https://rspatial.github.io/terra/reference/terra-package.html">The <code>terra</code> reference page</a> provides a brief overview of all of the functions and their categories. We’ll only focus on the <code>SpatRaster</code> methods.</p></li>
-<li><p><i class="fas fa-book"></i> <a href="https://rspatial.org/spatial/8-rastermanip.html">Raster Data Manipulation</a> from the Spatial Data Science with <code>R</code> and <code>terra</code> ebook provides some nice examples of <code>terra</code> functions in the context of spatial workflows.</p></li>
+<li><p><i class="fas fa-book"></i> <a href="https://ehjournal.biomedcentral.com/articles/10.1186/1476-069X-13-63?utm_source=chatgpt.com#Sec2">Spatio-temporal modeling of particulate air pollution in the conterminous United States using geographic and meteorological predictors</a> by <span class="citation" data-cites="yanosky2014spatio">(<a href="#ref-yanosky2014spatio" role="doc-biblioref">Yanosky et al. 2014</a>)</span> illustrates the use of combined vector, raster, and tabular data to generate high-resolution predictions of particulate matter exposure in the US. The authors use ArcGIS for the spatial stuff, but you could easily replicate this analysis in <code>R</code>.</p></li>
+<li><p><i class="fas fa-book"></i> <a href="https://www.sciencedirect.com/science/article/pii/S0169534721002275?via%3Dihub#s0015">Quantitative Conservation Geography</a> by <span class="citation" data-cites="didi2021conservation">(<a href="#ref-didi2021conservation" role="doc-biblioref"><strong>didi2021conservation?</strong></a>)</span> highlights the role that geography plays in environmental issues, identifies the need to integrate datasets, but also makes some pretty big assumptions about the goals of conservation geographers and the applicability of the data at hand.</p></li>
+<li><p><i class="fas fa-book"></i> <a href="https://www.tandfonline.com/doi/full/10.1080/24694452.2025.2514034?af=R#d1e282">Manufacturing Desolation: Unauthorized Border Crosser Mortality, Disappearance, and the Sociopolitical Construction of Remoteness in U.S. Boundary Enforcement</a> by <span class="citation" data-cites="boyce2025manufacturing">(<a href="#ref-boyce2025manufacturing" role="doc-biblioref">Boyce et al. 2025</a>)</span> is a really interesting example of combining social, environmental, and physiological data to understand how policy changes might alter human mortality through changes in the distribution of water.</p></li>
 </ul>
+</section>
+<section id="technical-details" class="level3">
+<h3 class="anchored" data-anchor-id="technical-details">Technical Details</h3>
+<ul>
+<li><p><i class="fas fa-book"></i> <a href="https://r.geocompx.org/attr">Attribute Data Operations</a> from <span class="citation" data-cites="lovelace_geocomputation_2019">(<a href="#ref-lovelace_geocomputation_2019" role="doc-biblioref">Lovelace et al. 2019</a>)</span> links <code>tidyverse</code> and base <code>R</code> approaches to data manipulation to the <code>sf</code> world.</p></li>
+<li><p><i class="fas fa-book"></i> <a href="https://dieghernan.github.io/tidyterra/articles/welcome.html">Welcome to <code>tidyterra</code></a> along with the rest of the articles on this page give a sense for the places where <code>tidyterra</code> can help integrate rasters into existing <code>dplyr</code> pipelines.</p></li>
+</ul>
+</section>
 </section>
 <section id="objectives" class="level2">
 <h2 class="anchored" data-anchor-id="objectives">Objectives</h2>
 <p>By the end of today, you should be able to:</p>
 <ul>
-<li><p>Access the elements that define a raster</p></li>
-<li><p>Build rasters from scratch using matrix operations and <code>terra</code></p></li>
-<li><p>Evaluate logical conditions with raster data</p></li>
-<li><p>Calculate different measures of raster data</p></li>
+<li><p><strong>Define</strong> Spatial Analysis and distinguish it from making maps.</p></li>
+<li><p><strong>Recognize</strong> the role of database structure and spatial geometry in generating attributes</p></li>
+<li><p><strong>Develop</strong> appreciation for the link between attribute operations and analysis validity.</p></li>
+<li><p><strong>Perform</strong> attribute operations on vector and raster data.</p></li>
 </ul>
 </section>
 <section id="slides" class="level2">
@@ -411,9 +444,20 @@ ul.task-list li input[type="checkbox"] {
 </div>
 
 
+
 </section>
 
-</main> <!-- /main -->
+<div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" role="doc-bibliography"><h2 class="anchored quarto-appendix-heading">References</h2><div id="refs" class="references csl-bib-body hanging-indent" data-line-spacing="2" role="list">
+<div id="ref-boyce2025manufacturing" class="csl-entry" role="listitem">
+Boyce, G., S. N. Chambers, T. Plath, and D. E. Martı́nez. 2025. Manufacturing desolation: Unauthorized border crosser mortality, disappearance, and the sociopolitical construction of remoteness in US boundary enforcement. Annals of the American Association of Geographers:1–18.
+</div>
+<div id="ref-lovelace_geocomputation_2019" class="csl-entry" role="listitem">
+Lovelace, R., J. Nowosad, and J. Muenchow. 2019. Geocomputation with <span>R</span>. <span>CRC Press</span>.
+</div>
+<div id="ref-yanosky2014spatio" class="csl-entry" role="listitem">
+Yanosky, J. D., C. J. Paciorek, F. Laden, J. E. Hart, R. C. Puett, D. Liao, and H. H. Suh. 2014. Spatio-temporal modeling of particulate air pollution in the conterminous united states using geographic and meteorological predictors. Environmental Health 13:63.
+</div>
+</div></section></div></main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
 window.document.addEventListener("DOMContentLoaded", function (event) {
   const toggleBodyColorMode = (bsSheetEl) => {
