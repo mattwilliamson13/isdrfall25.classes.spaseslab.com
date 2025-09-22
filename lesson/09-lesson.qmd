@@ -192,3 +192,46 @@ sensor_join <- st_join(x = censor_life_exp,
 
 ```
 
+Now let's take a quick look at this data - remember that `WHP_ID` is the name of variable in our raster.
+
+```{r pltrst}
+ggplot() +
+  geom_sf(sensor_join, 
+          mapping = aes(color = pm2.5_atm_max_2024, size=WHP_ID)) +
+  scale_color_viridis_b()
+
+```
+
+## Making A Nicer Map
+
+Ok, we've added some attributes to our sensor location. Now let's make an actually useful map. _There are some steps here that might help you with the exercise._ 
+
+```{r niceplot}
+
+state_boundaries <- tigris::states()
+
+study_area <- state_boundaries %>% 
+  filter(., STUSPS %in% c("ID", "OR", "WA")) %>% 
+  st_transform(., crs(fire_prob))
+
+county_boundaries <- tigris::counties(state = c("ID", "OR", "WA")) %>% 
+  st_transform(., crs(fire_prob))
+
+ggplot() +
+  geom_spatraster(fire_prob, 
+                  mapping = aes(fill = WHP_ID)) +
+  geom_sf(data = study_area, 
+          fill = NA, 
+          colour = "blue") +
+  geom_sf(data = county_boundaries,
+          fill = NA,
+          colour = "lightgray",
+          lwd = 0.7) +
+  geom_sf(censor_life_exp, 
+          mapping = aes(color = pm2.5_atm_max_2024, size=LIF_PFS)) +
+  scale_fill_viridis_c(option = "inferno", na.value = "transparent") +
+  scale_color_viridis_b() +
+  theme_bw()
+
+
+```
