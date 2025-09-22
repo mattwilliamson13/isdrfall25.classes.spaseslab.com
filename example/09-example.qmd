@@ -1,4 +1,12 @@
 ---
-title: "Generic"
+title: "Attributing the Smoke Dataset"
 ---
+
+1. Follow the steps in Lesson 9.
+
+2. Use the `tigris::states` and `tigris::counties` functions to download geometries for the state boundaries and county boundaries for ID, WA, and OR. (see `?tigris::counties` and `?tigris::states` to see how to do this)
+
+3. Summarize the points and the other variables at the county and state level (i.e., combine all of the points in a county/state and recalculate the pm2.5 values, run `zonal` on the counties etc)
+
+4. Generate a plot for the new scales of aggregtion and compare the point values to those that come from the new aggregation.
 

@@ -1,4 +1,194 @@
 ---
-title: "Generic Lesson"
+title: "Building Attributes for our Smoke Dataset"
 ---
+
+## The Setup
+
+You've now used the PurpleAir data a few times. A fairly obvious question seems to be how does an area's particulate matter (PM2.5) burden coincide with it's wildfire hazard. Similarly, how does the PM2.5 burden coincide with life expectancy. We'll use our raster of wildfire hazard probability, our vector dataset of Climate and Environmental Justice, and the sensor data themselves to begin building a dataset that would allow us to explore this question.
+
+## Getting Started
+
+I've added a few additional datasets to our Google Drive folder, so we'll need to load packages, download our data, and get a few things setup before we start building.
+
+First, let's get our packages and our Google Drive download script loaded.
+
+```{r ldpkg}
+library(googledrive)
+library(terra)
+library(sf)
+library(tidyterra)
+library(tidyverse)
+source("scripts/utilities/download_utils.R")
+
+
+```
+
+### Checking Data, Allignment, and Choosing Variables
+
+Let's download everything in our folder
+
+```{r dldata}
+
+file_list <- drive_ls(drive_get(as_id("https://drive.google.com/drive/u/1/folders/1PwfUX2hnJlbnqBe3qvl33tFBImtNFTuR")))
+
+
+file_list %>% 
+  dplyr::select(id, name) %>%
+  purrr::pmap(function(id, name) {
+    gdrive_folder_download(list(id = id, name = name),
+                           dstfldr = "inclass09")
+  })
+```
+
+Let's load our spatial data and see what we've got! We'll start by checking the CRS for each of the datasets. 
+
+```{r lddata}
+cejst_shp <- read_sf("data/original/inclass09/cejst.shp")
+
+fire_prob <- rast("data/original/inclass09/wildfire.tif")
+
+pa_locations_wgs <- read_sf("data/original/inclass09/pa.shp")
+
+st_crs(cejst_shp)
+st_crs(pa_locations_wgs)
+crs(fire_prob)
+
+
+```
+
+You'll notice that we've got some slightly different projections. Let's fix that before we get too far down the road. We'll reproject the shapefiles as that's the safest way to get everything lined up. 
+
+```{r reproj}
+cejst_reproj <- cejst_shp %>% 
+  st_transform(., crs = crs(fire_prob))
+
+pa_reproj <- pa_locations_wgs %>% 
+  st_transform(., crs = crs(fire_prob))
+
+```
+
+Ok, now that we've gotten all of our spatial data lined up. Let's load the last dataset, which is the tabular data depicting all of the monthly sensor readings. Let's take a `glimpse` at all of the data.
+
+```{r ldtbl}
+pa_data <- read_csv("data/original/inclass09/paReadings.csv")
+
+glimpse(cejst_reproj)
+glimpse(fire_prob)
+glimpse(pa_reproj)
+glimpse(pa_data)
+```
+
+## Joining By a Shared Key
+
+The fact that the sensor readings are tabular means we can exploit the `_join` family of functions from `dplyr` to combine our `pa_locations` with the `pa_data` set. We might be interested in getting any/all data from the tabular data that matches our location data. This is a **left_join**. For joins to work, the two datasets need to share **at least 1 column**. We call this column the **key**. If you don't specify a **key** `dplyr` looks for any and all columns with the same name. This can be a bit unsafe, so I recommend always specifying the key.
+
+::: {.callout-tip}
+When working with spatial data in `R` it is important to remember 2 things: **1) geometries are sticky (so they'll stick around in any join where the spatial data is the first argument) and 2) we can join tabular data to spatial data, but not vice versa (so to join spatial data to a tabular dataset, you'll need `st_drop_geometry` first)** 
+:::
+
+![](/images/left-join.gif)
+One thing you'll notice about our tabular dataset (`pa_data`) is that it's in long format - each sensor has multiple rows corresponding to the date that the reading is from. For spatial data, it's typically better to keep your data in wide format to avoid repeating geometries. Let's summarize the data into annual values and then `pivot_` to make the data wide.
+
+```{r lftjn}
+pa_data_wide <- pa_data %>% 
+  mutate(year = year(time_stamp)) %>%
+  select(id, year, pm2.5_atm) %>% 
+  filter(year > 2023) %>% 
+  group_by(id, year) %>%
+  summarise(across(where(is.numeric),
+                   list(mean = ~mean(.x, na.rm = TRUE),
+                        median = ~median(.x, na.rm = TRUE),
+                        max = ~max(.x, na.rm = TRUE)),
+                   .names = "{.col}_{.fn}"),
+            .groups = "drop") %>% 
+  pivot_wider(
+    names_from = year,
+    values_from = c(pm2.5_atm_mean, pm2.5_atm_median, pm2.5_atm_max),
+    names_glue = "{.value}_{year}"
+  )
+```
+
+We did a lot of stuff here. First, we calculated the year by exploiting the `year` function. Then we `selected` the columns we were interested in (pm2.5_atm) along with the year and id columns. We `filter`ed to get values after 2023 as those are datapoints after the creation of the wildfire hazard potential data. We then used `group_by` to get unique combinations of id and year in order to `summarize` the data into several statistics. Notice the use of embracing to give the columns their names. Finally, we used `pivot_wider` so that each sensor only has 1 row. You'll notice that places where a sensor is missing data (because it wasn't up for that year) get filled with `NAs` to ensure that the resulting data is rectangular.
+
+Now that we've got the data in a wide format, we can join it to our sensor locations.
+
+```{r tabjn}
+
+pa_data_lftjoin <- pa_reproj %>% 
+  left_join(., pa_data_wide, by = join_by(snsr_nd == id))
+```
+
+We used `join_by` to tell `dplyr` which columns it should look to for our **key**. You'll notice if you inspect the data that any sensor whose data doesn't correspond to our date range is filled with `NA`. This is the nature of a `left_join` - it keeps everything in the dataframe on the left and only the data from the right that has a corresponding **key** value. Hence, there should be the same number of rows in `pa_data_lftjoin` as there are in the original `pa_reproj` data.
+
+If we wanted to only keep the data the data where there is both sensor data and sensor locations we can use an `inner_join` instead.
+
+![](/images/inner-join.gif)
+
+```{r injn}
+
+pa_data_injoin <- pa_reproj %>% 
+  inner_join(., pa_data_wide, by = join_by(snsr_nd == id))
+
+```
+
+You'll notice when you do this that `pa_data_injoin` contains the same number of rows as `pa_data_wide`. We would expect this because there have to be sensors in the `pa_reproj` data that correspond to the data (or we wouldn't have the data). In practice this may not always be the case as the number of observations with a full record of data may differ substantially from the length of either of the two datasets. This makes `inner_join` a great way to identify which data overlap and if there are fewer than you'd expect, help you find the errors in one of the datasets.
+
+Let's finish with a quick plot of the data in space.
+
+```{r pltpnts}
+ggplot() +
+  geom_sf(pa_data_injoin, 
+          mapping = aes(color = pm2.5_atm_max_2024)) +
+  scale_color_viridis_b()
+
+```
+
+## Joining By a Shared Location
+
+Sometimes we might not have a great *key* to link datasets, but we might now that the data overlap in space. In those cases, we can use a spatial join to exploit the idea that measurements coming from similar locations should share something (similar to a key that explicitly links two datasets). We'll use the `cejst_reproj` data, but focus it by selecting only the `LIF_PFS` which describes the life expectancy based on the percentage of the national average.
+
+```{r spjoin}
+life_exp <- cejst_reproj %>% 
+  select(LIF_PFS)
+
+censor_life_exp <- st_join(x = pa_data_injoin, 
+                           y = life_exp,
+                           join = st_within,
+                           left = TRUE)
+  
+
+```
+
+To use `st_join` you need to tell `R` a few things. First, you need to tell it what the `join` should be based on. The parameter we give to the `join` argument is actually a function known as a binary operator. We'll talk about these more on Wednesday, but for now know that it is comparing the geometries of two objects. The other argument we need to provide is the `left` argument which specifies whether this is a `left_join` (`left=TRUE`) or an `inner_join` (`left=FALSE`). In this case, we'd want all of the sensors to remain in our dataset so we set `left` to `TRUE`. You'll notice again that `NAs` show up for rows that don't intersect measurements in the second dataset.
+
+We can add this info to our plot by adding a second aesthetic to our points. You'll notice that you get a warning because ggplot is dropping observations with `NA` for our `size` variable.
+
+```{r pltboth}
+ggplot() +
+  geom_sf(censor_life_exp, 
+          mapping = aes(color = pm2.5_atm_max_2024, size=LIF_PFS)) +
+  scale_color_viridis_b()
+
+```
+
+## Generating Attributes From Rasters
+
+This all works well when we're sticking within vector and tabular data and the `tidyverse`, but what about rasters? One of the first things we have to do when determining how to assign raster values to vector datasets is to decide the spatial boundaries that we want to use to summarize the raster data. We could use `extract` to summarize directly to the point, or we can use `zonal` to summarize across a polygon boundary. We'll use this function more in the next 2 class sessions, but I want to introduce it here. **To use `zonal`, you'll have to convert your `sf` object to a `SpatVector` object (using `vect`). The other thing to note here is that I've set `as.polygons` to `TRUE` to make sure I get a spatial object (setting it to `FALSE` returns a matrix ordered by the order of polygons in the dataset). Once I've done that, I can convert the `SpatVector` object back to an `sf` object (with `st_as_sf`) and then use a spatial join like before!!
+
+```{r extrst}
+
+fire_extract_mean <- terra::zonal(fire_prob, 
+                                  vect(cejst_reproj), 
+                                  fun="mean", 
+                                  na.rm = TRUE, 
+                                  as.polygons = TRUE)
+
+fire_sf <- st_as_sf(fire_extract_mean)
+
+sensor_join <- st_join(x = censor_life_exp, 
+                           y = fire_sf,
+                           join = st_within,
+                           left = TRUE)
+
+```
 

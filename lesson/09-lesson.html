@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Intro to Spatial Data in R - Generic Lesson</title>
+<title>Intro to Spatial Data in R - Building Attributes for our Smoke Dataset</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -96,7 +96,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 }</script>
 
 
-<meta property="og:title" content="Intro to Spatial Data in R - Generic Lesson">
+<meta property="og:title" content="Intro to Spatial Data in R - Building Attributes for our Smoke Dataset">
+<meta property="og:description" content="">
 <meta property="og:image" content="https://isdrfall25.classes.spaseslab.com/files/social-image-f22.png">
 <meta property="og:site-name" content="Intro to Spatial Data in R">
 <meta property="og:locale" content="en_US">
@@ -174,14 +175,27 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <!-- sidebar -->
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
-        
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#the-setup" id="toc-the-setup" class="nav-link active" data-scroll-target="#the-setup">The Setup</a></li>
+  <li><a href="#getting-started" id="toc-getting-started" class="nav-link" data-scroll-target="#getting-started">Getting Started</a>
+  <ul class="collapse">
+  <li><a href="#checking-data-allignment-and-choosing-variables" id="toc-checking-data-allignment-and-choosing-variables" class="nav-link" data-scroll-target="#checking-data-allignment-and-choosing-variables">Checking Data, Allignment, and Choosing Variables</a></li>
+  </ul></li>
+  <li><a href="#joining-by-a-shared-key" id="toc-joining-by-a-shared-key" class="nav-link" data-scroll-target="#joining-by-a-shared-key">Joining By a Shared Key</a></li>
+  <li><a href="#joining-by-a-shared-location" id="toc-joining-by-a-shared-location" class="nav-link" data-scroll-target="#joining-by-a-shared-location">Joining By a Shared Location</a></li>
+  <li><a href="#generating-attributes-from-rasters" id="toc-generating-attributes-from-rasters" class="nav-link" data-scroll-target="#generating-attributes-from-rasters">Generating Attributes From Rasters</a></li>
+  </ul>
+</nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<div class="quarto-title-block"><div><h1 class="title">Generic Lesson</h1><button type="button" class="btn code-tools-button" id="quarto-code-tools-source"><i class="bi"></i> Code</button></div></div>
+<div class="quarto-title-block"><div><h1 class="title">Building Attributes for our Smoke Dataset</h1><button type="button" class="btn code-tools-button dropdown-toggle" id="quarto-code-tools-menu" data-bs-toggle="dropdown" aria-expanded="false"><i class="bi"></i> Code</button><ul class="dropdown-menu dropdown-menu-end" aria-labelelledby="quarto-code-tools-menu"><li><a id="quarto-show-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Show All Code</a></li><li><a id="quarto-hide-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Hide All Code</a></li><li><hr class="dropdown-divider"></li><li><a id="quarto-view-source" class="dropdown-item" href="javascript:void(0)" role="button">View Source</a></li></ul></div></div>
 </div>
 
 
@@ -196,10 +210,671 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 </header>
 
+<section id="the-setup" class="level2">
+<h2 class="anchored" data-anchor-id="the-setup">The Setup</h2>
+<p>You’ve now used the PurpleAir data a few times. A fairly obvious question seems to be how does an area’s particulate matter (PM2.5) burden coincide with it’s wildfire hazard. Similarly, how does the PM2.5 burden coincide with life expectancy. We’ll use our raster of wildfire hazard probability, our vector dataset of Climate and Environmental Justice, and the sensor data themselves to begin building a dataset that would allow us to explore this question.</p>
+</section>
+<section id="getting-started" class="level2">
+<h2 class="anchored" data-anchor-id="getting-started">Getting Started</h2>
+<p>I’ve added a few additional datasets to our Google Drive folder, so we’ll need to load packages, download our data, and get a few things setup before we start building.</p>
+<p>First, let’s get our packages and our Google Drive download script loaded.</p>
+<div class="cell">
+<details open="">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(googledrive)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(terra)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stderr">
+<pre><code>terra 1.7.78</code></pre>
+</div>
+<details open="">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(sf)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: package 'sf' was built under R version 4.4.1</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Linking to GEOS 3.11.0, GDAL 3.5.3, PROJ 9.1.0; sf_use_s2() is TRUE</code></pre>
+</div>
+<details open="">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyterra)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stderr">
+<pre><code>
+Attaching package: 'tidyterra'</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>The following object is masked from 'package:stats':
+
+    filter</code></pre>
+</div>
+<details open="">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: package 'ggplot2' was built under R version 4.4.1</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──
+✔ dplyr     1.1.4     ✔ readr     2.1.5
+✔ forcats   1.0.0     ✔ stringr   1.5.1
+✔ ggplot2   3.5.2     ✔ tibble    3.2.1
+✔ lubridate 1.9.3     ✔ tidyr     1.3.1
+✔ purrr     1.0.2     </code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
+✖ tidyr::extract() masks terra::extract()
+✖ dplyr::filter()  masks tidyterra::filter(), stats::filter()
+✖ dplyr::lag()     masks stats::lag()
+ℹ Use the conflicted package (&lt;http://conflicted.r-lib.org/&gt;) to force all conflicts to become errors</code></pre>
+</div>
+<details open="">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">"scripts/utilities/download_utils.R"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<section id="checking-data-allignment-and-choosing-variables" class="level3">
+<h3 class="anchored" data-anchor-id="checking-data-allignment-and-choosing-variables">Checking Data, Allignment, and Choosing Variables</h3>
+<p>Let’s download everything in our folder</p>
+<div class="cell">
+<details open="">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>file_list <span class="ot">&lt;-</span> <span class="fu">drive_ls</span>(<span class="fu">drive_get</span>(<span class="fu">as_id</span>(<span class="st">"https://drive.google.com/drive/u/1/folders/1PwfUX2hnJlbnqBe3qvl33tFBImtNFTuR"</span>)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stderr">
+<pre><code>! Using an auto-discovered, cached token.</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>  To suppress this message, modify your code or options to clearly consent to
+  the use of a cached token.</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>  See gargle's "Non-interactive auth" vignette for more details:</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>  &lt;https://gargle.r-lib.org/articles/non-interactive-auth.html&gt;</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>ℹ The googledrive package is using a cached token for
+  'mattwilliamson@boisestate.edu'.</code></pre>
+</div>
+<details open="">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>file_list <span class="sc">%&gt;%</span> </span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(id, name) <span class="sc">%&gt;%</span></span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>  purrr<span class="sc">::</span><span class="fu">pmap</span>(<span class="cf">function</span>(id, name) {</span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">gdrive_folder_download</span>(<span class="fu">list</span>(<span class="at">id =</span> id, <span class="at">name =</span> name),</span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a>                           <span class="at">dstfldr =</span> <span class="st">"inclass09"</span>)</span>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a>  })</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stderr">
+<pre><code>File downloaded:</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>• 'paReadings.csv' &lt;id: 184wxWw1DQrllUAFUnXtR0TSMYVqWUJ_G&gt;</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Saved locally as:</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>• 'data/original/inclass09/paReadings.csv'</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>File downloaded:</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>• 'pa_pt_locations.shx' &lt;id: 14rFc7Hxgxl6QfuhfYtRDvNE6TOYUnho4&gt;</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Saved locally as:</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>• 'data/original/inclass09/pa.shx'</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>File downloaded:</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>• 'pa_pt_locations.shp' &lt;id: 15zHbHjWhcuxT0sgOuElDAh1QgOYEbjZN&gt;</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Saved locally as:</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>• 'data/original/inclass09/pa.shp'</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>File downloaded:</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>• 'pa_pt_locations.dbf' &lt;id: 13yZY6gkyd7GT7MVL5vOwI8xMcPCCZrTs&gt;</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Saved locally as:</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>• 'data/original/inclass09/pa.dbf'</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>File downloaded:</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>• 'pa_pt_locations.prj' &lt;id: 1yC1NjbbrbWAMiiJjcTobzfg252ah-pek&gt;</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Saved locally as:</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>• 'data/original/inclass09/pa.prj'</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>File downloaded:</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>• 'pa_censors_loc.csv' &lt;id: 13ZPu8E96ERWdUNlwQ5MB_vXrPCqvzxj_&gt;</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Saved locally as:</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>• 'data/original/inclass09/pa.csv'</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>File downloaded:</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>• 'wildfire_hazard_agg.tif' &lt;id: 135PvMlKu17i7tZcrF7XiWxzrzaX-aCLn&gt;</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Saved locally as:</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>• 'data/original/inclass09/wildfire.tif'</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>File downloaded:</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>• 'cejst_nw.shx' &lt;id: 1IXDayQ35MwCfq1UtuDHCtf5iNYq5VUqu&gt;</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Saved locally as:</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>• 'data/original/inclass09/cejst.shx'</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>File downloaded:</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>• 'cejst_nw.dbf' &lt;id: 1PgCOsZsVEOhxQs2Dpz21MNz0kMb32amB&gt;</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Saved locally as:</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>• 'data/original/inclass09/cejst.dbf'</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>File downloaded:</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>• 'cejst_nw.shp' &lt;id: 1ZeL_683mTTWdCDjQ4dY6oJsxyVZtQT6O&gt;</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Saved locally as:</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>• 'data/original/inclass09/cejst.shp'</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>File downloaded:</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>• 'cejst_nw.prj' &lt;id: 1r7OHK1DHhoEMBToiM2FmuK5xmEzWSdrc&gt;</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Saved locally as:</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>• 'data/original/inclass09/cejst.prj'</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[[1]]
+[1] "data/original/inclass09/paReadings.csv"
+
+[[2]]
+[1] "data/original/inclass09/pa.shx"
+
+[[3]]
+[1] "data/original/inclass09/pa.shp"
+
+[[4]]
+[1] "data/original/inclass09/pa.dbf"
+
+[[5]]
+[1] "data/original/inclass09/pa.prj"
+
+[[6]]
+[1] "data/original/inclass09/pa.csv"
+
+[[7]]
+[1] "data/original/inclass09/wildfire.tif"
+
+[[8]]
+[1] "data/original/inclass09/cejst.shx"
+
+[[9]]
+[1] "data/original/inclass09/cejst.dbf"
+
+[[10]]
+[1] "data/original/inclass09/cejst.shp"
+
+[[11]]
+[1] "data/original/inclass09/cejst.prj"</code></pre>
+</div>
+</div>
+<p>Let’s load our spatial data and see what we’ve got! We’ll start by checking the CRS for each of the datasets.</p>
+<div class="cell">
+<details open="">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb66"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb66-1"><a href="#cb66-1" aria-hidden="true" tabindex="-1"></a>cejst_shp <span class="ot">&lt;-</span> <span class="fu">read_sf</span>(<span class="st">"data/original/inclass09/cejst.shp"</span>)</span>
+<span id="cb66-2"><a href="#cb66-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb66-3"><a href="#cb66-3" aria-hidden="true" tabindex="-1"></a>fire_prob <span class="ot">&lt;-</span> <span class="fu">rast</span>(<span class="st">"data/original/inclass09/wildfire.tif"</span>)</span>
+<span id="cb66-4"><a href="#cb66-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb66-5"><a href="#cb66-5" aria-hidden="true" tabindex="-1"></a>pa_locations_wgs <span class="ot">&lt;-</span> <span class="fu">read_sf</span>(<span class="st">"data/original/inclass09/pa.shp"</span>)</span>
+<span id="cb66-6"><a href="#cb66-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb66-7"><a href="#cb66-7" aria-hidden="true" tabindex="-1"></a><span class="fu">st_crs</span>(cejst_shp)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Coordinate Reference System:
+  User input: WGS 84 
+  wkt:
+GEOGCRS["WGS 84",
+    DATUM["World Geodetic System 1984",
+        ELLIPSOID["WGS 84",6378137,298.257223563,
+            LENGTHUNIT["metre",1]]],
+    PRIMEM["Greenwich",0,
+        ANGLEUNIT["degree",0.0174532925199433]],
+    CS[ellipsoidal,2],
+        AXIS["latitude",north,
+            ORDER[1],
+            ANGLEUNIT["degree",0.0174532925199433]],
+        AXIS["longitude",east,
+            ORDER[2],
+            ANGLEUNIT["degree",0.0174532925199433]],
+    ID["EPSG",4326]]</code></pre>
+</div>
+<details open="">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb68"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb68-1"><a href="#cb68-1" aria-hidden="true" tabindex="-1"></a><span class="fu">st_crs</span>(pa_locations_wgs)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Coordinate Reference System:
+  User input: NAD83 
+  wkt:
+GEOGCRS["NAD83",
+    DATUM["North American Datum 1983",
+        ELLIPSOID["GRS 1980",6378137,298.257222101,
+            LENGTHUNIT["metre",1]]],
+    PRIMEM["Greenwich",0,
+        ANGLEUNIT["degree",0.0174532925199433]],
+    CS[ellipsoidal,2],
+        AXIS["latitude",north,
+            ORDER[1],
+            ANGLEUNIT["degree",0.0174532925199433]],
+        AXIS["longitude",east,
+            ORDER[2],
+            ANGLEUNIT["degree",0.0174532925199433]],
+    ID["EPSG",4269]]</code></pre>
+</div>
+<details open="">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb70"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb70-1"><a href="#cb70-1" aria-hidden="true" tabindex="-1"></a><span class="fu">crs</span>(fire_prob)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "PROJCRS[\"unnamed\",\n    BASEGEOGCRS[\"NAD83\",\n        DATUM[\"North American Datum 1983\",\n            ELLIPSOID[\"GRS 1980\",6378137,298.257222101004,\n                LENGTHUNIT[\"metre\",1]]],\n        PRIMEM[\"Greenwich\",0,\n            ANGLEUNIT[\"degree\",0.0174532925199433]],\n        ID[\"EPSG\",4269]],\n    CONVERSION[\"Albers Equal Area\",\n        METHOD[\"Albers Equal Area\",\n            ID[\"EPSG\",9822]],\n        PARAMETER[\"Latitude of false origin\",23,\n            ANGLEUNIT[\"degree\",0.0174532925199433],\n            ID[\"EPSG\",8821]],\n        PARAMETER[\"Longitude of false origin\",-96,\n            ANGLEUNIT[\"degree\",0.0174532925199433],\n            ID[\"EPSG\",8822]],\n        PARAMETER[\"Latitude of 1st standard parallel\",29.5,\n            ANGLEUNIT[\"degree\",0.0174532925199433],\n            ID[\"EPSG\",8823]],\n        PARAMETER[\"Latitude of 2nd standard parallel\",45.5,\n            ANGLEUNIT[\"degree\",0.0174532925199433],\n            ID[\"EPSG\",8824]],\n        PARAMETER[\"Easting at false origin\",0,\n            LENGTHUNIT[\"metre\",1],\n            ID[\"EPSG\",8826]],\n        PARAMETER[\"Northing at false origin\",0,\n            LENGTHUNIT[\"metre\",1],\n            ID[\"EPSG\",8827]]],\n    CS[Cartesian,2],\n        AXIS[\"easting\",east,\n            ORDER[1],\n            LENGTHUNIT[\"metre\",1,\n                ID[\"EPSG\",9001]]],\n        AXIS[\"northing\",north,\n            ORDER[2],\n            LENGTHUNIT[\"metre\",1,\n                ID[\"EPSG\",9001]]]]"</code></pre>
+</div>
+</div>
+<p>You’ll notice that we’ve got some slightly different projections. Let’s fix that before we get too far down the road. We’ll reproject the shapefiles as that’s the safest way to get everything lined up.</p>
+<div class="cell">
+<details open="">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb72"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb72-1"><a href="#cb72-1" aria-hidden="true" tabindex="-1"></a>cejst_reproj <span class="ot">&lt;-</span> cejst_shp <span class="sc">%&gt;%</span> </span>
+<span id="cb72-2"><a href="#cb72-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">st_transform</span>(., <span class="at">crs =</span> <span class="fu">crs</span>(fire_prob))</span>
+<span id="cb72-3"><a href="#cb72-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb72-4"><a href="#cb72-4" aria-hidden="true" tabindex="-1"></a>pa_reproj <span class="ot">&lt;-</span> pa_locations_wgs <span class="sc">%&gt;%</span> </span>
+<span id="cb72-5"><a href="#cb72-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">st_transform</span>(., <span class="at">crs =</span> <span class="fu">crs</span>(fire_prob))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p>Ok, now that we’ve gotten all of our spatial data lined up. Let’s load the last dataset, which is the tabular data depicting all of the monthly sensor readings. Let’s take a <code>glimpse</code> at all of the data.</p>
+<div class="cell">
+<details open="">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb73"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb73-1"><a href="#cb73-1" aria-hidden="true" tabindex="-1"></a>pa_data <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"data/original/inclass09/paReadings.csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stderr">
+<pre><code>Rows: 5945 Columns: 6
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: ","
+dbl  (5): id, humidity, temperature, pm2.5_atm, pm2.5_cf_1
+dttm (1): time_stamp
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
+</div>
+<details open="">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb75"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb75-1"><a href="#cb75-1" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(cejst_reproj)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Rows: 2,590
+Columns: 124
+$ GEOID10    &lt;chr&gt; "16019970700", "16025970100", "16027021700", "16027020700",…
+$ SF         &lt;chr&gt; "Idaho", "Idaho", "Idaho", "Idaho", "Idaho", "Idaho", "Idah…
+$ CF         &lt;chr&gt; "Bonneville County", "Camas County", "Canyon County", "Cany…
+$ DF_PFS     &lt;dbl&gt; 0.44, 0.67, 0.74, 0.48, 0.75, 0.80, 0.76, 0.72, 0.76, 0.52,…
+$ AF_PFS     &lt;dbl&gt; 0.73, 0.65, 0.86, 0.63, 0.79, 0.88, 0.86, 0.79, 0.80, 0.65,…
+$ HDF_PFS    &lt;dbl&gt; 0.57, 0.79, 0.69, 0.47, 0.72, 0.55, 0.53, 0.71, 0.74, 0.45,…
+$ DSF_PFS    &lt;dbl&gt; 0.53, 0.00, 0.58, 0.46, 0.12, 0.79, 0.68, 0.27, 0.06, 0.11,…
+$ EBF_PFS    &lt;dbl&gt; 0.63, 0.95, 0.54, 0.30, 0.63, 0.81, 0.81, 0.44, 0.73, 0.52,…
+$ EALR_PFS   &lt;dbl&gt; 0.55, 0.83, 0.63, 0.63, 0.65, NA, 0.41, 0.64, 0.65, 0.64, 0…
+$ EBLR_PFS   &lt;dbl&gt; 0.19, 0.93, 0.05, 0.55, 0.09, 0.09, 0.08, 0.09, 0.47, 0.17,…
+$ EPLR_PFS   &lt;dbl&gt; 0.80, 0.99, 0.09, 0.10, 0.11, 0.31, 0.08, 0.09, 0.10, 0.09,…
+$ HBF_PFS    &lt;dbl&gt; 0.69, 0.60, 0.53, 0.07, 0.46, 0.86, 0.93, 0.22, 0.53, 0.28,…
+$ LLEF_PFS   &lt;dbl&gt; 0.73, 0.48, 0.67, 0.29, 0.51, 0.87, 0.62, 0.38, 0.32, 0.26,…
+$ LIF_PFS    &lt;dbl&gt; 0.54, 0.54, 0.53, 0.12, 0.48, 0.61, 0.88, 0.46, 0.41, 0.32,…
+$ LMI_PFS    &lt;dbl&gt; 0.81, 0.75, 0.61, 0.25, 0.55, 0.92, 0.95, 0.44, 0.42, 0.35,…
+$ PM25F_PFS  &lt;dbl&gt; 0.11, 0.00, 0.68, 0.63, 0.42, 0.66, 0.69, 0.57, 0.26, 0.40,…
+$ HSEF       &lt;dbl&gt; 0.14, 0.06, 0.20, 0.08, 0.21, 0.24, 0.31, 0.18, 0.18, 0.09,…
+$ P100_PFS   &lt;dbl&gt; 0.83, 0.63, 0.47, 0.24, 0.60, 0.72, 0.93, 0.27, 0.39, 0.33,…
+$ P200_I_PFS &lt;dbl&gt; 0.86, 0.71, 0.81, 0.39, 0.75, 0.98, 0.91, 0.49, 0.67, 0.54,…
+$ AJDLI_ET   &lt;int&gt; 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 0, 1, 1, 1, 0, 0, 1, 0, 0, 0,…
+$ LPF_PFS    &lt;dbl&gt; 0.75, 0.52, 0.26, 0.30, 0.65, 0.62, 0.63, 0.40, 0.51, 0.36,…
+$ KP_PFS     &lt;dbl&gt; 0.86, 0.21, 0.84, 0.21, 0.61, 0.57, 0.21, 0.43, 0.90, 0.21,…
+$ NPL_PFS    &lt;dbl&gt; 0.09, 0.05, 0.06, 0.08, 0.03, 0.08, 0.05, 0.05, 0.08, 0.10,…
+$ RMP_PFS    &lt;dbl&gt; 0.49, 0.01, 0.56, 0.84, 0.26, 0.96, 0.58, 0.36, 0.10, 0.20,…
+$ TSDF_PFS   &lt;dbl&gt; 0.22, 0.01, 0.14, 0.42, 0.07, 0.55, 0.13, 0.11, 0.10, 0.19,…
+$ TPF        &lt;dbl&gt; 5589, 1048, 11701, 3901, 5059, 4681, 3006, 7423, 6653, 4693…
+$ TF_PFS     &lt;dbl&gt; 0.55, 0.06, 0.54, 0.53, 0.28, 0.71, 0.83, 0.24, 0.05, 0.09,…
+$ UF_PFS     &lt;dbl&gt; 0.61, 0.16, 0.64, 0.33, 0.66, 0.86, 0.80, 0.45, 0.47, 0.61,…
+$ WF_PFS     &lt;dbl&gt; 0.03, 0.11, 0.98, 0.24, 0.79, 0.98, 0.98, 0.85, 0.42, 0.04,…
+$ UST_PFS    &lt;dbl&gt; 0.59, 0.02, 0.44, 0.31, 0.17, 0.73, 0.83, 0.13, 0.06, 0.18,…
+$ N_WTR      &lt;int&gt; 0, 0, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,…
+$ N_WKFC     &lt;int&gt; 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,…
+$ N_CLT      &lt;int&gt; 0, 1, 0, 0, 0, 1, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0,…
+$ N_ENY      &lt;int&gt; 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0,…
+$ N_TRN      &lt;int&gt; 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0,…
+$ N_HSG      &lt;int&gt; 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0,…
+$ N_PLN      &lt;int&gt; 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,…
+$ N_HLTH     &lt;int&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,…
+$ SN_C       &lt;int&gt; 0, 1, 1, 0, 0, 1, 1, 0, 1, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0,…
+$ SN_T       &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA,…
+$ DLI        &lt;int&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,…
+$ ALI        &lt;int&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,…
+$ PLHSE      &lt;int&gt; 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,…
+$ LMILHSE    &lt;int&gt; 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,…
+$ ULHSE      &lt;int&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,…
+$ EPL_ET     &lt;int&gt; 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,…
+$ EAL_ET     &lt;int&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0,…
+$ EBL_ET     &lt;int&gt; 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,…
+$ EB_ET      &lt;int&gt; 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0,…
+$ PM25_ET    &lt;int&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,…
+$ DS_ET      &lt;int&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,…
+$ TP_ET      &lt;int&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,…
+$ LPP_ET     &lt;int&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,…
+$ HRS_ET     &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA,…
+$ KP_ET      &lt;int&gt; 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0,…
+$ HB_ET      &lt;int&gt; 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,…
+$ RMP_ET     &lt;int&gt; 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,…
+$ NPL_ET     &lt;int&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,…
+$ TSDF_ET    &lt;int&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,…
+$ WD_ET      &lt;int&gt; 0, 0, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,…
+$ UST_ET     &lt;int&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,…
+$ DB_ET      &lt;int&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,…
+$ A_ET       &lt;int&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,…
+$ HD_ET      &lt;int&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,…
+$ LLE_ET     &lt;int&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,…
+$ UN_ET      &lt;int&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,…
+$ LISO_ET    &lt;int&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,…
+$ POV_ET     &lt;int&gt; 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,…
+$ LMI_ET     &lt;int&gt; 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,…
+$ IA_LMI_ET  &lt;int&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,…
+$ IA_UN_ET   &lt;int&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,…
+$ IA_POV_ET  &lt;int&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,…
+$ TC         &lt;dbl&gt; 0, 3, 1, 0, 0, 4, 5, 0, 2, 0, 0, 3, 0, 0, 0, 0, 1, 0, 0, 0,…
+$ CC         &lt;dbl&gt; 0, 2, 1, 0, 0, 4, 4, 0, 2, 0, 0, 3, 0, 0, 0, 0, 1, 0, 0, 0,…
+$ IAULHSE    &lt;int&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,…
+$ IAPLHSE    &lt;int&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,…
+$ IALMILHSE  &lt;int&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,…
+$ IALMIL_76  &lt;dbl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA,…
+$ IAPLHS_77  &lt;dbl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA,…
+$ IAULHS_78  &lt;dbl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA,…
+$ LHE        &lt;int&gt; 1, 0, 1, 0, 1, 1, 1, 1, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0,…
+$ IALHE      &lt;int&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,…
+$ IAHSEF     &lt;dbl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA,…
+$ N_CLT_EOMI &lt;int&gt; 0, 1, 0, 0, 0, 1, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0,…
+$ N_ENY_EOMI &lt;int&gt; 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0,…
+$ N_TRN_EOMI &lt;int&gt; 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0,…
+$ N_HSG_EOMI &lt;int&gt; 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0,…
+$ N_PLN_EOMI &lt;int&gt; 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,…
+$ N_WTR_EOMI &lt;int&gt; 0, 0, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,…
+$ N_HLTH_88  &lt;int&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,…
+$ N_WKFC_89  &lt;int&gt; 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,…
+$ FPL200S    &lt;int&gt; 1, 1, 1, 0, 1, 1, 1, 0, 1, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0,…
+$ N_WKFC_91  &lt;int&gt; 1, 0, 1, 0, 1, 1, 1, 1, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0,…
+$ TD_ET      &lt;int&gt; 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0,…
+$ TD_PFS     &lt;dbl&gt; 0.67, 0.78, 0.60, 0.63, 0.85, 0.35, 0.29, 0.94, 0.91, 0.78,…
+$ FLD_PFS    &lt;dbl&gt; 0.83, 0.88, 0.43, 0.24, 0.82, 0.93, 0.97, 0.44, 0.49, 0.71,…
+$ WFR_PFS    &lt;dbl&gt; 0.70, 0.82, 0.33, 0.87, 0.80, 0.33, 0.83, 0.77, 0.81, 0.78,…
+$ FLD_ET     &lt;int&gt; 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,…
+$ WFR_ET     &lt;int&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,…
+$ ADJ_ET     &lt;int&gt; 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,…
+$ IS_PFS     &lt;dbl&gt; 0.64, 0.16, 0.41, 0.53, 0.86, 0.46, 0.51, 0.70, 0.82, 0.86,…
+$ IS_ET      &lt;int&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 1,…
+$ AML_ET     &lt;int&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,…
+$ FUDS_RAW   &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, "0", NA, NA, NA, NA, NA, NA…
+$ FUDS_ET    &lt;int&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,…
+$ IMP_FLG    &lt;chr&gt; "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0",…
+$ DM_B       &lt;dbl&gt; 0.04, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.01,…
+$ DM_AI      &lt;dbl&gt; 0.01, 0.00, 0.01, 0.00, 0.00, 0.02, 0.01, 0.00, 0.00, 0.00,…
+$ DM_A       &lt;dbl&gt; 0.00, 0.00, 0.00, 0.01, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00,…
+$ DM_HI      &lt;dbl&gt; 0.00, 0.00, 0.01, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00,…
+$ DM_T       &lt;dbl&gt; 0.06, 0.00, 0.06, 0.04, 0.04, 0.06, 0.03, 0.01, 0.02, 0.00,…
+$ DM_W       &lt;dbl&gt; 0.62, 0.98, 0.59, 0.88, 0.71, 0.54, 0.40, 0.81, 0.83, 0.85,…
+$ DM_H       &lt;dbl&gt; 0.27, 0.01, 0.36, 0.07, 0.26, 0.42, 0.54, 0.16, 0.15, 0.11,…
+$ DM_O       &lt;dbl&gt; 0.11, 0.00, 0.15, 0.02, 0.11, 0.12, 0.27, 0.03, 0.02, 0.02,…
+$ AGE_10     &lt;dbl&gt; 0.18, 0.16, 0.15, 0.12, 0.12, 0.15, 0.17, 0.10, 0.10, 0.14,…
+$ AGE_MIDDLE &lt;dbl&gt; 0.71, 0.65, 0.71, 0.71, 0.68, 0.77, 0.72, 0.71, 0.76, 0.66,…
+$ AGE_OLD    &lt;dbl&gt; 0.10, 0.18, 0.13, 0.15, 0.18, 0.07, 0.09, 0.18, 0.12, 0.18,…
+$ TA_COU_116 &lt;dbl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA,…
+$ TA_COUNT_C &lt;dbl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA,…
+$ TA_PERC    &lt;dbl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA,…
+$ TA_PERC_FE &lt;dbl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA,…
+$ UI_EXP     &lt;chr&gt; "Nation", "Nation", "Nation", "Nation", "Nation", "Nation",…
+$ THRHLD     &lt;dbl&gt; 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21,…
+$ geometry   &lt;MULTIPOLYGON [m]&gt; MULTIPOLYGON (((-1283132 23..., MULTIPOLYGON (…</code></pre>
+</div>
+<details open="">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb77"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb77-1"><a href="#cb77-1" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(fire_prob)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>#  A SpatRaster 4,016 x 4,607 x 1 layer (18,501,712 cells)
+#  Resolution (x / y): (240 / 240)
+#  Projected CRS: +proj=aea +lat_0=23 +lon_0=-96 +lat_1=29.5 +lat_2=45.5 +x_0=0 +y_0=0 +datum=NAD83 +units=m +no_defs
+#  CRS projection units: meter &lt;m&gt;
+#  Extent (x / y) : ([-2,294,745 / -1,189,065] , [ 2,208,735 /  3,172,575])
+
+$ WHP_ID &lt;dbl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA,…</code></pre>
+</div>
+<details open="">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb79"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb79-1"><a href="#cb79-1" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(pa_reproj)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Rows: 3,314
+Columns: 7
+$ snsr_nd  &lt;int&gt; 453, 896, 912, 928, 966, 968, 263821, 263885, 264149, 2069, 2…
+$ dt_crtd  &lt;dbl&gt; 1478543047, 1484435197, 1484454581, 1484520206, 1485899209, 1…
+$ name     &lt;chr&gt; "LRAPA-Oakridge City Hall", "Chemainus Elementary", "The Hub"…
+$ lctn_ty  &lt;int&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0…
+$ uptime   &lt;int&gt; 3754, 30973, 35, 1386, 13074, 54629, 12691, 6755, 14896, 38, …
+$ date_up  &lt;date&gt; 2016-11-07, 2017-01-14, 2017-01-15, 2017-01-15, 2017-01-31, …
+$ geometry &lt;POINT [m]&gt; POINT (-2094836 2599650), POINT (-2027829 3178619), POI…</code></pre>
+</div>
+<details open="">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb81"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb81-1"><a href="#cb81-1" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(pa_data)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Rows: 5,945
+Columns: 6
+$ id          &lt;dbl&gt; 32539, 32539, 32539, 32539, 32539, 32539, 32539, 32539, 32…
+$ time_stamp  &lt;dttm&gt; 2024-10-01, 2024-01-01, 2025-04-01, 2023-10-01, 2024-04-0…
+$ humidity    &lt;dbl&gt; 49, 57, 43, 53, 44, 36, 58, 55, 55, 53, 41, 41, 38, 42, 38…
+$ temperature &lt;dbl&gt; 52, 36, 52, 53, 52, 71, 40, 40, 59, 34, 73, 67, 78, 62, 76…
+$ pm2.5_atm   &lt;dbl&gt; 5.2, 3.6, 7.9, 171.1, 2.0, 4.1, 627.6, 2.6, 9.6, 3.1, 14.8…
+$ pm2.5_cf_1  &lt;dbl&gt; 5.4, 3.8, 10.6, 253.3, 2.1, 4.1, 939.4, 2.7, 10.7, 3.3, 15…</code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="joining-by-a-shared-key" class="level2">
+<h2 class="anchored" data-anchor-id="joining-by-a-shared-key">Joining By a Shared Key</h2>
+<p>The fact that the sensor readings are tabular means we can exploit the <code>_join</code> family of functions from <code>dplyr</code> to combine our <code>pa_locations</code> with the <code>pa_data</code> set. We might be interested in getting any/all data from the tabular data that matches our location data. This is a <strong>left_join</strong>. For joins to work, the two datasets need to share <strong>at least 1 column</strong>. We call this column the <strong>key</strong>. If you don’t specify a <strong>key</strong> <code>dplyr</code> looks for any and all columns with the same name. This can be a bit unsafe, so I recommend always specifying the key.</p>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Tip
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>When working with spatial data in <code>R</code> it is important to remember 2 things: <strong>1) geometries are sticky (so they’ll stick around in any join where the spatial data is the first argument) and 2) we can join tabular data to spatial data, but not vice versa (so to join spatial data to a tabular dataset, you’ll need <code>st_drop_geometry</code> first)</strong></p>
+</div>
+</div>
+<p><img src="../images/left-join.gif" class="img-fluid"> One thing you’ll notice about our tabular dataset (<code>pa_data</code>) is that it’s in long format - each sensor has multiple rows corresponding to the date that the reading is from. For spatial data, it’s typically better to keep your data in wide format to avoid repeating geometries. Let’s summarize the data into annual values and then <code>pivot_</code> to make the data wide.</p>
+<div class="cell">
+<details open="">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb83"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb83-1"><a href="#cb83-1" aria-hidden="true" tabindex="-1"></a>pa_data_wide <span class="ot">&lt;-</span> pa_data <span class="sc">%&gt;%</span> </span>
+<span id="cb83-2"><a href="#cb83-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">year =</span> <span class="fu">year</span>(time_stamp)) <span class="sc">%&gt;%</span></span>
+<span id="cb83-3"><a href="#cb83-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(id, year, pm2<span class="fl">.5</span>_atm) <span class="sc">%&gt;%</span> </span>
+<span id="cb83-4"><a href="#cb83-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(year <span class="sc">&gt;</span> <span class="dv">2023</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb83-5"><a href="#cb83-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(id, year) <span class="sc">%&gt;%</span></span>
+<span id="cb83-6"><a href="#cb83-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="fu">across</span>(<span class="fu">where</span>(is.numeric),</span>
+<span id="cb83-7"><a href="#cb83-7" aria-hidden="true" tabindex="-1"></a>                   <span class="fu">list</span>(<span class="at">mean =</span> <span class="sc">~</span><span class="fu">mean</span>(.x, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb83-8"><a href="#cb83-8" aria-hidden="true" tabindex="-1"></a>                        <span class="at">median =</span> <span class="sc">~</span><span class="fu">median</span>(.x, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb83-9"><a href="#cb83-9" aria-hidden="true" tabindex="-1"></a>                        <span class="at">max =</span> <span class="sc">~</span><span class="fu">max</span>(.x, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)),</span>
+<span id="cb83-10"><a href="#cb83-10" aria-hidden="true" tabindex="-1"></a>                   <span class="at">.names =</span> <span class="st">"{.col}_{.fn}"</span>),</span>
+<span id="cb83-11"><a href="#cb83-11" aria-hidden="true" tabindex="-1"></a>            <span class="at">.groups =</span> <span class="st">"drop"</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb83-12"><a href="#cb83-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_wider</span>(</span>
+<span id="cb83-13"><a href="#cb83-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">names_from =</span> year,</span>
+<span id="cb83-14"><a href="#cb83-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">values_from =</span> <span class="fu">c</span>(pm2<span class="fl">.5</span>_atm_mean, pm2<span class="fl">.5</span>_atm_median, pm2<span class="fl">.5</span>_atm_max),</span>
+<span id="cb83-15"><a href="#cb83-15" aria-hidden="true" tabindex="-1"></a>    <span class="at">names_glue =</span> <span class="st">"{.value}_{year}"</span></span>
+<span id="cb83-16"><a href="#cb83-16" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p>We did a lot of stuff here. First, we calculated the year by exploiting the <code>year</code> function. Then we <code>selected</code> the columns we were interested in (pm2.5_atm) along with the year and id columns. We <code>filter</code>ed to get values after 2023 as those are datapoints after the creation of the wildfire hazard potential data. We then used <code>group_by</code> to get unique combinations of id and year in order to <code>summarize</code> the data into several statistics. Notice the use of embracing to give the columns their names. Finally, we used <code>pivot_wider</code> so that each sensor only has 1 row. You’ll notice that places where a sensor is missing data (because it wasn’t up for that year) get filled with <code>NAs</code> to ensure that the resulting data is rectangular.</p>
+<p>Now that we’ve got the data in a wide format, we can join it to our sensor locations.</p>
+<div class="cell">
+<details open="">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb84"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb84-1"><a href="#cb84-1" aria-hidden="true" tabindex="-1"></a>pa_data_lftjoin <span class="ot">&lt;-</span> pa_reproj <span class="sc">%&gt;%</span> </span>
+<span id="cb84-2"><a href="#cb84-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(., pa_data_wide, <span class="at">by =</span> <span class="fu">join_by</span>(snsr_nd <span class="sc">==</span> id))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p>We used <code>join_by</code> to tell <code>dplyr</code> which columns it should look to for our <strong>key</strong>. You’ll notice if you inspect the data that any sensor whose data doesn’t correspond to our date range is filled with <code>NA</code>. This is the nature of a <code>left_join</code> - it keeps everything in the dataframe on the left and only the data from the right that has a corresponding <strong>key</strong> value. Hence, there should be the same number of rows in <code>pa_data_lftjoin</code> as there are in the original <code>pa_reproj</code> data.</p>
+<p>If we wanted to only keep the data the data where there is both sensor data and sensor locations we can use an <code>inner_join</code> instead.</p>
+<p><img src="../images/inner-join.gif" class="img-fluid"></p>
+<div class="cell">
+<details open="">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb85"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb85-1"><a href="#cb85-1" aria-hidden="true" tabindex="-1"></a>pa_data_injoin <span class="ot">&lt;-</span> pa_reproj <span class="sc">%&gt;%</span> </span>
+<span id="cb85-2"><a href="#cb85-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">inner_join</span>(., pa_data_wide, <span class="at">by =</span> <span class="fu">join_by</span>(snsr_nd <span class="sc">==</span> id))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p>You’ll notice when you do this that <code>pa_data_injoin</code> contains the same number of rows as <code>pa_data_wide</code>. We would expect this because there have to be sensors in the <code>pa_reproj</code> data that correspond to the data (or we wouldn’t have the data). In practice this may not always be the case as the number of observations with a full record of data may differ substantially from the length of either of the two datasets. This makes <code>inner_join</code> a great way to identify which data overlap and if there are fewer than you’d expect, help you find the errors in one of the datasets.</p>
+<p>Let’s finish with a quick plot of the data in space.</p>
+<div class="cell">
+<details open="">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb86"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb86-1"><a href="#cb86-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>() <span class="sc">+</span></span>
+<span id="cb86-2"><a href="#cb86-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_sf</span>(pa_data_injoin, </span>
+<span id="cb86-3"><a href="#cb86-3" aria-hidden="true" tabindex="-1"></a>          <span class="at">mapping =</span> <span class="fu">aes</span>(<span class="at">color =</span> pm2<span class="fl">.5</span>_atm_max_2024)) <span class="sc">+</span></span>
+<span id="cb86-4"><a href="#cb86-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_color_viridis_b</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<p><img src="09-lesson_files/figure-html/pltpnts-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+</section>
+<section id="joining-by-a-shared-location" class="level2">
+<h2 class="anchored" data-anchor-id="joining-by-a-shared-location">Joining By a Shared Location</h2>
+<p>Sometimes we might not have a great <em>key</em> to link datasets, but we might now that the data overlap in space. In those cases, we can use a spatial join to exploit the idea that measurements coming from similar locations should share something (similar to a key that explicitly links two datasets). We’ll use the <code>cejst_reproj</code> data, but focus it by selecting only the <code>LIF_PFS</code> which describes the life expectancy based on the percentage of the national average.</p>
+<div class="cell">
+<details open="">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb87"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb87-1"><a href="#cb87-1" aria-hidden="true" tabindex="-1"></a>life_exp <span class="ot">&lt;-</span> cejst_reproj <span class="sc">%&gt;%</span> </span>
+<span id="cb87-2"><a href="#cb87-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(LIF_PFS)</span>
+<span id="cb87-3"><a href="#cb87-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb87-4"><a href="#cb87-4" aria-hidden="true" tabindex="-1"></a>censor_life_exp <span class="ot">&lt;-</span> <span class="fu">st_join</span>(<span class="at">x =</span> pa_data_injoin, </span>
+<span id="cb87-5"><a href="#cb87-5" aria-hidden="true" tabindex="-1"></a>                           <span class="at">y =</span> life_exp,</span>
+<span id="cb87-6"><a href="#cb87-6" aria-hidden="true" tabindex="-1"></a>                           <span class="at">join =</span> st_within,</span>
+<span id="cb87-7"><a href="#cb87-7" aria-hidden="true" tabindex="-1"></a>                           <span class="at">left =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p>To use <code>st_join</code> you need to tell <code>R</code> a few things. First, you need to tell it what the <code>join</code> should be based on. The parameter we give to the <code>join</code> argument is actually a function known as a binary operator. We’ll talk about these more on Wednesday, but for now know that it is comparing the geometries of two objects. The other argument we need to provide is the <code>left</code> argument which specifies whether this is a <code>left_join</code> (<code>left=TRUE</code>) or an <code>inner_join</code> (<code>left=FALSE</code>). In this case, we’d want all of the sensors to remain in our dataset so we set <code>left</code> to <code>TRUE</code>. You’ll notice again that <code>NAs</code> show up for rows that don’t intersect measurements in the second dataset.</p>
+<p>We can add this info to our plot by adding a second aesthetic to our points. You’ll notice that you get a warning because ggplot is dropping observations with <code>NA</code> for our <code>size</code> variable.</p>
+<div class="cell">
+<details open="">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb88"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb88-1"><a href="#cb88-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>() <span class="sc">+</span></span>
+<span id="cb88-2"><a href="#cb88-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_sf</span>(censor_life_exp, </span>
+<span id="cb88-3"><a href="#cb88-3" aria-hidden="true" tabindex="-1"></a>          <span class="at">mapping =</span> <span class="fu">aes</span>(<span class="at">color =</span> pm2<span class="fl">.5</span>_atm_max_2024, <span class="at">size=</span>LIF_PFS)) <span class="sc">+</span></span>
+<span id="cb88-4"><a href="#cb88-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_color_viridis_b</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: Removed 7 rows containing missing values or values outside the scale range
+(`geom_sf()`).</code></pre>
+</div>
+<div class="cell-output-display">
+<p><img src="09-lesson_files/figure-html/pltboth-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+</section>
+<section id="generating-attributes-from-rasters" class="level2">
+<h2 class="anchored" data-anchor-id="generating-attributes-from-rasters">Generating Attributes From Rasters</h2>
+<p>This all works well when we’re sticking within vector and tabular data and the <code>tidyverse</code>, but what about rasters? One of the first things we have to do when determining how to assign raster values to vector datasets is to decide the spatial boundaries that we want to use to summarize the raster data. We could use <code>extract</code> to summarize directly to the point, or we can use <code>zonal</code> to summarize across a polygon boundary. We’ll use this function more in the next 2 class sessions, but I want to introduce it here. **To use <code>zonal</code>, you’ll have to convert your <code>sf</code> object to a <code>SpatVector</code> object (using <code>vect</code>). The other thing to note here is that I’ve set <code>as.polygons</code> to <code>TRUE</code> to make sure I get a spatial object (setting it to <code>FALSE</code> returns a matrix ordered by the order of polygons in the dataset). Once I’ve done that, I can convert the <code>SpatVector</code> object back to an <code>sf</code> object (with <code>st_as_sf</code>) and then use a spatial join like before!!</p>
+<div class="cell">
+<details open="">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb90"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb90-1"><a href="#cb90-1" aria-hidden="true" tabindex="-1"></a>fire_extract_mean <span class="ot">&lt;-</span> terra<span class="sc">::</span><span class="fu">zonal</span>(fire_prob, </span>
+<span id="cb90-2"><a href="#cb90-2" aria-hidden="true" tabindex="-1"></a>                                  <span class="fu">vect</span>(cejst_reproj), </span>
+<span id="cb90-3"><a href="#cb90-3" aria-hidden="true" tabindex="-1"></a>                                  <span class="at">fun=</span><span class="st">"mean"</span>, </span>
+<span id="cb90-4"><a href="#cb90-4" aria-hidden="true" tabindex="-1"></a>                                  <span class="at">na.rm =</span> <span class="cn">TRUE</span>, </span>
+<span id="cb90-5"><a href="#cb90-5" aria-hidden="true" tabindex="-1"></a>                                  <span class="at">as.polygons =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb90-6"><a href="#cb90-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb90-7"><a href="#cb90-7" aria-hidden="true" tabindex="-1"></a>fire_sf <span class="ot">&lt;-</span> <span class="fu">st_as_sf</span>(fire_extract_mean)</span>
+<span id="cb90-8"><a href="#cb90-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb90-9"><a href="#cb90-9" aria-hidden="true" tabindex="-1"></a>sensor_join <span class="ot">&lt;-</span> <span class="fu">st_join</span>(<span class="at">x =</span> censor_life_exp, </span>
+<span id="cb90-10"><a href="#cb90-10" aria-hidden="true" tabindex="-1"></a>                           <span class="at">y =</span> fire_sf,</span>
+<span id="cb90-11"><a href="#cb90-11" aria-hidden="true" tabindex="-1"></a>                           <span class="at">join =</span> st_within,</span>
+<span id="cb90-12"><a href="#cb90-12" aria-hidden="true" tabindex="-1"></a>                           <span class="at">left =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
 
 
 <!-- -->
 
+</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
@@ -486,9 +1161,199 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
   }
 });
 </script><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Source Code</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">
-<div class="sourceCode" id="cb1" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="an">title:</span><span class="co"> "Generic Lesson"</span></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb91" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb91-1"><a href="#cb91-1" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb91-2"><a href="#cb91-2" aria-hidden="true" tabindex="-1"></a><span class="an">title:</span><span class="co"> "Building Attributes for our Smoke Dataset"</span></span>
+<span id="cb91-3"><a href="#cb91-3" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb91-4"><a href="#cb91-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb91-5"><a href="#cb91-5" aria-hidden="true" tabindex="-1"></a><span class="fu">## The Setup</span></span>
+<span id="cb91-6"><a href="#cb91-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb91-7"><a href="#cb91-7" aria-hidden="true" tabindex="-1"></a>You've now used the PurpleAir data a few times. A fairly obvious question seems to be how does an area's particulate matter (PM2.5) burden coincide with it's wildfire hazard. Similarly, how does the PM2.5 burden coincide with life expectancy. We'll use our raster of wildfire hazard probability, our vector dataset of Climate and Environmental Justice, and the sensor data themselves to begin building a dataset that would allow us to explore this question.</span>
+<span id="cb91-8"><a href="#cb91-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb91-9"><a href="#cb91-9" aria-hidden="true" tabindex="-1"></a><span class="fu">## Getting Started</span></span>
+<span id="cb91-10"><a href="#cb91-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb91-11"><a href="#cb91-11" aria-hidden="true" tabindex="-1"></a>I've added a few additional datasets to our Google Drive folder, so we'll need to load packages, download our data, and get a few things setup before we start building.</span>
+<span id="cb91-12"><a href="#cb91-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb91-13"><a href="#cb91-13" aria-hidden="true" tabindex="-1"></a>First, let's get our packages and our Google Drive download script loaded.</span>
+<span id="cb91-14"><a href="#cb91-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb91-15"><a href="#cb91-15" aria-hidden="true" tabindex="-1"></a><span class="in">```{r ldpkg}</span></span>
+<span id="cb91-16"><a href="#cb91-16" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(googledrive)</span>
+<span id="cb91-17"><a href="#cb91-17" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(terra)</span>
+<span id="cb91-18"><a href="#cb91-18" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(sf)</span>
+<span id="cb91-19"><a href="#cb91-19" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyterra)</span>
+<span id="cb91-20"><a href="#cb91-20" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb91-21"><a href="#cb91-21" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">"scripts/utilities/download_utils.R"</span>)</span>
+<span id="cb91-22"><a href="#cb91-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb91-23"><a href="#cb91-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb91-24"><a href="#cb91-24" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb91-25"><a href="#cb91-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb91-26"><a href="#cb91-26" aria-hidden="true" tabindex="-1"></a><span class="fu">### Checking Data, Allignment, and Choosing Variables</span></span>
+<span id="cb91-27"><a href="#cb91-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb91-28"><a href="#cb91-28" aria-hidden="true" tabindex="-1"></a>Let's download everything in our folder</span>
+<span id="cb91-29"><a href="#cb91-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb91-30"><a href="#cb91-30" aria-hidden="true" tabindex="-1"></a><span class="in">```{r dldata}</span></span>
+<span id="cb91-31"><a href="#cb91-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb91-32"><a href="#cb91-32" aria-hidden="true" tabindex="-1"></a>file_list <span class="ot">&lt;-</span> <span class="fu">drive_ls</span>(<span class="fu">drive_get</span>(<span class="fu">as_id</span>(<span class="st">"https://drive.google.com/drive/u/1/folders/1PwfUX2hnJlbnqBe3qvl33tFBImtNFTuR"</span>)))</span>
+<span id="cb91-33"><a href="#cb91-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb91-34"><a href="#cb91-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb91-35"><a href="#cb91-35" aria-hidden="true" tabindex="-1"></a>file_list <span class="sc">%&gt;%</span> </span>
+<span id="cb91-36"><a href="#cb91-36" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(id, name) <span class="sc">%&gt;%</span></span>
+<span id="cb91-37"><a href="#cb91-37" aria-hidden="true" tabindex="-1"></a>  purrr<span class="sc">::</span><span class="fu">pmap</span>(<span class="cf">function</span>(id, name) {</span>
+<span id="cb91-38"><a href="#cb91-38" aria-hidden="true" tabindex="-1"></a>    <span class="fu">gdrive_folder_download</span>(<span class="fu">list</span>(<span class="at">id =</span> id, <span class="at">name =</span> name),</span>
+<span id="cb91-39"><a href="#cb91-39" aria-hidden="true" tabindex="-1"></a>                           <span class="at">dstfldr =</span> <span class="st">"inclass09"</span>)</span>
+<span id="cb91-40"><a href="#cb91-40" aria-hidden="true" tabindex="-1"></a>  })</span>
+<span id="cb91-41"><a href="#cb91-41" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb91-42"><a href="#cb91-42" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb91-43"><a href="#cb91-43" aria-hidden="true" tabindex="-1"></a>Let's load our spatial data and see what we've got! We'll start by checking the CRS for each of the datasets. </span>
+<span id="cb91-44"><a href="#cb91-44" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb91-45"><a href="#cb91-45" aria-hidden="true" tabindex="-1"></a><span class="in">```{r lddata}</span></span>
+<span id="cb91-46"><a href="#cb91-46" aria-hidden="true" tabindex="-1"></a>cejst_shp <span class="ot">&lt;-</span> <span class="fu">read_sf</span>(<span class="st">"data/original/inclass09/cejst.shp"</span>)</span>
+<span id="cb91-47"><a href="#cb91-47" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb91-48"><a href="#cb91-48" aria-hidden="true" tabindex="-1"></a>fire_prob <span class="ot">&lt;-</span> <span class="fu">rast</span>(<span class="st">"data/original/inclass09/wildfire.tif"</span>)</span>
+<span id="cb91-49"><a href="#cb91-49" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb91-50"><a href="#cb91-50" aria-hidden="true" tabindex="-1"></a>pa_locations_wgs <span class="ot">&lt;-</span> <span class="fu">read_sf</span>(<span class="st">"data/original/inclass09/pa.shp"</span>)</span>
+<span id="cb91-51"><a href="#cb91-51" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb91-52"><a href="#cb91-52" aria-hidden="true" tabindex="-1"></a><span class="fu">st_crs</span>(cejst_shp)</span>
+<span id="cb91-53"><a href="#cb91-53" aria-hidden="true" tabindex="-1"></a><span class="fu">st_crs</span>(pa_locations_wgs)</span>
+<span id="cb91-54"><a href="#cb91-54" aria-hidden="true" tabindex="-1"></a><span class="fu">crs</span>(fire_prob)</span>
+<span id="cb91-55"><a href="#cb91-55" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb91-56"><a href="#cb91-56" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb91-57"><a href="#cb91-57" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb91-58"><a href="#cb91-58" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb91-59"><a href="#cb91-59" aria-hidden="true" tabindex="-1"></a>You'll notice that we've got some slightly different projections. Let's fix that before we get too far down the road. We'll reproject the shapefiles as that's the safest way to get everything lined up. </span>
+<span id="cb91-60"><a href="#cb91-60" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb91-61"><a href="#cb91-61" aria-hidden="true" tabindex="-1"></a><span class="in">```{r reproj}</span></span>
+<span id="cb91-62"><a href="#cb91-62" aria-hidden="true" tabindex="-1"></a>cejst_reproj <span class="ot">&lt;-</span> cejst_shp <span class="sc">%&gt;%</span> </span>
+<span id="cb91-63"><a href="#cb91-63" aria-hidden="true" tabindex="-1"></a>  <span class="fu">st_transform</span>(., <span class="at">crs =</span> <span class="fu">crs</span>(fire_prob))</span>
+<span id="cb91-64"><a href="#cb91-64" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb91-65"><a href="#cb91-65" aria-hidden="true" tabindex="-1"></a>pa_reproj <span class="ot">&lt;-</span> pa_locations_wgs <span class="sc">%&gt;%</span> </span>
+<span id="cb91-66"><a href="#cb91-66" aria-hidden="true" tabindex="-1"></a>  <span class="fu">st_transform</span>(., <span class="at">crs =</span> <span class="fu">crs</span>(fire_prob))</span>
+<span id="cb91-67"><a href="#cb91-67" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb91-68"><a href="#cb91-68" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb91-69"><a href="#cb91-69" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb91-70"><a href="#cb91-70" aria-hidden="true" tabindex="-1"></a>Ok, now that we've gotten all of our spatial data lined up. Let's load the last dataset, which is the tabular data depicting all of the monthly sensor readings. Let's take a <span class="in">`glimpse`</span> at all of the data.</span>
+<span id="cb91-71"><a href="#cb91-71" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb91-72"><a href="#cb91-72" aria-hidden="true" tabindex="-1"></a><span class="in">```{r ldtbl}</span></span>
+<span id="cb91-73"><a href="#cb91-73" aria-hidden="true" tabindex="-1"></a>pa_data <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"data/original/inclass09/paReadings.csv"</span>)</span>
+<span id="cb91-74"><a href="#cb91-74" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb91-75"><a href="#cb91-75" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(cejst_reproj)</span>
+<span id="cb91-76"><a href="#cb91-76" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(fire_prob)</span>
+<span id="cb91-77"><a href="#cb91-77" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(pa_reproj)</span>
+<span id="cb91-78"><a href="#cb91-78" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(pa_data)</span>
+<span id="cb91-79"><a href="#cb91-79" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb91-80"><a href="#cb91-80" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb91-81"><a href="#cb91-81" aria-hidden="true" tabindex="-1"></a><span class="fu">## Joining By a Shared Key</span></span>
+<span id="cb91-82"><a href="#cb91-82" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb91-83"><a href="#cb91-83" aria-hidden="true" tabindex="-1"></a>The fact that the sensor readings are tabular means we can exploit the <span class="in">`_join`</span> family of functions from <span class="in">`dplyr`</span> to combine our <span class="in">`pa_locations`</span> with the <span class="in">`pa_data`</span> set. We might be interested in getting any/all data from the tabular data that matches our location data. This is a **left_join**. For joins to work, the two datasets need to share **at least 1 column**. We call this column the **key**. If you don't specify a **key** <span class="in">`dplyr`</span> looks for any and all columns with the same name. This can be a bit unsafe, so I recommend always specifying the key.</span>
+<span id="cb91-84"><a href="#cb91-84" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb91-85"><a href="#cb91-85" aria-hidden="true" tabindex="-1"></a>::: {.callout-tip}</span>
+<span id="cb91-86"><a href="#cb91-86" aria-hidden="true" tabindex="-1"></a>When working with spatial data in <span class="in">`R`</span> it is important to remember 2 things: **1) geometries are sticky (so they'll stick around in any join where the spatial data is the first argument) and 2) we can join tabular data to spatial data, but not vice versa (so to join spatial data to a tabular dataset, you'll need `st_drop_geometry` first)** </span>
+<span id="cb91-87"><a href="#cb91-87" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb91-88"><a href="#cb91-88" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb91-89"><a href="#cb91-89" aria-hidden="true" tabindex="-1"></a><span class="al">![](/images/left-join.gif)</span></span>
+<span id="cb91-90"><a href="#cb91-90" aria-hidden="true" tabindex="-1"></a>One thing you'll notice about our tabular dataset (<span class="in">`pa_data`</span>) is that it's in long format - each sensor has multiple rows corresponding to the date that the reading is from. For spatial data, it's typically better to keep your data in wide format to avoid repeating geometries. Let's summarize the data into annual values and then <span class="in">`pivot_`</span> to make the data wide.</span>
+<span id="cb91-91"><a href="#cb91-91" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb91-92"><a href="#cb91-92" aria-hidden="true" tabindex="-1"></a><span class="in">```{r lftjn}</span></span>
+<span id="cb91-93"><a href="#cb91-93" aria-hidden="true" tabindex="-1"></a>pa_data_wide <span class="ot">&lt;-</span> pa_data <span class="sc">%&gt;%</span> </span>
+<span id="cb91-94"><a href="#cb91-94" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">year =</span> <span class="fu">year</span>(time_stamp)) <span class="sc">%&gt;%</span></span>
+<span id="cb91-95"><a href="#cb91-95" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(id, year, pm2<span class="fl">.5</span>_atm) <span class="sc">%&gt;%</span> </span>
+<span id="cb91-96"><a href="#cb91-96" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(year <span class="sc">&gt;</span> <span class="dv">2023</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb91-97"><a href="#cb91-97" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(id, year) <span class="sc">%&gt;%</span></span>
+<span id="cb91-98"><a href="#cb91-98" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="fu">across</span>(<span class="fu">where</span>(is.numeric),</span>
+<span id="cb91-99"><a href="#cb91-99" aria-hidden="true" tabindex="-1"></a>                   <span class="fu">list</span>(<span class="at">mean =</span> <span class="sc">~</span><span class="fu">mean</span>(.x, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb91-100"><a href="#cb91-100" aria-hidden="true" tabindex="-1"></a>                        <span class="at">median =</span> <span class="sc">~</span><span class="fu">median</span>(.x, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb91-101"><a href="#cb91-101" aria-hidden="true" tabindex="-1"></a>                        <span class="at">max =</span> <span class="sc">~</span><span class="fu">max</span>(.x, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)),</span>
+<span id="cb91-102"><a href="#cb91-102" aria-hidden="true" tabindex="-1"></a>                   <span class="at">.names =</span> <span class="st">"{.col}_{.fn}"</span>),</span>
+<span id="cb91-103"><a href="#cb91-103" aria-hidden="true" tabindex="-1"></a>            <span class="at">.groups =</span> <span class="st">"drop"</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb91-104"><a href="#cb91-104" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_wider</span>(</span>
+<span id="cb91-105"><a href="#cb91-105" aria-hidden="true" tabindex="-1"></a>    <span class="at">names_from =</span> year,</span>
+<span id="cb91-106"><a href="#cb91-106" aria-hidden="true" tabindex="-1"></a>    <span class="at">values_from =</span> <span class="fu">c</span>(pm2<span class="fl">.5</span>_atm_mean, pm2<span class="fl">.5</span>_atm_median, pm2<span class="fl">.5</span>_atm_max),</span>
+<span id="cb91-107"><a href="#cb91-107" aria-hidden="true" tabindex="-1"></a>    <span class="at">names_glue =</span> <span class="st">"{.value}_{year}"</span></span>
+<span id="cb91-108"><a href="#cb91-108" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb91-109"><a href="#cb91-109" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb91-110"><a href="#cb91-110" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb91-111"><a href="#cb91-111" aria-hidden="true" tabindex="-1"></a>We did a lot of stuff here. First, we calculated the year by exploiting the <span class="in">`year`</span> function. Then we <span class="in">`selected`</span> the columns we were interested in (pm2.5_atm) along with the year and id columns. We <span class="in">`filter`</span>ed to get values after 2023 as those are datapoints after the creation of the wildfire hazard potential data. We then used <span class="in">`group_by`</span> to get unique combinations of id and year in order to <span class="in">`summarize`</span> the data into several statistics. Notice the use of embracing to give the columns their names. Finally, we used <span class="in">`pivot_wider`</span> so that each sensor only has 1 row. You'll notice that places where a sensor is missing data (because it wasn't up for that year) get filled with <span class="in">`NAs`</span> to ensure that the resulting data is rectangular.</span>
+<span id="cb91-112"><a href="#cb91-112" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb91-113"><a href="#cb91-113" aria-hidden="true" tabindex="-1"></a>Now that we've got the data in a wide format, we can join it to our sensor locations.</span>
+<span id="cb91-114"><a href="#cb91-114" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb91-115"><a href="#cb91-115" aria-hidden="true" tabindex="-1"></a><span class="in">```{r tabjn}</span></span>
+<span id="cb91-116"><a href="#cb91-116" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb91-117"><a href="#cb91-117" aria-hidden="true" tabindex="-1"></a>pa_data_lftjoin <span class="ot">&lt;-</span> pa_reproj <span class="sc">%&gt;%</span> </span>
+<span id="cb91-118"><a href="#cb91-118" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(., pa_data_wide, <span class="at">by =</span> <span class="fu">join_by</span>(snsr_nd <span class="sc">==</span> id))</span>
+<span id="cb91-119"><a href="#cb91-119" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb91-120"><a href="#cb91-120" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb91-121"><a href="#cb91-121" aria-hidden="true" tabindex="-1"></a>We used <span class="in">`join_by`</span> to tell <span class="in">`dplyr`</span> which columns it should look to for our **key**. You'll notice if you inspect the data that any sensor whose data doesn't correspond to our date range is filled with `NA`. This is the nature of a `left_join` - it keeps everything in the dataframe on the left and only the data from the right that has a corresponding **key** value. Hence, there should be the same number of rows in <span class="in">`pa_data_lftjoin`</span> as there are in the original <span class="in">`pa_reproj`</span> data.</span>
+<span id="cb91-122"><a href="#cb91-122" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb91-123"><a href="#cb91-123" aria-hidden="true" tabindex="-1"></a>If we wanted to only keep the data the data where there is both sensor data and sensor locations we can use an <span class="in">`inner_join`</span> instead.</span>
+<span id="cb91-124"><a href="#cb91-124" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb91-125"><a href="#cb91-125" aria-hidden="true" tabindex="-1"></a><span class="al">![](/images/inner-join.gif)</span></span>
+<span id="cb91-126"><a href="#cb91-126" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb91-127"><a href="#cb91-127" aria-hidden="true" tabindex="-1"></a><span class="in">```{r injn}</span></span>
+<span id="cb91-128"><a href="#cb91-128" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb91-129"><a href="#cb91-129" aria-hidden="true" tabindex="-1"></a>pa_data_injoin <span class="ot">&lt;-</span> pa_reproj <span class="sc">%&gt;%</span> </span>
+<span id="cb91-130"><a href="#cb91-130" aria-hidden="true" tabindex="-1"></a>  <span class="fu">inner_join</span>(., pa_data_wide, <span class="at">by =</span> <span class="fu">join_by</span>(snsr_nd <span class="sc">==</span> id))</span>
+<span id="cb91-131"><a href="#cb91-131" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb91-132"><a href="#cb91-132" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb91-133"><a href="#cb91-133" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb91-134"><a href="#cb91-134" aria-hidden="true" tabindex="-1"></a>You'll notice when you do this that <span class="in">`pa_data_injoin`</span> contains the same number of rows as <span class="in">`pa_data_wide`</span>. We would expect this because there have to be sensors in the <span class="in">`pa_reproj`</span> data that correspond to the data (or we wouldn't have the data). In practice this may not always be the case as the number of observations with a full record of data may differ substantially from the length of either of the two datasets. This makes <span class="in">`inner_join`</span> a great way to identify which data overlap and if there are fewer than you'd expect, help you find the errors in one of the datasets.</span>
+<span id="cb91-135"><a href="#cb91-135" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb91-136"><a href="#cb91-136" aria-hidden="true" tabindex="-1"></a>Let's finish with a quick plot of the data in space.</span>
+<span id="cb91-137"><a href="#cb91-137" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb91-138"><a href="#cb91-138" aria-hidden="true" tabindex="-1"></a><span class="in">```{r pltpnts}</span></span>
+<span id="cb91-139"><a href="#cb91-139" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>() <span class="sc">+</span></span>
+<span id="cb91-140"><a href="#cb91-140" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_sf</span>(pa_data_injoin, </span>
+<span id="cb91-141"><a href="#cb91-141" aria-hidden="true" tabindex="-1"></a>          <span class="at">mapping =</span> <span class="fu">aes</span>(<span class="at">color =</span> pm2<span class="fl">.5</span>_atm_max_2024)) <span class="sc">+</span></span>
+<span id="cb91-142"><a href="#cb91-142" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_color_viridis_b</span>()</span>
+<span id="cb91-143"><a href="#cb91-143" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb91-144"><a href="#cb91-144" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb91-145"><a href="#cb91-145" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb91-146"><a href="#cb91-146" aria-hidden="true" tabindex="-1"></a><span class="fu">## Joining By a Shared Location</span></span>
+<span id="cb91-147"><a href="#cb91-147" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb91-148"><a href="#cb91-148" aria-hidden="true" tabindex="-1"></a>Sometimes we might not have a great *key* to link datasets, but we might now that the data overlap in space. In those cases, we can use a spatial join to exploit the idea that measurements coming from similar locations should share something (similar to a key that explicitly links two datasets). We'll use the <span class="in">`cejst_reproj`</span> data, but focus it by selecting only the <span class="in">`LIF_PFS`</span> which describes the life expectancy based on the percentage of the national average.</span>
+<span id="cb91-149"><a href="#cb91-149" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb91-150"><a href="#cb91-150" aria-hidden="true" tabindex="-1"></a><span class="in">```{r spjoin}</span></span>
+<span id="cb91-151"><a href="#cb91-151" aria-hidden="true" tabindex="-1"></a>life_exp <span class="ot">&lt;-</span> cejst_reproj <span class="sc">%&gt;%</span> </span>
+<span id="cb91-152"><a href="#cb91-152" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(LIF_PFS)</span>
+<span id="cb91-153"><a href="#cb91-153" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb91-154"><a href="#cb91-154" aria-hidden="true" tabindex="-1"></a>censor_life_exp <span class="ot">&lt;-</span> <span class="fu">st_join</span>(<span class="at">x =</span> pa_data_injoin, </span>
+<span id="cb91-155"><a href="#cb91-155" aria-hidden="true" tabindex="-1"></a>                           <span class="at">y =</span> life_exp,</span>
+<span id="cb91-156"><a href="#cb91-156" aria-hidden="true" tabindex="-1"></a>                           <span class="at">join =</span> st_within,</span>
+<span id="cb91-157"><a href="#cb91-157" aria-hidden="true" tabindex="-1"></a>                           <span class="at">left =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb91-158"><a href="#cb91-158" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb91-159"><a href="#cb91-159" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb91-160"><a href="#cb91-160" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb91-161"><a href="#cb91-161" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb91-162"><a href="#cb91-162" aria-hidden="true" tabindex="-1"></a>To use <span class="in">`st_join`</span> you need to tell <span class="in">`R`</span> a few things. First, you need to tell it what the <span class="in">`join`</span> should be based on. The parameter we give to the <span class="in">`join`</span> argument is actually a function known as a binary operator. We'll talk about these more on Wednesday, but for now know that it is comparing the geometries of two objects. The other argument we need to provide is the <span class="in">`left`</span> argument which specifies whether this is a <span class="in">`left_join`</span> (<span class="in">`left=TRUE`</span>) or an <span class="in">`inner_join`</span> (<span class="in">`left=FALSE`</span>). In this case, we'd want all of the sensors to remain in our dataset so we set <span class="in">`left`</span> to <span class="in">`TRUE`</span>. You'll notice again that <span class="in">`NAs`</span> show up for rows that don't intersect measurements in the second dataset.</span>
+<span id="cb91-163"><a href="#cb91-163" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb91-164"><a href="#cb91-164" aria-hidden="true" tabindex="-1"></a>We can add this info to our plot by adding a second aesthetic to our points. You'll notice that you get a warning because ggplot is dropping observations with <span class="in">`NA`</span> for our <span class="in">`size`</span> variable.</span>
+<span id="cb91-165"><a href="#cb91-165" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb91-166"><a href="#cb91-166" aria-hidden="true" tabindex="-1"></a><span class="in">```{r pltboth}</span></span>
+<span id="cb91-167"><a href="#cb91-167" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>() <span class="sc">+</span></span>
+<span id="cb91-168"><a href="#cb91-168" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_sf</span>(censor_life_exp, </span>
+<span id="cb91-169"><a href="#cb91-169" aria-hidden="true" tabindex="-1"></a>          <span class="at">mapping =</span> <span class="fu">aes</span>(<span class="at">color =</span> pm2<span class="fl">.5</span>_atm_max_2024, <span class="at">size=</span>LIF_PFS)) <span class="sc">+</span></span>
+<span id="cb91-170"><a href="#cb91-170" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_color_viridis_b</span>()</span>
+<span id="cb91-171"><a href="#cb91-171" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb91-172"><a href="#cb91-172" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb91-173"><a href="#cb91-173" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb91-174"><a href="#cb91-174" aria-hidden="true" tabindex="-1"></a><span class="fu">## Generating Attributes From Rasters</span></span>
+<span id="cb91-175"><a href="#cb91-175" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb91-176"><a href="#cb91-176" aria-hidden="true" tabindex="-1"></a>This all works well when we're sticking within vector and tabular data and the <span class="in">`tidyverse`</span>, but what about rasters? One of the first things we have to do when determining how to assign raster values to vector datasets is to decide the spatial boundaries that we want to use to summarize the raster data. We could use <span class="in">`extract`</span> to summarize directly to the point, or we can use <span class="in">`zonal`</span> to summarize across a polygon boundary. We'll use this function more in the next 2 class sessions, but I want to introduce it here. **To use <span class="in">`zonal`</span>, you'll have to convert your <span class="in">`sf`</span> object to a <span class="in">`SpatVector`</span> object (using <span class="in">`vect`</span>). The other thing to note here is that I've set <span class="in">`as.polygons`</span> to <span class="in">`TRUE`</span> to make sure I get a spatial object (setting it to <span class="in">`FALSE`</span> returns a matrix ordered by the order of polygons in the dataset). Once I've done that, I can convert the <span class="in">`SpatVector`</span> object back to an <span class="in">`sf`</span> object (with <span class="in">`st_as_sf`</span>) and then use a spatial join like before!!</span>
+<span id="cb91-177"><a href="#cb91-177" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb91-178"><a href="#cb91-178" aria-hidden="true" tabindex="-1"></a><span class="in">```{r extrst}</span></span>
+<span id="cb91-179"><a href="#cb91-179" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb91-180"><a href="#cb91-180" aria-hidden="true" tabindex="-1"></a>fire_extract_mean <span class="ot">&lt;-</span> terra<span class="sc">::</span><span class="fu">zonal</span>(fire_prob, </span>
+<span id="cb91-181"><a href="#cb91-181" aria-hidden="true" tabindex="-1"></a>                                  <span class="fu">vect</span>(cejst_reproj), </span>
+<span id="cb91-182"><a href="#cb91-182" aria-hidden="true" tabindex="-1"></a>                                  <span class="at">fun=</span><span class="st">"mean"</span>, </span>
+<span id="cb91-183"><a href="#cb91-183" aria-hidden="true" tabindex="-1"></a>                                  <span class="at">na.rm =</span> <span class="cn">TRUE</span>, </span>
+<span id="cb91-184"><a href="#cb91-184" aria-hidden="true" tabindex="-1"></a>                                  <span class="at">as.polygons =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb91-185"><a href="#cb91-185" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb91-186"><a href="#cb91-186" aria-hidden="true" tabindex="-1"></a>fire_sf <span class="ot">&lt;-</span> <span class="fu">st_as_sf</span>(fire_extract_mean)</span>
+<span id="cb91-187"><a href="#cb91-187" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb91-188"><a href="#cb91-188" aria-hidden="true" tabindex="-1"></a>sensor_join <span class="ot">&lt;-</span> <span class="fu">st_join</span>(<span class="at">x =</span> censor_life_exp, </span>
+<span id="cb91-189"><a href="#cb91-189" aria-hidden="true" tabindex="-1"></a>                           <span class="at">y =</span> fire_sf,</span>
+<span id="cb91-190"><a href="#cb91-190" aria-hidden="true" tabindex="-1"></a>                           <span class="at">join =</span> st_within,</span>
+<span id="cb91-191"><a href="#cb91-191" aria-hidden="true" tabindex="-1"></a>                           <span class="at">left =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb91-192"><a href="#cb91-192" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb91-193"><a href="#cb91-193" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div></div></div></div></div>
 </div> <!-- /content -->
 <footer class="footer">
