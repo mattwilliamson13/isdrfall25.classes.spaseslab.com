@@ -208,13 +208,14 @@ Ok, we've added some attributes to our sensor location. Now let's make an actual
 
 ```{r niceplot}
 
-state_boundaries <- tigris::states()
+state_boundaries <- tigris::states(progress_bar = FALSE)
 
 study_area <- state_boundaries %>% 
   filter(., STUSPS %in% c("ID", "OR", "WA")) %>% 
   st_transform(., crs(fire_prob))
 
-county_boundaries <- tigris::counties(state = c("ID", "OR", "WA")) %>% 
+county_boundaries <- tigris::counties(state = c("ID", "OR", "WA"),
+                                      progress_bar = FALSE) %>% 
   st_transform(., crs(fire_prob))
 
 ggplot() +
@@ -235,3 +236,5 @@ ggplot() +
 
 
 ```
+
+Here we've done a few things. First, we've used `tidyterra::geom_spatraster` to add the raster layer to our `ggplot` object. Second, we've added two shapefiles to help orient folks to the map. Notice that instead of using `aes` to map a variable name to a plot attribute, we've set them universally. This is useful when you want vector data to show up as one particular color or fill (or one symbol generally). Finally, we've added our actual sensor data with two different variables used for `aes`. If we're going to assign aesthetics, then we need to `ggplot` where to get the colors (or fills) for those aesthetics. We do that with the `scale_` calls at the end. 
