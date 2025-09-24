@@ -383,7 +383,11 @@ div.csl-indent {
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#readings" id="toc-readings" class="nav-link active" data-scroll-target="#readings">Readings</a></li>
+  <li><a href="#readings" id="toc-readings" class="nav-link active" data-scroll-target="#readings">Readings</a>
+  <ul class="collapse">
+  <li><a href="#bigger-picture" id="toc-bigger-picture" class="nav-link" data-scroll-target="#bigger-picture">Bigger Picture</a></li>
+  <li><a href="#technical-details" id="toc-technical-details" class="nav-link" data-scroll-target="#technical-details">Technical Details</a></li>
+  </ul></li>
   <li><a href="#objectives" id="toc-objectives" class="nav-link" data-scroll-target="#objectives">Objectives</a></li>
   <li><a href="#slides" id="toc-slides" class="nav-link" data-scroll-target="#slides">Slides</a></li>
   </ul>
@@ -403,11 +407,22 @@ div.csl-indent {
 <p>Last class you learned a bit about joining attributes across tabular and spatial data. As you hopefully have learned, simply getting the attributes lined up doesn’t avoid the potential fallacies involved in spatial analysis. Doing that requires not just aligning who the data belongs to (i.e., via the attributes), but also ensuring that the <em>scales of measurement align with our questions</em>. Today, we’ll learn some of the spatial operations available in <code>R</code> that help us change the <code>geometry</code> of our data to better align the scales of measurement with the scales of our question.</p>
 <section id="readings" class="level2">
 <h2 class="anchored" data-anchor-id="readings">Readings</h2>
+<section id="bigger-picture" class="level3">
+<h3 class="anchored" data-anchor-id="bigger-picture">Bigger Picture</h3>
 <ul>
 <li><p><i class="fas fa-external-link-square-alt"></i> <a href="https://www.jstor.org/stable/2087176?seq=3">Ecological Correlations and the Behavior of Individuals</a> by <span class="citation" data-cites="lovelace_geocomputation_2019">(<a href="#ref-lovelace_geocomputation_2019" role="doc-biblioref">Lovelace et al. 2019</a>)</span> by <span class="citation" data-cites="robinson1950">(<a href="#ref-robinson1950" role="doc-biblioref"><strong>robinson1950?</strong></a>)</span> is the foundational paper on the ecological fallacy. Note that the language here is pretty out-of-date, but many of the issues and challenges he raises remain important 70 years later.</p></li>
 <li><p><i class="fas fa-external-link-square-alt"></i> <a href="https://link.springer.com/article/10.1186/s12942-019-0170-3">Incorporating geography into a new generalized theoretical and statistical framework addressing the modifiable areal unit problem</a> by <span class="citation" data-cites="tuson2019">(<a href="#ref-tuson2019" role="doc-biblioref">Tuson et al. 2019</a>)</span> provides some really nice examples of how the MAUP can manifest in your data and why it matters.</p></li>
 <li><p><i class="fas fa-external-link-square-alt"></i> <a href="https://www.tandfonline.com/doi/full/10.1080/15230406.2015.1093431#abstract">Evaluating data stability in aggregation structures across spatial scales: revisiting the modifiable areal unit problem</a> by <span class="citation" data-cites="nelson2017evaluating">(<a href="#ref-nelson2017evaluating" role="doc-biblioref">Nelson and Brewer 2017</a>)</span> introduces statistical techniques for assessing the stability of analytic results across different levels of spatial aggregation.</p></li>
 </ul>
+</section>
+<section id="technical-details" class="level3">
+<h3 class="anchored" data-anchor-id="technical-details">Technical Details</h3>
+<ul>
+<li><p><i class="fas fa-external-link-square-alt"></i> The introductory vignette for the <a href="https://r-spatial.github.io/sf/articles/sf1.html"><code>sf</code> package</a> has a lot of useful info on <code>sf</code> objects and conventions.</p></li>
+<li><p><i class="fas fa-book"></i> <a href="https://geocompr.robinlovelace.net/spatial-class.html">Section 2.2</a> on Vector Data and <a href="https://geocompr.robinlovelace.net/geometric-operations.html">Sections 5.1-5.3</a> on Geographic Operations in Lovelace et al. <span class="citation" data-cites="lovelace_geocomputation_2019">(<a href="#ref-lovelace_geocomputation_2019" role="doc-biblioref">Lovelace et al. 2019</a>)</span> - for more details about vectors and geometric operations on vectors.</p></li>
+<li><p><i class="fas fa-external-link-square-alt"></i> <a href="https://r-spatial.org/book/03-Geometries.html">Section 3.1 and 3.2</a> of Spatial Data Science, a <code>bookdown</code> project by Edzer Pebesma and Roger Bivand (of the <code>sf</code>, <code>sp</code>, <code>rgeos</code>, and <code>rgdal</code> packages).</p></li>
+</ul>
+</section>
 </section>
 <section id="objectives" class="level2">
 <h2 class="anchored" data-anchor-id="objectives">Objectives</h2>
