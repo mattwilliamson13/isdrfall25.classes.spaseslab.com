@@ -1,4 +1,11 @@
 ---
-title: "Generic"
+title: "Using Spatial Operations to Change Geometries and Explore MAUP"
 ---
+
+1. Follow the steps in lesson 10 to download the data and create the functions
+
+2. Compare the correlation values between the `greedy` algorithm and the `random` algorithm. Share a plot illustrating the difference in the slack channel.
+
+3. Modify the `rsts` dataset using `disagg` to make a finer resolution raster, extract the new finer resolution raster to your polygons? Does using a finer resolution result in a correlation that is closer to the true value? Post your answer in the Slack Channel.
+
 

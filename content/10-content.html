@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Intro to Spatial Data in R - Introduction to Mapping Geographic Data</title>
+<title>Intro to Spatial Data in R - Spatial Data Operations</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -81,7 +81,7 @@ div.csl-indent {
 }</script>
 
 
-<meta property="og:title" content="Intro to Spatial Data in R - Introduction to Mapping Geographic Data">
+<meta property="og:title" content="Intro to Spatial Data in R - Spatial Data Operations">
 <meta property="og:description" content="">
 <meta property="og:image" content="https://isdrfall25.classes.spaseslab.com/files/social-image-f22.png">
 <meta property="og:site-name" content="Intro to Spatial Data in R">
@@ -393,29 +393,29 @@ div.csl-indent {
 <main class="content" id="quarto-document-content">
 
 <header id="title-block-header">
-<h1 class="title display-7">Introduction to Mapping Geographic Data</h1>
+<h1 class="title display-7">Spatial Data Operations</h1>
 
 <div class="date-block bg-content text-white p-2">
-  <p class="date">Content for Wednesday, September 20, 2023</p>
+  <p class="date">Content for Wednesday, September 24, 2025</p>
 </div>
 </header>
 
-<p>Now that we’re getting into actual operations on spatial data and beginning to actually modify the geometries and attributes of spatial data, it’ll be important for you to be able to visualize the results. At this point, we’ll be focusing on rough visualization as a way of “gut-checking” the outcomes of your code. We’ll focus more on creating informative, aesthetically pleasing, publication quality visualizations.</p>
+<p>Last class you learned a bit about joining attributes across tabular and spatial data. As you hopefully have learned, simply getting the attributes lined up doesn’t avoid the potential fallacies involved in spatial analysis. Doing that requires not just aligning who the data belongs to (i.e., via the attributes), but also ensuring that the <em>scales of measurement align with our questions</em>. Today, we’ll learn some of the spatial operations available in <code>R</code> that help us change the <code>geometry</code> of our data to better align the scales of measurement with the scales of our question.</p>
 <section id="readings" class="level2">
 <h2 class="anchored" data-anchor-id="readings">Readings</h2>
 <ul>
-<li><p><i class="fas fa-external-link-square-alt"></i> <a href="https://r-tmap.github.io/tmap-book/nutshell.html">Ch.3 Tmap in a nutshell</a> from “Elegant and informative maps with tmap” by Martijn Tennekes and Jakub Nowosad provides a great “quick start” for using the <code>tmap</code> package for visualizing spatial data.</p></li>
-<li><p><i class="fas fa-external-link-square-alt"></i> <a href="https://geocompr.robinlovelace.net/adv-map.html">Making maps with <code>R</code></a> by <span class="citation" data-cites="lovelace_geocomputation_2019">(<a href="#ref-lovelace_geocomputation_2019" role="doc-biblioref">Lovelace et al. 2019</a>)</span> introduces the <code>tmap</code> package for making nice maps with relatively minimal syntax.</p></li>
-<li><p><i class="fas fa-external-link-square-alt"></i> <a href="https://www.emilyburchfield.org/courses/eds/making_maps_in_r">Making maps in <code>R</code></a> by Emily Burchfield illustrates some quick mapping syntax with base <code>plot</code>, <code>ggplot</code>, and <code>tmap</code>. For now, just focus on the base <code>plot</code> and <code>tmap</code> sections as we’ll take on the ggplot stuff later in the course.</p></li>
+<li><p><i class="fas fa-external-link-square-alt"></i> <a href="https://www.jstor.org/stable/2087176?seq=3">Ecological Correlations and the Behavior of Individuals</a> by <span class="citation" data-cites="lovelace_geocomputation_2019">(<a href="#ref-lovelace_geocomputation_2019" role="doc-biblioref">Lovelace et al. 2019</a>)</span> by <span class="citation" data-cites="robinson1950">(<a href="#ref-robinson1950" role="doc-biblioref"><strong>robinson1950?</strong></a>)</span> is the foundational paper on the ecological fallacy. Note that the language here is pretty out-of-date, but many of the issues and challenges he raises remain important 70 years later.</p></li>
+<li><p><i class="fas fa-external-link-square-alt"></i> <a href="https://link.springer.com/article/10.1186/s12942-019-0170-3">Incorporating geography into a new generalized theoretical and statistical framework addressing the modifiable areal unit problem</a> by <span class="citation" data-cites="tuson2019">(<a href="#ref-tuson2019" role="doc-biblioref">Tuson et al. 2019</a>)</span> provides some really nice examples of how the MAUP can manifest in your data and why it matters.</p></li>
+<li><p><i class="fas fa-external-link-square-alt"></i> <a href="https://www.tandfonline.com/doi/full/10.1080/15230406.2015.1093431#abstract">Evaluating data stability in aggregation structures across spatial scales: revisiting the modifiable areal unit problem</a> by <span class="citation" data-cites="nelson2017evaluating">(<a href="#ref-nelson2017evaluating" role="doc-biblioref">Nelson and Brewer 2017</a>)</span> introduces statistical techniques for assessing the stability of analytic results across different levels of spatial aggregation.</p></li>
 </ul>
 </section>
 <section id="objectives" class="level2">
 <h2 class="anchored" data-anchor-id="objectives">Objectives</h2>
 <p>By the end of today, you should be able to:</p>
 <ul>
-<li><p>Describe the basic components of data visualization as a foundation for mapping syntax</p></li>
-<li><p>Understand layering in both base <code>plot</code> and <code>tmap</code></p></li>
-<li><p>Make basic plots of multiple spatial data objects</p></li>
+<li><p><strong>Describe</strong> the Modifiable Areal Unit Problem (MAUP).</p></li>
+<li><p><strong>Link</strong> the inferential problems of the ecological fallacy to the statistical problems of the MAUP.</p></li>
+<li><p><strong>Modify</strong> the geometries of spatial objects to explore the MAUP.</p></li>
 </ul>
 </section>
 <section id="slides" class="level2">
@@ -427,7 +427,6 @@ div.csl-indent {
 <div>
 <iframe class="slide-deck" src="../slides/10-slides.html"></iframe>
 </div>
-<p><a href="https://boisestate.hosted.panopto.com/Panopto/Pages/Viewer.aspx?id=fb4619f1-cd01-49ee-920e-b0830142b65f">Link to today’s Panopto Slides</a></p>
 
 
 
@@ -436,6 +435,12 @@ div.csl-indent {
 <div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" role="doc-bibliography"><h2 class="anchored quarto-appendix-heading">References</h2><div id="refs" class="references csl-bib-body hanging-indent" data-line-spacing="2" role="list">
 <div id="ref-lovelace_geocomputation_2019" class="csl-entry" role="listitem">
 Lovelace, R., J. Nowosad, and J. Muenchow. 2019. Geocomputation with <span>R</span>. <span>CRC Press</span>.
+</div>
+<div id="ref-nelson2017evaluating" class="csl-entry" role="listitem">
+Nelson, J. K., and C. A. Brewer. 2017. Evaluating data stability in aggregation structures across spatial scales: Revisiting the modifiable areal unit problem. Cartography and Geographic Information Science 44:35–50.
+</div>
+<div id="ref-tuson2019" class="csl-entry" role="listitem">
+Tuson, M., M. Yap, M. R. Kok, K. Murray, B. Turlach, and D. Whyatt. 2019. Incorporating geography into a new generalized theoretical and statistical framework addressing the modifiable areal unit problem. International journal of health geographics 18:6.
 </div>
 </div></section></div></main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
