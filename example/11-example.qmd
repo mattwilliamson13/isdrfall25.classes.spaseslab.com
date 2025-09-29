@@ -1,4 +1,9 @@
 ---
-title: "Generic"
+title: "More Fun with Geometries and Aggregation"
 ---
 
+1. Make a plot of the count of streetlights relative to population density based on the aggregated `sf` object
+
+2. Make a second scatterplot of the density values extracted from the density raster
+
+3. Use `focal` to smooth your density raster and create a second scatterplot of density extracted from 
