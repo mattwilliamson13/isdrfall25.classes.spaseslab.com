@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Intro to Spatial Data in R - Operations With Vector Data I</title>
+<title>Intro to Spatial Data in R - Geometry Data Operations and Troubleshooting</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -81,7 +81,7 @@ div.csl-indent {
 }</script>
 
 
-<meta property="og:title" content="Intro to Spatial Data in R - Operations With Vector Data I">
+<meta property="og:title" content="Intro to Spatial Data in R - Geometry Data Operations and Troubleshooting">
 <meta property="og:description" content="">
 <meta property="og:image" content="https://isdrfall25.classes.spaseslab.com/files/social-image-f22.png">
 <meta property="og:site-name" content="Intro to Spatial Data in R">
@@ -383,7 +383,11 @@ div.csl-indent {
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#readings" id="toc-readings" class="nav-link active" data-scroll-target="#readings">Readings</a></li>
+  <li><a href="#readings" id="toc-readings" class="nav-link active" data-scroll-target="#readings">Readings</a>
+  <ul class="collapse">
+  <li><a href="#bigger-picture" id="toc-bigger-picture" class="nav-link" data-scroll-target="#bigger-picture">Bigger Picture</a></li>
+  <li><a href="#technical-details" id="toc-technical-details" class="nav-link" data-scroll-target="#technical-details">Technical Details</a></li>
+  </ul></li>
   <li><a href="#objectives" id="toc-objectives" class="nav-link" data-scroll-target="#objectives">Objectives</a></li>
   <li><a href="#slides" id="toc-slides" class="nav-link" data-scroll-target="#slides">Slides</a></li>
   </ul>
@@ -393,30 +397,38 @@ div.csl-indent {
 <main class="content" id="quarto-document-content">
 
 <header id="title-block-header">
-<h1 class="title display-7">Operations With Vector Data I</h1>
+<h1 class="title display-7">Geometry Data Operations and Troubleshooting</h1>
 
 <div class="date-block bg-content text-white p-2">
-  <p class="date">Content for Monday, September 25, 2023</p>
+  <p class="date">Content for Monday, September 29, 2025</p>
 </div>
 </header>
 
-<p>Now that we’ve spent some time getting used to the syntax of the <code>sf</code> package and used it to assess some of the characteristics of vector objects (e.g., through <em>predicates</em> and <em>measures</em>), we’ll move into <em>transformations</em>. Transformations allow you to actually manipulate the geometries of a vector object (without necessarily changing the attributes themselves) and are a powerful tool for geting disparate data into some logical alignment. That said, transforming geometries can be complicated and often has some unanticipated consequences. That’s why we spent a little bit of time learning the mapping syntax as a means for you to be able to check yourself.</p>
+<p>This session and the next one will focus on giving you more practice with manipulating the geometries of <code>sf</code> objects, calculating new variables based on those geometries, and converting <code>sf</code> objects to raster objects for use in <code>terra</code>. The primary goal of these two sessions is to refine your ability to manipulate spatial data and combine them into the databases we’ll need for conducting the analyeses in Part 3 of this course.</p>
 <section id="readings" class="level2">
 <h2 class="anchored" data-anchor-id="readings">Readings</h2>
+<section id="bigger-picture" class="level3">
+<h3 class="anchored" data-anchor-id="bigger-picture">Bigger Picture</h3>
+<ul>
+<li><strong>None</strong> Use this as an opportunity to revisit (or read for the first time) some of the previous material that discusses inferential challenges with spatial data.</li>
+</ul>
+</section>
+<section id="technical-details" class="level3">
+<h3 class="anchored" data-anchor-id="technical-details">Technical Details</h3>
 <ul>
 <li><p><i class="fas fa-external-link-square-alt"></i> The introductory vignette for the <a href="https://r-spatial.github.io/sf/articles/sf1.html"><code>sf</code> package</a> has a lot of useful info on <code>sf</code> objects and conventions.</p></li>
 <li><p><i class="fas fa-book"></i> <a href="https://geocompr.robinlovelace.net/spatial-class.html">Section 2.2</a> on Vector Data and <a href="https://geocompr.robinlovelace.net/geometric-operations.html">Sections 5.1-5.3</a> on Geographic Operations in Lovelace et al. <span class="citation" data-cites="lovelace_geocomputation_2019">(<a href="#ref-lovelace_geocomputation_2019" role="doc-biblioref">Lovelace et al. 2019</a>)</span> - for more details about vectors and geometric operations on vectors.</p></li>
 <li><p><i class="fas fa-external-link-square-alt"></i> <a href="https://r-spatial.org/book/03-Geometries.html">Section 3.1 and 3.2</a> of Spatial Data Science, a <code>bookdown</code> project by Edzer Pebesma and Roger Bivand (of the <code>sf</code>, <code>sp</code>, <code>rgeos</code>, and <code>rgdal</code> packages).</p></li>
 </ul>
 </section>
+</section>
 <section id="objectives" class="level2">
 <h2 class="anchored" data-anchor-id="objectives">Objectives</h2>
 <p>By the end of today, you should be able to:</p>
 <ul>
-<li><p>Recognize the unary, binary, and n-ary transformers</p></li>
-<li><p>Articulate common uses for unary and binary transformers</p></li>
-<li><p>Use unary transformations to fix invalid geometries</p></li>
-<li><p>Implement common binary transformers to align and combine data</p></li>
+<li><p><strong>Use</strong> transformers to fix or modify geometries</p></li>
+<li><p><strong>Calculate</strong> new values using predicates.</p></li>
+<li><p><strong>Convert</strong> vector data to raster data</p></li>
 </ul>
 </section>
 <section id="slides" class="level2">
@@ -427,12 +439,6 @@ div.csl-indent {
 </p>
 <div>
 <iframe class="slide-deck" src="../slides/11-slides.html"></iframe>
-</div>
-<div class="quarto-figure quarto-figure-center">
-<figure class="figure">
-<p><img src="https://boisestate.hosted.panopto.com/Panopto/Pages/Viewer.aspx?id=e53c74b0-c0b4-48f8-b9d1-b0880140f55c" class="img-fluid figure-img"></p>
-<figcaption class="figure-caption">Panopto Vidoe Here</figcaption>
-</figure>
 </div>
 
 

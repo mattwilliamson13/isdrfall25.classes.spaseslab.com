@@ -84,6 +84,146 @@
     "text": "Footnotes\n\n\nSo seriously, just don’t cheat or plagiarize!↩︎"
   },
   {
+    "objectID": "slides/11-slides.html#the-vector-data-model",
+    "href": "slides/11-slides.html#the-vector-data-model",
+    "title": "Geometry Data Operations and Troubleshooting",
+    "section": "The Vector Data Model",
+    "text": "The Vector Data Model\n\n\n\n\nCoordinates define the Vertices (i.e., discrete x-y locations) that comprise the geometry\nThe organization of those vertices define the shape of the vector\nGeneral types: points, lines, polygons"
+  },
+  {
+    "objectID": "slides/11-slides.html#representing-vector-data-in-r",
+    "href": "slides/11-slides.html#representing-vector-data-in-r",
+    "title": "Geometry Data Operations and Troubleshooting",
+    "section": "Representing vector data in R",
+    "text": "Representing vector data in R\n\n\n\n\n\nFrom Lovelace et al.\n\n\n\n\n\nsf hierarchy reflects increasing complexity of geometry\n\nst_point, st_linestring, st_polygon for single features\nst_multi* for multiple features of the same type\nst_geometrycollection for multiple feature types\nst_as_sfc creates the geometry list column for many sf operations"
+  },
+  {
+    "objectID": "slides/11-slides.html#revisiting-simple-features",
+    "href": "slides/11-slides.html#revisiting-simple-features",
+    "title": "Geometry Data Operations and Troubleshooting",
+    "section": "Revisiting Simple Features",
+    "text": "Revisiting Simple Features\n\n\n\n\nThe sf package relies on a simple feature data model to represent geometries\n\nhierarchical\nstandardized methods\ncomplementary binary and human-readable encoding\n\n\n\n\n\n\n\n\n\n\n\n\ntype\ndescription\n\n\n\n\nPOINT\nsingle point geometry\n\n\nMULTIPOINT\nset of points\n\n\nLINESTRING\nsingle linestring (two or more points connected by straight lines)\n\n\nMULTILINESTRING\nset of linestrings\n\n\nPOLYGON\nexterior ring with zero or more inner rings, denoting holes\n\n\nMULTIPOLYGON\nset of polygons\n\n\nGEOMETRYCOLLECTION\nset of the geometries above"
+  },
+  {
+    "objectID": "slides/11-slides.html#standaridized-methods",
+    "href": "slides/11-slides.html#standaridized-methods",
+    "title": "Geometry Data Operations and Troubleshooting",
+    "section": "Standaridized Methods",
+    "text": "Standaridized Methods\n\nWe can categorize sf operations based on what they return and/or how many geometries they accept as input.\n\n\n\n\n\nOutput Categories\n\nPredicates: evaluate a logical statement asserting that a property is TRUE\nMeasures: return a numeric value with units based on the units of the CRS\nTransformations: create new geometries based on input geometries.\n\n\n\n\n\n\nInput Geometries\n\nUnary: operate on a single geometry at a time (meaning that if you have a MULTI* object the function works on each geometry individually)\nBinary: operate on pairs of geometries\nn-ary: operate on sets of geometries"
+  },
+  {
+    "objectID": "slides/11-slides.html#common-problems-with-vector-data",
+    "href": "slides/11-slides.html#common-problems-with-vector-data",
+    "title": "Geometry Data Operations and Troubleshooting",
+    "section": "Common Problems with Vector Data",
+    "text": "Common Problems with Vector Data\n\n\n\n\nVectors and scale\nSlivers and overlaps\nUndershoots and overshoots\nSelf-intersections and rings\n\n\n\n\n\n\nTopology Errors - Saylor Acad.\n\n\n\n\n\nWe’ll use st_is_valid() (a predicate) to check this, but fixing can be tricky"
+  },
+  {
+    "objectID": "slides/11-slides.html#fixing-problematic-topology",
+    "href": "slides/11-slides.html#fixing-problematic-topology",
+    "title": "Geometry Data Operations and Troubleshooting",
+    "section": "Fixing Problematic Topology",
+    "text": "Fixing Problematic Topology\n\nst_make_valid() (a transformer) for simple cases\nst_buffer (also a transformer) with dist=0"
+  },
+  {
+    "objectID": "slides/11-slides.html#fixing-geometries",
+    "href": "slides/11-slides.html#fixing-geometries",
+    "title": "Geometry Data Operations and Troubleshooting",
+    "section": "Fixing geometries",
+    "text": "Fixing geometries\n\nWhen all(st_is_valid(your.shapefile)) returns FALSE\n\n\n\n\n\nst_make_valid has two methods:\n\noriginal converts rings into noded lines and extracts polygons\nstructured makes rings valid first then merges/subtracts from existing polgyons\n\n\n\n\n\n```{r}\nlibrary(sf)\nx = st_sfc(st_polygon(list(rbind(c(0,0),c(0.5,0),c(0.5,0.5),c(0.5,0),c(1,0),c(1,1),c(0,1),c(0,0)))))\nst_is_valid(x)\n```\n\n[1] FALSE"
+  },
+  {
+    "objectID": "slides/11-slides.html#fixing-geometries-with-st_make_valid",
+    "href": "slides/11-slides.html#fixing-geometries-with-st_make_valid",
+    "title": "Geometry Data Operations and Troubleshooting",
+    "section": "Fixing geometries with st_make_valid",
+    "text": "Fixing geometries with st_make_valid\n\n\n\n\n\n\n\n\n\n```{r}\ny &lt;- x %&gt;% st_make_valid()\nst_is_valid(y)\n```\n\n[1] TRUE"
+  },
+  {
+    "objectID": "slides/11-slides.html#fixing-geometries-with-st_buffer",
+    "href": "slides/11-slides.html#fixing-geometries-with-st_buffer",
+    "title": "Geometry Data Operations and Troubleshooting",
+    "section": "Fixing Geometries with st_buffer",
+    "text": "Fixing Geometries with st_buffer\n\n\n-st_buffer enforces valid geometries as an output\n\nSetting a 0 distance buffer leaves most geometries unchanged\nNot all transformations do this\n\n\n\n```{r}\nz &lt;- x %&gt;% st_buffer(., dist=0)\n\nst_is_valid(z)\n```\n\n[1] TRUE"
+  },
+  {
+    "objectID": "slides/11-slides.html#revisiting-the-raster-data-model",
+    "href": "slides/11-slides.html#revisiting-the-raster-data-model",
+    "title": "Geometry Data Operations and Troubleshooting",
+    "section": "Revisiting the Raster Data Model",
+    "text": "Revisiting the Raster Data Model\n\n\n\n\nVector data describe the “exact” locations of features on a landscape (including a Cartesian landscape)\nRaster data represent spatially continuous phenomena (NA is possible)\nDepict the alignment of data on a regular lattice (often a square)\n\nOperations mimic those for matrix objects in R\n\nGeometry is implicit; the spatial extent and number of rows and columns define the cell size"
+  },
+  {
+    "objectID": "slides/11-slides.html#rasters-with-terra",
+    "href": "slides/11-slides.html#rasters-with-terra",
+    "title": "Geometry Data Operations and Troubleshooting",
+    "section": "Rasters with terra",
+    "text": "Rasters with terra\n\nsyntax is different for terra compared to sf\nRepresentation in Environment is also different\nCan break pipes, Be Explicit"
+  },
+  {
+    "objectID": "slides/11-slides.html#rasters-by-construction-1",
+    "href": "slides/11-slides.html#rasters-by-construction-1",
+    "title": "Geometry Data Operations and Troubleshooting",
+    "section": "Rasters by Construction",
+    "text": "Rasters by Construction\n\n\n\nmtx &lt;- matrix(1:16, nrow=4)\nmtx\n\n     [,1] [,2] [,3] [,4]\n[1,]    1    5    9   13\n[2,]    2    6   10   14\n[3,]    3    7   11   15\n[4,]    4    8   12   16\n\nrstr &lt;- terra::rast(mtx)\nrstr\n\nclass       : SpatRaster \ndimensions  : 4, 4, 1  (nrow, ncol, nlyr)\nresolution  : 1, 1  (x, y)\nextent      : 0, 4, 0, 4  (xmin, xmax, ymin, ymax)\ncoord. ref. :  \nsource(s)   : memory\nname        : lyr.1 \nmin value   :     1 \nmax value   :    16 \n\n\n\n\n\n\n\n\n\n\n\nNote: you must have raster or terra loaded for plot() to work on Rast* objects; otherwise you get Error in as.double(y) : cannot coerce type 'S4' to vector of type 'double'"
+  },
+  {
+    "objectID": "slides/11-slides.html#rasters-by-construction-origin",
+    "href": "slides/11-slides.html#rasters-by-construction-origin",
+    "title": "Geometry Data Operations and Troubleshooting",
+    "section": "Rasters by Construction: Origin",
+    "text": "Rasters by Construction: Origin\n\nOrigin defines the location of the intersection of the x and y axes\n\n\n\n\nr &lt;- rast(xmin=-4, xmax = 9.5, ncols=10)\nr[] &lt;- runif(ncell(r))\norigin(r)\n\n[1] 0.05 0.00\n\nr2 &lt;- r\norigin(r2) &lt;- c(2,2)"
+  },
+  {
+    "objectID": "slides/11-slides.html#rasters-by-construction-resolution",
+    "href": "slides/11-slides.html#rasters-by-construction-resolution",
+    "title": "Geometry Data Operations and Troubleshooting",
+    "section": "Rasters by Construction: Resolution",
+    "text": "Rasters by Construction: Resolution\n\n\nGeometry is implicit; the spatial extent and number of rows and columns define the cell size\nResolution (res) defines the length and width of an individual pixel\n\n\n\n\n\nr &lt;- rast(xmin=-4, xmax = 9.5, \n          ncols=10)\nres(r)\n\n[1] 1.35 1.00\n\nr2 &lt;- rast(xmin=-4, xmax = 5, \n           ncols=10)\nres(r2)\n\n[1] 0.9 1.0\n\n\n\n\nr &lt;- rast(xmin=-4, xmax = 9.5, \n          res=c(0.5,0.5))\nncol(r)\n\n[1] 27\n\nr2 &lt;- rast(xmin=-4, xmax = 9.5, \n           res=c(5,5))\nncol(r2)\n\n[1] 3"
+  },
+  {
+    "objectID": "slides/11-slides.html#extending-predicates",
+    "href": "slides/11-slides.html#extending-predicates",
+    "title": "Geometry Data Operations and Troubleshooting",
+    "section": "Extending predicates",
+    "text": "Extending predicates\n\nPredicates: evaluate a logical statement asserting that a property is TRUE\nterra does not follow the same hierarchy as sf so a little trickier"
+  },
+  {
+    "objectID": "slides/11-slides.html#unary-predicates-in-terra",
+    "href": "slides/11-slides.html#unary-predicates-in-terra",
+    "title": "Geometry Data Operations and Troubleshooting",
+    "section": "Unary predicates in terra",
+    "text": "Unary predicates in terra\n\nCan tell us qualities of a raster dataset\nMany similar operations for SpatVector class (note use of .)\n\n\n\n\n\n\n\n\n\npredicate\nasks…\n\n\n\n\nis.lonlat\nDoes the object have a longitude/latitude CRS?\n\n\ninMemory\nis the object stored in memory?\n\n\nis.factor\nAre there categorical layers?\n\n\nhasValues\nDo the cells have values?"
+  },
+  {
+    "objectID": "slides/11-slides.html#unary-predicates-in-terra-1",
+    "href": "slides/11-slides.html#unary-predicates-in-terra-1",
+    "title": "Geometry Data Operations and Troubleshooting",
+    "section": "Unary predicates in terra",
+    "text": "Unary predicates in terra\n\n\n\n\nglobal: tests if the raster covers all longitudes (from -180 to 180 degrees) such that the extreme columns are in fact adjacent\n\n\nr &lt;- rast()\nis.lonlat(r)\n\n[1] TRUE\n\nis.lonlat(r, global=TRUE)\n\n[1] TRUE\n\n\n\n\n\n\nperhaps: If TRUE and the crs is unknown, the method returns TRUE if the coordinates are plausible for longitude/latitude\n\n\ncrs(r) &lt;- \"\"\nis.lonlat(r)\n\n[1] NA\n\nis.lonlat(r, perhaps=TRUE, warn=FALSE)\n\n[1] TRUE\n\n\n\ncrs(r) &lt;- \"+proj=lcc +lat_1=48 +lat_2=33 +lon_0=-100 +ellps=WGS84\"\nis.lonlat(r)\n\n[1] FALSE"
+  },
+  {
+    "objectID": "slides/11-slides.html#binary-predicates-in-terra",
+    "href": "slides/11-slides.html#binary-predicates-in-terra",
+    "title": "Geometry Data Operations and Troubleshooting",
+    "section": "Binary predicates in terra",
+    "text": "Binary predicates in terra\n\nTake exactly 2 inputs, return 1 matrix of cell locs where value is TRUE\nadjacent: identifies cells adajcent to a set of raster cells"
+  },
+  {
+    "objectID": "slides/11-slides.html#unary-measures-in-terra",
+    "href": "slides/11-slides.html#unary-measures-in-terra",
+    "title": "Geometry Data Operations and Troubleshooting",
+    "section": "Unary measures in terra",
+    "text": "Unary measures in terra\n\nSlightly more flexible than sf\nOne result for each layer in a stack\n\n\n\n\n\n\n\n\n\nmeasure\nreturns\n\n\n\n\ncellSize\narea of individual cells\n\n\nexpanse\nsummed area of all cells\n\n\nvalues\nreturns all cell values\n\n\nncol\nnumber of columns\n\n\nnrow\nnumber of rows\n\n\nncell\nnumber of cells\n\n\nres\nresolution\n\n\next\nminimum and maximum of x and y coords\n\n\norigin\nthe orgin of a SpatRaster\n\n\ncrs\nthe coordinate reference system\n\n\ncats\ncategories of a categorical raster"
+  },
+  {
+    "objectID": "slides/11-slides.html#binary-measures-in-terra",
+    "href": "slides/11-slides.html#binary-measures-in-terra",
+    "title": "Geometry Data Operations and Troubleshooting",
+    "section": "Binary measures in terra",
+    "text": "Binary measures in terra\n\nReturns a matrix or SpatRaster describing the measure\n\n\n\n\n\n\n\n\n\nmeasure\nreturns\n\n\n\n\ndistance\nshortest distance to non-NA or vector object\n\n\ngridDistance\nshortest distance through adjacent grid cells\n\n\ncostDistance\nShortest distance considering cell-varying friction\n\n\ndirection\nazimuth to cells that are not NA"
+  },
+  {
     "objectID": "slides/09-slides.html#objectives",
     "href": "slides/09-slides.html#objectives",
     "title": "Attribute Data Operations",
@@ -1850,30 +1990,30 @@
   {
     "objectID": "content/11-content.html",
     "href": "content/11-content.html",
-    "title": "Operations With Vector Data I",
+    "title": "Geometry Data Operations and Troubleshooting",
     "section": "",
-    "text": "Now that we’ve spent some time getting used to the syntax of the sf package and used it to assess some of the characteristics of vector objects (e.g., through predicates and measures), we’ll move into transformations. Transformations allow you to actually manipulate the geometries of a vector object (without necessarily changing the attributes themselves) and are a powerful tool for geting disparate data into some logical alignment. That said, transforming geometries can be complicated and often has some unanticipated consequences. That’s why we spent a little bit of time learning the mapping syntax as a means for you to be able to check yourself."
+    "text": "This session and the next one will focus on giving you more practice with manipulating the geometries of sf objects, calculating new variables based on those geometries, and converting sf objects to raster objects for use in terra. The primary goal of these two sessions is to refine your ability to manipulate spatial data and combine them into the databases we’ll need for conducting the analyeses in Part 3 of this course."
   },
   {
     "objectID": "content/11-content.html#readings",
     "href": "content/11-content.html#readings",
-    "title": "Operations With Vector Data I",
+    "title": "Geometry Data Operations and Troubleshooting",
     "section": "Readings",
-    "text": "Readings\n\n The introductory vignette for the sf package has a lot of useful info on sf objects and conventions.\n Section 2.2 on Vector Data and Sections 5.1-5.3 on Geographic Operations in Lovelace et al. (Lovelace et al. 2019) - for more details about vectors and geometric operations on vectors.\n Section 3.1 and 3.2 of Spatial Data Science, a bookdown project by Edzer Pebesma and Roger Bivand (of the sf, sp, rgeos, and rgdal packages)."
+    "text": "Readings\n\nBigger Picture\n\nNone Use this as an opportunity to revisit (or read for the first time) some of the previous material that discusses inferential challenges with spatial data.\n\n\n\nTechnical Details\n\n The introductory vignette for the sf package has a lot of useful info on sf objects and conventions.\n Section 2.2 on Vector Data and Sections 5.1-5.3 on Geographic Operations in Lovelace et al. (Lovelace et al. 2019) - for more details about vectors and geometric operations on vectors.\n Section 3.1 and 3.2 of Spatial Data Science, a bookdown project by Edzer Pebesma and Roger Bivand (of the sf, sp, rgeos, and rgdal packages)."
   },
   {
     "objectID": "content/11-content.html#objectives",
     "href": "content/11-content.html#objectives",
-    "title": "Operations With Vector Data I",
+    "title": "Geometry Data Operations and Troubleshooting",
     "section": "Objectives",
-    "text": "Objectives\nBy the end of today, you should be able to:\n\nRecognize the unary, binary, and n-ary transformers\nArticulate common uses for unary and binary transformers\nUse unary transformations to fix invalid geometries\nImplement common binary transformers to align and combine data"
+    "text": "Objectives\nBy the end of today, you should be able to:\n\nUse transformers to fix or modify geometries\nCalculate new values using predicates.\nConvert vector data to raster data"
   },
   {
     "objectID": "content/11-content.html#slides",
     "href": "content/11-content.html#slides",
-    "title": "Operations With Vector Data I",
+    "title": "Geometry Data Operations and Troubleshooting",
     "section": "Slides",
-    "text": "Slides\nThe slides for today’s lesson are available online as an HTML file. Use the buttons below to open the slides either as an interactive website or as a static PDF (for printing or storing for later). You can also click in the slides below and navigate through them with your left and right arrow keys.\n\n View all slides in new window  Download PDF of all slides\n\n\n\n\n\n\n\nPanopto Vidoe Here"
+    "text": "Slides\nThe slides for today’s lesson are available online as an HTML file. Use the buttons below to open the slides either as an interactive website or as a static PDF (for printing or storing for later). You can also click in the slides below and navigate through them with your left and right arrow keys.\n\n View all slides in new window  Download PDF of all slides"
   },
   {
     "objectID": "content/13-content.html",
