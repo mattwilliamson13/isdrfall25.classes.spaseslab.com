@@ -63,6 +63,7 @@ ul.task-list li input[type="checkbox"] {
 
 
 <meta property="og:title" content="Intro to Spatial Data in R - Assignment 2: Fundamentals of Spatial Data">
+<meta property="og:description" content="">
 <meta property="og:image" content="https://isdrfall25.classes.spaseslab.com/files/social-image-f22.png">
 <meta property="og:site-name" content="Intro to Spatial Data in R">
 <meta property="og:locale" content="en_US">
@@ -302,7 +303,8 @@ ul.task-list li input[type="checkbox"] {
   <ul>
   <li><a href="#objectives" id="toc-objectives" class="nav-link active" data-scroll-target="#objectives">Objectives</a></li>
   <li><a href="#instructions" id="toc-instructions" class="nav-link" data-scroll-target="#instructions">Instructions</a></li>
-  <li><a href="#questions-to-answer" id="toc-questions-to-answer" class="nav-link" data-scroll-target="#questions-to-answer">Questions to Answer</a></li>
+  <li><a href="#submission" id="toc-submission" class="nav-link" data-scroll-target="#submission">Submission:</a></li>
+  <li><a href="#about-the-data" id="toc-about-the-data" class="nav-link" data-scroll-target="#about-the-data">About the Data</a></li>
   </ul>
 </nav>
     </div>
@@ -328,12 +330,37 @@ ul.task-list li input[type="checkbox"] {
 
 <section id="objectives" class="level3">
 <h3 class="anchored" data-anchor-id="objectives">Objectives</h3>
+<p>This assignment provides you a chance to practice your skills manipulating geometries and building custom functions for iteration. It also asks you to think a bit about why these choices matter, not just computationally, but with in the context of your analysis. By the end of the assignment, you should be able to:</p>
+<ol type="1">
+<li><p>Align raster and vector data to a common CRS and explain why the choice of CRS is important.</p></li>
+<li><p>Alter raster and vector geometries to explore and explain the Modifiable Areal Unit Problem (MAUP).</p></li>
+<li><p>Create new variables (fields) with raster and vector data by using spatial measures.</p></li>
+<li><p>Build introductory maps using <code>ggplot</code> to visualize your data</p></li>
+<li><p>Describe the Atomic and Ecological Fallacy and identify where they might occur in your own research.</p></li>
+</ol>
 </section>
 <section id="instructions" class="level3">
 <h3 class="anchored" data-anchor-id="instructions">Instructions</h3>
+<ol type="1">
+<li><p>Join <a href="https://classroom.github.com/a/m_9NV4Fo">the assignment repository</a>. In the <code>docs</code> folder, you’ll find the instructions and questions for the assignment (assignment02.qmd).</p></li>
+<li><p>Change the <code>yaml</code> header of the document to include your name and the course number as your affiliation</p></li>
+<li><p>Complete the tasks in the assignment making at least 3 commits</p></li>
+<li><p>Render the document and push your final html and quarto documents to your repository.</p></li>
+</ol>
 </section>
-<section id="questions-to-answer" class="level3">
-<h3 class="anchored" data-anchor-id="questions-to-answer">Questions to Answer</h3>
+<section id="submission" class="level3">
+<h3 class="anchored" data-anchor-id="submission">Submission:</h3>
+<p>Submit a single Quarto document (.qmd) with integrated code, outputs, and written responses. Your document should be written as if it were a lab notebook entry: clear enough that another researcher could reproduce your work without asking you questions. Your assignment will be considered complete if the following are true:</p>
+<ol type="1">
+<li><p>You have <em>at least 3 commits</em> in your version history (which I can access in GitHub classroom)</p></li>
+<li><p>You have pushed your final Quarto document</p></li>
+<li><p>You have pushed a rendered <code>.html</code> version of your document.</p></li>
+</ol>
+</section>
+<section id="about-the-data" class="level3">
+<h3 class="anchored" data-anchor-id="about-the-data">About the Data</h3>
+<p>Hospitals provide important services to a wide range of community members. That said, they aren’t placed in the world at random. Your task in this assignment is to combine geoprocessing with visualization to see if you can identify key elements that correlate with the location of hospitals and think about what that might mean for the folks with and without access to those hospitals.</p>
+<p>In our Google Drive folder, you will find three datasets. The first is a shapefile of Idaho hospital locations taken from the Open Street Maps database (accessed via the <code>osmdata</code> package). The second is a shapefile from the <a href="https://www.cdc.gov/places/measure-definitions/index.html">CDC Places dataset</a> depicting the modeled score for a variety of health indicators. You can access these by running our download function (you’ll need to use <code>source</code> to do this when you load your packages) for <a href="https://drive.google.com/drive/folders/1tCbftdEbYZrr8beht-vTOUQdTx9u4sCJ">this link</a>. The last is a tabular dataset for a set of Idaho demographics downloaded from the <code>tidycensus</code>package. The data includes household income, total population, population breakdown by race, and a demographic dissimilarity score based on the <code>mutual_local</code> function in the <a href="https://cran.r-project.org/web/packages/segregation/vignettes/segregation.html">segregation package</a>.</p>
 
 
 </section>

@@ -4,8 +4,40 @@ title: "Assignment 2: Fundamentals of Spatial Data"
 
 ### Objectives
 
+This assignment provides you a chance to practice your skills manipulating geometries and building custom functions for iteration. It also asks you to think a bit about why these choices matter, not just computationally, but with in the context of your analysis. By the end of the assignment, you should be able to:
+
+1. Align raster and vector data to a common CRS and explain why the choice of CRS is important.
+
+2. Alter raster and vector geometries to explore and explain the Modifiable Areal Unit Problem (MAUP).
+
+3. Create new variables (fields) with raster and vector data by using spatial measures.
+
+4. Build introductory maps using `ggplot` to visualize your data
+
+5. Describe the Atomic and Ecological Fallacy and identify where they might occur in your own research.
+
 ### Instructions
 
+1. Join [the assignment repository](https://classroom.github.com/a/m_9NV4Fo). In the `docs` folder, you'll find the instructions and questions for the assignment (assignment02.qmd). 
 
-### Questions to Answer
+2. Change the `yaml` header of the document to include your name and the course number as your affiliation
 
+3. Complete the tasks in the assignment making at least 3 commits
+
+4. Render the document and push your final html and quarto documents to your repository.
+
+### Submission:
+
+Submit a single Quarto document (.qmd) with integrated code, outputs, and written responses. Your document should be written as if it were a lab notebook entry: clear enough that another researcher could reproduce your work without asking you questions. Your assignment will be considered complete if the following are true:
+
+1. You have _at least 3 commits_ in your version history (which I can access in GitHub classroom)
+
+2. You have pushed your final Quarto document
+
+3. You have pushed a rendered `.html` version of your document.
+
+### About the Data
+
+Hospitals provide important services to a wide range of community members. That said, they aren't placed in the world at random. Your task in this assignment is to combine geoprocessing with visualization to see if you can identify key elements that correlate with the location of hospitals and think about what that might mean for the folks with and without access to those hospitals.
+
+In our Google Drive folder, you will find three datasets. The first is a shapefile of Idaho hospital locations taken from the Open Street Maps database (accessed via the `osmdata` package). The second is a shapefile from the [CDC Places dataset](https://www.cdc.gov/places/measure-definitions/index.html) depicting the modeled score for a variety of health indicators. You can access these by running our download function (you'll need to use `source` to do this when you load your packages) for [this link](https://drive.google.com/drive/folders/1tCbftdEbYZrr8beht-vTOUQdTx9u4sCJ). The last is a tabular dataset for a set of Idaho demographics downloaded from the `tidycensus`package. The data includes household income, total population, population breakdown by race, and a demographic dissimilarity score based on the `mutual_local` function in the [segregation package](https://cran.r-project.org/web/packages/segregation/vignettes/segregation.html).
