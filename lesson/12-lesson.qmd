@@ -1,4 +1,24 @@
 ---
-title: "Generic Lesson"
+title: "Building Spatial Databases"
 ---
 
+## Getting Started
+
+We're going to work through this in class and I'll update this once we're done. But to get started you'll need to download the data. Source your google download function and download the files.
+
+```{r}
+library(googledrive)
+source("scripts/utilities/download_utils.R")
+
+file_list <- drive_ls(drive_get(as_id("https://drive.google.com/drive/folders/1BY24_G3bp6gfbu3BaioZb_eS0nzCwq7a")))
+
+
+file_list %>% 
+  dplyr::select(id, name) %>%
+  purrr::pmap(function(id, name) {
+    gdrive_folder_download(list(id = id, name = name),
+                           dstfldr = "inclass11")
+  })
+
+
+```
