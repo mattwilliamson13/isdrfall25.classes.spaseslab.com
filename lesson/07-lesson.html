@@ -230,7 +230,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <pre><code>Warning: package 'sf' was built under R version 4.4.1</code></pre>
 </div>
 <div class="cell-output cell-output-stderr">
-<pre><code>Linking to GEOS 3.11.0, GDAL 3.5.3, PROJ 9.1.0; sf_use_s2() is TRUE</code></pre>
+<pre><code>Linking to GEOS 3.13.0, GDAL 3.8.5, PROJ 9.5.1; sf_use_s2() is TRUE</code></pre>
 </div>
 <details open="">
 <summary>Code</summary>
@@ -260,12 +260,21 @@ Attaching package: 'tidyterra'</code></pre>
 <pre><code>Warning: package 'ggplot2' was built under R version 4.4.1</code></pre>
 </div>
 <div class="cell-output cell-output-stderr">
+<pre><code>Warning: package 'tibble' was built under R version 4.4.1</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: package 'purrr' was built under R version 4.4.1</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: package 'stringr' was built under R version 4.4.1</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
 <pre><code>── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──
 ✔ dplyr     1.1.4     ✔ readr     2.1.5
-✔ forcats   1.0.0     ✔ stringr   1.5.1
-✔ ggplot2   3.5.2     ✔ tibble    3.2.1
+✔ forcats   1.0.0     ✔ stringr   1.5.2
+✔ ggplot2   3.5.2     ✔ tibble    3.3.0
 ✔ lubridate 1.9.3     ✔ tidyr     1.3.1
-✔ purrr     1.0.2     </code></pre>
+✔ purrr     1.1.0     </code></pre>
 </div>
 <div class="cell-output cell-output-stderr">
 <pre><code>── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
@@ -282,7 +291,7 @@ Attaching package: 'tidyterra'</code></pre>
 <div class="cell">
 <details open="">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">"scripts/utilities/download_utils.R"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">"scripts/utilities/download_utils.R"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
 <p>The first time you run the <code>gdrive_folder_download</code> function, you’ll be taken to a webpage where you need to give <code>googledrive</code> access to your Google Drive folders. Make sure you’ve checked all the boxes and click Allow. You should get a message saying that authorization is complete and that you can close the tab.</p>
@@ -290,7 +299,7 @@ Attaching package: 'tidyterra'</code></pre>
 <div class="cell">
 <details open="">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>file_list <span class="ot">&lt;-</span> <span class="fu">drive_ls</span>(<span class="fu">drive_get</span>(<span class="fu">as_id</span>(<span class="st">"https://drive.google.com/drive/u/1/folders/1PwfUX2hnJlbnqBe3qvl33tFBImtNFTuR"</span>)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>file_list <span class="ot">&lt;-</span> <span class="fu">drive_ls</span>(<span class="fu">drive_get</span>(<span class="fu">as_id</span>(<span class="st">"https://drive.google.com/drive/u/1/folders/1PwfUX2hnJlbnqBe3qvl33tFBImtNFTuR"</span>)))[<span class="sc">-</span><span class="dv">1</span>,]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stderr">
 <pre><code>! Using an auto-discovered, cached token.</code></pre>
@@ -311,12 +320,12 @@ Attaching package: 'tidyterra'</code></pre>
 </div>
 <details open="">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>file_list <span class="sc">%&gt;%</span> </span>
-<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(id, name) <span class="sc">%&gt;%</span></span>
-<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>  purrr<span class="sc">::</span><span class="fu">pmap</span>(<span class="cf">function</span>(id, name) {</span>
-<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">gdrive_folder_download</span>(<span class="fu">list</span>(<span class="at">id =</span> id, <span class="at">name =</span> name),</span>
-<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a>                           <span class="at">dstfldr =</span> <span class="st">"inclass07"</span>)</span>
-<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a>  })</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>file_list <span class="sc">%&gt;%</span> </span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(id, name) <span class="sc">%&gt;%</span></span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>  purrr<span class="sc">::</span><span class="fu">pmap</span>(<span class="cf">function</span>(id, name) {</span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">gdrive_folder_download</span>(<span class="fu">list</span>(<span class="at">id =</span> id, <span class="at">name =</span> name),</span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>                           <span class="at">dstfldr =</span> <span class="st">"inclass07"</span>)</span>
+<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a>  })</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stderr">
 <pre><code>File downloaded:</code></pre>
@@ -553,14 +562,14 @@ Attaching package: 'tidyterra'</code></pre>
 <div class="cell">
 <details open="">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb82"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb82-1"><a href="#cb82-1" aria-hidden="true" tabindex="-1"></a>cejst_shp <span class="ot">&lt;-</span> <span class="fu">read_sf</span>(<span class="st">"data/original/inclass07/cejst.shp"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb85"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb85-1"><a href="#cb85-1" aria-hidden="true" tabindex="-1"></a>cejst_shp <span class="ot">&lt;-</span> <span class="fu">read_sf</span>(<span class="st">"data/original/inclass07/cejst.shp"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
 <p>Now that you’ve got the data in, let’s take a look at it using <code>str</code> and <code>glimpse</code>.</p>
 <div class="cell">
 <details open="">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb83"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb83-1"><a href="#cb83-1" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(cejst_shp)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb86"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb86-1"><a href="#cb86-1" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(cejst_shp)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>sf [2,590 × 124] (S3: sf/tbl_df/tbl/data.frame)
@@ -676,7 +685,7 @@ Attaching package: 'tidyterra'</code></pre>
 <div class="cell">
 <details open="">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb85"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb85-1"><a href="#cb85-1" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(cejst_shp)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb88"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb88-1"><a href="#cb88-1" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(cejst_shp)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>Rows: 2,590
@@ -812,7 +821,7 @@ $ geometry   &lt;MULTIPOLYGON [°]&gt; MULTIPOLYGON (((-112.0208 4..., MULTIPOLY
 <div class="cell">
 <details open="">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb87"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb87-1"><a href="#cb87-1" aria-hidden="true" tabindex="-1"></a><span class="fu">all</span>(<span class="fu">st_is_valid</span>(cejst_shp))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb90"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb90-1"><a href="#cb90-1" aria-hidden="true" tabindex="-1"></a><span class="fu">all</span>(<span class="fu">st_is_valid</span>(cejst_shp))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] TRUE</code></pre>
@@ -823,7 +832,7 @@ $ geometry   &lt;MULTIPOLYGON [°]&gt; MULTIPOLYGON (((-112.0208 4..., MULTIPOLY
 <div class="cell">
 <details open="">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb89"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb89-1"><a href="#cb89-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(<span class="fu">st_geometry</span>(cejst_shp))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb92"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb92-1"><a href="#cb92-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(<span class="fu">st_geometry</span>(cejst_shp))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
 <p><img src="07-lesson_files/figure-html/unnamed-chunk-1-1.png" class="img-fluid" width="672"></p>
@@ -836,7 +845,7 @@ $ geometry   &lt;MULTIPOLYGON [°]&gt; MULTIPOLYGON (((-112.0208 4..., MULTIPOLY
 <div class="cell">
 <details open="">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb90"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb90-1"><a href="#cb90-1" aria-hidden="true" tabindex="-1"></a>fire_prob <span class="ot">&lt;-</span> <span class="fu">rast</span>(<span class="st">"data/original/inclass07/wildfire.tif"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb93"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb93-1"><a href="#cb93-1" aria-hidden="true" tabindex="-1"></a>fire_prob <span class="ot">&lt;-</span> <span class="fu">rast</span>(<span class="st">"data/original/inclass07/wildfire.tif"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
 <p>Importantly, <code>rast</code> does more than just read in data. You can look at <code>?rast</code> to learn some more of those functions.</p>
@@ -844,7 +853,7 @@ $ geometry   &lt;MULTIPOLYGON [°]&gt; MULTIPOLYGON (((-112.0208 4..., MULTIPOLY
 <div class="cell">
 <details open="">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb91"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb91-1"><a href="#cb91-1" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(fire_prob)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb94"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb94-1"><a href="#cb94-1" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(fire_prob)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>S4 class 'SpatRaster' [package "terra"]</code></pre>
@@ -855,7 +864,7 @@ $ geometry   &lt;MULTIPOLYGON [°]&gt; MULTIPOLYGON (((-112.0208 4..., MULTIPOLY
 <div class="cell">
 <details open="">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb93"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb93-1"><a href="#cb93-1" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(fire_prob)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb96"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb96-1"><a href="#cb96-1" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(fire_prob)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>#  A SpatRaster 4,016 x 4,607 x 1 layer (18,501,712 cells)
@@ -872,7 +881,7 @@ $ WHP_ID &lt;dbl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA,
 <div class="cell">
 <details open="">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb95"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb95-1"><a href="#cb95-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(fire_prob)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb98"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb98-1"><a href="#cb98-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(fire_prob)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
 <p><img src="07-lesson_files/figure-html/plotrst-1.png" class="img-fluid" width="672"></p>
@@ -1169,143 +1178,143 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
   }
 });
 </script><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Source Code</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">
-<div class="sourceCode" id="cb96" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb96-1"><a href="#cb96-1" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
-<span id="cb96-2"><a href="#cb96-2" aria-hidden="true" tabindex="-1"></a><span class="an">title:</span><span class="co"> "Data Models, Coordinates, and Geometries"</span></span>
-<span id="cb96-3"><a href="#cb96-3" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
-<span id="cb96-4"><a href="#cb96-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb96-5"><a href="#cb96-5" aria-hidden="true" tabindex="-1"></a><span class="fu">## Objectives</span></span>
-<span id="cb96-6"><a href="#cb96-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb96-7"><a href="#cb96-7" aria-hidden="true" tabindex="-1"></a>We're going to introduce the <span class="in">`sf`</span>, <span class="in">`terra`</span>, and <span class="in">`tidyterra`</span> packages today as a way of reading and inspecting spatial data. By the end of this lesson, you should be able to:</span>
-<span id="cb96-8"><a href="#cb96-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb96-9"><a href="#cb96-9" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>Read in spatial data from both the vector and raster data model.</span>
-<span id="cb96-10"><a href="#cb96-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb96-11"><a href="#cb96-11" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>Recognize the required components of a spatial data object</span>
-<span id="cb96-12"><a href="#cb96-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb96-13"><a href="#cb96-13" aria-hidden="true" tabindex="-1"></a><span class="ss">3. </span>Use <span class="in">`plot`</span> as a way to perform a quick check on your data.</span>
-<span id="cb96-14"><a href="#cb96-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb96-15"><a href="#cb96-15" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb96-16"><a href="#cb96-16" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb96-17"><a href="#cb96-17" aria-hidden="true" tabindex="-1"></a><span class="fu">## Getting Started</span></span>
-<span id="cb96-18"><a href="#cb96-18" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb96-19"><a href="#cb96-19" aria-hidden="true" tabindex="-1"></a>First, <span class="co">[</span><span class="ot">join the repository</span><span class="co">](https://classroom.github.com/a/XWzfBM16)</span>. Then, we'll have to <span class="co">[</span><span class="ot">get our credentials</span><span class="co">](https://rstudio.aws.boisestate.edu/)</span> and login to a <span class="co">[</span><span class="ot">new RStudio session</span><span class="co">](https://rstudio.apps.aws.boisestate.edu/)</span>. Finally, create a new, version control, git-based project (using the link to the repo you just created). </span>
-<span id="cb96-20"><a href="#cb96-20" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb96-21"><a href="#cb96-21" aria-hidden="true" tabindex="-1"></a>Once you've done that, you'll need to load your packages. We're going to add 3 new packages to the <span class="in">`tidyverse`</span>; the <span class="in">`sf`</span>, <span class="in">`terra`</span>, and <span class="in">`tidyterra`</span> packages. We'll also add the <span class="in">`googledrive`</span> so that we can use a custom function for downloading data from a shared Google Drive folder. Note that when you load these, the conflicts that the <span class="in">`tidyverse`</span> reports will be different. In order to overcome these conflicts, you'll need to use explicit calls like <span class="in">`package::function`</span> so <span class="in">`R`</span> knows which ones to use.</span>
-<span id="cb96-22"><a href="#cb96-22" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb96-23"><a href="#cb96-23" aria-hidden="true" tabindex="-1"></a><span class="in">```{r ldpkg}</span></span>
-<span id="cb96-24"><a href="#cb96-24" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(googledrive)</span>
-<span id="cb96-25"><a href="#cb96-25" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(sf)</span>
-<span id="cb96-26"><a href="#cb96-26" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(terra)</span>
-<span id="cb96-27"><a href="#cb96-27" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyterra)</span>
-<span id="cb96-28"><a href="#cb96-28" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
-<span id="cb96-29"><a href="#cb96-29" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb96-30"><a href="#cb96-30" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb96-31"><a href="#cb96-31" aria-hidden="true" tabindex="-1"></a><span class="fu">## Loading a Custom Function</span></span>
-<span id="cb96-32"><a href="#cb96-32" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb96-33"><a href="#cb96-33" aria-hidden="true" tabindex="-1"></a>You'll notice that your <span class="in">`scripts/utilities`</span> folder has a file called <span class="in">`download_utils.R`</span>. This file has some custom functions for downloading data directly from websites and from a Google Drive Folder. In order to give yourself access to these functions you'll need to <span class="in">`source`</span> them into your environment. You can do this by typing:</span>
-<span id="cb96-34"><a href="#cb96-34" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb96-35"><a href="#cb96-35" aria-hidden="true" tabindex="-1"></a><span class="in">```{r srcfun}</span></span>
-<span id="cb96-36"><a href="#cb96-36" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">"scripts/utilities/download_utils.R"</span>)</span>
-<span id="cb96-37"><a href="#cb96-37" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb96-38"><a href="#cb96-38" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb96-39"><a href="#cb96-39" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb96-40"><a href="#cb96-40" aria-hidden="true" tabindex="-1"></a>The first time you run the <span class="in">`gdrive_folder_download`</span> function, you'll be taken to a webpage where you need to give <span class="in">`googledrive`</span> access to your Google Drive folders. Make sure you've checked all the boxes and click Allow. You should get a message saying that authorization is complete and that you can close the tab.</span>
-<span id="cb96-41"><a href="#cb96-41" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb96-42"><a href="#cb96-42" aria-hidden="true" tabindex="-1"></a>Let's run it now and download the data to our <span class="in">`original`</span> folder. You'll see that it requires two arguments, <span class="in">`filelst`</span> and <span class="in">`dstfldr`</span>. The first is a list of files in the folder, the second is the name of the destination folder. In order to generate the <span class="in">`filelst`</span> we need to do some <span class="in">`googledrive`</span> gymnastics to generate a data frame of the unique google drive id's for each file. We then use <span class="in">`pmap`</span> to download each file. You'll notice that the destination path is printed to the screen.</span>
-<span id="cb96-43"><a href="#cb96-43" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb96-44"><a href="#cb96-44" aria-hidden="true" tabindex="-1"></a><span class="in">```{r dldata}</span></span>
-<span id="cb96-45"><a href="#cb96-45" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb96-46"><a href="#cb96-46" aria-hidden="true" tabindex="-1"></a>file_list <span class="ot">&lt;-</span> <span class="fu">drive_ls</span>(<span class="fu">drive_get</span>(<span class="fu">as_id</span>(<span class="st">"https://drive.google.com/drive/u/1/folders/1PwfUX2hnJlbnqBe3qvl33tFBImtNFTuR"</span>)))</span>
-<span id="cb96-47"><a href="#cb96-47" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb96-48"><a href="#cb96-48" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb96-49"><a href="#cb96-49" aria-hidden="true" tabindex="-1"></a>file_list <span class="sc">%&gt;%</span> </span>
-<span id="cb96-50"><a href="#cb96-50" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(id, name) <span class="sc">%&gt;%</span></span>
-<span id="cb96-51"><a href="#cb96-51" aria-hidden="true" tabindex="-1"></a>  purrr<span class="sc">::</span><span class="fu">pmap</span>(<span class="cf">function</span>(id, name) {</span>
-<span id="cb96-52"><a href="#cb96-52" aria-hidden="true" tabindex="-1"></a>    <span class="fu">gdrive_folder_download</span>(<span class="fu">list</span>(<span class="at">id =</span> id, <span class="at">name =</span> name),</span>
-<span id="cb96-53"><a href="#cb96-53" aria-hidden="true" tabindex="-1"></a>                           <span class="at">dstfldr =</span> <span class="st">"inclass07"</span>)</span>
-<span id="cb96-54"><a href="#cb96-54" aria-hidden="true" tabindex="-1"></a>  })</span>
-<span id="cb96-55"><a href="#cb96-55" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb96-56"><a href="#cb96-56" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb96-57"><a href="#cb96-57" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb96-58"><a href="#cb96-58" aria-hidden="true" tabindex="-1"></a><span class="fu">## Reading Data: Vectors</span></span>
-<span id="cb96-59"><a href="#cb96-59" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb96-60"><a href="#cb96-60" aria-hidden="true" tabindex="-1"></a>The vector data (called <span class="in">`cejst`</span>) comes from the Climate and Environmental Justice Screening Tool which is no longer available online. You'll notice that there are multiple files with the same name, but different extensions. We'll talk more about these different files in the next few weeks, but for now, just not that these files exist. </span>
-<span id="cb96-61"><a href="#cb96-61" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb96-62"><a href="#cb96-62" aria-hidden="true" tabindex="-1"></a>Because <span class="in">`sf`</span> adheres to the <span class="in">`tidyverse`</span> grammars, we can use a similar intuition to read in the data. You'll note that even though we have all these extra files, we only need the <span class="in">`.shp`</span> file. This is the shapefile which is the "overarching" file for all of the data.</span>
-<span id="cb96-63"><a href="#cb96-63" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb96-64"><a href="#cb96-64" aria-hidden="true" tabindex="-1"></a><span class="in">```{r readsf}</span></span>
-<span id="cb96-65"><a href="#cb96-65" aria-hidden="true" tabindex="-1"></a>cejst_shp <span class="ot">&lt;-</span> <span class="fu">read_sf</span>(<span class="st">"data/original/inclass07/cejst.shp"</span>)</span>
-<span id="cb96-66"><a href="#cb96-66" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb96-67"><a href="#cb96-67" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb96-68"><a href="#cb96-68" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb96-69"><a href="#cb96-69" aria-hidden="true" tabindex="-1"></a>Now that you've got the data in, let's take a look at it using <span class="in">`str`</span> and  <span class="in">`glimpse`</span>.</span>
-<span id="cb96-70"><a href="#cb96-70" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb96-71"><a href="#cb96-71" aria-hidden="true" tabindex="-1"></a><span class="in">```{r looksf}</span></span>
-<span id="cb96-72"><a href="#cb96-72" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(cejst_shp)</span>
-<span id="cb96-73"><a href="#cb96-73" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb96-74"><a href="#cb96-74" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb96-75"><a href="#cb96-75" aria-hidden="true" tabindex="-1"></a>You'll notice that this is a new data type:</span>
-<span id="cb96-76"><a href="#cb96-76" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb96-77"><a href="#cb96-77" aria-hidden="true" tabindex="-1"></a><span class="in">`sf [2,590 × 124] (S3: sf/tbl_df/tbl/data.frame)`</span></span>
-<span id="cb96-78"><a href="#cb96-78" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb96-79"><a href="#cb96-79" aria-hidden="true" tabindex="-1"></a>You can read this to yourself as "cejst_shp" is an <span class="in">`sf`</span> object with a <span class="in">`tbl_df`</span> combined with. it. (It's slightly more complicated than that, but this can give you an intuition). </span>
-<span id="cb96-80"><a href="#cb96-80" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb96-81"><a href="#cb96-81" aria-hidden="true" tabindex="-1"></a>Now let's look at the output of glimpse:</span>
-<span id="cb96-82"><a href="#cb96-82" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb96-83"><a href="#cb96-83" aria-hidden="true" tabindex="-1"></a><span class="in">```{r glimpsf}</span></span>
-<span id="cb96-84"><a href="#cb96-84" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(cejst_shp)</span>
-<span id="cb96-85"><a href="#cb96-85" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb96-86"><a href="#cb96-86" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb96-87"><a href="#cb96-87" aria-hidden="true" tabindex="-1"></a>The key addition here is the <span class="in">`geometry`</span> column. This is where the magic of <span class="in">`tibbles`</span> comes in - it's a <span class="in">`list`</span> column. These sorts of columns aren't allowed in <span class="in">`data.frames`</span> because they entail multiple (and potentially different) data types. They become critical for spatial data (and <span class="in">`sf`</span> objects) as they contain the coordinates for where the object need to go!</span>
-<span id="cb96-88"><a href="#cb96-88" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb96-89"><a href="#cb96-89" aria-hidden="true" tabindex="-1"></a>In the previous examples, you got used to checking the various columns for (in-)feasible values. You should still do this; however, the introduction of the <span class="in">`geometry`</span> column. **Identifying problematic `geometry` is key component of ensuring your data is valid.** Luckly, you can do this with:</span>
-<span id="cb96-90"><a href="#cb96-90" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb96-91"><a href="#cb96-91" aria-hidden="true" tabindex="-1"></a><span class="in">```{r validity}</span></span>
-<span id="cb96-92"><a href="#cb96-92" aria-hidden="true" tabindex="-1"></a><span class="fu">all</span>(<span class="fu">st_is_valid</span>(cejst_shp))</span>
-<span id="cb96-93"><a href="#cb96-93" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb96-94"><a href="#cb96-94" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb96-95"><a href="#cb96-95" aria-hidden="true" tabindex="-1"></a>Things look good for now! We'll talk more about what to do when this returns <span class="in">`FALSE`</span> in future classes.</span>
-<span id="cb96-96"><a href="#cb96-96" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb96-97"><a href="#cb96-97" aria-hidden="true" tabindex="-1"></a>One final check is to take a look at the data. We'll learn more about how to make fancy maps in the future, but for now, there's a quick check:</span>
-<span id="cb96-98"><a href="#cb96-98" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb96-101"><a href="#cb96-101" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb96-102"><a href="#cb96-102" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(<span class="fu">st_geometry</span>(cejst_shp))</span>
-<span id="cb96-103"><a href="#cb96-103" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb96-104"><a href="#cb96-104" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb96-105"><a href="#cb96-105" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb96-106"><a href="#cb96-106" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb96-107"><a href="#cb96-107" aria-hidden="true" tabindex="-1"></a><span class="fu">## Reading Data: Rasters</span></span>
-<span id="cb96-108"><a href="#cb96-108" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb96-109"><a href="#cb96-109" aria-hidden="true" tabindex="-1"></a>Let's switch gears a bit and run through same process with rasters. Unfortunately, the <span class="in">`terra`</span> package uses a different syntax. I'll do my best to highlight those difference as we go, but for now, let's focus on the <span class="in">`terra`</span> version of read.</span>
-<span id="cb96-110"><a href="#cb96-110" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb96-111"><a href="#cb96-111" aria-hidden="true" tabindex="-1"></a><span class="in">```{r loadrst}</span></span>
-<span id="cb96-112"><a href="#cb96-112" aria-hidden="true" tabindex="-1"></a>fire_prob <span class="ot">&lt;-</span> <span class="fu">rast</span>(<span class="st">"data/original/inclass07/wildfire.tif"</span>)</span>
-<span id="cb96-113"><a href="#cb96-113" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb96-114"><a href="#cb96-114" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb96-115"><a href="#cb96-115" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb96-116"><a href="#cb96-116" aria-hidden="true" tabindex="-1"></a>Importantly, <span class="in">`rast`</span> does more than just read in data. You can look at <span class="in">`?rast`</span> to learn some more of those functions.</span>
-<span id="cb96-117"><a href="#cb96-117" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb96-118"><a href="#cb96-118" aria-hidden="true" tabindex="-1"></a>Let's look at the data with <span class="in">`str`</span></span>
-<span id="cb96-119"><a href="#cb96-119" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb96-120"><a href="#cb96-120" aria-hidden="true" tabindex="-1"></a><span class="in">```{r insprst}</span></span>
-<span id="cb96-121"><a href="#cb96-121" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(fire_prob)</span>
-<span id="cb96-122"><a href="#cb96-122" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb96-123"><a href="#cb96-123" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb96-124"><a href="#cb96-124" aria-hidden="true" tabindex="-1"></a>You'll notice a much less verbose response that this is a <span class="in">`SpatRaster`</span> data class. We'll talk more about what this means in the next few weeks, but for now, just notice that this is a distinct class assigned to a very particular package. </span>
-<span id="cb96-125"><a href="#cb96-125" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb96-126"><a href="#cb96-126" aria-hidden="true" tabindex="-1"></a>What happens when you look at <span class="in">`glimpse`</span></span>
-<span id="cb96-127"><a href="#cb96-127" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb96-128"><a href="#cb96-128" aria-hidden="true" tabindex="-1"></a><span class="in">```{r rstglimp}</span></span>
-<span id="cb96-129"><a href="#cb96-129" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(fire_prob)</span>
-<span id="cb96-130"><a href="#cb96-130" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb96-131"><a href="#cb96-131" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb96-132"><a href="#cb96-132" aria-hidden="true" tabindex="-1"></a>You get a variety of additional information on the resolution, projection, and extent. What you don't get, however, is a geometry or any info about where each cell should be. This is because for <span class="in">`raster`</span> data, the geometry is **implicit** - if we know where the raster covers, and the cell size, then we know the rest of the information necessary to derie the geometry. The other thing you'll notice is that there's only 1 variable. This is again a function of the raster data type. Each layer can only contain information on one measurement and all of those measurements much be of the same data class. Rasters are essentially matrices where the rows are the x coordinates, the columns are the y coordinates, and the cell values are the measurement.</span>
-<span id="cb96-133"><a href="#cb96-133" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb96-134"><a href="#cb96-134" aria-hidden="true" tabindex="-1"></a>The last thing we might want to do is plot the raster to quickly make sure it looks like the thing we thought it would. The nice part about <span class="in">`terra`</span> is that there is a basic <span class="in">`plot`</span> function that you can use:</span>
-<span id="cb96-135"><a href="#cb96-135" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb96-136"><a href="#cb96-136" aria-hidden="true" tabindex="-1"></a><span class="in">```{r plotrst}</span></span>
-<span id="cb96-137"><a href="#cb96-137" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb96-138"><a href="#cb96-138" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(fire_prob)</span>
-<span id="cb96-139"><a href="#cb96-139" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<div class="sourceCode" id="cb99" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb99-1"><a href="#cb99-1" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb99-2"><a href="#cb99-2" aria-hidden="true" tabindex="-1"></a><span class="an">title:</span><span class="co"> "Data Models, Coordinates, and Geometries"</span></span>
+<span id="cb99-3"><a href="#cb99-3" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb99-4"><a href="#cb99-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb99-5"><a href="#cb99-5" aria-hidden="true" tabindex="-1"></a><span class="fu">## Objectives</span></span>
+<span id="cb99-6"><a href="#cb99-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb99-7"><a href="#cb99-7" aria-hidden="true" tabindex="-1"></a>We're going to introduce the <span class="in">`sf`</span>, <span class="in">`terra`</span>, and <span class="in">`tidyterra`</span> packages today as a way of reading and inspecting spatial data. By the end of this lesson, you should be able to:</span>
+<span id="cb99-8"><a href="#cb99-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb99-9"><a href="#cb99-9" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>Read in spatial data from both the vector and raster data model.</span>
+<span id="cb99-10"><a href="#cb99-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb99-11"><a href="#cb99-11" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>Recognize the required components of a spatial data object</span>
+<span id="cb99-12"><a href="#cb99-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb99-13"><a href="#cb99-13" aria-hidden="true" tabindex="-1"></a><span class="ss">3. </span>Use <span class="in">`plot`</span> as a way to perform a quick check on your data.</span>
+<span id="cb99-14"><a href="#cb99-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb99-15"><a href="#cb99-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb99-16"><a href="#cb99-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb99-17"><a href="#cb99-17" aria-hidden="true" tabindex="-1"></a><span class="fu">## Getting Started</span></span>
+<span id="cb99-18"><a href="#cb99-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb99-19"><a href="#cb99-19" aria-hidden="true" tabindex="-1"></a>First, <span class="co">[</span><span class="ot">join the repository</span><span class="co">](https://classroom.github.com/a/XWzfBM16)</span>. Then, we'll have to <span class="co">[</span><span class="ot">get our credentials</span><span class="co">](https://rstudio.aws.boisestate.edu/)</span> and login to a <span class="co">[</span><span class="ot">new RStudio session</span><span class="co">](https://rstudio.apps.aws.boisestate.edu/)</span>. Finally, create a new, version control, git-based project (using the link to the repo you just created). </span>
+<span id="cb99-20"><a href="#cb99-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb99-21"><a href="#cb99-21" aria-hidden="true" tabindex="-1"></a>Once you've done that, you'll need to load your packages. We're going to add 3 new packages to the <span class="in">`tidyverse`</span>; the <span class="in">`sf`</span>, <span class="in">`terra`</span>, and <span class="in">`tidyterra`</span> packages. We'll also add the <span class="in">`googledrive`</span> so that we can use a custom function for downloading data from a shared Google Drive folder. Note that when you load these, the conflicts that the <span class="in">`tidyverse`</span> reports will be different. In order to overcome these conflicts, you'll need to use explicit calls like <span class="in">`package::function`</span> so <span class="in">`R`</span> knows which ones to use.</span>
+<span id="cb99-22"><a href="#cb99-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb99-23"><a href="#cb99-23" aria-hidden="true" tabindex="-1"></a><span class="in">```{r ldpkg}</span></span>
+<span id="cb99-24"><a href="#cb99-24" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(googledrive)</span>
+<span id="cb99-25"><a href="#cb99-25" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(sf)</span>
+<span id="cb99-26"><a href="#cb99-26" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(terra)</span>
+<span id="cb99-27"><a href="#cb99-27" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyterra)</span>
+<span id="cb99-28"><a href="#cb99-28" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb99-29"><a href="#cb99-29" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb99-30"><a href="#cb99-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb99-31"><a href="#cb99-31" aria-hidden="true" tabindex="-1"></a><span class="fu">## Loading a Custom Function</span></span>
+<span id="cb99-32"><a href="#cb99-32" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb99-33"><a href="#cb99-33" aria-hidden="true" tabindex="-1"></a>You'll notice that your <span class="in">`scripts/utilities`</span> folder has a file called <span class="in">`download_utils.R`</span>. This file has some custom functions for downloading data directly from websites and from a Google Drive Folder. In order to give yourself access to these functions you'll need to <span class="in">`source`</span> them into your environment. You can do this by typing:</span>
+<span id="cb99-34"><a href="#cb99-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb99-35"><a href="#cb99-35" aria-hidden="true" tabindex="-1"></a><span class="in">```{r srcfun}</span></span>
+<span id="cb99-36"><a href="#cb99-36" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">"scripts/utilities/download_utils.R"</span>)</span>
+<span id="cb99-37"><a href="#cb99-37" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb99-38"><a href="#cb99-38" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb99-39"><a href="#cb99-39" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb99-40"><a href="#cb99-40" aria-hidden="true" tabindex="-1"></a>The first time you run the <span class="in">`gdrive_folder_download`</span> function, you'll be taken to a webpage where you need to give <span class="in">`googledrive`</span> access to your Google Drive folders. Make sure you've checked all the boxes and click Allow. You should get a message saying that authorization is complete and that you can close the tab.</span>
+<span id="cb99-41"><a href="#cb99-41" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb99-42"><a href="#cb99-42" aria-hidden="true" tabindex="-1"></a>Let's run it now and download the data to our <span class="in">`original`</span> folder. You'll see that it requires two arguments, <span class="in">`filelst`</span> and <span class="in">`dstfldr`</span>. The first is a list of files in the folder, the second is the name of the destination folder. In order to generate the <span class="in">`filelst`</span> we need to do some <span class="in">`googledrive`</span> gymnastics to generate a data frame of the unique google drive id's for each file. We then use <span class="in">`pmap`</span> to download each file. You'll notice that the destination path is printed to the screen.</span>
+<span id="cb99-43"><a href="#cb99-43" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb99-44"><a href="#cb99-44" aria-hidden="true" tabindex="-1"></a><span class="in">```{r dldata}</span></span>
+<span id="cb99-45"><a href="#cb99-45" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb99-46"><a href="#cb99-46" aria-hidden="true" tabindex="-1"></a>file_list <span class="ot">&lt;-</span> <span class="fu">drive_ls</span>(<span class="fu">drive_get</span>(<span class="fu">as_id</span>(<span class="st">"https://drive.google.com/drive/u/1/folders/1PwfUX2hnJlbnqBe3qvl33tFBImtNFTuR"</span>)))[<span class="sc">-</span><span class="dv">1</span>,]</span>
+<span id="cb99-47"><a href="#cb99-47" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb99-48"><a href="#cb99-48" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb99-49"><a href="#cb99-49" aria-hidden="true" tabindex="-1"></a>file_list <span class="sc">%&gt;%</span> </span>
+<span id="cb99-50"><a href="#cb99-50" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(id, name) <span class="sc">%&gt;%</span></span>
+<span id="cb99-51"><a href="#cb99-51" aria-hidden="true" tabindex="-1"></a>  purrr<span class="sc">::</span><span class="fu">pmap</span>(<span class="cf">function</span>(id, name) {</span>
+<span id="cb99-52"><a href="#cb99-52" aria-hidden="true" tabindex="-1"></a>    <span class="fu">gdrive_folder_download</span>(<span class="fu">list</span>(<span class="at">id =</span> id, <span class="at">name =</span> name),</span>
+<span id="cb99-53"><a href="#cb99-53" aria-hidden="true" tabindex="-1"></a>                           <span class="at">dstfldr =</span> <span class="st">"inclass07"</span>)</span>
+<span id="cb99-54"><a href="#cb99-54" aria-hidden="true" tabindex="-1"></a>  })</span>
+<span id="cb99-55"><a href="#cb99-55" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb99-56"><a href="#cb99-56" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb99-57"><a href="#cb99-57" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb99-58"><a href="#cb99-58" aria-hidden="true" tabindex="-1"></a><span class="fu">## Reading Data: Vectors</span></span>
+<span id="cb99-59"><a href="#cb99-59" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb99-60"><a href="#cb99-60" aria-hidden="true" tabindex="-1"></a>The vector data (called <span class="in">`cejst`</span>) comes from the Climate and Environmental Justice Screening Tool which is no longer available online. You'll notice that there are multiple files with the same name, but different extensions. We'll talk more about these different files in the next few weeks, but for now, just not that these files exist. </span>
+<span id="cb99-61"><a href="#cb99-61" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb99-62"><a href="#cb99-62" aria-hidden="true" tabindex="-1"></a>Because <span class="in">`sf`</span> adheres to the <span class="in">`tidyverse`</span> grammars, we can use a similar intuition to read in the data. You'll note that even though we have all these extra files, we only need the <span class="in">`.shp`</span> file. This is the shapefile which is the "overarching" file for all of the data.</span>
+<span id="cb99-63"><a href="#cb99-63" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb99-64"><a href="#cb99-64" aria-hidden="true" tabindex="-1"></a><span class="in">```{r readsf}</span></span>
+<span id="cb99-65"><a href="#cb99-65" aria-hidden="true" tabindex="-1"></a>cejst_shp <span class="ot">&lt;-</span> <span class="fu">read_sf</span>(<span class="st">"data/original/inclass07/cejst.shp"</span>)</span>
+<span id="cb99-66"><a href="#cb99-66" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb99-67"><a href="#cb99-67" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb99-68"><a href="#cb99-68" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb99-69"><a href="#cb99-69" aria-hidden="true" tabindex="-1"></a>Now that you've got the data in, let's take a look at it using <span class="in">`str`</span> and  <span class="in">`glimpse`</span>.</span>
+<span id="cb99-70"><a href="#cb99-70" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb99-71"><a href="#cb99-71" aria-hidden="true" tabindex="-1"></a><span class="in">```{r looksf}</span></span>
+<span id="cb99-72"><a href="#cb99-72" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(cejst_shp)</span>
+<span id="cb99-73"><a href="#cb99-73" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb99-74"><a href="#cb99-74" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb99-75"><a href="#cb99-75" aria-hidden="true" tabindex="-1"></a>You'll notice that this is a new data type:</span>
+<span id="cb99-76"><a href="#cb99-76" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb99-77"><a href="#cb99-77" aria-hidden="true" tabindex="-1"></a><span class="in">`sf [2,590 × 124] (S3: sf/tbl_df/tbl/data.frame)`</span></span>
+<span id="cb99-78"><a href="#cb99-78" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb99-79"><a href="#cb99-79" aria-hidden="true" tabindex="-1"></a>You can read this to yourself as "cejst_shp" is an <span class="in">`sf`</span> object with a <span class="in">`tbl_df`</span> combined with. it. (It's slightly more complicated than that, but this can give you an intuition). </span>
+<span id="cb99-80"><a href="#cb99-80" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb99-81"><a href="#cb99-81" aria-hidden="true" tabindex="-1"></a>Now let's look at the output of glimpse:</span>
+<span id="cb99-82"><a href="#cb99-82" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb99-83"><a href="#cb99-83" aria-hidden="true" tabindex="-1"></a><span class="in">```{r glimpsf}</span></span>
+<span id="cb99-84"><a href="#cb99-84" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(cejst_shp)</span>
+<span id="cb99-85"><a href="#cb99-85" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb99-86"><a href="#cb99-86" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb99-87"><a href="#cb99-87" aria-hidden="true" tabindex="-1"></a>The key addition here is the <span class="in">`geometry`</span> column. This is where the magic of <span class="in">`tibbles`</span> comes in - it's a <span class="in">`list`</span> column. These sorts of columns aren't allowed in <span class="in">`data.frames`</span> because they entail multiple (and potentially different) data types. They become critical for spatial data (and <span class="in">`sf`</span> objects) as they contain the coordinates for where the object need to go!</span>
+<span id="cb99-88"><a href="#cb99-88" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb99-89"><a href="#cb99-89" aria-hidden="true" tabindex="-1"></a>In the previous examples, you got used to checking the various columns for (in-)feasible values. You should still do this; however, the introduction of the <span class="in">`geometry`</span> column. **Identifying problematic `geometry` is key component of ensuring your data is valid.** Luckly, you can do this with:</span>
+<span id="cb99-90"><a href="#cb99-90" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb99-91"><a href="#cb99-91" aria-hidden="true" tabindex="-1"></a><span class="in">```{r validity}</span></span>
+<span id="cb99-92"><a href="#cb99-92" aria-hidden="true" tabindex="-1"></a><span class="fu">all</span>(<span class="fu">st_is_valid</span>(cejst_shp))</span>
+<span id="cb99-93"><a href="#cb99-93" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb99-94"><a href="#cb99-94" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb99-95"><a href="#cb99-95" aria-hidden="true" tabindex="-1"></a>Things look good for now! We'll talk more about what to do when this returns <span class="in">`FALSE`</span> in future classes.</span>
+<span id="cb99-96"><a href="#cb99-96" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb99-97"><a href="#cb99-97" aria-hidden="true" tabindex="-1"></a>One final check is to take a look at the data. We'll learn more about how to make fancy maps in the future, but for now, there's a quick check:</span>
+<span id="cb99-98"><a href="#cb99-98" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb99-101"><a href="#cb99-101" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb99-102"><a href="#cb99-102" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(<span class="fu">st_geometry</span>(cejst_shp))</span>
+<span id="cb99-103"><a href="#cb99-103" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb99-104"><a href="#cb99-104" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb99-105"><a href="#cb99-105" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb99-106"><a href="#cb99-106" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb99-107"><a href="#cb99-107" aria-hidden="true" tabindex="-1"></a><span class="fu">## Reading Data: Rasters</span></span>
+<span id="cb99-108"><a href="#cb99-108" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb99-109"><a href="#cb99-109" aria-hidden="true" tabindex="-1"></a>Let's switch gears a bit and run through same process with rasters. Unfortunately, the <span class="in">`terra`</span> package uses a different syntax. I'll do my best to highlight those difference as we go, but for now, let's focus on the <span class="in">`terra`</span> version of read.</span>
+<span id="cb99-110"><a href="#cb99-110" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb99-111"><a href="#cb99-111" aria-hidden="true" tabindex="-1"></a><span class="in">```{r loadrst}</span></span>
+<span id="cb99-112"><a href="#cb99-112" aria-hidden="true" tabindex="-1"></a>fire_prob <span class="ot">&lt;-</span> <span class="fu">rast</span>(<span class="st">"data/original/inclass07/wildfire.tif"</span>)</span>
+<span id="cb99-113"><a href="#cb99-113" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb99-114"><a href="#cb99-114" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb99-115"><a href="#cb99-115" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb99-116"><a href="#cb99-116" aria-hidden="true" tabindex="-1"></a>Importantly, <span class="in">`rast`</span> does more than just read in data. You can look at <span class="in">`?rast`</span> to learn some more of those functions.</span>
+<span id="cb99-117"><a href="#cb99-117" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb99-118"><a href="#cb99-118" aria-hidden="true" tabindex="-1"></a>Let's look at the data with <span class="in">`str`</span></span>
+<span id="cb99-119"><a href="#cb99-119" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb99-120"><a href="#cb99-120" aria-hidden="true" tabindex="-1"></a><span class="in">```{r insprst}</span></span>
+<span id="cb99-121"><a href="#cb99-121" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(fire_prob)</span>
+<span id="cb99-122"><a href="#cb99-122" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb99-123"><a href="#cb99-123" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb99-124"><a href="#cb99-124" aria-hidden="true" tabindex="-1"></a>You'll notice a much less verbose response that this is a <span class="in">`SpatRaster`</span> data class. We'll talk more about what this means in the next few weeks, but for now, just notice that this is a distinct class assigned to a very particular package. </span>
+<span id="cb99-125"><a href="#cb99-125" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb99-126"><a href="#cb99-126" aria-hidden="true" tabindex="-1"></a>What happens when you look at <span class="in">`glimpse`</span></span>
+<span id="cb99-127"><a href="#cb99-127" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb99-128"><a href="#cb99-128" aria-hidden="true" tabindex="-1"></a><span class="in">```{r rstglimp}</span></span>
+<span id="cb99-129"><a href="#cb99-129" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(fire_prob)</span>
+<span id="cb99-130"><a href="#cb99-130" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb99-131"><a href="#cb99-131" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb99-132"><a href="#cb99-132" aria-hidden="true" tabindex="-1"></a>You get a variety of additional information on the resolution, projection, and extent. What you don't get, however, is a geometry or any info about where each cell should be. This is because for <span class="in">`raster`</span> data, the geometry is **implicit** - if we know where the raster covers, and the cell size, then we know the rest of the information necessary to derie the geometry. The other thing you'll notice is that there's only 1 variable. This is again a function of the raster data type. Each layer can only contain information on one measurement and all of those measurements much be of the same data class. Rasters are essentially matrices where the rows are the x coordinates, the columns are the y coordinates, and the cell values are the measurement.</span>
+<span id="cb99-133"><a href="#cb99-133" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb99-134"><a href="#cb99-134" aria-hidden="true" tabindex="-1"></a>The last thing we might want to do is plot the raster to quickly make sure it looks like the thing we thought it would. The nice part about <span class="in">`terra`</span> is that there is a basic <span class="in">`plot`</span> function that you can use:</span>
+<span id="cb99-135"><a href="#cb99-135" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb99-136"><a href="#cb99-136" aria-hidden="true" tabindex="-1"></a><span class="in">```{r plotrst}</span></span>
+<span id="cb99-137"><a href="#cb99-137" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb99-138"><a href="#cb99-138" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(fire_prob)</span>
+<span id="cb99-139"><a href="#cb99-139" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 </code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div></div></div></div></div>
 </div> <!-- /content -->

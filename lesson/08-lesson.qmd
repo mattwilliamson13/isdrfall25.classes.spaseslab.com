@@ -34,7 +34,7 @@ source("scripts/utilities/download_utils.R")
 You likely noticed in your quick maps that the two datasets look different. Sure, one is a vector with lots of `POLYGON` elements and the other is a raster (stored as a `SpatRaster`). If you looked a little, you probably noticed that the orienation (angle) of the areas was a bit different. If you looked a little harder, you probably saw that the general shapes of the states is a bit different, too. And, maybe if you squint, you can see that the boundaries of the maps looks a little different. We'll work through some ways of looking at and fixing those things today! Let's load our datasets and get started!
 
 ```{r dlld}
-file_list <- drive_ls(drive_get(as_id("https://drive.google.com/drive/u/1/folders/1PwfUX2hnJlbnqBe3qvl33tFBImtNFTuR")))
+file_list <- drive_ls(drive_get(as_id("https://drive.google.com/drive/u/1/folders/1PwfUX2hnJlbnqBe3qvl33tFBImtNFTuR")))[-1,]
 
 
 file_list %>% 

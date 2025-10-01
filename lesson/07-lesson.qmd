@@ -43,7 +43,7 @@ Let's run it now and download the data to our `original` folder. You'll see that
 
 ```{r dldata}
 
-file_list <- drive_ls(drive_get(as_id("https://drive.google.com/drive/u/1/folders/1PwfUX2hnJlbnqBe3qvl33tFBImtNFTuR")))
+file_list <- drive_ls(drive_get(as_id("https://drive.google.com/drive/u/1/folders/1PwfUX2hnJlbnqBe3qvl33tFBImtNFTuR")))[-1,]
 
 
 file_list %>% 

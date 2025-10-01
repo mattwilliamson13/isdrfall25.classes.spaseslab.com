@@ -301,7 +301,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <blockquote class="blockquote">
 <p>The syntax is similar to the previous models, but with <code>method=rf</code> to signal that we want to use the <code>rf</code> package to fit the Random Forest. Here, the tuning parameter is the number of variables to include in the tree. We’ve only got 7 variables so we’ll set the <code>tuneLength</code> to the maximum number of variables.</p>
 </blockquote>
-<div class="cell" data-hash="09-pointpatternssolutions_cache/html/unnamed-chunk-4_4b3da0d5812e8a2096952b26ca094590">
+<div class="cell" data-hash="09-pointpatternssolutions_cache/html/unnamed-chunk-3_481fba7724c34a4d7b09e5cc2cbe7aa6">
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>RFFit <span class="ot">&lt;-</span> <span class="fu">train</span>(<span class="fu">as.numeric</span>(cost) <span class="sc">~</span> ., <span class="at">data =</span> training, </span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>                 <span class="at">method =</span> <span class="st">"rf"</span>,</span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>                 <span class="at">trControl =</span> fitControl, </span>
@@ -342,7 +342,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <blockquote class="blockquote">
 <p>If you looked at the RMSE values for our initial models, you’ll notice that they were quite high and the models weren’t particularly interesting. Because the cost data ranges over several orders of magnitude, we might try log-transforming them and fitting a linear model (because the data are no longer integers) along with the other two models. We do that here following the syntax above. When calculating the RMSE, we have to remember to log-transform the cost variable in the testing dataset to make sure that the predictions are comperable. Again, the regression tree and Random Forest are the better performers, but the RMSE suggests that we are doing considerably better (<span class="math inline">\(10^{2}=100\)</span> as opposed to the 100,000s we were getting before).</p>
 </blockquote>
-<div class="cell" data-hash="09-pointpatternssolutions_cache/html/unnamed-chunk-7_7312283d6a8bb4fb38ccd201040b664a">
+<div class="cell" data-hash="09-pointpatternssolutions_cache/html/unnamed-chunk-6_ea6713371dd45cd068e682239de4878e">
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>training.log <span class="ot">&lt;-</span> training <span class="sc">%&gt;%</span> </span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">cost =</span> <span class="fu">log</span>(cost, <span class="dv">10</span>))</span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a></span>

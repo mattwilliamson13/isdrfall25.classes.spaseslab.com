@@ -228,12 +228,21 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <pre><code>Warning: package 'ggplot2' was built under R version 4.4.1</code></pre>
 </div>
 <div class="cell-output cell-output-stderr">
+<pre><code>Warning: package 'tibble' was built under R version 4.4.1</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: package 'purrr' was built under R version 4.4.1</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: package 'stringr' was built under R version 4.4.1</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
 <pre><code>── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──
 ✔ dplyr     1.1.4     ✔ readr     2.1.5
-✔ forcats   1.0.0     ✔ stringr   1.5.1
-✔ ggplot2   3.5.2     ✔ tibble    3.2.1
+✔ forcats   1.0.0     ✔ stringr   1.5.2
+✔ ggplot2   3.5.2     ✔ tibble    3.3.0
 ✔ lubridate 1.9.3     ✔ tidyr     1.3.1
-✔ purrr     1.0.2     
+✔ purrr     1.1.0     
 ── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
 ✖ dplyr::filter() masks stats::filter()
 ✖ dplyr::lag()    masks stats::lag()
@@ -247,27 +256,27 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div class="cell">
 <details open="">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>simpson_receipts <span class="ot">&lt;-</span> <span class="fu">read_delim</span>(<span class="st">"data/original/simpson_fec_17_26.csv"</span>,</span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>                               <span class="at">delim =</span> <span class="st">","</span>)</span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>fulcher_receipts <span class="ot">&lt;-</span> <span class="fu">read_delim</span>(<span class="st">"data/original/fulcher_fec_17_26.csv"</span>,</span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>                               <span class="at">delim =</span> <span class="st">","</span>)</span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>crapo_receipts <span class="ot">&lt;-</span> <span class="fu">read_delim</span>(<span class="st">"data/original/crapo_fec_17_26.csv"</span>,</span>
-<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>                               <span class="at">delim =</span> <span class="st">","</span>)</span>
-<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>risch_receipts <span class="ot">&lt;-</span> <span class="fu">read_delim</span>(<span class="st">"data/original/risch_fec_17_26.csv"</span>,</span>
-<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>                               <span class="at">delim =</span> <span class="st">","</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>simpson_receipts <span class="ot">&lt;-</span> <span class="fu">read_delim</span>(<span class="st">"data/original/simpson_fec_17_26.csv"</span>,</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>                               <span class="at">delim =</span> <span class="st">","</span>)</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>fulcher_receipts <span class="ot">&lt;-</span> <span class="fu">read_delim</span>(<span class="st">"data/original/fulcher_fec_17_26.csv"</span>,</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>                               <span class="at">delim =</span> <span class="st">","</span>)</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>crapo_receipts <span class="ot">&lt;-</span> <span class="fu">read_delim</span>(<span class="st">"data/original/crapo_fec_17_26.csv"</span>,</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>                               <span class="at">delim =</span> <span class="st">","</span>)</span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>risch_receipts <span class="ot">&lt;-</span> <span class="fu">read_delim</span>(<span class="st">"data/original/risch_fec_17_26.csv"</span>,</span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>                               <span class="at">delim =</span> <span class="st">","</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
 <p>That’s not ideal. We can do the same thing with <code>map</code> using two commands. First, we’ll use <code>list.files()</code> to get a vector of filenames. Then, we’ll pass that to <code>map</code></p>
 <div class="cell">
 <details open="">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>contribution_files <span class="ot">&lt;-</span> <span class="fu">list.files</span>(here<span class="sc">::</span><span class="fu">here</span>(<span class="st">"data/original/"</span>), <span class="at">pattern =</span> <span class="st">"17_26.csv"</span>, <span class="at">full.names =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>contribution_data <span class="ot">&lt;-</span> <span class="fu">map</span>(contribution_files,</span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>                         <span class="cf">function</span>(x) <span class="fu">read_delim</span>(x, <span class="at">delim=</span><span class="st">","</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>contribution_files <span class="ot">&lt;-</span> <span class="fu">list.files</span>(here<span class="sc">::</span><span class="fu">here</span>(<span class="st">"data/original/"</span>), <span class="at">pattern =</span> <span class="st">"17_26.csv"</span>, <span class="at">full.names =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>contribution_data <span class="ot">&lt;-</span> <span class="fu">map</span>(contribution_files,</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>                         <span class="cf">function</span>(x) <span class="fu">read_delim</span>(x, <span class="at">delim=</span><span class="st">","</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stderr">
 <pre><code>Rows: 8124 Columns: 78
@@ -333,11 +342,11 @@ dttm  (2): contribution_receipt_date, load_date
 <div class="cell">
 <details open="">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>contribution_data <span class="ot">&lt;-</span> <span class="fu">list.files</span>(here<span class="sc">::</span><span class="fu">here</span>(<span class="st">"data/original/"</span>), </span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>                                 <span class="at">pattern =</span> <span class="st">"17_26.csv"</span>, </span>
-<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>                                 <span class="at">full.names =</span> <span class="cn">TRUE</span>) <span class="sc">%&gt;%</span>  </span>
-<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">map</span>(.,</span>
-<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>                         <span class="cf">function</span>(x) <span class="fu">read_delim</span>(x, <span class="at">delim=</span><span class="st">","</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>contribution_data <span class="ot">&lt;-</span> <span class="fu">list.files</span>(here<span class="sc">::</span><span class="fu">here</span>(<span class="st">"data/original/"</span>), </span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>                                 <span class="at">pattern =</span> <span class="st">"17_26.csv"</span>, </span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>                                 <span class="at">full.names =</span> <span class="cn">TRUE</span>) <span class="sc">%&gt;%</span>  </span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">map</span>(.,</span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>                         <span class="cf">function</span>(x) <span class="fu">read_delim</span>(x, <span class="at">delim=</span><span class="st">","</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stderr">
 <pre><code>Rows: 8124 Columns: 78
@@ -402,10 +411,10 @@ dttm  (2): contribution_receipt_date, load_date
 <div class="cell">
 <details open="">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>contribution_data <span class="ot">&lt;-</span> <span class="fu">list.files</span>(here<span class="sc">::</span><span class="fu">here</span>(<span class="st">"data/original/"</span>), </span>
-<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>                                 <span class="at">pattern =</span> <span class="st">"17_26.csv"</span>, </span>
-<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>                                 <span class="at">full.names =</span> <span class="cn">TRUE</span>) <span class="sc">%&gt;%</span>  </span>
-<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">map</span>(., read_csv)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>contribution_data <span class="ot">&lt;-</span> <span class="fu">list.files</span>(here<span class="sc">::</span><span class="fu">here</span>(<span class="st">"data/original/"</span>), </span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>                                 <span class="at">pattern =</span> <span class="st">"17_26.csv"</span>, </span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>                                 <span class="at">full.names =</span> <span class="cn">TRUE</span>) <span class="sc">%&gt;%</span>  </span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">map</span>(., read_csv)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stderr">
 <pre><code>Rows: 8124 Columns: 78
@@ -470,12 +479,12 @@ dttm  (2): contribution_receipt_date, load_date
 <div class="cell">
 <details open="">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>contribution_data <span class="ot">&lt;-</span> <span class="fu">list.files</span>(here<span class="sc">::</span><span class="fu">here</span>(<span class="st">"data/original/"</span>), </span>
-<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>                                 <span class="at">pattern =</span> <span class="st">"17_26.csv"</span>, </span>
-<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>                                 <span class="at">full.names =</span> <span class="cn">TRUE</span>) <span class="sc">%&gt;%</span>  </span>
-<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">map</span>(<span class="sc">~</span> <span class="fu">read_csv</span>(.x) <span class="sc">%&gt;%</span></span>
-<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">representative =</span> <span class="fu">str_extract</span>(<span class="fu">basename</span>(.x), <span class="st">"^[^_]+(?=_fec_)"</span>))</span>
-<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>contribution_data <span class="ot">&lt;-</span> <span class="fu">list.files</span>(here<span class="sc">::</span><span class="fu">here</span>(<span class="st">"data/original/"</span>), </span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>                                 <span class="at">pattern =</span> <span class="st">"17_26.csv"</span>, </span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>                                 <span class="at">full.names =</span> <span class="cn">TRUE</span>) <span class="sc">%&gt;%</span>  </span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">map</span>(<span class="sc">~</span> <span class="fu">read_csv</span>(.x) <span class="sc">%&gt;%</span></span>
+<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">representative =</span> <span class="fu">str_extract</span>(<span class="fu">basename</span>(.x), <span class="st">"^[^_]+(?=_fec_)"</span>))</span>
+<span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stderr">
 <pre><code>Rows: 8124 Columns: 78
@@ -541,7 +550,7 @@ dttm  (2): contribution_receipt_date, load_date
 <div class="cell">
 <details open="">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="fu">class</span>(contribution_data)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="fu">class</span>(contribution_data)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] "list"</code></pre>
@@ -552,7 +561,7 @@ dttm  (2): contribution_receipt_date, load_date
 <div class="cell">
 <details open="">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(contribution_data[[<span class="dv">1</span>]])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(contribution_data[[<span class="dv">1</span>]])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>Rows: 8,124
@@ -646,47 +655,47 @@ $ representative                        &lt;chr&gt; "crapo", "crapo", "crapo", "
 <div class="cell">
 <details open="">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a>select_vars <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"is_individual"</span>, <span class="st">"contributor_name"</span>,  <span class="st">"contribution_receipt_amount"</span>, <span class="st">"committee_name"</span>, <span class="st">"report_year"</span>)</span>
-<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a>simpson_subset <span class="ot">&lt;-</span> simpson_receipts <span class="sc">%&gt;%</span> </span>
-<span id="cb33-4"><a href="#cb33-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="fu">all_of</span>(select_vars)) <span class="sc">%&gt;%</span> </span>
-<span id="cb33-5"><a href="#cb33-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(is_individual <span class="sc">==</span> <span class="cn">TRUE</span>)</span>
-<span id="cb33-6"><a href="#cb33-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb33-7"><a href="#cb33-7" aria-hidden="true" tabindex="-1"></a>fulcher_subset <span class="ot">&lt;-</span> fulcher_receipts <span class="sc">%&gt;%</span> </span>
-<span id="cb33-8"><a href="#cb33-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="fu">all_of</span>(select_vars)) <span class="sc">%&gt;%</span> </span>
-<span id="cb33-9"><a href="#cb33-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(is_individual <span class="sc">==</span> <span class="cn">TRUE</span>)</span>
-<span id="cb33-10"><a href="#cb33-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb33-11"><a href="#cb33-11" aria-hidden="true" tabindex="-1"></a>crapo_subset <span class="ot">&lt;-</span> crapo_receipts <span class="sc">%&gt;%</span> </span>
-<span id="cb33-12"><a href="#cb33-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="fu">all_of</span>(select_vars)) <span class="sc">%&gt;%</span> </span>
-<span id="cb33-13"><a href="#cb33-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(is_individual <span class="sc">==</span> <span class="cn">TRUE</span>)</span>
-<span id="cb33-14"><a href="#cb33-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb33-15"><a href="#cb33-15" aria-hidden="true" tabindex="-1"></a>risch_subset <span class="ot">&lt;-</span> risch_receipts <span class="sc">%&gt;%</span> </span>
-<span id="cb33-16"><a href="#cb33-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="fu">all_of</span>(select_vars)) <span class="sc">%&gt;%</span> </span>
-<span id="cb33-17"><a href="#cb33-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(is_individual <span class="sc">==</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a>select_vars <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"is_individual"</span>, <span class="st">"contributor_name"</span>,  <span class="st">"contribution_receipt_amount"</span>, <span class="st">"committee_name"</span>, <span class="st">"report_year"</span>)</span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a>simpson_subset <span class="ot">&lt;-</span> simpson_receipts <span class="sc">%&gt;%</span> </span>
+<span id="cb36-4"><a href="#cb36-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="fu">all_of</span>(select_vars)) <span class="sc">%&gt;%</span> </span>
+<span id="cb36-5"><a href="#cb36-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(is_individual <span class="sc">==</span> <span class="cn">TRUE</span>)</span>
+<span id="cb36-6"><a href="#cb36-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-7"><a href="#cb36-7" aria-hidden="true" tabindex="-1"></a>fulcher_subset <span class="ot">&lt;-</span> fulcher_receipts <span class="sc">%&gt;%</span> </span>
+<span id="cb36-8"><a href="#cb36-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="fu">all_of</span>(select_vars)) <span class="sc">%&gt;%</span> </span>
+<span id="cb36-9"><a href="#cb36-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(is_individual <span class="sc">==</span> <span class="cn">TRUE</span>)</span>
+<span id="cb36-10"><a href="#cb36-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-11"><a href="#cb36-11" aria-hidden="true" tabindex="-1"></a>crapo_subset <span class="ot">&lt;-</span> crapo_receipts <span class="sc">%&gt;%</span> </span>
+<span id="cb36-12"><a href="#cb36-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="fu">all_of</span>(select_vars)) <span class="sc">%&gt;%</span> </span>
+<span id="cb36-13"><a href="#cb36-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(is_individual <span class="sc">==</span> <span class="cn">TRUE</span>)</span>
+<span id="cb36-14"><a href="#cb36-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-15"><a href="#cb36-15" aria-hidden="true" tabindex="-1"></a>risch_subset <span class="ot">&lt;-</span> risch_receipts <span class="sc">%&gt;%</span> </span>
+<span id="cb36-16"><a href="#cb36-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="fu">all_of</span>(select_vars)) <span class="sc">%&gt;%</span> </span>
+<span id="cb36-17"><a href="#cb36-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(is_individual <span class="sc">==</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
 <p>Let’s clean this up creating our own function:</p>
 <div class="cell">
 <details open="">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a>select_ind_donors <span class="ot">&lt;-</span> <span class="cf">function</span>(df, vars, donor_type){</span>
-<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a>  df <span class="sc">%&gt;%</span> </span>
-<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">select</span>(<span class="fu">all_of</span>({{ vars }})) <span class="sc">%&gt;%</span> </span>
-<span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">filter</span>(is_individual <span class="sc">==</span> donor_type)</span>
-<span id="cb34-5"><a href="#cb34-5" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a>select_ind_donors <span class="ot">&lt;-</span> <span class="cf">function</span>(df, vars, donor_type){</span>
+<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a>  df <span class="sc">%&gt;%</span> </span>
+<span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">select</span>(<span class="fu">all_of</span>({{ vars }})) <span class="sc">%&gt;%</span> </span>
+<span id="cb37-4"><a href="#cb37-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">filter</span>(is_individual <span class="sc">==</span> donor_type)</span>
+<span id="cb37-5"><a href="#cb37-5" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
 <p>Our function <code>select_ind_donors</code>, has a descriptive name and takes 3 arguments (<code>df</code>, <code>vars</code>, and <code>donor_type</code>). The one thing to notice is our use of <em>embracing</em> to pass our variables into the function. Let’s test it on 1 slot of our list.</p>
 <div class="cell">
 <details open="">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a>select_vars <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"is_individual"</span>, <span class="st">"contributor_name"</span>,  <span class="st">"contribution_receipt_amount"</span>, <span class="st">"committee_name"</span>, <span class="st">"report_year"</span>,</span>
-<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a>                 <span class="st">"representative"</span>)</span>
-<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a>test_fun <span class="ot">&lt;-</span> <span class="fu">select_ind_donors</span>(<span class="at">df =</span> contribution_data[[<span class="dv">1</span>]],</span>
-<span id="cb35-5"><a href="#cb35-5" aria-hidden="true" tabindex="-1"></a>                              <span class="at">vars =</span> select_vars,</span>
-<span id="cb35-6"><a href="#cb35-6" aria-hidden="true" tabindex="-1"></a>                              <span class="at">donor_type =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb35-7"><a href="#cb35-7" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(test_fun)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a>select_vars <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"is_individual"</span>, <span class="st">"contributor_name"</span>,  <span class="st">"contribution_receipt_amount"</span>, <span class="st">"committee_name"</span>, <span class="st">"report_year"</span>,</span>
+<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a>                 <span class="st">"representative"</span>)</span>
+<span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-4"><a href="#cb38-4" aria-hidden="true" tabindex="-1"></a>test_fun <span class="ot">&lt;-</span> <span class="fu">select_ind_donors</span>(<span class="at">df =</span> contribution_data[[<span class="dv">1</span>]],</span>
+<span id="cb38-5"><a href="#cb38-5" aria-hidden="true" tabindex="-1"></a>                              <span class="at">vars =</span> select_vars,</span>
+<span id="cb38-6"><a href="#cb38-6" aria-hidden="true" tabindex="-1"></a>                              <span class="at">donor_type =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb38-7"><a href="#cb38-7" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(test_fun)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>Rows: 3,979
@@ -703,13 +712,13 @@ $ representative              &lt;chr&gt; "crapo", "crapo", "crapo", "crapo", "c
 <div class="cell">
 <details open="">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a>select_vars <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"is_individual"</span>, <span class="st">"contributor_name"</span>,  <span class="st">"contribution_receipt_amount"</span>, <span class="st">"committee_name"</span>, <span class="st">"report_year"</span>,</span>
-<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a>                 <span class="st">"representative"</span>)</span>
-<span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-4"><a href="#cb37-4" aria-hidden="true" tabindex="-1"></a>ind_donors <span class="ot">&lt;-</span> <span class="fu">map</span>(contribution_data, </span>
-<span id="cb37-5"><a href="#cb37-5" aria-hidden="true" tabindex="-1"></a>                  \(x) <span class="fu">select_ind_donors</span>(<span class="at">df =</span> x,</span>
-<span id="cb37-6"><a href="#cb37-6" aria-hidden="true" tabindex="-1"></a>                              <span class="at">vars =</span> select_vars,</span>
-<span id="cb37-7"><a href="#cb37-7" aria-hidden="true" tabindex="-1"></a>                              <span class="at">donor_type =</span> <span class="cn">TRUE</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a>select_vars <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"is_individual"</span>, <span class="st">"contributor_name"</span>,  <span class="st">"contribution_receipt_amount"</span>, <span class="st">"committee_name"</span>, <span class="st">"report_year"</span>,</span>
+<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a>                 <span class="st">"representative"</span>)</span>
+<span id="cb40-3"><a href="#cb40-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-4"><a href="#cb40-4" aria-hidden="true" tabindex="-1"></a>ind_donors <span class="ot">&lt;-</span> <span class="fu">map</span>(contribution_data, </span>
+<span id="cb40-5"><a href="#cb40-5" aria-hidden="true" tabindex="-1"></a>                  \(x) <span class="fu">select_ind_donors</span>(<span class="at">df =</span> x,</span>
+<span id="cb40-6"><a href="#cb40-6" aria-hidden="true" tabindex="-1"></a>                              <span class="at">vars =</span> select_vars,</span>
+<span id="cb40-7"><a href="#cb40-7" aria-hidden="true" tabindex="-1"></a>                              <span class="at">donor_type =</span> <span class="cn">TRUE</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
 <p>Here you can see the power of lists combined with <code>map</code>: each slot gets passed to our function so that we don’t have to extract each dataframe to run our function.</p>
@@ -717,14 +726,14 @@ $ representative              &lt;chr&gt; "crapo", "crapo", "crapo", "crapo", "c
 <div class="cell">
 <details open="">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a>select_vars <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"is_individual"</span>, <span class="st">"contributor_name"</span>,  <span class="st">"contribution_receipt_amount"</span>, <span class="st">"committee_name"</span>, <span class="st">"report_year"</span>,</span>
-<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a>                 <span class="st">"representative"</span>)</span>
-<span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb38-4"><a href="#cb38-4" aria-hidden="true" tabindex="-1"></a>ind_donors <span class="ot">&lt;-</span> <span class="fu">map</span>(contribution_data, </span>
-<span id="cb38-5"><a href="#cb38-5" aria-hidden="true" tabindex="-1"></a>                  \(x) <span class="fu">select_ind_donors</span>(<span class="at">df =</span> x,</span>
-<span id="cb38-6"><a href="#cb38-6" aria-hidden="true" tabindex="-1"></a>                              <span class="at">vars =</span> select_vars,</span>
-<span id="cb38-7"><a href="#cb38-7" aria-hidden="true" tabindex="-1"></a>                              <span class="at">donor_type =</span> <span class="cn">TRUE</span>)) <span class="sc">%&gt;%</span> </span>
-<span id="cb38-8"><a href="#cb38-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">bind_rows</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a>select_vars <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"is_individual"</span>, <span class="st">"contributor_name"</span>,  <span class="st">"contribution_receipt_amount"</span>, <span class="st">"committee_name"</span>, <span class="st">"report_year"</span>,</span>
+<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a>                 <span class="st">"representative"</span>)</span>
+<span id="cb41-3"><a href="#cb41-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb41-4"><a href="#cb41-4" aria-hidden="true" tabindex="-1"></a>ind_donors <span class="ot">&lt;-</span> <span class="fu">map</span>(contribution_data, </span>
+<span id="cb41-5"><a href="#cb41-5" aria-hidden="true" tabindex="-1"></a>                  \(x) <span class="fu">select_ind_donors</span>(<span class="at">df =</span> x,</span>
+<span id="cb41-6"><a href="#cb41-6" aria-hidden="true" tabindex="-1"></a>                              <span class="at">vars =</span> select_vars,</span>
+<span id="cb41-7"><a href="#cb41-7" aria-hidden="true" tabindex="-1"></a>                              <span class="at">donor_type =</span> <span class="cn">TRUE</span>)) <span class="sc">%&gt;%</span> </span>
+<span id="cb41-8"><a href="#cb41-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">bind_rows</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
 </section>
@@ -1022,201 +1031,201 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
   }
 });
 </script><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Source Code</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">
-<div class="sourceCode" id="cb39" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
-<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a><span class="an">title:</span><span class="co"> "Iterating with Election Data"</span></span>
-<span id="cb39-3"><a href="#cb39-3" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
-<span id="cb39-4"><a href="#cb39-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb39-5"><a href="#cb39-5" aria-hidden="true" tabindex="-1"></a><span class="fu">## Objectives</span></span>
-<span id="cb39-6"><a href="#cb39-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb39-7"><a href="#cb39-7" aria-hidden="true" tabindex="-1"></a>Last time, we used some "brute force" approaches to cleaning up the election data. Lots of repetition and lots of copy-and-pasting. That's not ideal - it's not particularly readable (think about reading the same sentence over and over again with one word change) and it's pretty error-prone. We're going to clean that up by:</span>
-<span id="cb39-8"><a href="#cb39-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb39-9"><a href="#cb39-9" aria-hidden="true" tabindex="-1"></a><span class="at">&gt; Develop our own, custom functions and use iteration to eliminate redundancy.</span></span>
-<span id="cb39-10"><a href="#cb39-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb39-11"><a href="#cb39-11" aria-hidden="true" tabindex="-1"></a>You will still be working with the <span class="co">[</span><span class="ot">FEC contribution receipts</span><span class="co">](https://www.fec.gov/data/)</span> for our four member of Congress, but this time we'll do it in a more principled way.</span>
-<span id="cb39-12"><a href="#cb39-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb39-13"><a href="#cb39-13" aria-hidden="true" tabindex="-1"></a><span class="fu">## Getting Set Up</span></span>
-<span id="cb39-14"><a href="#cb39-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb39-15"><a href="#cb39-15" aria-hidden="true" tabindex="-1"></a>First, <span class="co">[</span><span class="ot">join the repository</span><span class="co">](https://classroom.github.com/a/JFFqRu2D)</span>. Then, we'll have to <span class="co">[</span><span class="ot">get our credentials</span><span class="co">](https://rstudio.aws.boisestate.edu/)</span> and login to a <span class="co">[</span><span class="ot">new RStudio session</span><span class="co">](https://rstudio.apps.aws.boisestate.edu/)</span>. Finally, create a new, version control, git-based project (using the link to the repo you just created). </span>
-<span id="cb39-16"><a href="#cb39-16" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb39-17"><a href="#cb39-17" aria-hidden="true" tabindex="-1"></a>Once you've done that, you'll need to load your packages. In this case, it's just the <span class="in">`tidyverse`</span>.</span>
-<span id="cb39-18"><a href="#cb39-18" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb39-19"><a href="#cb39-19" aria-hidden="true" tabindex="-1"></a><span class="in">```{r ldpkg}</span></span>
-<span id="cb39-20"><a href="#cb39-20" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
-<span id="cb39-21"><a href="#cb39-21" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb39-22"><a href="#cb39-22" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb39-23"><a href="#cb39-23" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb39-24"><a href="#cb39-24" aria-hidden="true" tabindex="-1"></a><span class="fu">## Reading in the Data</span></span>
-<span id="cb39-25"><a href="#cb39-25" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb39-26"><a href="#cb39-26" aria-hidden="true" tabindex="-1"></a>Last time, we copied the <span class="in">`read_delim`</span> function 4x to read in all the data:</span>
-<span id="cb39-27"><a href="#cb39-27" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb39-28"><a href="#cb39-28" aria-hidden="true" tabindex="-1"></a><span class="in">```{r rddata}</span></span>
-<span id="cb39-29"><a href="#cb39-29" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
-<span id="cb39-30"><a href="#cb39-30" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: false</span></span>
-<span id="cb39-31"><a href="#cb39-31" aria-hidden="true" tabindex="-1"></a>simpson_receipts <span class="ot">&lt;-</span> <span class="fu">read_delim</span>(<span class="st">"data/original/simpson_fec_17_26.csv"</span>,</span>
-<span id="cb39-32"><a href="#cb39-32" aria-hidden="true" tabindex="-1"></a>                               <span class="at">delim =</span> <span class="st">","</span>)</span>
-<span id="cb39-33"><a href="#cb39-33" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb39-34"><a href="#cb39-34" aria-hidden="true" tabindex="-1"></a>fulcher_receipts <span class="ot">&lt;-</span> <span class="fu">read_delim</span>(<span class="st">"data/original/fulcher_fec_17_26.csv"</span>,</span>
-<span id="cb39-35"><a href="#cb39-35" aria-hidden="true" tabindex="-1"></a>                               <span class="at">delim =</span> <span class="st">","</span>)</span>
-<span id="cb39-36"><a href="#cb39-36" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb39-37"><a href="#cb39-37" aria-hidden="true" tabindex="-1"></a>crapo_receipts <span class="ot">&lt;-</span> <span class="fu">read_delim</span>(<span class="st">"data/original/crapo_fec_17_26.csv"</span>,</span>
-<span id="cb39-38"><a href="#cb39-38" aria-hidden="true" tabindex="-1"></a>                               <span class="at">delim =</span> <span class="st">","</span>)</span>
-<span id="cb39-39"><a href="#cb39-39" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb39-40"><a href="#cb39-40" aria-hidden="true" tabindex="-1"></a>risch_receipts <span class="ot">&lt;-</span> <span class="fu">read_delim</span>(<span class="st">"data/original/risch_fec_17_26.csv"</span>,</span>
-<span id="cb39-41"><a href="#cb39-41" aria-hidden="true" tabindex="-1"></a>                               <span class="at">delim =</span> <span class="st">","</span>)</span>
-<span id="cb39-42"><a href="#cb39-42" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb39-43"><a href="#cb39-43" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb39-44"><a href="#cb39-44" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb39-45"><a href="#cb39-45" aria-hidden="true" tabindex="-1"></a>That's not ideal. We can do the same thing with <span class="in">`map`</span> using two commands. First, we'll use <span class="in">`list.files()`</span> to get a vector of filenames. Then, we'll pass that to <span class="in">`map`</span></span>
-<span id="cb39-46"><a href="#cb39-46" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb39-47"><a href="#cb39-47" aria-hidden="true" tabindex="-1"></a><span class="in">```{r iterread}</span></span>
-<span id="cb39-48"><a href="#cb39-48" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb39-49"><a href="#cb39-49" aria-hidden="true" tabindex="-1"></a>contribution_files <span class="ot">&lt;-</span> <span class="fu">list.files</span>(here<span class="sc">::</span><span class="fu">here</span>(<span class="st">"data/original/"</span>), <span class="at">pattern =</span> <span class="st">"17_26.csv"</span>, <span class="at">full.names =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb39-50"><a href="#cb39-50" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb39-51"><a href="#cb39-51" aria-hidden="true" tabindex="-1"></a>contribution_data <span class="ot">&lt;-</span> <span class="fu">map</span>(contribution_files,</span>
-<span id="cb39-52"><a href="#cb39-52" aria-hidden="true" tabindex="-1"></a>                         <span class="cf">function</span>(x) <span class="fu">read_delim</span>(x, <span class="at">delim=</span><span class="st">","</span>))</span>
-<span id="cb39-53"><a href="#cb39-53" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb39-54"><a href="#cb39-54" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb39-55"><a href="#cb39-55" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb39-56"><a href="#cb39-56" aria-hidden="true" tabindex="-1"></a>I did a few things here. First, I used <span class="in">`here::here()`</span> to make sure that <span class="in">`R`</span> used the correct project directory when looking for my files. Then, I passed "17_26.csv" as the parameter for the <span class="in">`pattern`</span> argument. The <span class="in">`pattern`</span> argument excepts characters and regular expressions as a way to make sure that I only get the files that match our election data (this is why file naming is important!!). Finally, I passed <span class="in">`TRUE`</span> to the <span class="in">`full.names`</span> argument to ensure that I get the entire path (not just the filename). Once I've got the <span class="in">`contribution_files`</span> I pass that to <span class="in">`map`</span>. I had to write out the <span class="in">`function(x)`</span> because I wanted to pass additional arguments to <span class="in">`read_delim`</span>. </span>
-<span id="cb39-57"><a href="#cb39-57" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb39-58"><a href="#cb39-58" aria-hidden="true" tabindex="-1"></a>You've probably noticed that there's an even more compact way to do this using a pipe:</span>
-<span id="cb39-59"><a href="#cb39-59" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb39-60"><a href="#cb39-60" aria-hidden="true" tabindex="-1"></a><span class="in">```{r iterread2}</span></span>
-<span id="cb39-61"><a href="#cb39-61" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb39-62"><a href="#cb39-62" aria-hidden="true" tabindex="-1"></a>contribution_data <span class="ot">&lt;-</span> <span class="fu">list.files</span>(here<span class="sc">::</span><span class="fu">here</span>(<span class="st">"data/original/"</span>), </span>
-<span id="cb39-63"><a href="#cb39-63" aria-hidden="true" tabindex="-1"></a>                                 <span class="at">pattern =</span> <span class="st">"17_26.csv"</span>, </span>
-<span id="cb39-64"><a href="#cb39-64" aria-hidden="true" tabindex="-1"></a>                                 <span class="at">full.names =</span> <span class="cn">TRUE</span>) <span class="sc">%&gt;%</span>  </span>
-<span id="cb39-65"><a href="#cb39-65" aria-hidden="true" tabindex="-1"></a>  <span class="fu">map</span>(.,</span>
-<span id="cb39-66"><a href="#cb39-66" aria-hidden="true" tabindex="-1"></a>                         <span class="cf">function</span>(x) <span class="fu">read_delim</span>(x, <span class="at">delim=</span><span class="st">","</span>))</span>
-<span id="cb39-67"><a href="#cb39-67" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb39-68"><a href="#cb39-68" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb39-69"><a href="#cb39-69" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb39-70"><a href="#cb39-70" aria-hidden="true" tabindex="-1"></a>Better still, we can replace <span class="in">`read_delim`</span> with <span class="in">`read_csv`</span> and eliminate the need to pass additional arguments.</span>
-<span id="cb39-71"><a href="#cb39-71" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb39-72"><a href="#cb39-72" aria-hidden="true" tabindex="-1"></a><span class="in">```{r iterread3}</span></span>
-<span id="cb39-73"><a href="#cb39-73" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb39-74"><a href="#cb39-74" aria-hidden="true" tabindex="-1"></a>contribution_data <span class="ot">&lt;-</span> <span class="fu">list.files</span>(here<span class="sc">::</span><span class="fu">here</span>(<span class="st">"data/original/"</span>), </span>
-<span id="cb39-75"><a href="#cb39-75" aria-hidden="true" tabindex="-1"></a>                                 <span class="at">pattern =</span> <span class="st">"17_26.csv"</span>, </span>
-<span id="cb39-76"><a href="#cb39-76" aria-hidden="true" tabindex="-1"></a>                                 <span class="at">full.names =</span> <span class="cn">TRUE</span>) <span class="sc">%&gt;%</span>  </span>
-<span id="cb39-77"><a href="#cb39-77" aria-hidden="true" tabindex="-1"></a>  <span class="fu">map</span>(., read_csv)</span>
-<span id="cb39-78"><a href="#cb39-78" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb39-79"><a href="#cb39-79" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb39-80"><a href="#cb39-80" aria-hidden="true" tabindex="-1"></a>This is helpful, but I would like to keep track of who the data belongs to, so I'm going to step back and write my own 1-time function inside of <span class="in">`map`</span>.</span>
-<span id="cb39-81"><a href="#cb39-81" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb39-82"><a href="#cb39-82" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb39-83"><a href="#cb39-83" aria-hidden="true" tabindex="-1"></a><span class="in">```{r iterread5}</span></span>
-<span id="cb39-84"><a href="#cb39-84" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb39-85"><a href="#cb39-85" aria-hidden="true" tabindex="-1"></a>contribution_data <span class="ot">&lt;-</span> <span class="fu">list.files</span>(here<span class="sc">::</span><span class="fu">here</span>(<span class="st">"data/original/"</span>), </span>
-<span id="cb39-86"><a href="#cb39-86" aria-hidden="true" tabindex="-1"></a>                                 <span class="at">pattern =</span> <span class="st">"17_26.csv"</span>, </span>
-<span id="cb39-87"><a href="#cb39-87" aria-hidden="true" tabindex="-1"></a>                                 <span class="at">full.names =</span> <span class="cn">TRUE</span>) <span class="sc">%&gt;%</span>  </span>
-<span id="cb39-88"><a href="#cb39-88" aria-hidden="true" tabindex="-1"></a>  <span class="fu">map</span>(<span class="sc">~</span> <span class="fu">read_csv</span>(.x) <span class="sc">%&gt;%</span></span>
-<span id="cb39-89"><a href="#cb39-89" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">representative =</span> <span class="fu">str_extract</span>(<span class="fu">basename</span>(.x), <span class="st">"^[^_]+(?=_fec_)"</span>))</span>
-<span id="cb39-90"><a href="#cb39-90" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb39-91"><a href="#cb39-91" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb39-92"><a href="#cb39-92" aria-hidden="true" tabindex="-1"></a>I've added a <span class="in">`mutate`</span> step to the pipeline to create a column that tracks the representative. The <span class="in">`str_extract`</span> function is from <span class="in">`stringr`</span> and relies on regular expressions to decide which characters to keep. This particular expression takes all of the characters before "_fec" in the filename. Regular expressions are often complicated and frustrating, but they can be extremely powerful. One of the places I rely on AI in my coding is to get these right!</span>
-<span id="cb39-93"><a href="#cb39-93" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb39-94"><a href="#cb39-94" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb39-95"><a href="#cb39-95" aria-hidden="true" tabindex="-1"></a>Now, let's inspect the resulting object:</span>
-<span id="cb39-96"><a href="#cb39-96" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb39-97"><a href="#cb39-97" aria-hidden="true" tabindex="-1"></a><span class="in">```{r iterinspect}</span></span>
-<span id="cb39-98"><a href="#cb39-98" aria-hidden="true" tabindex="-1"></a><span class="fu">class</span>(contribution_data)</span>
-<span id="cb39-99"><a href="#cb39-99" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb39-100"><a href="#cb39-100" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb39-101"><a href="#cb39-101" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb39-102"><a href="#cb39-102" aria-hidden="true" tabindex="-1"></a>This is the first time we've really encountered the <span class="in">`list`</span> data class. Lists can hold multiple data types so long as the data exists in its own <span class="in">`slot`</span>. So a list could have 1 slot that contains a vector, another slot that contains a matrix, and another that contains a dataframe. Lists are extremely flexible, but take a little getting used to.</span>
-<span id="cb39-103"><a href="#cb39-103" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb39-104"><a href="#cb39-104" aria-hidden="true" tabindex="-1"></a>One of the tricky bits is actually getting to data in each slot. We can do this by using the <span class="in">`[[`</span> notation.</span>
-<span id="cb39-105"><a href="#cb39-105" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb39-106"><a href="#cb39-106" aria-hidden="true" tabindex="-1"></a><span class="in">```{r iterinspect2}</span></span>
-<span id="cb39-107"><a href="#cb39-107" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(contribution_data[[<span class="dv">1</span>]])</span>
-<span id="cb39-108"><a href="#cb39-108" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb39-109"><a href="#cb39-109" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb39-110"><a href="#cb39-110" aria-hidden="true" tabindex="-1"></a>By using <span class="in">`[[1]]`</span> I'm telling <span class="in">`glimpse`</span> to run on the object that's in the first slot of <span class="in">`contribution_data`</span>. Once we're inside the <span class="in">`list`</span> the data behaves the same way it would if it didn't exist in the list.</span>
-<span id="cb39-111"><a href="#cb39-111" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb39-112"><a href="#cb39-112" aria-hidden="true" tabindex="-1"></a><span class="fu">## Choosing the Correct Columns</span></span>
-<span id="cb39-113"><a href="#cb39-113" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb39-114"><a href="#cb39-114" aria-hidden="true" tabindex="-1"></a>Last time, we used a pretty clunky way to narrow down all of the data.</span>
-<span id="cb39-115"><a href="#cb39-115" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb39-116"><a href="#cb39-116" aria-hidden="true" tabindex="-1"></a><span class="in">```{r lasttime}</span></span>
-<span id="cb39-117"><a href="#cb39-117" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
-<span id="cb39-118"><a href="#cb39-118" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: false</span></span>
-<span id="cb39-119"><a href="#cb39-119" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb39-120"><a href="#cb39-120" aria-hidden="true" tabindex="-1"></a>select_vars <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"is_individual"</span>, <span class="st">"contributor_name"</span>,  <span class="st">"contribution_receipt_amount"</span>, <span class="st">"committee_name"</span>, <span class="st">"report_year"</span>)</span>
-<span id="cb39-121"><a href="#cb39-121" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb39-122"><a href="#cb39-122" aria-hidden="true" tabindex="-1"></a>simpson_subset <span class="ot">&lt;-</span> simpson_receipts <span class="sc">%&gt;%</span> </span>
-<span id="cb39-123"><a href="#cb39-123" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="fu">all_of</span>(select_vars)) <span class="sc">%&gt;%</span> </span>
-<span id="cb39-124"><a href="#cb39-124" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(is_individual <span class="sc">==</span> <span class="cn">TRUE</span>)</span>
-<span id="cb39-125"><a href="#cb39-125" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb39-126"><a href="#cb39-126" aria-hidden="true" tabindex="-1"></a>fulcher_subset <span class="ot">&lt;-</span> fulcher_receipts <span class="sc">%&gt;%</span> </span>
-<span id="cb39-127"><a href="#cb39-127" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="fu">all_of</span>(select_vars)) <span class="sc">%&gt;%</span> </span>
-<span id="cb39-128"><a href="#cb39-128" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(is_individual <span class="sc">==</span> <span class="cn">TRUE</span>)</span>
-<span id="cb39-129"><a href="#cb39-129" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb39-130"><a href="#cb39-130" aria-hidden="true" tabindex="-1"></a>crapo_subset <span class="ot">&lt;-</span> crapo_receipts <span class="sc">%&gt;%</span> </span>
-<span id="cb39-131"><a href="#cb39-131" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="fu">all_of</span>(select_vars)) <span class="sc">%&gt;%</span> </span>
-<span id="cb39-132"><a href="#cb39-132" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(is_individual <span class="sc">==</span> <span class="cn">TRUE</span>)</span>
-<span id="cb39-133"><a href="#cb39-133" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb39-134"><a href="#cb39-134" aria-hidden="true" tabindex="-1"></a>risch_subset <span class="ot">&lt;-</span> risch_receipts <span class="sc">%&gt;%</span> </span>
-<span id="cb39-135"><a href="#cb39-135" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="fu">all_of</span>(select_vars)) <span class="sc">%&gt;%</span> </span>
-<span id="cb39-136"><a href="#cb39-136" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(is_individual <span class="sc">==</span> <span class="cn">TRUE</span>)</span>
-<span id="cb39-137"><a href="#cb39-137" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb39-138"><a href="#cb39-138" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb39-139"><a href="#cb39-139" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb39-140"><a href="#cb39-140" aria-hidden="true" tabindex="-1"></a>Let's clean this up creating our own function:</span>
-<span id="cb39-141"><a href="#cb39-141" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb39-142"><a href="#cb39-142" aria-hidden="true" tabindex="-1"></a><span class="in">```{r newfun}</span></span>
-<span id="cb39-143"><a href="#cb39-143" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb39-144"><a href="#cb39-144" aria-hidden="true" tabindex="-1"></a>select_ind_donors <span class="ot">&lt;-</span> <span class="cf">function</span>(df, vars, donor_type){</span>
-<span id="cb39-145"><a href="#cb39-145" aria-hidden="true" tabindex="-1"></a>  df <span class="sc">%&gt;%</span> </span>
-<span id="cb39-146"><a href="#cb39-146" aria-hidden="true" tabindex="-1"></a>    <span class="fu">select</span>(<span class="fu">all_of</span>({{ vars }})) <span class="sc">%&gt;%</span> </span>
-<span id="cb39-147"><a href="#cb39-147" aria-hidden="true" tabindex="-1"></a>    <span class="fu">filter</span>(is_individual <span class="sc">==</span> donor_type)</span>
-<span id="cb39-148"><a href="#cb39-148" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb39-149"><a href="#cb39-149" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb39-150"><a href="#cb39-150" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb39-151"><a href="#cb39-151" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb39-152"><a href="#cb39-152" aria-hidden="true" tabindex="-1"></a>Our function <span class="in">`select_ind_donors`</span>, has a descriptive name and takes 3 arguments (<span class="in">`df`</span>, <span class="in">`vars`</span>, and <span class="in">`donor_type`</span>). The one thing to notice is our use of _embracing_ to pass our variables into the function. Let's test it on 1 slot of our list.</span>
-<span id="cb39-153"><a href="#cb39-153" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb39-154"><a href="#cb39-154" aria-hidden="true" tabindex="-1"></a><span class="in">```{r testfun}</span></span>
-<span id="cb39-155"><a href="#cb39-155" aria-hidden="true" tabindex="-1"></a>select_vars <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"is_individual"</span>, <span class="st">"contributor_name"</span>,  <span class="st">"contribution_receipt_amount"</span>, <span class="st">"committee_name"</span>, <span class="st">"report_year"</span>,</span>
-<span id="cb39-156"><a href="#cb39-156" aria-hidden="true" tabindex="-1"></a>                 <span class="st">"representative"</span>)</span>
-<span id="cb39-157"><a href="#cb39-157" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb39-158"><a href="#cb39-158" aria-hidden="true" tabindex="-1"></a>test_fun <span class="ot">&lt;-</span> <span class="fu">select_ind_donors</span>(<span class="at">df =</span> contribution_data[[<span class="dv">1</span>]],</span>
-<span id="cb39-159"><a href="#cb39-159" aria-hidden="true" tabindex="-1"></a>                              <span class="at">vars =</span> select_vars,</span>
-<span id="cb39-160"><a href="#cb39-160" aria-hidden="true" tabindex="-1"></a>                              <span class="at">donor_type =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb39-161"><a href="#cb39-161" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(test_fun)</span>
-<span id="cb39-162"><a href="#cb39-162" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb39-163"><a href="#cb39-163" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb39-164"><a href="#cb39-164" aria-hidden="true" tabindex="-1"></a>Looks like that worked! Now let's use iteration to do that to all of the slots in our list.</span>
-<span id="cb39-165"><a href="#cb39-165" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb39-166"><a href="#cb39-166" aria-hidden="true" tabindex="-1"></a><span class="in">```{r iterfun}</span></span>
-<span id="cb39-167"><a href="#cb39-167" aria-hidden="true" tabindex="-1"></a>select_vars <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"is_individual"</span>, <span class="st">"contributor_name"</span>,  <span class="st">"contribution_receipt_amount"</span>, <span class="st">"committee_name"</span>, <span class="st">"report_year"</span>,</span>
-<span id="cb39-168"><a href="#cb39-168" aria-hidden="true" tabindex="-1"></a>                 <span class="st">"representative"</span>)</span>
-<span id="cb39-169"><a href="#cb39-169" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb39-170"><a href="#cb39-170" aria-hidden="true" tabindex="-1"></a>ind_donors <span class="ot">&lt;-</span> <span class="fu">map</span>(contribution_data, </span>
-<span id="cb39-171"><a href="#cb39-171" aria-hidden="true" tabindex="-1"></a>                  \(x) <span class="fu">select_ind_donors</span>(<span class="at">df =</span> x,</span>
-<span id="cb39-172"><a href="#cb39-172" aria-hidden="true" tabindex="-1"></a>                              <span class="at">vars =</span> select_vars,</span>
-<span id="cb39-173"><a href="#cb39-173" aria-hidden="true" tabindex="-1"></a>                              <span class="at">donor_type =</span> <span class="cn">TRUE</span>))</span>
-<span id="cb39-174"><a href="#cb39-174" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb39-175"><a href="#cb39-175" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb39-176"><a href="#cb39-176" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb39-177"><a href="#cb39-177" aria-hidden="true" tabindex="-1"></a>Here you can see the power of lists combined with <span class="in">`map`</span>: each slot gets passed to our function so that we don't have to extract each dataframe to run our function.</span>
-<span id="cb39-178"><a href="#cb39-178" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb39-179"><a href="#cb39-179" aria-hidden="true" tabindex="-1"></a>The only problem left is to get this into a single dataframe. We can do that easily enough using <span class="in">`bind_rows`</span>:</span>
-<span id="cb39-180"><a href="#cb39-180" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb39-181"><a href="#cb39-181" aria-hidden="true" tabindex="-1"></a><span class="in">```{r iterfundf}</span></span>
-<span id="cb39-182"><a href="#cb39-182" aria-hidden="true" tabindex="-1"></a>select_vars <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"is_individual"</span>, <span class="st">"contributor_name"</span>,  <span class="st">"contribution_receipt_amount"</span>, <span class="st">"committee_name"</span>, <span class="st">"report_year"</span>,</span>
-<span id="cb39-183"><a href="#cb39-183" aria-hidden="true" tabindex="-1"></a>                 <span class="st">"representative"</span>)</span>
-<span id="cb39-184"><a href="#cb39-184" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb39-185"><a href="#cb39-185" aria-hidden="true" tabindex="-1"></a>ind_donors <span class="ot">&lt;-</span> <span class="fu">map</span>(contribution_data, </span>
-<span id="cb39-186"><a href="#cb39-186" aria-hidden="true" tabindex="-1"></a>                  \(x) <span class="fu">select_ind_donors</span>(<span class="at">df =</span> x,</span>
-<span id="cb39-187"><a href="#cb39-187" aria-hidden="true" tabindex="-1"></a>                              <span class="at">vars =</span> select_vars,</span>
-<span id="cb39-188"><a href="#cb39-188" aria-hidden="true" tabindex="-1"></a>                              <span class="at">donor_type =</span> <span class="cn">TRUE</span>)) <span class="sc">%&gt;%</span> </span>
-<span id="cb39-189"><a href="#cb39-189" aria-hidden="true" tabindex="-1"></a>  <span class="fu">bind_rows</span>()</span>
-<span id="cb39-190"><a href="#cb39-190" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb39-191"><a href="#cb39-191" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb39-192"><a href="#cb39-192" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb39-193"><a href="#cb39-193" aria-hidden="true" tabindex="-1"></a><span class="fu">## Final Thoughts</span></span>
-<span id="cb39-194"><a href="#cb39-194" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb39-195"><a href="#cb39-195" aria-hidden="true" tabindex="-1"></a>This is just the tip of the iceberg. We'll continue practicing building functions and iterating as we move throug the rest of the semester. For now, I just want you to get some practice building intution for how this works.</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb42" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a><span class="an">title:</span><span class="co"> "Iterating with Election Data"</span></span>
+<span id="cb42-3"><a href="#cb42-3" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb42-4"><a href="#cb42-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb42-5"><a href="#cb42-5" aria-hidden="true" tabindex="-1"></a><span class="fu">## Objectives</span></span>
+<span id="cb42-6"><a href="#cb42-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb42-7"><a href="#cb42-7" aria-hidden="true" tabindex="-1"></a>Last time, we used some "brute force" approaches to cleaning up the election data. Lots of repetition and lots of copy-and-pasting. That's not ideal - it's not particularly readable (think about reading the same sentence over and over again with one word change) and it's pretty error-prone. We're going to clean that up by:</span>
+<span id="cb42-8"><a href="#cb42-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb42-9"><a href="#cb42-9" aria-hidden="true" tabindex="-1"></a><span class="at">&gt; Develop our own, custom functions and use iteration to eliminate redundancy.</span></span>
+<span id="cb42-10"><a href="#cb42-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb42-11"><a href="#cb42-11" aria-hidden="true" tabindex="-1"></a>You will still be working with the <span class="co">[</span><span class="ot">FEC contribution receipts</span><span class="co">](https://www.fec.gov/data/)</span> for our four member of Congress, but this time we'll do it in a more principled way.</span>
+<span id="cb42-12"><a href="#cb42-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb42-13"><a href="#cb42-13" aria-hidden="true" tabindex="-1"></a><span class="fu">## Getting Set Up</span></span>
+<span id="cb42-14"><a href="#cb42-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb42-15"><a href="#cb42-15" aria-hidden="true" tabindex="-1"></a>First, <span class="co">[</span><span class="ot">join the repository</span><span class="co">](https://classroom.github.com/a/JFFqRu2D)</span>. Then, we'll have to <span class="co">[</span><span class="ot">get our credentials</span><span class="co">](https://rstudio.aws.boisestate.edu/)</span> and login to a <span class="co">[</span><span class="ot">new RStudio session</span><span class="co">](https://rstudio.apps.aws.boisestate.edu/)</span>. Finally, create a new, version control, git-based project (using the link to the repo you just created). </span>
+<span id="cb42-16"><a href="#cb42-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb42-17"><a href="#cb42-17" aria-hidden="true" tabindex="-1"></a>Once you've done that, you'll need to load your packages. In this case, it's just the <span class="in">`tidyverse`</span>.</span>
+<span id="cb42-18"><a href="#cb42-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb42-19"><a href="#cb42-19" aria-hidden="true" tabindex="-1"></a><span class="in">```{r ldpkg}</span></span>
+<span id="cb42-20"><a href="#cb42-20" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb42-21"><a href="#cb42-21" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb42-22"><a href="#cb42-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb42-23"><a href="#cb42-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb42-24"><a href="#cb42-24" aria-hidden="true" tabindex="-1"></a><span class="fu">## Reading in the Data</span></span>
+<span id="cb42-25"><a href="#cb42-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb42-26"><a href="#cb42-26" aria-hidden="true" tabindex="-1"></a>Last time, we copied the <span class="in">`read_delim`</span> function 4x to read in all the data:</span>
+<span id="cb42-27"><a href="#cb42-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb42-28"><a href="#cb42-28" aria-hidden="true" tabindex="-1"></a><span class="in">```{r rddata}</span></span>
+<span id="cb42-29"><a href="#cb42-29" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb42-30"><a href="#cb42-30" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: false</span></span>
+<span id="cb42-31"><a href="#cb42-31" aria-hidden="true" tabindex="-1"></a>simpson_receipts <span class="ot">&lt;-</span> <span class="fu">read_delim</span>(<span class="st">"data/original/simpson_fec_17_26.csv"</span>,</span>
+<span id="cb42-32"><a href="#cb42-32" aria-hidden="true" tabindex="-1"></a>                               <span class="at">delim =</span> <span class="st">","</span>)</span>
+<span id="cb42-33"><a href="#cb42-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb42-34"><a href="#cb42-34" aria-hidden="true" tabindex="-1"></a>fulcher_receipts <span class="ot">&lt;-</span> <span class="fu">read_delim</span>(<span class="st">"data/original/fulcher_fec_17_26.csv"</span>,</span>
+<span id="cb42-35"><a href="#cb42-35" aria-hidden="true" tabindex="-1"></a>                               <span class="at">delim =</span> <span class="st">","</span>)</span>
+<span id="cb42-36"><a href="#cb42-36" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb42-37"><a href="#cb42-37" aria-hidden="true" tabindex="-1"></a>crapo_receipts <span class="ot">&lt;-</span> <span class="fu">read_delim</span>(<span class="st">"data/original/crapo_fec_17_26.csv"</span>,</span>
+<span id="cb42-38"><a href="#cb42-38" aria-hidden="true" tabindex="-1"></a>                               <span class="at">delim =</span> <span class="st">","</span>)</span>
+<span id="cb42-39"><a href="#cb42-39" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb42-40"><a href="#cb42-40" aria-hidden="true" tabindex="-1"></a>risch_receipts <span class="ot">&lt;-</span> <span class="fu">read_delim</span>(<span class="st">"data/original/risch_fec_17_26.csv"</span>,</span>
+<span id="cb42-41"><a href="#cb42-41" aria-hidden="true" tabindex="-1"></a>                               <span class="at">delim =</span> <span class="st">","</span>)</span>
+<span id="cb42-42"><a href="#cb42-42" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb42-43"><a href="#cb42-43" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb42-44"><a href="#cb42-44" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb42-45"><a href="#cb42-45" aria-hidden="true" tabindex="-1"></a>That's not ideal. We can do the same thing with <span class="in">`map`</span> using two commands. First, we'll use <span class="in">`list.files()`</span> to get a vector of filenames. Then, we'll pass that to <span class="in">`map`</span></span>
+<span id="cb42-46"><a href="#cb42-46" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb42-47"><a href="#cb42-47" aria-hidden="true" tabindex="-1"></a><span class="in">```{r iterread}</span></span>
+<span id="cb42-48"><a href="#cb42-48" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb42-49"><a href="#cb42-49" aria-hidden="true" tabindex="-1"></a>contribution_files <span class="ot">&lt;-</span> <span class="fu">list.files</span>(here<span class="sc">::</span><span class="fu">here</span>(<span class="st">"data/original/"</span>), <span class="at">pattern =</span> <span class="st">"17_26.csv"</span>, <span class="at">full.names =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb42-50"><a href="#cb42-50" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb42-51"><a href="#cb42-51" aria-hidden="true" tabindex="-1"></a>contribution_data <span class="ot">&lt;-</span> <span class="fu">map</span>(contribution_files,</span>
+<span id="cb42-52"><a href="#cb42-52" aria-hidden="true" tabindex="-1"></a>                         <span class="cf">function</span>(x) <span class="fu">read_delim</span>(x, <span class="at">delim=</span><span class="st">","</span>))</span>
+<span id="cb42-53"><a href="#cb42-53" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb42-54"><a href="#cb42-54" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb42-55"><a href="#cb42-55" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb42-56"><a href="#cb42-56" aria-hidden="true" tabindex="-1"></a>I did a few things here. First, I used <span class="in">`here::here()`</span> to make sure that <span class="in">`R`</span> used the correct project directory when looking for my files. Then, I passed "17_26.csv" as the parameter for the <span class="in">`pattern`</span> argument. The <span class="in">`pattern`</span> argument excepts characters and regular expressions as a way to make sure that I only get the files that match our election data (this is why file naming is important!!). Finally, I passed <span class="in">`TRUE`</span> to the <span class="in">`full.names`</span> argument to ensure that I get the entire path (not just the filename). Once I've got the <span class="in">`contribution_files`</span> I pass that to <span class="in">`map`</span>. I had to write out the <span class="in">`function(x)`</span> because I wanted to pass additional arguments to <span class="in">`read_delim`</span>. </span>
+<span id="cb42-57"><a href="#cb42-57" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb42-58"><a href="#cb42-58" aria-hidden="true" tabindex="-1"></a>You've probably noticed that there's an even more compact way to do this using a pipe:</span>
+<span id="cb42-59"><a href="#cb42-59" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb42-60"><a href="#cb42-60" aria-hidden="true" tabindex="-1"></a><span class="in">```{r iterread2}</span></span>
+<span id="cb42-61"><a href="#cb42-61" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb42-62"><a href="#cb42-62" aria-hidden="true" tabindex="-1"></a>contribution_data <span class="ot">&lt;-</span> <span class="fu">list.files</span>(here<span class="sc">::</span><span class="fu">here</span>(<span class="st">"data/original/"</span>), </span>
+<span id="cb42-63"><a href="#cb42-63" aria-hidden="true" tabindex="-1"></a>                                 <span class="at">pattern =</span> <span class="st">"17_26.csv"</span>, </span>
+<span id="cb42-64"><a href="#cb42-64" aria-hidden="true" tabindex="-1"></a>                                 <span class="at">full.names =</span> <span class="cn">TRUE</span>) <span class="sc">%&gt;%</span>  </span>
+<span id="cb42-65"><a href="#cb42-65" aria-hidden="true" tabindex="-1"></a>  <span class="fu">map</span>(.,</span>
+<span id="cb42-66"><a href="#cb42-66" aria-hidden="true" tabindex="-1"></a>                         <span class="cf">function</span>(x) <span class="fu">read_delim</span>(x, <span class="at">delim=</span><span class="st">","</span>))</span>
+<span id="cb42-67"><a href="#cb42-67" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb42-68"><a href="#cb42-68" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb42-69"><a href="#cb42-69" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb42-70"><a href="#cb42-70" aria-hidden="true" tabindex="-1"></a>Better still, we can replace <span class="in">`read_delim`</span> with <span class="in">`read_csv`</span> and eliminate the need to pass additional arguments.</span>
+<span id="cb42-71"><a href="#cb42-71" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb42-72"><a href="#cb42-72" aria-hidden="true" tabindex="-1"></a><span class="in">```{r iterread3}</span></span>
+<span id="cb42-73"><a href="#cb42-73" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb42-74"><a href="#cb42-74" aria-hidden="true" tabindex="-1"></a>contribution_data <span class="ot">&lt;-</span> <span class="fu">list.files</span>(here<span class="sc">::</span><span class="fu">here</span>(<span class="st">"data/original/"</span>), </span>
+<span id="cb42-75"><a href="#cb42-75" aria-hidden="true" tabindex="-1"></a>                                 <span class="at">pattern =</span> <span class="st">"17_26.csv"</span>, </span>
+<span id="cb42-76"><a href="#cb42-76" aria-hidden="true" tabindex="-1"></a>                                 <span class="at">full.names =</span> <span class="cn">TRUE</span>) <span class="sc">%&gt;%</span>  </span>
+<span id="cb42-77"><a href="#cb42-77" aria-hidden="true" tabindex="-1"></a>  <span class="fu">map</span>(., read_csv)</span>
+<span id="cb42-78"><a href="#cb42-78" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb42-79"><a href="#cb42-79" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb42-80"><a href="#cb42-80" aria-hidden="true" tabindex="-1"></a>This is helpful, but I would like to keep track of who the data belongs to, so I'm going to step back and write my own 1-time function inside of <span class="in">`map`</span>.</span>
+<span id="cb42-81"><a href="#cb42-81" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb42-82"><a href="#cb42-82" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb42-83"><a href="#cb42-83" aria-hidden="true" tabindex="-1"></a><span class="in">```{r iterread5}</span></span>
+<span id="cb42-84"><a href="#cb42-84" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb42-85"><a href="#cb42-85" aria-hidden="true" tabindex="-1"></a>contribution_data <span class="ot">&lt;-</span> <span class="fu">list.files</span>(here<span class="sc">::</span><span class="fu">here</span>(<span class="st">"data/original/"</span>), </span>
+<span id="cb42-86"><a href="#cb42-86" aria-hidden="true" tabindex="-1"></a>                                 <span class="at">pattern =</span> <span class="st">"17_26.csv"</span>, </span>
+<span id="cb42-87"><a href="#cb42-87" aria-hidden="true" tabindex="-1"></a>                                 <span class="at">full.names =</span> <span class="cn">TRUE</span>) <span class="sc">%&gt;%</span>  </span>
+<span id="cb42-88"><a href="#cb42-88" aria-hidden="true" tabindex="-1"></a>  <span class="fu">map</span>(<span class="sc">~</span> <span class="fu">read_csv</span>(.x) <span class="sc">%&gt;%</span></span>
+<span id="cb42-89"><a href="#cb42-89" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">representative =</span> <span class="fu">str_extract</span>(<span class="fu">basename</span>(.x), <span class="st">"^[^_]+(?=_fec_)"</span>))</span>
+<span id="cb42-90"><a href="#cb42-90" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb42-91"><a href="#cb42-91" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb42-92"><a href="#cb42-92" aria-hidden="true" tabindex="-1"></a>I've added a <span class="in">`mutate`</span> step to the pipeline to create a column that tracks the representative. The <span class="in">`str_extract`</span> function is from <span class="in">`stringr`</span> and relies on regular expressions to decide which characters to keep. This particular expression takes all of the characters before "_fec" in the filename. Regular expressions are often complicated and frustrating, but they can be extremely powerful. One of the places I rely on AI in my coding is to get these right!</span>
+<span id="cb42-93"><a href="#cb42-93" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb42-94"><a href="#cb42-94" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb42-95"><a href="#cb42-95" aria-hidden="true" tabindex="-1"></a>Now, let's inspect the resulting object:</span>
+<span id="cb42-96"><a href="#cb42-96" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb42-97"><a href="#cb42-97" aria-hidden="true" tabindex="-1"></a><span class="in">```{r iterinspect}</span></span>
+<span id="cb42-98"><a href="#cb42-98" aria-hidden="true" tabindex="-1"></a><span class="fu">class</span>(contribution_data)</span>
+<span id="cb42-99"><a href="#cb42-99" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb42-100"><a href="#cb42-100" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb42-101"><a href="#cb42-101" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb42-102"><a href="#cb42-102" aria-hidden="true" tabindex="-1"></a>This is the first time we've really encountered the <span class="in">`list`</span> data class. Lists can hold multiple data types so long as the data exists in its own <span class="in">`slot`</span>. So a list could have 1 slot that contains a vector, another slot that contains a matrix, and another that contains a dataframe. Lists are extremely flexible, but take a little getting used to.</span>
+<span id="cb42-103"><a href="#cb42-103" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb42-104"><a href="#cb42-104" aria-hidden="true" tabindex="-1"></a>One of the tricky bits is actually getting to data in each slot. We can do this by using the <span class="in">`[[`</span> notation.</span>
+<span id="cb42-105"><a href="#cb42-105" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb42-106"><a href="#cb42-106" aria-hidden="true" tabindex="-1"></a><span class="in">```{r iterinspect2}</span></span>
+<span id="cb42-107"><a href="#cb42-107" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(contribution_data[[<span class="dv">1</span>]])</span>
+<span id="cb42-108"><a href="#cb42-108" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb42-109"><a href="#cb42-109" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb42-110"><a href="#cb42-110" aria-hidden="true" tabindex="-1"></a>By using <span class="in">`[[1]]`</span> I'm telling <span class="in">`glimpse`</span> to run on the object that's in the first slot of <span class="in">`contribution_data`</span>. Once we're inside the <span class="in">`list`</span> the data behaves the same way it would if it didn't exist in the list.</span>
+<span id="cb42-111"><a href="#cb42-111" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb42-112"><a href="#cb42-112" aria-hidden="true" tabindex="-1"></a><span class="fu">## Choosing the Correct Columns</span></span>
+<span id="cb42-113"><a href="#cb42-113" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb42-114"><a href="#cb42-114" aria-hidden="true" tabindex="-1"></a>Last time, we used a pretty clunky way to narrow down all of the data.</span>
+<span id="cb42-115"><a href="#cb42-115" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb42-116"><a href="#cb42-116" aria-hidden="true" tabindex="-1"></a><span class="in">```{r lasttime}</span></span>
+<span id="cb42-117"><a href="#cb42-117" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb42-118"><a href="#cb42-118" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: false</span></span>
+<span id="cb42-119"><a href="#cb42-119" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb42-120"><a href="#cb42-120" aria-hidden="true" tabindex="-1"></a>select_vars <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"is_individual"</span>, <span class="st">"contributor_name"</span>,  <span class="st">"contribution_receipt_amount"</span>, <span class="st">"committee_name"</span>, <span class="st">"report_year"</span>)</span>
+<span id="cb42-121"><a href="#cb42-121" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb42-122"><a href="#cb42-122" aria-hidden="true" tabindex="-1"></a>simpson_subset <span class="ot">&lt;-</span> simpson_receipts <span class="sc">%&gt;%</span> </span>
+<span id="cb42-123"><a href="#cb42-123" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="fu">all_of</span>(select_vars)) <span class="sc">%&gt;%</span> </span>
+<span id="cb42-124"><a href="#cb42-124" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(is_individual <span class="sc">==</span> <span class="cn">TRUE</span>)</span>
+<span id="cb42-125"><a href="#cb42-125" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb42-126"><a href="#cb42-126" aria-hidden="true" tabindex="-1"></a>fulcher_subset <span class="ot">&lt;-</span> fulcher_receipts <span class="sc">%&gt;%</span> </span>
+<span id="cb42-127"><a href="#cb42-127" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="fu">all_of</span>(select_vars)) <span class="sc">%&gt;%</span> </span>
+<span id="cb42-128"><a href="#cb42-128" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(is_individual <span class="sc">==</span> <span class="cn">TRUE</span>)</span>
+<span id="cb42-129"><a href="#cb42-129" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb42-130"><a href="#cb42-130" aria-hidden="true" tabindex="-1"></a>crapo_subset <span class="ot">&lt;-</span> crapo_receipts <span class="sc">%&gt;%</span> </span>
+<span id="cb42-131"><a href="#cb42-131" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="fu">all_of</span>(select_vars)) <span class="sc">%&gt;%</span> </span>
+<span id="cb42-132"><a href="#cb42-132" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(is_individual <span class="sc">==</span> <span class="cn">TRUE</span>)</span>
+<span id="cb42-133"><a href="#cb42-133" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb42-134"><a href="#cb42-134" aria-hidden="true" tabindex="-1"></a>risch_subset <span class="ot">&lt;-</span> risch_receipts <span class="sc">%&gt;%</span> </span>
+<span id="cb42-135"><a href="#cb42-135" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="fu">all_of</span>(select_vars)) <span class="sc">%&gt;%</span> </span>
+<span id="cb42-136"><a href="#cb42-136" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(is_individual <span class="sc">==</span> <span class="cn">TRUE</span>)</span>
+<span id="cb42-137"><a href="#cb42-137" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb42-138"><a href="#cb42-138" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb42-139"><a href="#cb42-139" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb42-140"><a href="#cb42-140" aria-hidden="true" tabindex="-1"></a>Let's clean this up creating our own function:</span>
+<span id="cb42-141"><a href="#cb42-141" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb42-142"><a href="#cb42-142" aria-hidden="true" tabindex="-1"></a><span class="in">```{r newfun}</span></span>
+<span id="cb42-143"><a href="#cb42-143" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb42-144"><a href="#cb42-144" aria-hidden="true" tabindex="-1"></a>select_ind_donors <span class="ot">&lt;-</span> <span class="cf">function</span>(df, vars, donor_type){</span>
+<span id="cb42-145"><a href="#cb42-145" aria-hidden="true" tabindex="-1"></a>  df <span class="sc">%&gt;%</span> </span>
+<span id="cb42-146"><a href="#cb42-146" aria-hidden="true" tabindex="-1"></a>    <span class="fu">select</span>(<span class="fu">all_of</span>({{ vars }})) <span class="sc">%&gt;%</span> </span>
+<span id="cb42-147"><a href="#cb42-147" aria-hidden="true" tabindex="-1"></a>    <span class="fu">filter</span>(is_individual <span class="sc">==</span> donor_type)</span>
+<span id="cb42-148"><a href="#cb42-148" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb42-149"><a href="#cb42-149" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb42-150"><a href="#cb42-150" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb42-151"><a href="#cb42-151" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb42-152"><a href="#cb42-152" aria-hidden="true" tabindex="-1"></a>Our function <span class="in">`select_ind_donors`</span>, has a descriptive name and takes 3 arguments (<span class="in">`df`</span>, <span class="in">`vars`</span>, and <span class="in">`donor_type`</span>). The one thing to notice is our use of _embracing_ to pass our variables into the function. Let's test it on 1 slot of our list.</span>
+<span id="cb42-153"><a href="#cb42-153" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb42-154"><a href="#cb42-154" aria-hidden="true" tabindex="-1"></a><span class="in">```{r testfun}</span></span>
+<span id="cb42-155"><a href="#cb42-155" aria-hidden="true" tabindex="-1"></a>select_vars <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"is_individual"</span>, <span class="st">"contributor_name"</span>,  <span class="st">"contribution_receipt_amount"</span>, <span class="st">"committee_name"</span>, <span class="st">"report_year"</span>,</span>
+<span id="cb42-156"><a href="#cb42-156" aria-hidden="true" tabindex="-1"></a>                 <span class="st">"representative"</span>)</span>
+<span id="cb42-157"><a href="#cb42-157" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb42-158"><a href="#cb42-158" aria-hidden="true" tabindex="-1"></a>test_fun <span class="ot">&lt;-</span> <span class="fu">select_ind_donors</span>(<span class="at">df =</span> contribution_data[[<span class="dv">1</span>]],</span>
+<span id="cb42-159"><a href="#cb42-159" aria-hidden="true" tabindex="-1"></a>                              <span class="at">vars =</span> select_vars,</span>
+<span id="cb42-160"><a href="#cb42-160" aria-hidden="true" tabindex="-1"></a>                              <span class="at">donor_type =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb42-161"><a href="#cb42-161" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(test_fun)</span>
+<span id="cb42-162"><a href="#cb42-162" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb42-163"><a href="#cb42-163" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb42-164"><a href="#cb42-164" aria-hidden="true" tabindex="-1"></a>Looks like that worked! Now let's use iteration to do that to all of the slots in our list.</span>
+<span id="cb42-165"><a href="#cb42-165" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb42-166"><a href="#cb42-166" aria-hidden="true" tabindex="-1"></a><span class="in">```{r iterfun}</span></span>
+<span id="cb42-167"><a href="#cb42-167" aria-hidden="true" tabindex="-1"></a>select_vars <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"is_individual"</span>, <span class="st">"contributor_name"</span>,  <span class="st">"contribution_receipt_amount"</span>, <span class="st">"committee_name"</span>, <span class="st">"report_year"</span>,</span>
+<span id="cb42-168"><a href="#cb42-168" aria-hidden="true" tabindex="-1"></a>                 <span class="st">"representative"</span>)</span>
+<span id="cb42-169"><a href="#cb42-169" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb42-170"><a href="#cb42-170" aria-hidden="true" tabindex="-1"></a>ind_donors <span class="ot">&lt;-</span> <span class="fu">map</span>(contribution_data, </span>
+<span id="cb42-171"><a href="#cb42-171" aria-hidden="true" tabindex="-1"></a>                  \(x) <span class="fu">select_ind_donors</span>(<span class="at">df =</span> x,</span>
+<span id="cb42-172"><a href="#cb42-172" aria-hidden="true" tabindex="-1"></a>                              <span class="at">vars =</span> select_vars,</span>
+<span id="cb42-173"><a href="#cb42-173" aria-hidden="true" tabindex="-1"></a>                              <span class="at">donor_type =</span> <span class="cn">TRUE</span>))</span>
+<span id="cb42-174"><a href="#cb42-174" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb42-175"><a href="#cb42-175" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb42-176"><a href="#cb42-176" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb42-177"><a href="#cb42-177" aria-hidden="true" tabindex="-1"></a>Here you can see the power of lists combined with <span class="in">`map`</span>: each slot gets passed to our function so that we don't have to extract each dataframe to run our function.</span>
+<span id="cb42-178"><a href="#cb42-178" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb42-179"><a href="#cb42-179" aria-hidden="true" tabindex="-1"></a>The only problem left is to get this into a single dataframe. We can do that easily enough using <span class="in">`bind_rows`</span>:</span>
+<span id="cb42-180"><a href="#cb42-180" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb42-181"><a href="#cb42-181" aria-hidden="true" tabindex="-1"></a><span class="in">```{r iterfundf}</span></span>
+<span id="cb42-182"><a href="#cb42-182" aria-hidden="true" tabindex="-1"></a>select_vars <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"is_individual"</span>, <span class="st">"contributor_name"</span>,  <span class="st">"contribution_receipt_amount"</span>, <span class="st">"committee_name"</span>, <span class="st">"report_year"</span>,</span>
+<span id="cb42-183"><a href="#cb42-183" aria-hidden="true" tabindex="-1"></a>                 <span class="st">"representative"</span>)</span>
+<span id="cb42-184"><a href="#cb42-184" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb42-185"><a href="#cb42-185" aria-hidden="true" tabindex="-1"></a>ind_donors <span class="ot">&lt;-</span> <span class="fu">map</span>(contribution_data, </span>
+<span id="cb42-186"><a href="#cb42-186" aria-hidden="true" tabindex="-1"></a>                  \(x) <span class="fu">select_ind_donors</span>(<span class="at">df =</span> x,</span>
+<span id="cb42-187"><a href="#cb42-187" aria-hidden="true" tabindex="-1"></a>                              <span class="at">vars =</span> select_vars,</span>
+<span id="cb42-188"><a href="#cb42-188" aria-hidden="true" tabindex="-1"></a>                              <span class="at">donor_type =</span> <span class="cn">TRUE</span>)) <span class="sc">%&gt;%</span> </span>
+<span id="cb42-189"><a href="#cb42-189" aria-hidden="true" tabindex="-1"></a>  <span class="fu">bind_rows</span>()</span>
+<span id="cb42-190"><a href="#cb42-190" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb42-191"><a href="#cb42-191" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb42-192"><a href="#cb42-192" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb42-193"><a href="#cb42-193" aria-hidden="true" tabindex="-1"></a><span class="fu">## Final Thoughts</span></span>
+<span id="cb42-194"><a href="#cb42-194" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb42-195"><a href="#cb42-195" aria-hidden="true" tabindex="-1"></a>This is just the tip of the iceberg. We'll continue practicing building functions and iterating as we move throug the rest of the semester. For now, I just want you to get some practice building intution for how this works.</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div></div></div></div></div>
 </div> <!-- /content -->
 <footer class="footer">
