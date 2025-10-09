@@ -1,0 +1,14 @@
+{
+  "hash": "dc9125a7485336a77cc31632c3b1ab75",
+  "result": {
+    "markdown": "---\ntitle: \"Conclusion\"\ndate: \"2023-12-6\"\n---\n\n\n\n\nYou did it!! You made it all the way through and hopefully learned a few things along the way. Today we'll do a brief wrapup of the course and answer any outstanding questions you may have.\n\n\n\n\n\n<p class=\"text-center buttons\"><a class=\"btn btn-danger\" target=\"_blank\" href=\"/slides/32-slides.html\"><i class=\"fa-solid fa-arrow-up-right-from-square\"></i> View all slides in new window</a> <a class=\"btn btn-danger\" target=\"_blank\" href=\"/slides/32-slides.pdf\" role=\"button\"><i class=\"fa-solid fa-file-pdf\"></i> Download PDF of all slides</a></p>\n\n\n<div>\n\n\n```{=html}\n<iframe class=\"slide-deck\" src=\"/slides/32-slides.html\"></iframe>\n```\n\n\n</div>\n\n",
+    "supporting": [],
+    "filters": [
+      "rmarkdown/pagebreak.lua"
+    ],
+    "includes": {},
+    "engineDependencies": {},
+    "preserve": {},
+    "postProcess": true
+  }
+}

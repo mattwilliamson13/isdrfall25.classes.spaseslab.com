@@ -1,0 +1,57 @@
+---
+title: "What Is This Class?"
+date: "2025-08-25"
+---
+
+```{r slides-videos, echo=FALSE, include=FALSE}
+source(here::here("R", "slide-things.R"))
+
+```
+
+Today we'll focus on getting to know each other and the course structure. Before we get inundated with technical details and syntax, I think it's important to remind ourselves why we need geographical analysis. We'll spend some time on the various conceptualizations of place and space, how those things show up in geographic data, and their implications for the kinds of science we can do when we're using geographic data. This session is meant to provide a bit of philosophical foundation for you to keep in mind as you work through various parts of the analytic pipeline.
+
+## Readings
+
+### Setting the Stage
+{{< fa arrow-up-right-from-square >}} [Conservation biogeography: assessment and prospects](https://onlinelibrary.wiley.com/doi/full/10.1111/j.1366-9516.2005.00143.x) by Whitaker et al. [-@whittaker2005] provides an overview of the of geography in understanding ecosystem function and shaping conservation strategies.
+
+{{< fa arrow-up-right-from-square >}} [Economic geography, politics, and policy](https://www.annualreviews.org/doi/abs/10.1146/annurev-polisci-050718-033649) by Rickard [-@rickard2020] provides a review of the role of geography in understanding responses to globalization. 
+
+{{< fa arrow-up-right-from-square >}} [Revolutionary and counter revolutionary theory in geography and the problem of ghetto formation](https://onlinelibrary.wiley.com/doi/epdf/10.1111/j.1467-8330.1972.tb00486.x) by David Harvey [-@Harvey1972] offers a scathing critique of quantitative geography (though Harvey was one of the founders of the field). See [@Barnes2009] for a relatively recent attempt to reconcile these views.
+
+### Technical Details
+- The [syllabus](/syllabus.qmd), [content](/content/index.qmd), [examples](/example/index.qmd), and [assignments](/assignment/index.qmd) pages for this class
+
+- {{< fa arrow-up-right-from-square >}} [Happy Git and GitHub for the useR](https://happygitwithr.com/index.html) - all you really need to know to be a proficient user of git for version control and reproducible workflows.
+
+### Thinking Deeper
+{{< fa arrow-up-right-from-square >}} [Does scale exist? An epistemological scale continuum for complex human–environment systems](https://www.sciencedirect.com/science/article/pii/S0016718506001564) by Steven Manson [-@MANSON2008] is one of my favorite summaries of the various definitions and confusion surrounding scale as a concept invoked in many disciplines.
+
+{{< fa arrow-up-right-from-square >}} [Spatial Scaling in Ecology](https://www.jstor.org/stable/2389612) by John Wiens [-@Wiens1989] describes the fundamental challenges of scale in Ecology.
+
+## Objectives
+By the end of today you should be able to:
+
+* **Describe** the roles that geographic analysis in understanding the world.
+
+* **Define** what we mean by description, explanation, and prediction in geography.
+
+* **Understand** the organization of the course, the approach to grading, and the requirements for the final project
+
+* **Access** the course examples and assignments and know the process for submitting assignments
+
+## Slides
+
+The slides for today's lesson are available online as an HTML file. Use the buttons below to open the slides either as an interactive website or as a static PDF (for printing or storing for later). You can also click in the slides below and navigate through them with your left and right arrow keys.
+
+```{r show-slide-tabs, echo=FALSE, results="asis"}
+slide_buttons("/slides/01-slides")
+```
+
+<div>
+
+```{=html}
+<iframe class="slide-deck" src="/slides/01-slides.html"></iframe>
+```
+
+</div>

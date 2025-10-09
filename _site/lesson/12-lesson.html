@@ -1,0 +1,1611 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.3.450">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Intro to Spatial Data in R - Building Spatial Databases</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<link href="..//files/iSDR_logo.png" rel="icon" type="image/png">
+<script src="../site_libs/quarto-html/quarto.js"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/quarto-contrib/fontawesome6-0.1.0/all.css" rel="stylesheet">
+<link href="../site_libs/quarto-contrib/fontawesome6-0.1.0/latex-fontsize.css" rel="stylesheet">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+
+<meta property="og:title" content="Intro to Spatial Data in R - Building Spatial Databases">
+<meta property="og:description" content="">
+<meta property="og:image" content="https://isdrfall25.classes.spaseslab.com/files/social-image-f22.png">
+<meta property="og:site-name" content="Intro to Spatial Data in R">
+<meta property="og:locale" content="en_US">
+</head>
+
+<body class="nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg navbar-dark ">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container">
+    <a class="navbar-brand" href="../index.html">
+    <span class="navbar-title">Intro to Spatial Data in R</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../syllabus.html" rel="" target="">
+ <span class="menu-text">Syllabus</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../schedule.html" rel="" target="">
+ <span class="menu-text">Schedule</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../content/index.html" rel="" target="">
+ <span class="menu-text">Content</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../assignment/index.html" rel="" target="">
+ <span class="menu-text">Assignments</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../example/index.html" rel="" target="">
+ <span class="menu-text">Examples</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../lesson/index.html" rel="" target="">
+ <span class="menu-text">Lessons</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../resource/index.html" rel="" target="">
+ <span class="menu-text">Resources</span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://ecostatsbsu.slack.com/archives/CV4DEJ8M7" rel="" target=""><i class="bi bi-slack" role="img" aria-label="Slack">
+</i> 
+ <span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/BSU-Spatial-Data-in-R-Fall2025" rel="" target=""><i class="bi bi-github" role="img" aria-label="GitHub">
+</i> 
+ <span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://rstudio.apps.aws.boisestate.edu/" rel="" target=""><i class="bi bi-cloud-fill" role="img" aria-label="Rstudio">
+</i> 
+ <span class="menu-text"></span></a>
+  </li>  
+</ul>
+            <div class="quarto-navbar-tools">
+</div>
+          </div> <!-- /navcollapse -->
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#getting-started" id="toc-getting-started" class="nav-link active" data-scroll-target="#getting-started">Getting Started</a></li>
+  <li><a href="#load-packages-and-functions" id="toc-load-packages-and-functions" class="nav-link" data-scroll-target="#load-packages-and-functions">Load Packages and functions</a></li>
+  <li><a href="#read-in-the-data-and-reproject" id="toc-read-in-the-data-and-reproject" class="nav-link" data-scroll-target="#read-in-the-data-and-reproject">Read in the data and reproject</a></li>
+  <li><a href="#calculate-dependent-variables" id="toc-calculate-dependent-variables" class="nav-link" data-scroll-target="#calculate-dependent-variables">Calculate Dependent Variables</a>
+  <ul class="collapse">
+  <li><a href="#using-rasters" id="toc-using-rasters" class="nav-link" data-scroll-target="#using-rasters">Using Rasters</a></li>
+  <li><a href="#summarizing-across-vectors" id="toc-summarizing-across-vectors" class="nav-link" data-scroll-target="#summarizing-across-vectors">Summarizing Across Vectors</a></li>
+  </ul></li>
+  <li><a href="#calculate-independent-variables" id="toc-calculate-independent-variables" class="nav-link" data-scroll-target="#calculate-independent-variables">Calculate Independent Variables</a>
+  <ul class="collapse">
+  <li><a href="#as-rasters" id="toc-as-rasters" class="nav-link" data-scroll-target="#as-rasters">As Rasters</a></li>
+  </ul></li>
+  <li><a href="#extract-x-to-y" id="toc-extract-x-to-y" class="nav-link" data-scroll-target="#extract-x-to-y">Extract x to y</a></li>
+  <li><a href="#plot-and-summarize" id="toc-plot-and-summarize" class="nav-link" data-scroll-target="#plot-and-summarize">Plot and Summarize</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<div class="quarto-title-block"><div><h1 class="title">Building Spatial Databases</h1><button type="button" class="btn code-tools-button dropdown-toggle" id="quarto-code-tools-menu" data-bs-toggle="dropdown" aria-expanded="false"><i class="bi"></i> Code</button><ul class="dropdown-menu dropdown-menu-end" aria-labelelledby="quarto-code-tools-menu"><li><a id="quarto-show-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Show All Code</a></li><li><a id="quarto-hide-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Hide All Code</a></li><li><hr class="dropdown-divider"></li><li><a id="quarto-view-source" class="dropdown-item" href="javascript:void(0)" role="button">View Source</a></li></ul></div></div>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+</header>
+
+<section id="getting-started" class="level2">
+<h2 class="anchored" data-anchor-id="getting-started">Getting Started</h2>
+<p>First, we’ll have to <a href="https://rstudio.aws.boisestate.edu/">get our credentials</a> and login to a <a href="https://rstudio.apps.aws.boisestate.edu/">new RStudio session</a>. You can create your own repository if you’d like to track these things. You’ll have to copy your googledrive download function from a previous repo.</p>
+<p>We’re going to work through this in class and I’ll update this once we’re done. I’ve adjusted the headings here to reflect the generic workflow pseudocode you provided in-class. I’ll try to add some narrative to help remind you what we were doing.</p>
+</section>
+<section id="load-packages-and-functions" class="level2">
+<h2 class="anchored" data-anchor-id="load-packages-and-functions">Load Packages and functions</h2>
+<div class="cell">
+<details open="">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stderr">
+<pre><code>── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──
+✔ dplyr     1.1.4     ✔ readr     2.1.5
+✔ forcats   1.0.1     ✔ stringr   1.5.2
+✔ ggplot2   4.0.0     ✔ tibble    3.3.0
+✔ lubridate 1.9.4     ✔ tidyr     1.3.1
+✔ purrr     1.1.0     
+── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
+✖ dplyr::filter() masks stats::filter()
+✖ dplyr::lag()    masks stats::lag()
+ℹ Use the conflicted package (&lt;http://conflicted.r-lib.org/&gt;) to force all conflicts to become errors</code></pre>
+</div>
+<details open="">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(sf)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stderr">
+<pre><code>Linking to GEOS 3.13.0, GDAL 3.8.5, PROJ 9.5.1; sf_use_s2() is TRUE</code></pre>
+</div>
+<details open="">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(terra)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stderr">
+<pre><code>terra 1.8.70
+
+Attaching package: 'terra'
+
+The following object is masked from 'package:tidyr':
+
+    extract</code></pre>
+</div>
+<details open="">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(googledrive)</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tigris)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stderr">
+<pre><code>To enable caching of data, set `options(tigris_use_cache = TRUE)`
+in your R script or .Rprofile.
+
+Attaching package: 'tigris'
+
+The following object is masked from 'package:terra':
+
+    blocks</code></pre>
+</div>
+<details open="">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyterra)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stderr">
+<pre><code>
+Attaching package: 'tidyterra'
+
+The following object is masked from 'package:stats':
+
+    filter</code></pre>
+</div>
+<details open="">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">"scripts/utilities/download_utils.R"</span>)</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>file_list <span class="ot">&lt;-</span> <span class="fu">drive_ls</span>(<span class="fu">drive_get</span>(<span class="fu">as_id</span>(<span class="st">"https://drive.google.com/drive/folders/1BY24_G3bp6gfbu3BaioZb_eS0nzCwq7a?dmr=1&amp;ec=wgc-drive-globalnav-goto"</span>)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stderr">
+<pre><code>! Using an auto-discovered, cached token.
+  To suppress this message, modify your code or options to clearly consent to
+  the use of a cached token.
+  See gargle's "Non-interactive auth" vignette for more details:
+  &lt;https://gargle.r-lib.org/articles/non-interactive-auth.html&gt;
+ℹ The googledrive package is using a cached token for
+  'mattwilliamson@boisestate.edu'.</code></pre>
+</div>
+<details open="">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>file_list <span class="sc">%&gt;%</span> </span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(id, name) <span class="sc">%&gt;%</span></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>  purrr<span class="sc">::</span><span class="fu">pmap</span>(<span class="cf">function</span>(id, name) {</span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">gdrive_folder_download</span>(<span class="fu">list</span>(<span class="at">id =</span> id, <span class="at">name =</span> name),</span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>                           <span class="at">dstfldr =</span> <span class="st">"inclass12"</span>)</span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>  })</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stderr">
+<pre><code>File downloaded:
+• 'boiseDemo.dbf' &lt;id: 1MDcQUM0haGEHu1gRMR5k87WMJ4xko4-S&gt;
+Saved locally as:
+• 'data/original/inclass12/boiseDemo.dbf'
+File downloaded:
+• 'boiseDemo.shp' &lt;id: 1NLZ32a4STOXnfqUaQCWL6nyVWVdT0e-F&gt;
+Saved locally as:
+• 'data/original/inclass12/boiseDemo.shp'
+File downloaded:
+• 'boiseDemo.shx' &lt;id: 1yzWnnp76EJO7a4OVWSLRk2Asw4_zgUvQ&gt;
+Saved locally as:
+• 'data/original/inclass12/boiseDemo.shx'
+File downloaded:
+• 'boiseDemo.prj' &lt;id: 1WmXmBk63xvozvxTU2VdmnMzMRbRLOKnp&gt;
+Saved locally as:
+• 'data/original/inclass12/boiseDemo.prj'
+File downloaded:
+• 'Parks_and_Reserves_(polygons).shx' &lt;id: 1grOuIz-BXb1fQ3asL5PBeA84l6KjGIGo&gt;
+Saved locally as:
+• 'data/original/inclass12/Parks.shx'
+File downloaded:
+• 'Parks_and_Reserves_(polygons).shp' &lt;id: 1SlcaElSufdLDsEHOlI62BcBO07KmwpSx&gt;
+Saved locally as:
+• 'data/original/inclass12/Parks.shp'
+File downloaded:
+• 'Parks_and_Reserves_(polygons).prj' &lt;id: 1_13HJla4xzsetfXnBydFNwZq7A8gYfv1&gt;
+Saved locally as:
+• 'data/original/inclass12/Parks.prj'
+File downloaded:
+• 'Parks_and_Reserves_(polygons).shp.xml'
+  &lt;id: 1SY7danZ8V98uuGYPUL5i9SCFBOQfQWNG&gt;
+Saved locally as:
+• 'data/original/inclass12/Parks.xml'
+File downloaded:
+• 'Parks_and_Reserves_(polygons).dbf' &lt;id: 1aAlSMMwBEG4HvdVJgY7f1w0LgTbMA0Ia&gt;
+Saved locally as:
+• 'data/original/inclass12/Parks.dbf'
+File downloaded:
+• 'Parks_and_Reserves_(polygons).cpg' &lt;id: 1i4MPnhW0N215zFckl1JODBvkhuNacFJj&gt;
+Saved locally as:
+• 'data/original/inclass12/Parks.cpg'
+File downloaded:
+• 'adaPlaces.prj' &lt;id: 1YLILtVLedDnlbvK2AOVPlv_IIyFmGx3n&gt;
+Saved locally as:
+• 'data/original/inclass12/adaPlaces.prj'
+File downloaded:
+• 'adaPlaces.shp' &lt;id: 13LJul9lBTQsawPtfnBwQiP1oRz8W7cRC&gt;
+Saved locally as:
+• 'data/original/inclass12/adaPlaces.shp'
+File downloaded:
+• 'adaPlaces.dbf' &lt;id: 18x1Qcxu1YjGKcQ7H-QlOFrIlvxa5f-hP&gt;
+Saved locally as:
+• 'data/original/inclass12/adaPlaces.dbf'
+File downloaded:
+• 'adaPlaces.shx' &lt;id: 1CS6_76bXdz2_B10IzUt_e7arQBN2RD91&gt;
+Saved locally as:
+• 'data/original/inclass12/adaPlaces.shx'
+File downloaded:
+• 'StreetLights.prj' &lt;id: 1Nfi30vayBmcOUP2K3rWYC6iErLVcNLiV&gt;
+Saved locally as:
+• 'data/original/inclass12/StreetLights.prj'
+File downloaded:
+• 'StreetLights.shp.xml' &lt;id: 1aPXm-yM6lV6IyBPy1X9cf5_js6thkAzb&gt;
+Saved locally as:
+• 'data/original/inclass12/StreetLights.shp.xml'
+File downloaded:
+• 'StreetLights.shp' &lt;id: 13KY8Cno_Oh6vI8A540MRYPpxeYVNMH6q&gt;
+Saved locally as:
+• 'data/original/inclass12/StreetLights.shp'
+File downloaded:
+• 'StreetLights.shx' &lt;id: 15s3Qs3erCX1yjuUkmCIMOrsg08pDcvfY&gt;
+Saved locally as:
+• 'data/original/inclass12/StreetLights.shx'
+File downloaded:
+• 'StreetLights.dbf' &lt;id: 1IHloRFQDMUD3e08Y7T9MgoBl_PP8Pw9N&gt;
+Saved locally as:
+• 'data/original/inclass12/StreetLights.dbf'
+File downloaded:
+• 'StreetLights.cpg' &lt;id: 1N6Uo73t2uMLthdTgPadglVZq-WgXXlYA&gt;
+Saved locally as:
+• 'data/original/inclass12/StreetLights.cpg'
+File downloaded:
+• 'BPDCrimesPublic.csv' &lt;id: 1yuh-5n7U7tb8L2FifHEet4mUU3NR3mlv&gt;
+Saved locally as:
+• 'data/original/inclass12/BPDCrimesPublic.csv'
+File downloaded:
+• 'BPDPatrolAreas.shp' &lt;id: 1NwNcvhgoaiZBBg8CNl3yv9M0csCHlLRd&gt;
+Saved locally as:
+• 'data/original/inclass12/BPDPatrolAreas.shp'
+File downloaded:
+• 'BPDPatrolAreas.cpg' &lt;id: 1YnLjuelTftZOP_NWmn77yaaDQrngQ9Cl&gt;
+Saved locally as:
+• 'data/original/inclass12/BPDPatrolAreas.cpg'
+File downloaded:
+• 'BPDPatrolAreas.prj' &lt;id: 1ZhDJpdqkzcK29Hf2_V0Yq9JOOVnJo9r_&gt;
+Saved locally as:
+• 'data/original/inclass12/BPDPatrolAreas.prj'
+File downloaded:
+• 'BPDPatrolAreas.dbf' &lt;id: 1hMXQIQCLE4O-rvLp2BoNAfXsheCLIWT0&gt;
+Saved locally as:
+• 'data/original/inclass12/BPDPatrolAreas.dbf'
+File downloaded:
+• 'BPDPatrolAreas.shp.xml' &lt;id: 1iAGlcDDLUuD9KAQ5nw75wjq9DT7dEiWi&gt;
+Saved locally as:
+• 'data/original/inclass12/BPDPatrolAreas.shp.xml'
+File downloaded:
+• 'BPDPatrolAreas.shx' &lt;id: 1sJbAvaevE44Akfx6jAdQZSS52nJYKDMH&gt;
+Saved locally as:
+• 'data/original/inclass12/BPDPatrolAreas.shx'</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[[1]]
+[1] "data/original/inclass12/boiseDemo.dbf"
+
+[[2]]
+[1] "data/original/inclass12/boiseDemo.shp"
+
+[[3]]
+[1] "data/original/inclass12/boiseDemo.shx"
+
+[[4]]
+[1] "data/original/inclass12/boiseDemo.prj"
+
+[[5]]
+[1] "data/original/inclass12/Parks.shx"
+
+[[6]]
+[1] "data/original/inclass12/Parks.shp"
+
+[[7]]
+[1] "data/original/inclass12/Parks.prj"
+
+[[8]]
+[1] "data/original/inclass12/Parks.xml"
+
+[[9]]
+[1] "data/original/inclass12/Parks.dbf"
+
+[[10]]
+[1] "data/original/inclass12/Parks.cpg"
+
+[[11]]
+[1] "data/original/inclass12/adaPlaces.prj"
+
+[[12]]
+[1] "data/original/inclass12/adaPlaces.shp"
+
+[[13]]
+[1] "data/original/inclass12/adaPlaces.dbf"
+
+[[14]]
+[1] "data/original/inclass12/adaPlaces.shx"
+
+[[15]]
+[1] "data/original/inclass12/StreetLights.prj"
+
+[[16]]
+[1] "data/original/inclass12/StreetLights.shp.xml"
+
+[[17]]
+[1] "data/original/inclass12/StreetLights.shp"
+
+[[18]]
+[1] "data/original/inclass12/StreetLights.shx"
+
+[[19]]
+[1] "data/original/inclass12/StreetLights.dbf"
+
+[[20]]
+[1] "data/original/inclass12/StreetLights.cpg"
+
+[[21]]
+[1] "data/original/inclass12/BPDCrimesPublic.csv"
+
+[[22]]
+[1] "data/original/inclass12/BPDPatrolAreas.shp"
+
+[[23]]
+[1] "data/original/inclass12/BPDPatrolAreas.cpg"
+
+[[24]]
+[1] "data/original/inclass12/BPDPatrolAreas.prj"
+
+[[25]]
+[1] "data/original/inclass12/BPDPatrolAreas.dbf"
+
+[[26]]
+[1] "data/original/inclass12/BPDPatrolAreas.shp.xml"
+
+[[27]]
+[1] "data/original/inclass12/BPDPatrolAreas.shx"</code></pre>
+</div>
+</div>
+<p>In class, we created a new function to read, reproject, and crop our data to a common location and crs. I’ll add that here so that we can call it down the road and avoid all of the hacky copy-and-pasting I was doing. I’ve given the function a descriptive name. I’ve also provided 3 arguments (<code>filepath</code>, <code>target_crs</code>, and <code>crop_region</code>) and given them better names to help make it more obvious what we’re looking for. I’ve also added a last “safety” step to make the geometries valid.</p>
+<div class="cell">
+<details open="">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>read_project_crop <span class="ot">&lt;-</span> <span class="cf">function</span>(filepath, target_crs, crop_region) {</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>  shp <span class="ot">&lt;-</span> <span class="fu">st_read</span>(filepath, <span class="at">quiet =</span> <span class="cn">TRUE</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">st_transform</span>(., target_crs) <span class="sc">%&gt;%</span> </span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">st_crop</span>(., crop_region) <span class="sc">%&gt;%</span> </span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">st_make_valid</span>(.)</span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(shp)</span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+</section>
+<section id="read-in-the-data-and-reproject" class="level2">
+<h2 class="anchored" data-anchor-id="read-in-the-data-and-reproject">Read in the data and reproject</h2>
+<p>Now that we have our function, let’s load in the data. In class, we just used one of our objects to provide the “Boise Study Area”, but we might want a more systematic selection for our area-of-interest (AOI). We’ll use the <code>tigris</code> package to download the geometry for the Boise Metro Area and use that as our template. We combine that with a <code>filter</code> and <code>str_detect</code> call to look for any row containing characters matching “Boise”. Finally, we reproject the data to our chosen projection <code>EPSG:8826</code> (chosen because mercator projections are best for measuring distance, though in a geography this small, you’d have a hard time noticing the difference).</p>
+<div class="cell">
+<details open="">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>boise_metro <span class="ot">&lt;-</span> <span class="fu">core_based_statistical_areas</span>(<span class="at">cb =</span> <span class="cn">TRUE</span>, </span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>                                            <span class="at">year =</span> <span class="dv">2020</span>, </span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>                                            <span class="at">progress_bar =</span> <span class="cn">FALSE</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(</span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">str_detect</span>(NAME, <span class="st">"Boise"</span>)</span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>    ) <span class="sc">%&gt;%</span></span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">st_transform</span>(., </span>
+<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a>               <span class="at">crs =</span> <span class="st">"EPSG:8826"</span>)</span>
+<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(boise_metro<span class="sc">$</span>geometry)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<p><img src="12-lesson_files/figure-html/ldbdry-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>Now that we’ve got our <code>crop_region</code> let’s use our new function to read in all of the shapefiles. We can do that by using <code>list.files</code> with a regular expression to get all of the <code>.shp</code> files in our data folder. We then use our new function with <code>map</code> to create a list of projected, cropped shapefiles. Once we’ve got that, we want to give the shapefiles in each slot of the list a more intuitive name - which we do using <code>names</code> (using a <code>str_remove</code> from the <code>stringr</code> package to clean up the filenames returned by <code>basenames()</code>). Finally, we use <code>map_dfr</code> to create a summary dataframe returning the number of invalid geometries in each <code>slot</code> in our list. Everything looks good (no invalid geometries) so far!</p>
+<div class="cell">
+<details open="">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>shapefile_paths <span class="ot">&lt;-</span> <span class="fu">list.files</span>(<span class="st">"data/original/inclass12"</span>, </span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>                              <span class="at">pattern =</span> <span class="st">"</span><span class="sc">\\</span><span class="st">.shp$"</span>, </span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>                              <span class="at">full.names =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>shp_list <span class="ot">&lt;-</span> shapefile_paths <span class="sc">%&gt;%</span> </span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">map</span>(., </span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a>      <span class="cf">function</span>(x) <span class="fu">read_project_crop</span>(<span class="at">filepath =</span> x , </span>
+<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a>                                      <span class="at">target_crs =</span> <span class="st">"EPSG:8826"</span>, </span>
+<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a>                                      <span class="at">crop_region =</span> boise_metro)</span>
+<span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a>      )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: attribute variables are assumed to be spatially constant throughout
+all geometries
+Warning: attribute variables are assumed to be spatially constant throughout
+all geometries
+Warning: attribute variables are assumed to be spatially constant throughout
+all geometries</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning in CPL_read_ogr(dsn, layer, query, as.character(options), quiet, : GDAL
+Message 1:
+/Users/mattwilliamson/Websites/isdrfall2025/data/original/inclass12/Parks.shp
+contains polygon(s) with rings with invalid winding order. Autocorrecting them,
+but that shapefile should be corrected using ogr2ogr for example.</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: attribute variables are assumed to be spatially constant throughout
+all geometries
+Warning: attribute variables are assumed to be spatially constant throughout
+all geometries</code></pre>
+</div>
+<details open="">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(shp_list) <span class="ot">&lt;-</span> shapefile_paths  <span class="sc">%&gt;%</span>  </span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">basename</span>() <span class="sc">%&gt;%</span>  </span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">str_remove</span>(<span class="st">"</span><span class="sc">\\</span><span class="st">.shp$"</span>)</span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a>validity_summary <span class="ot">&lt;-</span> <span class="fu">map_dfr</span>(</span>
+<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a>  shp_list,</span>
+<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a>  <span class="sc">~</span> {</span>
+<span id="cb22-9"><a href="#cb22-9" aria-hidden="true" tabindex="-1"></a>    v <span class="ot">&lt;-</span> <span class="fu">st_is_valid</span>(.x)</span>
+<span id="cb22-10"><a href="#cb22-10" aria-hidden="true" tabindex="-1"></a>    <span class="fu">tibble</span>(</span>
+<span id="cb22-11"><a href="#cb22-11" aria-hidden="true" tabindex="-1"></a>      <span class="at">n_total =</span> <span class="fu">length</span>(v),</span>
+<span id="cb22-12"><a href="#cb22-12" aria-hidden="true" tabindex="-1"></a>      <span class="at">n_valid =</span> <span class="fu">sum</span>(v),</span>
+<span id="cb22-13"><a href="#cb22-13" aria-hidden="true" tabindex="-1"></a>      <span class="at">n_invalid =</span> <span class="fu">sum</span>(<span class="sc">!</span>v),</span>
+<span id="cb22-14"><a href="#cb22-14" aria-hidden="true" tabindex="-1"></a>      <span class="at">pct_valid =</span> <span class="fu">mean</span>(v)</span>
+<span id="cb22-15"><a href="#cb22-15" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb22-16"><a href="#cb22-16" aria-hidden="true" tabindex="-1"></a>  },</span>
+<span id="cb22-17"><a href="#cb22-17" aria-hidden="true" tabindex="-1"></a>  <span class="at">.id =</span> <span class="st">"layer"</span></span>
+<span id="cb22-18"><a href="#cb22-18" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p>Now, we could leave all of the shapefiles in the list and access them by name for our subsequent operations, but that’s a little clunky. Instead, we’ll use <code>assign</code> to bring them into our Global Environment as individual objects. We’ll use <code>walk2</code> from the <code>purrr</code> package because we are interested in the <em>side effects</em> of our iteration which in this case is whatever happens when we run <code>assign</code>. We don’t use <code>map</code> because we aren’t interested in keeping the results of <code>assign</code> we just want to run it over each combination of <code>names(shp_list)</code> and <code>shp_list</code>.</p>
+<div class="cell">
+<details open="">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="fu">walk2</span>(<span class="fu">names</span>(shp_list), shp_list, <span class="sc">~</span> <span class="fu">assign</span>(.x, .y, <span class="at">envir =</span> .GlobalEnv))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div class="callout callout-style-default callout-warning callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Warning
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Assigning objects into your environment can be risky. You can inadvertently overwrite functions or other objects. Make sure if you do this that the values you assign in the <code>names</code> call aren’t shared with anything else you might need.</p>
+</div>
+</div>
+<p>The last thing we need is the actual crimes dataset which we got as a <code>.csv</code> from the <a href="https://city-of-boise.opendata.arcgis.com/search">Boise Open Data portal</a>. If you go to the <a href="https://services1.arcgis.com/WHM6qC35aMtyAAlN/arcgis/rest/services/BPD_Crimes_Public/FeatureServer/0">information page for the file</a> you’ll see the CRS which we’ll use to create an <code>sf</code> object from the <code>.csv</code> file.</p>
+<div class="cell">
+<details open="">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>boise_crimes <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(</span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>  <span class="st">"data/original/inclass10/BPDCrimesPublic.csv"</span></span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span> </span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">st_as_sf</span>(., <span class="at">coords =</span> <span class="fu">c</span>(<span class="st">'x'</span>, <span class="st">'y'</span>), <span class="at">crs =</span> <span class="st">"ESRI:102459"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">st_transform</span>(., <span class="at">crs =</span> <span class="st">"EPSG:8826"</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">st_crop</span>(., boise_metro)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stderr">
+<pre><code>Rows: 57751 Columns: 33
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: ","
+chr (24): DRNumber, IncidentType, CrimeCode, CrimeCodeDescription, CrimeCode...
+dbl  (9): OBJECTID, ChargeID, District, Occurred_HR, Occurred_MO, Occurred_D...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: attribute variables are assumed to be spatially constant throughout
+all geometries</code></pre>
+</div>
+</div>
+<p>Now that we’ve got everything into our environment, let’s plot them to see how things look. You’ll notice that I use a series of <code>geom_sf</code> calls to layer the data. I only use the <code>aes</code> function to map the color of each polygon in our demographics dataset to a variable. All of the other colors are set universally (i.e., outside of the <code>mapping</code> argument).</p>
+<div class="cell">
+<details open="">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>() <span class="sc">+</span></span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_sf</span>(<span class="at">data =</span> boiseDemo, <span class="fu">aes</span>(<span class="at">fill =</span> hhincome)) <span class="sc">+</span></span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_sf</span>(<span class="at">data =</span> Parks, <span class="at">fill =</span> <span class="st">"darkgreen"</span>)<span class="sc">+</span></span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_sf</span>(<span class="at">data =</span> adaPlaces, <span class="at">fill =</span> <span class="st">"transparent"</span>, </span>
+<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a>          <span class="at">color =</span> <span class="st">"green"</span>, </span>
+<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a>          <span class="at">size =</span> <span class="fl">0.25</span>) <span class="sc">+</span></span>
+<span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_sf</span>(<span class="at">data =</span> boise_crimes, </span>
+<span id="cb27-8"><a href="#cb27-8" aria-hidden="true" tabindex="-1"></a>          <span class="at">fill =</span> <span class="st">"transparent"</span>, </span>
+<span id="cb27-9"><a href="#cb27-9" aria-hidden="true" tabindex="-1"></a>          <span class="at">color =</span> <span class="st">"red"</span>) <span class="sc">+</span></span>
+<span id="cb27-10"><a href="#cb27-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_sf</span>(<span class="at">data =</span> StreetLights, </span>
+<span id="cb27-11"><a href="#cb27-11" aria-hidden="true" tabindex="-1"></a>          <span class="at">fill =</span> <span class="st">"transparent"</span>, </span>
+<span id="cb27-12"><a href="#cb27-12" aria-hidden="true" tabindex="-1"></a>          <span class="at">color =</span> <span class="st">"yellow"</span>,</span>
+<span id="cb27-13"><a href="#cb27-13" aria-hidden="true" tabindex="-1"></a>          <span class="at">size=</span><span class="fl">0.25</span>) <span class="sc">+</span></span>
+<span id="cb27-14"><a href="#cb27-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_sf</span>(<span class="at">data =</span> BPDPatrolAreas, <span class="at">fill =</span> <span class="st">"transparent"</span>, <span class="at">color =</span> <span class="st">"white"</span>) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<p><img src="12-lesson_files/figure-html/pltshps-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>You can see that the Census considers large parts of Canyon and Owyhee Counties to be part of the Boise Combined Statistical Area. That makes sense for a lot of things, but in this case we don’t have crime data for those locations. We’ll want to think about that when we’re generating our various variables. Because the crimes dataset extends out to our larger demographic data, we’ll use the <code>boiseDemo</code> dataset as our primary AOI.</p>
+</section>
+<section id="calculate-dependent-variables" class="level2">
+<h2 class="anchored" data-anchor-id="calculate-dependent-variables">Calculate Dependent Variables</h2>
+<section id="using-rasters" class="level3">
+<h3 class="anchored" data-anchor-id="using-rasters">Using Rasters</h3>
+<p>In order to explore the correlation of crimes in Boise with other features, we need to figure out how we want to think about crimes. In class, we thought about a continuous surface of distance between crimes as a way of looking for places where crimes are common (distance is low) vs.&nbsp;uncommon (distance high). We’ll use a template raster of 50m resolution to ease computation, but remember the choice of resolution implies a particular <em>scale</em> of inquiry which we hope will align with the mechanisms with think are operating.</p>
+<div class="cell">
+<details open="">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>template_rst <span class="ot">&lt;-</span> <span class="fu">rast</span>(<span class="at">res =</span> <span class="fu">c</span>(<span class="dv">50</span>,<span class="dv">50</span>),</span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>                     <span class="at">crs=</span><span class="fu">crs</span>(boiseDemo), </span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>                     <span class="at">extent =</span> <span class="fu">ext</span>(boiseDemo))</span>
+<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a>dist_crimes <span class="ot">&lt;-</span> <span class="fu">distance</span>(<span class="at">x =</span> template_rst,</span>
+<span id="cb28-6"><a href="#cb28-6" aria-hidden="true" tabindex="-1"></a>                       <span class="at">y =</span> <span class="fu">vect</span>(boise_crimes),</span>
+<span id="cb28-7"><a href="#cb28-7" aria-hidden="true" tabindex="-1"></a>                       <span class="at">rasterize =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb28-8"><a href="#cb28-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-9"><a href="#cb28-9" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(dist_crimes)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<p><img src="12-lesson_files/figure-html/summarize-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>Maybe we are more interested in something like density of crimes. We could express that as a raster. We do that using <code>rasterize</code> and supplying <code>count</code> as the parameter for the <code>fun</code> argument. This tells <code>terra</code> to count all the points in each of our 50m cells.</p>
+<div class="cell">
+<details open="">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>dens_crimes <span class="ot">&lt;-</span> <span class="fu">rasterize</span>(<span class="at">x =</span> <span class="fu">vect</span>(boise_crimes),</span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>                         <span class="at">y =</span> template_rst,</span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>                         <span class="at">fun =</span> <span class="st">"count"</span>,</span>
+<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a>                         <span class="at">background =</span> <span class="dv">0</span>)</span>
+<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-6"><a href="#cb29-6" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(dens_crimes)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<p><img src="12-lesson_files/figure-html/sumdens-1.png" class="img-fluid" width="672"></p>
+</div>
+<details open="">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(<span class="fu">log</span>(dens_crimes))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<p><img src="12-lesson_files/figure-html/sumdens-2.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>The initial <code>plot(dens_crimes)</code> makes it difficult to see much (as the number of crimes in a cell is rarely more than 1). I added the <code>plot(log(dens_crimes))</code> to help you see where crimes actually occur (as the <code>log(0)</code> is <code>-Inf</code> and thus plots as <code>NA</code>).</p>
+</section>
+<section id="summarizing-across-vectors" class="level3">
+<h3 class="anchored" data-anchor-id="summarizing-across-vectors">Summarizing Across Vectors</h3>
+<p>Rather than express crime as some sort of continuous field (raster), we might want to aggregate crimes to one of our existing vector geometries. We might choose to count crimes in each Police District or in each Census block group. I’ll demonstrate two versions of this:</p>
+<div class="cell">
+<details open="">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>crimes_in_bpd <span class="ot">&lt;-</span> <span class="fu">st_join</span>(boise_crimes, BPDPatrolAreas)</span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>counts <span class="ot">&lt;-</span> crimes_in_bpd <span class="sc">%&gt;%</span></span>
+<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">st_drop_geometry</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(<span class="at">polygon_id =</span> PoliceArea)</span>
+<span id="cb31-5"><a href="#cb31-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-6"><a href="#cb31-6" aria-hidden="true" tabindex="-1"></a>crimes_per_bpd <span class="ot">&lt;-</span> BPDPatrolAreas <span class="sc">%&gt;%</span></span>
+<span id="cb31-7"><a href="#cb31-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(counts, <span class="at">by =</span> <span class="fu">c</span>(<span class="st">"PoliceArea"</span> <span class="ot">=</span> <span class="st">"polygon_id"</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb31-8"><a href="#cb31-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">num_crimes =</span> <span class="fu">replace_na</span>(n, <span class="dv">0</span>))</span>
+<span id="cb31-9"><a href="#cb31-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-10"><a href="#cb31-10" aria-hidden="true" tabindex="-1"></a>boiseDemo<span class="sc">$</span>count <span class="ot">&lt;-</span> <span class="fu">lengths</span>(<span class="fu">st_intersects</span>(boiseDemo, boise_crimes))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p>In the first, more verbose version, I’m demonstrating the use of <code>count</code> with a <code>left_join</code>. It’s a bit clunky, but for large datasets, the dropping of geometry can make the calculation go faster and also makes for a bit more readable code. In the second version, I’m using a spatial <strong>predicate</strong> (which returns <code>TRUE/FALSE</code>) to count the number of crimes that intersect the polygons of <code>boiseDemo</code> and assigning it (using <code>$</code>) to a new column called <code>count</code>.</p>
+</section>
+</section>
+<section id="calculate-independent-variables" class="level2">
+<h2 class="anchored" data-anchor-id="calculate-independent-variables">Calculate Independent Variables</h2>
+<section id="as-rasters" class="level3">
+<h3 class="anchored" data-anchor-id="as-rasters">As Rasters</h3>
+<p>In class, we talked about buffering each streetlight point based on a rough approximation of the area they illuminate. We’ll replicate that here, but use a bit more of a sophisticated approach. First, we assign an “illumination factor” by using the <code>case_when</code> function which works as a multiple <code>if_else</code> or <code>iflese</code> (use <code>?if_else</code> to learn more about these conditional evaluation functions). Then we calculate an illumination radius based on the wattage or the overal average wattage (if the light has <code>NA</code> for these values). Finally, we pipe this into <code>st_buffer</code> to convert the points into polygons that are sized according to illumination.</p>
+<div class="cell">
+<details open="">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>streetlights_buffered <span class="ot">&lt;-</span> StreetLights <span class="sc">%&gt;%</span></span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">type_factor =</span> <span class="fu">case_when</span>(</span>
+<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a>      Lamp_Type <span class="sc">==</span> <span class="st">"LED"</span> <span class="sc">~</span> <span class="fl">1.2</span>,</span>
+<span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a>      Lamp_Type <span class="sc">==</span> <span class="st">"High Pressure Sodium"</span> <span class="sc">~</span> <span class="fl">1.0</span>,</span>
+<span id="cb32-6"><a href="#cb32-6" aria-hidden="true" tabindex="-1"></a>      Lamp_Type <span class="sc">==</span> <span class="st">"Solar"</span> <span class="sc">~</span> <span class="fl">0.8</span>,</span>
+<span id="cb32-7"><a href="#cb32-7" aria-hidden="true" tabindex="-1"></a>      <span class="cn">TRUE</span> <span class="sc">~</span> <span class="dv">1</span></span>
+<span id="cb32-8"><a href="#cb32-8" aria-hidden="true" tabindex="-1"></a>    ),</span>
+<span id="cb32-9"><a href="#cb32-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">radius =</span> <span class="fu">if_else</span>(<span class="fu">is.na</span>(Wattage), </span>
+<span id="cb32-10"><a href="#cb32-10" aria-hidden="true" tabindex="-1"></a>                     <span class="fl">0.5</span> <span class="sc">*</span> <span class="fu">sqrt</span>(<span class="fu">mean</span>(Wattage, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)) <span class="sc">*</span> type_factor,</span>
+<span id="cb32-11"><a href="#cb32-11" aria-hidden="true" tabindex="-1"></a>                     <span class="fl">0.5</span> <span class="sc">*</span> <span class="fu">sqrt</span>(Wattage) <span class="sc">*</span> type_factor)</span>
+<span id="cb32-12"><a href="#cb32-12" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb32-13"><a href="#cb32-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">st_buffer</span>(., <span class="at">dist =</span> .<span class="sc">$</span>radius)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p>Now that we’ve got that, we can calculate our distance and density rasters using the same approach that we did for crimes.</p>
+<div class="cell">
+<details open="">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a>dist_lights <span class="ot">&lt;-</span> <span class="fu">distance</span>(<span class="at">x =</span> template_rst,</span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a>                       <span class="at">y =</span> <span class="fu">vect</span>(streetlights_buffered),</span>
+<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a>                       <span class="at">rasterize =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb33-4"><a href="#cb33-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-5"><a href="#cb33-5" aria-hidden="true" tabindex="-1"></a>dens_lights <span class="ot">&lt;-</span> <span class="fu">rasterize</span>(<span class="at">x =</span> <span class="fu">vect</span>(streetlights_buffered),</span>
+<span id="cb33-6"><a href="#cb33-6" aria-hidden="true" tabindex="-1"></a>                         <span class="at">y =</span> template_rst,</span>
+<span id="cb33-7"><a href="#cb33-7" aria-hidden="true" tabindex="-1"></a>                         <span class="at">fun =</span> <span class="st">"count"</span>,</span>
+<span id="cb33-8"><a href="#cb33-8" aria-hidden="true" tabindex="-1"></a>                         <span class="at">background =</span> <span class="dv">0</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p>We can do the same thing for parks (but without buffering). We have to add <code>st_cast</code> because <code>vect()</code> doesn’t know how to deal with a <code>GEOMETRYCOLLECTION</code> spatial class. You’ll get some warnings about the first part of the geometry collection being retained. In this case, it’s because the City of Boise serves this as both a polygon and point dataset (and we’re using the polygons.)</p>
+<div class="cell">
+<details open="">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a>dist_parks <span class="ot">&lt;-</span> <span class="fu">distance</span>(<span class="at">x =</span> template_rst,</span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a>                       <span class="at">y =</span> <span class="fu">vect</span>(</span>
+<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a>                         <span class="fu">st_cast</span>(Parks, <span class="at">to =</span> <span class="st">"MULTIPOLYGON"</span>)),</span>
+<span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a>                       <span class="at">rasterize =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning in st_cast.GEOMETRYCOLLECTION(X[[i]], ...): only first part of
+geometrycollection is retained
+Warning in st_cast.GEOMETRYCOLLECTION(X[[i]], ...): only first part of
+geometrycollection is retained</code></pre>
+</div>
+<details open="">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a>dens_parks <span class="ot">&lt;-</span> <span class="fu">rasterize</span>(<span class="at">x =</span> <span class="fu">vect</span>(</span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a>                         <span class="fu">st_cast</span>(Parks, <span class="at">to =</span> <span class="st">"MULTIPOLYGON"</span>)),</span>
+<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a>                         <span class="at">y =</span> template_rst,</span>
+<span id="cb36-4"><a href="#cb36-4" aria-hidden="true" tabindex="-1"></a>                         <span class="at">fun =</span> <span class="st">"count"</span>,</span>
+<span id="cb36-5"><a href="#cb36-5" aria-hidden="true" tabindex="-1"></a>                         <span class="at">background =</span> <span class="dv">0</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning in st_cast.GEOMETRYCOLLECTION(X[[i]], ...): only first part of
+geometrycollection is retained
+Warning in st_cast.GEOMETRYCOLLECTION(X[[i]], ...): only first part of
+geometrycollection is retained</code></pre>
+</div>
+</div>
+<p>You could do this for a (possibly filtered) version of the <code>adaPlaces</code>, but the syntax is basically the same so I won’t show it here. Instead, we’ll rasterize 2 of our demographic datasets. Instead of providing a parameter for the <code>fun</code> argument, we’ll use the <code>field</code> argument and pass it the name of the column we’d like to rasterize. You’ll also notice that I don’t supply a <code>background</code> argument which means that <code>NA</code>s will remain in the resulting raster.</p>
+<div class="cell">
+<details open="">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a>income_rst <span class="ot">&lt;-</span> <span class="fu">rasterize</span>(<span class="at">x =</span> <span class="fu">vect</span>(</span>
+<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a>                         boiseDemo),</span>
+<span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a>                         <span class="at">y =</span> template_rst,</span>
+<span id="cb38-4"><a href="#cb38-4" aria-hidden="true" tabindex="-1"></a>                         <span class="at">field =</span> <span class="st">"hhincome"</span>)</span>
+<span id="cb38-5"><a href="#cb38-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-6"><a href="#cb38-6" aria-hidden="true" tabindex="-1"></a>segregation_rst <span class="ot">&lt;-</span> <span class="fu">rasterize</span>(<span class="at">x =</span> <span class="fu">vect</span>(</span>
+<span id="cb38-7"><a href="#cb38-7" aria-hidden="true" tabindex="-1"></a>                         boiseDemo),</span>
+<span id="cb38-8"><a href="#cb38-8" aria-hidden="true" tabindex="-1"></a>                         <span class="at">y =</span> template_rst,</span>
+<span id="cb38-9"><a href="#cb38-9" aria-hidden="true" tabindex="-1"></a>                         <span class="at">field =</span> <span class="st">"ls"</span>)</span>
+<span id="cb38-10"><a href="#cb38-10" aria-hidden="true" tabindex="-1"></a>population_rst <span class="ot">&lt;-</span> <span class="fu">rasterize</span>(<span class="at">x =</span> <span class="fu">vect</span>(</span>
+<span id="cb38-11"><a href="#cb38-11" aria-hidden="true" tabindex="-1"></a>                         boiseDemo),</span>
+<span id="cb38-12"><a href="#cb38-12" aria-hidden="true" tabindex="-1"></a>                         <span class="at">y =</span> template_rst,</span>
+<span id="cb38-13"><a href="#cb38-13" aria-hidden="true" tabindex="-1"></a>                         <span class="at">field =</span> <span class="st">"totalpop"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p>Let’s bundle all of these together so that we can make life easier later. We can do that by combining our rasters (using <code>c</code> for <code>concatenate</code>).</p>
+<div class="cell">
+<details open="">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a>predictor_rsts <span class="ot">&lt;-</span> <span class="fu">c</span>(dist_lights, dens_lights, dist_parks, dens_parks, income_rst, segregation_rst, population_rst)</span>
+<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-3"><a href="#cb39-3" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(predictor_rsts) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"dist_lights"</span>, <span class="st">"dens_lights"</span>, <span class="st">"dist_parks"</span>, </span>
+<span id="cb39-4"><a href="#cb39-4" aria-hidden="true" tabindex="-1"></a>                           <span class="st">"dens_parks"</span>, <span class="st">"income"</span>, <span class="st">"segregation"</span>, <span class="st">"population"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+</section>
+</section>
+<section id="extract-x-to-y" class="level2">
+<h2 class="anchored" data-anchor-id="extract-x-to-y">Extract x to y</h2>
+<p>One way to get at the correlation between variables is to look at correlations in the crimes rasters and the other predictor rasters. We can use the <code>cor</code> function for that, but we need to convert the <code>SpatRasters</code> to matrices. That’s pretty easy using the <code>as.matrix</code> function (you can find a lot of <code>as._</code> coercion functions by typing <code>?as.matrix</code>). Because we have <code>NA</code> in some of our Census data, we provide <code>"complete"</code> to the <code>use</code> argument of <code>cor</code> to have the correlation restricted to complete observations (those where there is no <code>NA</code> in any of the rasters being considered)</p>
+<div class="cell">
+<details open="">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cor</span>(<span class="fu">as.matrix</span>(dist_crimes), <span class="fu">as.matrix</span>(population_rst), <span class="at">use=</span><span class="st">"complete"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>       totalpop
+layer 0.3464698</code></pre>
+</div>
+<details open="">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cor</span>(<span class="fu">as.matrix</span>(dist_crimes), <span class="fu">as.matrix</span>(income_rst), <span class="at">use=</span><span class="st">"complete"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>         hhincome
+layer -0.07198322</code></pre>
+</div>
+<details open="">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb44"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cor</span>(<span class="fu">as.matrix</span>(dist_crimes), <span class="fu">as.matrix</span>(dist_lights), <span class="at">use=</span><span class="st">"complete"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>          layer
+layer 0.7068155</code></pre>
+</div>
+</div>
+<p>Remember that our <code>dist_crimes</code> is the distance from the nearest crime. So a positive correlation with population means that as population goes up so does the distance to a crime. Alternatively, the negative correlation with income means that as income goes up, the distance between crimes goes down.</p>
+<p>Alternatively, we might want to summarize some of our variables to our boise police district data. We can do this by using using <code>st_intersection</code> (which returns the geometry of overlap between our crimes_per_bpd data and our demographic data), calculating the proportion of area overlapped for each blockgroup (the <code>weight</code> variable below), and then caluculating a weighted mean for each police district.</p>
+<div class="cell">
+<details open="">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb46"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a>bpd_demo <span class="ot">&lt;-</span> <span class="fu">st_intersection</span>(boiseDemo, crimes_per_bpd) <span class="sc">%&gt;%</span> </span>
+<span id="cb46-2"><a href="#cb46-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">area =</span> <span class="fu">st_area</span>(geometry)) <span class="sc">%&gt;%</span> </span>
+<span id="cb46-3"><a href="#cb46-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(PoliceArea) <span class="sc">%&gt;%</span></span>
+<span id="cb46-4"><a href="#cb46-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">weight =</span> <span class="fu">as.numeric</span>(area) <span class="sc">/</span> <span class="fu">sum</span>(<span class="fu">as.numeric</span>(area))) <span class="sc">%&gt;%</span> </span>
+<span id="cb46-5"><a href="#cb46-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">weighted_mean_inc =</span> <span class="fu">sum</span>(weight <span class="sc">*</span> hhincome, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)) <span class="sc">%&gt;%</span> </span>
+<span id="cb46-6"><a href="#cb46-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">st_drop_geometry</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb46-7"><a href="#cb46-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">right_join</span>(., crimes_per_bpd)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: attribute variables are assumed to be spatially constant throughout
+all geometries</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Joining with `by = join_by(PoliceArea)`</code></pre>
+</div>
+</div>
+<p>We could also calculate a weighted average using <code>terra::extract</code>. Use extract essentially produces a weighted average because each cell in a police district is given the value of whichever polygon it came from. As such, when we calculate the mean it is based on the proportional composition of the polygons that were used to create that raster.</p>
+<div class="cell">
+<details open="">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb49"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a>bpd_ext <span class="ot">&lt;-</span> terra<span class="sc">::</span><span class="fu">extract</span>(predictor_rsts, <span class="fu">vect</span>(crimes_per_bpd),</span>
+<span id="cb49-2"><a href="#cb49-2" aria-hidden="true" tabindex="-1"></a>                          <span class="at">fun =</span> mean, </span>
+<span id="cb49-3"><a href="#cb49-3" aria-hidden="true" tabindex="-1"></a>                          <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p>In the future, you might actually want to fit a model to the crimes data where you need multiple predictors and want to focus only on where crimes are (rather than some sort of correlation across the entirety of the field. One easy way to do that is to extract our predictors from each raster to the locations in our crimes dataset. Let’s use <code>terra::extract</code> (note that I’m calling it explicitly because of the conflict with <code>dplyr::extract</code>). The result is a dataframe with the number of rows equal to our crimes dataset and the number of columns equal to the number of rasters. You’ll notice that I’m providing the names to the combined dataset to make it easier to identify each variable in the resulting dataframe.</p>
+<div class="cell">
+<details open="">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb50"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a>crimes_ext <span class="ot">&lt;-</span> terra<span class="sc">::</span><span class="fu">extract</span>(<span class="at">x =</span> predictor_rsts, </span>
+<span id="cb50-2"><a href="#cb50-2" aria-hidden="true" tabindex="-1"></a>                             <span class="at">y =</span> <span class="fu">vect</span>(boise_crimes))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+</section>
+<section id="plot-and-summarize" class="level2">
+<h2 class="anchored" data-anchor-id="plot-and-summarize">Plot and Summarize</h2>
+<p>Thinking through the correlations in this data can be a little tricky. We might start with the summarized data. We can use <code>ggplot</code> to do this. We use the <code>mapping</code> argument to specify that we want the x-axis to be the weighted mean of income and the y-axis to be the number of crimes. We use <code>geom_point()</code> to tell <code>ggplot</code> that we want a dotplot and then add <code>geom_smooth()</code> to add a smoothed (in this case using the loess smoother) illustrate the relationship.</p>
+<div class="cell">
+<details open="">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb51"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> bpd_demo,</span>
+<span id="cb51-2"><a href="#cb51-2" aria-hidden="true" tabindex="-1"></a>       <span class="at">mapping =</span> <span class="fu">aes</span>(<span class="at">x =</span> weighted_mean_inc, </span>
+<span id="cb51-3"><a href="#cb51-3" aria-hidden="true" tabindex="-1"></a>                     <span class="at">y =</span> num_crimes)) <span class="sc">+</span></span>
+<span id="cb51-4"><a href="#cb51-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<span id="cb51-5"><a href="#cb51-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stderr">
+<pre><code>`geom_smooth()` using method = 'loess' and formula = 'y ~ x'</code></pre>
+</div>
+<div class="cell-output-display">
+<p><img src="12-lesson_files/figure-html/plt-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>Based on the aggregated data, we see that most of the crimes occur in the lower to middle ranges of income, but the correlation is not particularly obvious. Perhaps that’s because there is some other variable that’s correlated with income. We can use our extracted raster data to see if that might be the case.</p>
+<div class="cell">
+<details open="">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb53"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb53-1"><a href="#cb53-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> crimes_ext,</span>
+<span id="cb53-2"><a href="#cb53-2" aria-hidden="true" tabindex="-1"></a>       <span class="at">mapping =</span> <span class="fu">aes</span>(<span class="at">x =</span> income, </span>
+<span id="cb53-3"><a href="#cb53-3" aria-hidden="true" tabindex="-1"></a>                     <span class="at">y =</span> segregation)) <span class="sc">+</span> </span>
+<span id="cb53-4"><a href="#cb53-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span> </span>
+<span id="cb53-5"><a href="#cb53-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">"lm"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stderr">
+<pre><code>`geom_smooth()` using formula = 'y ~ x'</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: Removed 848 rows containing non-finite outside the scale range
+(`stat_smooth()`).</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: Removed 848 rows containing missing values or values outside the scale range
+(`geom_point()`).</code></pre>
+</div>
+<div class="cell-output-display">
+<p><img src="12-lesson_files/figure-html/rstplot-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>Based on this plot, it would appear (if you squint at the line) that areas with high incomes tend to have lower segregation than areas with low income. We also see that there are some very high segregation values right in the same income range where we see the peak in the aggregated crimes data. Based on this, what might your next steps be?</p>
+
+
+<!-- -->
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  const viewSource = window.document.getElementById('quarto-view-source') ||
+                     window.document.getElementById('quarto-code-tools-source');
+  if (viewSource) {
+    const sourceUrl = viewSource.getAttribute("data-quarto-source-url");
+    viewSource.addEventListener("click", function(e) {
+      if (sourceUrl) {
+        // rstudio viewer pane
+        if (/\bcapabilities=\b/.test(window.location)) {
+          window.open(sourceUrl);
+        } else {
+          window.location.href = sourceUrl;
+        }
+      } else {
+        const modal = new bootstrap.Modal(document.getElementById('quarto-embedded-source-code-modal'));
+        modal.show();
+      }
+      return false;
+    });
+  }
+  function toggleCodeHandler(show) {
+    return function(e) {
+      const detailsSrc = window.document.querySelectorAll(".cell > details > .sourceCode");
+      for (let i=0; i<detailsSrc.length; i++) {
+        const details = detailsSrc[i].parentElement;
+        if (show) {
+          details.open = true;
+        } else {
+          details.removeAttribute("open");
+        }
+      }
+      const cellCodeDivs = window.document.querySelectorAll(".cell > .sourceCode");
+      const fromCls = show ? "hidden" : "unhidden";
+      const toCls = show ? "unhidden" : "hidden";
+      for (let i=0; i<cellCodeDivs.length; i++) {
+        const codeDiv = cellCodeDivs[i];
+        if (codeDiv.classList.contains(fromCls)) {
+          codeDiv.classList.remove(fromCls);
+          codeDiv.classList.add(toCls);
+        } 
+      }
+      return false;
+    }
+  }
+  const hideAllCode = window.document.getElementById("quarto-hide-all-code");
+  if (hideAllCode) {
+    hideAllCode.addEventListener("click", toggleCodeHandler(false));
+  }
+  const showAllCode = window.document.getElementById("quarto-show-all-code");
+  if (showAllCode) {
+    showAllCode.addEventListener("click", toggleCodeHandler(true));
+  }
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Source Code</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">
+<div class="sourceCode" id="cb57" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb57-1"><a href="#cb57-1" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb57-2"><a href="#cb57-2" aria-hidden="true" tabindex="-1"></a><span class="an">title:</span><span class="co"> "Building Spatial Databases"</span></span>
+<span id="cb57-3"><a href="#cb57-3" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb57-4"><a href="#cb57-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb57-5"><a href="#cb57-5" aria-hidden="true" tabindex="-1"></a><span class="fu">## Getting Started</span></span>
+<span id="cb57-6"><a href="#cb57-6" aria-hidden="true" tabindex="-1"></a>First, we'll have to <span class="co">[</span><span class="ot">get our credentials</span><span class="co">](https://rstudio.aws.boisestate.edu/)</span> and login to a <span class="co">[</span><span class="ot">new RStudio session</span><span class="co">](https://rstudio.apps.aws.boisestate.edu/)</span>. You can create your own repository if you'd like to track these things. You'll have to copy your googledrive download function from a previous repo.</span>
+<span id="cb57-7"><a href="#cb57-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb57-8"><a href="#cb57-8" aria-hidden="true" tabindex="-1"></a>We're going to work through this in class and I'll update this once we're done. I've adjusted the headings here to reflect the generic workflow pseudocode you provided in-class. I'll try to add some narrative to help remind you what we were doing.</span>
+<span id="cb57-9"><a href="#cb57-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb57-10"><a href="#cb57-10" aria-hidden="true" tabindex="-1"></a><span class="fu">## Load Packages and functions</span></span>
+<span id="cb57-11"><a href="#cb57-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb57-12"><a href="#cb57-12" aria-hidden="true" tabindex="-1"></a><span class="in">```{r ldpkg}</span></span>
+<span id="cb57-13"><a href="#cb57-13" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb57-14"><a href="#cb57-14" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(sf)</span>
+<span id="cb57-15"><a href="#cb57-15" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(terra)</span>
+<span id="cb57-16"><a href="#cb57-16" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(googledrive)</span>
+<span id="cb57-17"><a href="#cb57-17" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tigris)</span>
+<span id="cb57-18"><a href="#cb57-18" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyterra)</span>
+<span id="cb57-19"><a href="#cb57-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb57-20"><a href="#cb57-20" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">"scripts/utilities/download_utils.R"</span>)</span>
+<span id="cb57-21"><a href="#cb57-21" aria-hidden="true" tabindex="-1"></a>file_list <span class="ot">&lt;-</span> <span class="fu">drive_ls</span>(<span class="fu">drive_get</span>(<span class="fu">as_id</span>(<span class="st">"https://drive.google.com/drive/folders/1BY24_G3bp6gfbu3BaioZb_eS0nzCwq7a?dmr=1&amp;ec=wgc-drive-globalnav-goto"</span>)))</span>
+<span id="cb57-22"><a href="#cb57-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb57-23"><a href="#cb57-23" aria-hidden="true" tabindex="-1"></a>file_list <span class="sc">%&gt;%</span> </span>
+<span id="cb57-24"><a href="#cb57-24" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(id, name) <span class="sc">%&gt;%</span></span>
+<span id="cb57-25"><a href="#cb57-25" aria-hidden="true" tabindex="-1"></a>  purrr<span class="sc">::</span><span class="fu">pmap</span>(<span class="cf">function</span>(id, name) {</span>
+<span id="cb57-26"><a href="#cb57-26" aria-hidden="true" tabindex="-1"></a>    <span class="fu">gdrive_folder_download</span>(<span class="fu">list</span>(<span class="at">id =</span> id, <span class="at">name =</span> name),</span>
+<span id="cb57-27"><a href="#cb57-27" aria-hidden="true" tabindex="-1"></a>                           <span class="at">dstfldr =</span> <span class="st">"inclass12"</span>)</span>
+<span id="cb57-28"><a href="#cb57-28" aria-hidden="true" tabindex="-1"></a>  })</span>
+<span id="cb57-29"><a href="#cb57-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb57-30"><a href="#cb57-30" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb57-31"><a href="#cb57-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb57-32"><a href="#cb57-32" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb57-33"><a href="#cb57-33" aria-hidden="true" tabindex="-1"></a>In class, we created a new function to read, reproject, and crop our data to a common location and crs. I'll add that here so that we can call it down the road and avoid all of the hacky copy-and-pasting I was doing. I've given the function a descriptive name. I've also provided 3 arguments (<span class="in">`filepath`</span>, <span class="in">`target_crs`</span>, and <span class="in">`crop_region`</span>) and given them better names to help make it more obvious what we're looking for. I've also added a last "safety" step to make the geometries valid.</span>
+<span id="cb57-34"><a href="#cb57-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb57-35"><a href="#cb57-35" aria-hidden="true" tabindex="-1"></a><span class="in">```{r sputilsfun}</span></span>
+<span id="cb57-36"><a href="#cb57-36" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb57-37"><a href="#cb57-37" aria-hidden="true" tabindex="-1"></a>read_project_crop <span class="ot">&lt;-</span> <span class="cf">function</span>(filepath, target_crs, crop_region) {</span>
+<span id="cb57-38"><a href="#cb57-38" aria-hidden="true" tabindex="-1"></a>  shp <span class="ot">&lt;-</span> <span class="fu">st_read</span>(filepath, <span class="at">quiet =</span> <span class="cn">TRUE</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb57-39"><a href="#cb57-39" aria-hidden="true" tabindex="-1"></a>    <span class="fu">st_transform</span>(., target_crs) <span class="sc">%&gt;%</span> </span>
+<span id="cb57-40"><a href="#cb57-40" aria-hidden="true" tabindex="-1"></a>    <span class="fu">st_crop</span>(., crop_region) <span class="sc">%&gt;%</span> </span>
+<span id="cb57-41"><a href="#cb57-41" aria-hidden="true" tabindex="-1"></a>    <span class="fu">st_make_valid</span>(.)</span>
+<span id="cb57-42"><a href="#cb57-42" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(shp)</span>
+<span id="cb57-43"><a href="#cb57-43" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb57-44"><a href="#cb57-44" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb57-45"><a href="#cb57-45" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb57-46"><a href="#cb57-46" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb57-47"><a href="#cb57-47" aria-hidden="true" tabindex="-1"></a><span class="fu">## Read in the data and reproject</span></span>
+<span id="cb57-48"><a href="#cb57-48" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb57-49"><a href="#cb57-49" aria-hidden="true" tabindex="-1"></a>Now that we have our function, let's load in the data. In class, we just used one of our objects to provide the "Boise Study Area", but we might want a more systematic selection for our area-of-interest (AOI). We'll use the <span class="in">`tigris`</span> package to download the geometry for the Boise Metro Area and use that as our template. We combine that with a <span class="in">`filter`</span> and <span class="in">`str_detect`</span> call to look for any row containing characters matching "Boise". Finally, we reproject the data to our chosen projection <span class="in">`EPSG:8826`</span> (chosen because mercator projections are best for measuring distance, though in a geography this small, you'd have a hard time noticing the difference).</span>
+<span id="cb57-50"><a href="#cb57-50" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb57-51"><a href="#cb57-51" aria-hidden="true" tabindex="-1"></a><span class="in">```{r ldbdry}</span></span>
+<span id="cb57-52"><a href="#cb57-52" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb57-53"><a href="#cb57-53" aria-hidden="true" tabindex="-1"></a>boise_metro <span class="ot">&lt;-</span> <span class="fu">core_based_statistical_areas</span>(<span class="at">cb =</span> <span class="cn">TRUE</span>, </span>
+<span id="cb57-54"><a href="#cb57-54" aria-hidden="true" tabindex="-1"></a>                                            <span class="at">year =</span> <span class="dv">2020</span>, </span>
+<span id="cb57-55"><a href="#cb57-55" aria-hidden="true" tabindex="-1"></a>                                            <span class="at">progress_bar =</span> <span class="cn">FALSE</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb57-56"><a href="#cb57-56" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(</span>
+<span id="cb57-57"><a href="#cb57-57" aria-hidden="true" tabindex="-1"></a>    <span class="fu">str_detect</span>(NAME, <span class="st">"Boise"</span>)</span>
+<span id="cb57-58"><a href="#cb57-58" aria-hidden="true" tabindex="-1"></a>    ) <span class="sc">%&gt;%</span></span>
+<span id="cb57-59"><a href="#cb57-59" aria-hidden="true" tabindex="-1"></a>  <span class="fu">st_transform</span>(., </span>
+<span id="cb57-60"><a href="#cb57-60" aria-hidden="true" tabindex="-1"></a>               <span class="at">crs =</span> <span class="st">"EPSG:8826"</span>)</span>
+<span id="cb57-61"><a href="#cb57-61" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb57-62"><a href="#cb57-62" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(boise_metro<span class="sc">$</span>geometry)</span>
+<span id="cb57-63"><a href="#cb57-63" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb57-64"><a href="#cb57-64" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb57-65"><a href="#cb57-65" aria-hidden="true" tabindex="-1"></a>Now that we've got our <span class="in">`crop_region`</span> let's use our new function to read in all of the shapefiles. We can do that by using <span class="in">`list.files`</span> with a regular expression to get all of the <span class="in">`.shp`</span> files in our data folder. We then use our new function with <span class="in">`map`</span> to create a list of projected, cropped shapefiles. Once we've got that, we want to give the shapefiles in each slot of the list a more intuitive name - which we do using <span class="in">`names`</span> (using a <span class="in">`str_remove`</span> from the <span class="in">`stringr`</span> package to clean up the filenames returned by <span class="in">`basenames()`</span>). Finally, we use <span class="in">`map_dfr`</span> to create a summary dataframe returning the number of invalid geometries in each <span class="in">`slot`</span> in our list. Everything looks good (no invalid geometries) so far!</span>
+<span id="cb57-66"><a href="#cb57-66" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb57-67"><a href="#cb57-67" aria-hidden="true" tabindex="-1"></a><span class="in">```{r rddata}</span></span>
+<span id="cb57-68"><a href="#cb57-68" aria-hidden="true" tabindex="-1"></a>shapefile_paths <span class="ot">&lt;-</span> <span class="fu">list.files</span>(<span class="st">"data/original/inclass12"</span>, </span>
+<span id="cb57-69"><a href="#cb57-69" aria-hidden="true" tabindex="-1"></a>                              <span class="at">pattern =</span> <span class="st">"</span><span class="sc">\\</span><span class="st">.shp$"</span>, </span>
+<span id="cb57-70"><a href="#cb57-70" aria-hidden="true" tabindex="-1"></a>                              <span class="at">full.names =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb57-71"><a href="#cb57-71" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb57-72"><a href="#cb57-72" aria-hidden="true" tabindex="-1"></a>shp_list <span class="ot">&lt;-</span> shapefile_paths <span class="sc">%&gt;%</span> </span>
+<span id="cb57-73"><a href="#cb57-73" aria-hidden="true" tabindex="-1"></a>  <span class="fu">map</span>(., </span>
+<span id="cb57-74"><a href="#cb57-74" aria-hidden="true" tabindex="-1"></a>      <span class="cf">function</span>(x) <span class="fu">read_project_crop</span>(<span class="at">filepath =</span> x , </span>
+<span id="cb57-75"><a href="#cb57-75" aria-hidden="true" tabindex="-1"></a>                                      <span class="at">target_crs =</span> <span class="st">"EPSG:8826"</span>, </span>
+<span id="cb57-76"><a href="#cb57-76" aria-hidden="true" tabindex="-1"></a>                                      <span class="at">crop_region =</span> boise_metro)</span>
+<span id="cb57-77"><a href="#cb57-77" aria-hidden="true" tabindex="-1"></a>      )</span>
+<span id="cb57-78"><a href="#cb57-78" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb57-79"><a href="#cb57-79" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(shp_list) <span class="ot">&lt;-</span> shapefile_paths  <span class="sc">%&gt;%</span>  </span>
+<span id="cb57-80"><a href="#cb57-80" aria-hidden="true" tabindex="-1"></a>  <span class="fu">basename</span>() <span class="sc">%&gt;%</span>  </span>
+<span id="cb57-81"><a href="#cb57-81" aria-hidden="true" tabindex="-1"></a>  <span class="fu">str_remove</span>(<span class="st">"</span><span class="sc">\\</span><span class="st">.shp$"</span>)</span>
+<span id="cb57-82"><a href="#cb57-82" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb57-83"><a href="#cb57-83" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb57-84"><a href="#cb57-84" aria-hidden="true" tabindex="-1"></a>validity_summary <span class="ot">&lt;-</span> <span class="fu">map_dfr</span>(</span>
+<span id="cb57-85"><a href="#cb57-85" aria-hidden="true" tabindex="-1"></a>  shp_list,</span>
+<span id="cb57-86"><a href="#cb57-86" aria-hidden="true" tabindex="-1"></a>  <span class="sc">~</span> {</span>
+<span id="cb57-87"><a href="#cb57-87" aria-hidden="true" tabindex="-1"></a>    v <span class="ot">&lt;-</span> <span class="fu">st_is_valid</span>(.x)</span>
+<span id="cb57-88"><a href="#cb57-88" aria-hidden="true" tabindex="-1"></a>    <span class="fu">tibble</span>(</span>
+<span id="cb57-89"><a href="#cb57-89" aria-hidden="true" tabindex="-1"></a>      <span class="at">n_total =</span> <span class="fu">length</span>(v),</span>
+<span id="cb57-90"><a href="#cb57-90" aria-hidden="true" tabindex="-1"></a>      <span class="at">n_valid =</span> <span class="fu">sum</span>(v),</span>
+<span id="cb57-91"><a href="#cb57-91" aria-hidden="true" tabindex="-1"></a>      <span class="at">n_invalid =</span> <span class="fu">sum</span>(<span class="sc">!</span>v),</span>
+<span id="cb57-92"><a href="#cb57-92" aria-hidden="true" tabindex="-1"></a>      <span class="at">pct_valid =</span> <span class="fu">mean</span>(v)</span>
+<span id="cb57-93"><a href="#cb57-93" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb57-94"><a href="#cb57-94" aria-hidden="true" tabindex="-1"></a>  },</span>
+<span id="cb57-95"><a href="#cb57-95" aria-hidden="true" tabindex="-1"></a>  <span class="at">.id =</span> <span class="st">"layer"</span></span>
+<span id="cb57-96"><a href="#cb57-96" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb57-97"><a href="#cb57-97" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb57-98"><a href="#cb57-98" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb57-99"><a href="#cb57-99" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb57-100"><a href="#cb57-100" aria-hidden="true" tabindex="-1"></a>Now, we could leave all of the shapefiles in the list and access them by name for our subsequent operations, but that's a little clunky. Instead, we'll use <span class="in">`assign`</span> to bring them into our Global Environment as individual objects. We'll use <span class="in">`walk2`</span> from the <span class="in">`purrr`</span> package because we are interested in the _side effects_ of our iteration which in this case is whatever happens when we run <span class="in">`assign`</span>. We don't use <span class="in">`map`</span> because we aren't interested in keeping the results of <span class="in">`assign`</span> we just want to run it over each combination of <span class="in">`names(shp_list)`</span> and <span class="in">`shp_list`</span>. </span>
+<span id="cb57-101"><a href="#cb57-101" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb57-102"><a href="#cb57-102" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb57-103"><a href="#cb57-103" aria-hidden="true" tabindex="-1"></a><span class="in">```{r assignenv}</span></span>
+<span id="cb57-104"><a href="#cb57-104" aria-hidden="true" tabindex="-1"></a><span class="fu">walk2</span>(<span class="fu">names</span>(shp_list), shp_list, <span class="sc">~</span> <span class="fu">assign</span>(.x, .y, <span class="at">envir =</span> .GlobalEnv))</span>
+<span id="cb57-105"><a href="#cb57-105" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb57-106"><a href="#cb57-106" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb57-107"><a href="#cb57-107" aria-hidden="true" tabindex="-1"></a>::: {.callout-warning}</span>
+<span id="cb57-108"><a href="#cb57-108" aria-hidden="true" tabindex="-1"></a>Assigning objects into your environment can be risky. You can inadvertently overwrite functions or other objects. Make sure if you do this that the values you assign in the <span class="in">`names`</span> call aren't shared with anything else you might need.</span>
+<span id="cb57-109"><a href="#cb57-109" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb57-110"><a href="#cb57-110" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb57-111"><a href="#cb57-111" aria-hidden="true" tabindex="-1"></a>The last thing we need is the actual crimes dataset which we got as a <span class="in">`.csv`</span> from the <span class="co">[</span><span class="ot">Boise Open Data portal</span><span class="co">](https://city-of-boise.opendata.arcgis.com/search)</span>. If you go to the <span class="co">[</span><span class="ot">information page for the file</span><span class="co">](https://services1.arcgis.com/WHM6qC35aMtyAAlN/arcgis/rest/services/BPD_Crimes_Public/FeatureServer/0)</span> you'll see the CRS which we'll use to create an <span class="in">`sf`</span> object from the <span class="in">`.csv`</span> file.</span>
+<span id="cb57-112"><a href="#cb57-112" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb57-113"><a href="#cb57-113" aria-hidden="true" tabindex="-1"></a><span class="in">```{r rdcrimes}</span></span>
+<span id="cb57-114"><a href="#cb57-114" aria-hidden="true" tabindex="-1"></a>boise_crimes <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(</span>
+<span id="cb57-115"><a href="#cb57-115" aria-hidden="true" tabindex="-1"></a>  <span class="st">"data/original/inclass10/BPDCrimesPublic.csv"</span></span>
+<span id="cb57-116"><a href="#cb57-116" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span> </span>
+<span id="cb57-117"><a href="#cb57-117" aria-hidden="true" tabindex="-1"></a>  <span class="fu">st_as_sf</span>(., <span class="at">coords =</span> <span class="fu">c</span>(<span class="st">'x'</span>, <span class="st">'y'</span>), <span class="at">crs =</span> <span class="st">"ESRI:102459"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb57-118"><a href="#cb57-118" aria-hidden="true" tabindex="-1"></a>  <span class="fu">st_transform</span>(., <span class="at">crs =</span> <span class="st">"EPSG:8826"</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb57-119"><a href="#cb57-119" aria-hidden="true" tabindex="-1"></a>  <span class="fu">st_crop</span>(., boise_metro)</span>
+<span id="cb57-120"><a href="#cb57-120" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb57-121"><a href="#cb57-121" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb57-122"><a href="#cb57-122" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb57-123"><a href="#cb57-123" aria-hidden="true" tabindex="-1"></a>Now that we've got everything into our environment, let's plot them to see how things look. You'll notice that I use a series of <span class="in">`geom_sf`</span> calls to layer the data. I only use the <span class="in">`aes`</span> function to map the color of each polygon in our demographics dataset to a variable. All of the other colors are set universally (i.e., outside of the <span class="in">`mapping`</span> argument).</span>
+<span id="cb57-124"><a href="#cb57-124" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb57-125"><a href="#cb57-125" aria-hidden="true" tabindex="-1"></a><span class="in">```{r pltshps}</span></span>
+<span id="cb57-126"><a href="#cb57-126" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>() <span class="sc">+</span></span>
+<span id="cb57-127"><a href="#cb57-127" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_sf</span>(<span class="at">data =</span> boiseDemo, <span class="fu">aes</span>(<span class="at">fill =</span> hhincome)) <span class="sc">+</span></span>
+<span id="cb57-128"><a href="#cb57-128" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_sf</span>(<span class="at">data =</span> Parks, <span class="at">fill =</span> <span class="st">"darkgreen"</span>)<span class="sc">+</span></span>
+<span id="cb57-129"><a href="#cb57-129" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_sf</span>(<span class="at">data =</span> adaPlaces, <span class="at">fill =</span> <span class="st">"transparent"</span>, </span>
+<span id="cb57-130"><a href="#cb57-130" aria-hidden="true" tabindex="-1"></a>          <span class="at">color =</span> <span class="st">"green"</span>, </span>
+<span id="cb57-131"><a href="#cb57-131" aria-hidden="true" tabindex="-1"></a>          <span class="at">size =</span> <span class="fl">0.25</span>) <span class="sc">+</span></span>
+<span id="cb57-132"><a href="#cb57-132" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_sf</span>(<span class="at">data =</span> boise_crimes, </span>
+<span id="cb57-133"><a href="#cb57-133" aria-hidden="true" tabindex="-1"></a>          <span class="at">fill =</span> <span class="st">"transparent"</span>, </span>
+<span id="cb57-134"><a href="#cb57-134" aria-hidden="true" tabindex="-1"></a>          <span class="at">color =</span> <span class="st">"red"</span>) <span class="sc">+</span></span>
+<span id="cb57-135"><a href="#cb57-135" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_sf</span>(<span class="at">data =</span> StreetLights, </span>
+<span id="cb57-136"><a href="#cb57-136" aria-hidden="true" tabindex="-1"></a>          <span class="at">fill =</span> <span class="st">"transparent"</span>, </span>
+<span id="cb57-137"><a href="#cb57-137" aria-hidden="true" tabindex="-1"></a>          <span class="at">color =</span> <span class="st">"yellow"</span>,</span>
+<span id="cb57-138"><a href="#cb57-138" aria-hidden="true" tabindex="-1"></a>          <span class="at">size=</span><span class="fl">0.25</span>) <span class="sc">+</span></span>
+<span id="cb57-139"><a href="#cb57-139" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_sf</span>(<span class="at">data =</span> BPDPatrolAreas, <span class="at">fill =</span> <span class="st">"transparent"</span>, <span class="at">color =</span> <span class="st">"white"</span>) </span>
+<span id="cb57-140"><a href="#cb57-140" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb57-141"><a href="#cb57-141" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb57-142"><a href="#cb57-142" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb57-143"><a href="#cb57-143" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb57-144"><a href="#cb57-144" aria-hidden="true" tabindex="-1"></a>You can see that the Census considers large parts of Canyon and Owyhee Counties to be part of the Boise Combined Statistical Area. That makes sense for a lot of things, but in this case we don't have crime data for those locations. We'll want to think about that when we're generating our various variables. Because the crimes dataset extends out to our larger demographic data, we'll use the <span class="in">`boiseDemo`</span> dataset as our primary AOI.</span>
+<span id="cb57-145"><a href="#cb57-145" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb57-146"><a href="#cb57-146" aria-hidden="true" tabindex="-1"></a><span class="fu">## Calculate Dependent Variables</span></span>
+<span id="cb57-147"><a href="#cb57-147" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb57-148"><a href="#cb57-148" aria-hidden="true" tabindex="-1"></a><span class="fu">### Using Rasters</span></span>
+<span id="cb57-149"><a href="#cb57-149" aria-hidden="true" tabindex="-1"></a>In order to explore the correlation of crimes in Boise with other features, we need to figure out how we want to think about crimes. </span>
+<span id="cb57-150"><a href="#cb57-150" aria-hidden="true" tabindex="-1"></a>In class, we thought about a continuous surface of distance between crimes as a way of looking for places where crimes are common (distance is low) vs. uncommon (distance high). We'll use a template raster of 50m resolution to ease computation, but remember the choice of resolution implies a particular _scale_ of inquiry which we hope will align with the mechanisms with think are operating.</span>
+<span id="cb57-151"><a href="#cb57-151" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb57-152"><a href="#cb57-152" aria-hidden="true" tabindex="-1"></a><span class="in">```{r summarize}</span></span>
+<span id="cb57-153"><a href="#cb57-153" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb57-154"><a href="#cb57-154" aria-hidden="true" tabindex="-1"></a>template_rst <span class="ot">&lt;-</span> <span class="fu">rast</span>(<span class="at">res =</span> <span class="fu">c</span>(<span class="dv">50</span>,<span class="dv">50</span>),</span>
+<span id="cb57-155"><a href="#cb57-155" aria-hidden="true" tabindex="-1"></a>                     <span class="at">crs=</span><span class="fu">crs</span>(boiseDemo), </span>
+<span id="cb57-156"><a href="#cb57-156" aria-hidden="true" tabindex="-1"></a>                     <span class="at">extent =</span> <span class="fu">ext</span>(boiseDemo))</span>
+<span id="cb57-157"><a href="#cb57-157" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb57-158"><a href="#cb57-158" aria-hidden="true" tabindex="-1"></a>dist_crimes <span class="ot">&lt;-</span> <span class="fu">distance</span>(<span class="at">x =</span> template_rst,</span>
+<span id="cb57-159"><a href="#cb57-159" aria-hidden="true" tabindex="-1"></a>                       <span class="at">y =</span> <span class="fu">vect</span>(boise_crimes),</span>
+<span id="cb57-160"><a href="#cb57-160" aria-hidden="true" tabindex="-1"></a>                       <span class="at">rasterize =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb57-161"><a href="#cb57-161" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb57-162"><a href="#cb57-162" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(dist_crimes)</span>
+<span id="cb57-163"><a href="#cb57-163" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb57-164"><a href="#cb57-164" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb57-165"><a href="#cb57-165" aria-hidden="true" tabindex="-1"></a>Maybe we are more interested in something like density of crimes. We could express that as a raster. We do that using <span class="in">`rasterize`</span> and supplying <span class="in">`count`</span> as the parameter for the <span class="in">`fun`</span> argument. This tells <span class="in">`terra`</span> to count all the points in each of our 50m cells.</span>
+<span id="cb57-166"><a href="#cb57-166" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb57-167"><a href="#cb57-167" aria-hidden="true" tabindex="-1"></a><span class="in">```{r sumdens}</span></span>
+<span id="cb57-168"><a href="#cb57-168" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb57-169"><a href="#cb57-169" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb57-170"><a href="#cb57-170" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb57-171"><a href="#cb57-171" aria-hidden="true" tabindex="-1"></a>dens_crimes <span class="ot">&lt;-</span> <span class="fu">rasterize</span>(<span class="at">x =</span> <span class="fu">vect</span>(boise_crimes),</span>
+<span id="cb57-172"><a href="#cb57-172" aria-hidden="true" tabindex="-1"></a>                         <span class="at">y =</span> template_rst,</span>
+<span id="cb57-173"><a href="#cb57-173" aria-hidden="true" tabindex="-1"></a>                         <span class="at">fun =</span> <span class="st">"count"</span>,</span>
+<span id="cb57-174"><a href="#cb57-174" aria-hidden="true" tabindex="-1"></a>                         <span class="at">background =</span> <span class="dv">0</span>)</span>
+<span id="cb57-175"><a href="#cb57-175" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb57-176"><a href="#cb57-176" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(dens_crimes)</span>
+<span id="cb57-177"><a href="#cb57-177" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(<span class="fu">log</span>(dens_crimes))</span>
+<span id="cb57-178"><a href="#cb57-178" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb57-179"><a href="#cb57-179" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb57-180"><a href="#cb57-180" aria-hidden="true" tabindex="-1"></a>The initial <span class="in">`plot(dens_crimes)`</span> makes it difficult to see much (as the number of crimes in a cell is rarely more than 1). I added the <span class="in">`plot(log(dens_crimes))`</span> to help you see where crimes actually occur (as the <span class="in">`log(0)`</span> is <span class="in">`-Inf`</span> and thus plots as <span class="in">`NA`</span>).</span>
+<span id="cb57-181"><a href="#cb57-181" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb57-182"><a href="#cb57-182" aria-hidden="true" tabindex="-1"></a><span class="fu">### Summarizing Across Vectors</span></span>
+<span id="cb57-183"><a href="#cb57-183" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb57-184"><a href="#cb57-184" aria-hidden="true" tabindex="-1"></a>Rather than express crime as some sort of continuous field (raster), we might want to aggregate crimes to one of our existing vector geometries. We might choose to count crimes in each Police District or in each Census block group. I'll demonstrate two versions of this:</span>
+<span id="cb57-185"><a href="#cb57-185" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb57-186"><a href="#cb57-186" aria-hidden="true" tabindex="-1"></a><span class="in">```{r ctcrimes}</span></span>
+<span id="cb57-187"><a href="#cb57-187" aria-hidden="true" tabindex="-1"></a>crimes_in_bpd <span class="ot">&lt;-</span> <span class="fu">st_join</span>(boise_crimes, BPDPatrolAreas)</span>
+<span id="cb57-188"><a href="#cb57-188" aria-hidden="true" tabindex="-1"></a>counts <span class="ot">&lt;-</span> crimes_in_bpd <span class="sc">%&gt;%</span></span>
+<span id="cb57-189"><a href="#cb57-189" aria-hidden="true" tabindex="-1"></a>  <span class="fu">st_drop_geometry</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb57-190"><a href="#cb57-190" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(<span class="at">polygon_id =</span> PoliceArea)</span>
+<span id="cb57-191"><a href="#cb57-191" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb57-192"><a href="#cb57-192" aria-hidden="true" tabindex="-1"></a>crimes_per_bpd <span class="ot">&lt;-</span> BPDPatrolAreas <span class="sc">%&gt;%</span></span>
+<span id="cb57-193"><a href="#cb57-193" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(counts, <span class="at">by =</span> <span class="fu">c</span>(<span class="st">"PoliceArea"</span> <span class="ot">=</span> <span class="st">"polygon_id"</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb57-194"><a href="#cb57-194" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">num_crimes =</span> <span class="fu">replace_na</span>(n, <span class="dv">0</span>))</span>
+<span id="cb57-195"><a href="#cb57-195" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb57-196"><a href="#cb57-196" aria-hidden="true" tabindex="-1"></a>boiseDemo<span class="sc">$</span>count <span class="ot">&lt;-</span> <span class="fu">lengths</span>(<span class="fu">st_intersects</span>(boiseDemo, boise_crimes))</span>
+<span id="cb57-197"><a href="#cb57-197" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb57-198"><a href="#cb57-198" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb57-199"><a href="#cb57-199" aria-hidden="true" tabindex="-1"></a>In the first, more verbose version, I'm demonstrating the use of <span class="in">`count`</span> with a <span class="in">`left_join`</span>. It's a bit clunky, but for large datasets, the dropping of geometry can make the calculation go faster and also makes for a bit more readable code. In the second version, I'm using a spatial **predicate** (which returns <span class="in">`TRUE/FALSE`</span>) to count the number of crimes that intersect the polygons of <span class="in">`boiseDemo`</span> and assigning it (using <span class="in">`$`</span>) to a new column called <span class="in">`count`</span>.</span>
+<span id="cb57-200"><a href="#cb57-200" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb57-201"><a href="#cb57-201" aria-hidden="true" tabindex="-1"></a><span class="fu">## Calculate Independent Variables</span></span>
+<span id="cb57-202"><a href="#cb57-202" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb57-203"><a href="#cb57-203" aria-hidden="true" tabindex="-1"></a><span class="fu">### As Rasters</span></span>
+<span id="cb57-204"><a href="#cb57-204" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb57-205"><a href="#cb57-205" aria-hidden="true" tabindex="-1"></a>In class, we talked about buffering each streetlight point based on a rough approximation of the area they illuminate. We'll replicate that here, but use a bit more of a sophisticated approach. First, we assign an "illumination factor" by using the <span class="in">`case_when`</span> function which works as a multiple <span class="in">`if_else`</span> or <span class="in">`iflese`</span> (use <span class="in">`?if_else`</span> to learn more about these conditional evaluation functions). Then we calculate an illumination radius based on the wattage or the overal average wattage (if the light has <span class="in">`NA`</span> for these values). Finally, we pipe this into <span class="in">`st_buffer`</span> to convert the points into polygons that are sized according to illumination.</span>
+<span id="cb57-206"><a href="#cb57-206" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb57-207"><a href="#cb57-207" aria-hidden="true" tabindex="-1"></a><span class="in">```{r ltbuf}</span></span>
+<span id="cb57-208"><a href="#cb57-208" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb57-209"><a href="#cb57-209" aria-hidden="true" tabindex="-1"></a>streetlights_buffered <span class="ot">&lt;-</span> StreetLights <span class="sc">%&gt;%</span></span>
+<span id="cb57-210"><a href="#cb57-210" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb57-211"><a href="#cb57-211" aria-hidden="true" tabindex="-1"></a>    <span class="at">type_factor =</span> <span class="fu">case_when</span>(</span>
+<span id="cb57-212"><a href="#cb57-212" aria-hidden="true" tabindex="-1"></a>      Lamp_Type <span class="sc">==</span> <span class="st">"LED"</span> <span class="sc">~</span> <span class="fl">1.2</span>,</span>
+<span id="cb57-213"><a href="#cb57-213" aria-hidden="true" tabindex="-1"></a>      Lamp_Type <span class="sc">==</span> <span class="st">"High Pressure Sodium"</span> <span class="sc">~</span> <span class="fl">1.0</span>,</span>
+<span id="cb57-214"><a href="#cb57-214" aria-hidden="true" tabindex="-1"></a>      Lamp_Type <span class="sc">==</span> <span class="st">"Solar"</span> <span class="sc">~</span> <span class="fl">0.8</span>,</span>
+<span id="cb57-215"><a href="#cb57-215" aria-hidden="true" tabindex="-1"></a>      <span class="cn">TRUE</span> <span class="sc">~</span> <span class="dv">1</span></span>
+<span id="cb57-216"><a href="#cb57-216" aria-hidden="true" tabindex="-1"></a>    ),</span>
+<span id="cb57-217"><a href="#cb57-217" aria-hidden="true" tabindex="-1"></a>    <span class="at">radius =</span> <span class="fu">if_else</span>(<span class="fu">is.na</span>(Wattage), </span>
+<span id="cb57-218"><a href="#cb57-218" aria-hidden="true" tabindex="-1"></a>                     <span class="fl">0.5</span> <span class="sc">*</span> <span class="fu">sqrt</span>(<span class="fu">mean</span>(Wattage, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)) <span class="sc">*</span> type_factor,</span>
+<span id="cb57-219"><a href="#cb57-219" aria-hidden="true" tabindex="-1"></a>                     <span class="fl">0.5</span> <span class="sc">*</span> <span class="fu">sqrt</span>(Wattage) <span class="sc">*</span> type_factor)</span>
+<span id="cb57-220"><a href="#cb57-220" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb57-221"><a href="#cb57-221" aria-hidden="true" tabindex="-1"></a>  <span class="fu">st_buffer</span>(., <span class="at">dist =</span> .<span class="sc">$</span>radius)</span>
+<span id="cb57-222"><a href="#cb57-222" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb57-223"><a href="#cb57-223" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb57-224"><a href="#cb57-224" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb57-225"><a href="#cb57-225" aria-hidden="true" tabindex="-1"></a>Now that we've got that, we can calculate our distance and density rasters using the same approach that we did for crimes.</span>
+<span id="cb57-226"><a href="#cb57-226" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb57-227"><a href="#cb57-227" aria-hidden="true" tabindex="-1"></a><span class="in">```{r ltrst}</span></span>
+<span id="cb57-228"><a href="#cb57-228" aria-hidden="true" tabindex="-1"></a>dist_lights <span class="ot">&lt;-</span> <span class="fu">distance</span>(<span class="at">x =</span> template_rst,</span>
+<span id="cb57-229"><a href="#cb57-229" aria-hidden="true" tabindex="-1"></a>                       <span class="at">y =</span> <span class="fu">vect</span>(streetlights_buffered),</span>
+<span id="cb57-230"><a href="#cb57-230" aria-hidden="true" tabindex="-1"></a>                       <span class="at">rasterize =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb57-231"><a href="#cb57-231" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb57-232"><a href="#cb57-232" aria-hidden="true" tabindex="-1"></a>dens_lights <span class="ot">&lt;-</span> <span class="fu">rasterize</span>(<span class="at">x =</span> <span class="fu">vect</span>(streetlights_buffered),</span>
+<span id="cb57-233"><a href="#cb57-233" aria-hidden="true" tabindex="-1"></a>                         <span class="at">y =</span> template_rst,</span>
+<span id="cb57-234"><a href="#cb57-234" aria-hidden="true" tabindex="-1"></a>                         <span class="at">fun =</span> <span class="st">"count"</span>,</span>
+<span id="cb57-235"><a href="#cb57-235" aria-hidden="true" tabindex="-1"></a>                         <span class="at">background =</span> <span class="dv">0</span>)</span>
+<span id="cb57-236"><a href="#cb57-236" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb57-237"><a href="#cb57-237" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb57-238"><a href="#cb57-238" aria-hidden="true" tabindex="-1"></a>We can do the same thing for parks (but without buffering). We have to add <span class="in">`st_cast`</span> because <span class="in">`vect()`</span> doesn't know how to deal with a <span class="in">`GEOMETRYCOLLECTION`</span> spatial class. You'll get some warnings about the first part of the geometry collection being retained. In this case, it's because the City of Boise serves this as both a polygon and point dataset (and we're using the polygons.)</span>
+<span id="cb57-239"><a href="#cb57-239" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb57-240"><a href="#cb57-240" aria-hidden="true" tabindex="-1"></a><span class="in">```{r pkrst}</span></span>
+<span id="cb57-241"><a href="#cb57-241" aria-hidden="true" tabindex="-1"></a>dist_parks <span class="ot">&lt;-</span> <span class="fu">distance</span>(<span class="at">x =</span> template_rst,</span>
+<span id="cb57-242"><a href="#cb57-242" aria-hidden="true" tabindex="-1"></a>                       <span class="at">y =</span> <span class="fu">vect</span>(</span>
+<span id="cb57-243"><a href="#cb57-243" aria-hidden="true" tabindex="-1"></a>                         <span class="fu">st_cast</span>(Parks, <span class="at">to =</span> <span class="st">"MULTIPOLYGON"</span>)),</span>
+<span id="cb57-244"><a href="#cb57-244" aria-hidden="true" tabindex="-1"></a>                       <span class="at">rasterize =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb57-245"><a href="#cb57-245" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb57-246"><a href="#cb57-246" aria-hidden="true" tabindex="-1"></a>dens_parks <span class="ot">&lt;-</span> <span class="fu">rasterize</span>(<span class="at">x =</span> <span class="fu">vect</span>(</span>
+<span id="cb57-247"><a href="#cb57-247" aria-hidden="true" tabindex="-1"></a>                         <span class="fu">st_cast</span>(Parks, <span class="at">to =</span> <span class="st">"MULTIPOLYGON"</span>)),</span>
+<span id="cb57-248"><a href="#cb57-248" aria-hidden="true" tabindex="-1"></a>                         <span class="at">y =</span> template_rst,</span>
+<span id="cb57-249"><a href="#cb57-249" aria-hidden="true" tabindex="-1"></a>                         <span class="at">fun =</span> <span class="st">"count"</span>,</span>
+<span id="cb57-250"><a href="#cb57-250" aria-hidden="true" tabindex="-1"></a>                         <span class="at">background =</span> <span class="dv">0</span>)</span>
+<span id="cb57-251"><a href="#cb57-251" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb57-252"><a href="#cb57-252" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb57-253"><a href="#cb57-253" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb57-254"><a href="#cb57-254" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb57-255"><a href="#cb57-255" aria-hidden="true" tabindex="-1"></a>You could do this for a (possibly filtered) version of the <span class="in">`adaPlaces`</span>, but the syntax is basically the same so I won't show it here. Instead, we'll rasterize 2 of our demographic datasets. Instead of providing a parameter for the <span class="in">`fun`</span> argument, we'll use the <span class="in">`field`</span> argument and pass it the name of the column we'd like to rasterize. You'll also notice that I don't supply a <span class="in">`background`</span> argument which means that <span class="in">`NA`</span>s will remain in the resulting raster.</span>
+<span id="cb57-256"><a href="#cb57-256" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb57-257"><a href="#cb57-257" aria-hidden="true" tabindex="-1"></a><span class="in">```{r demorst}</span></span>
+<span id="cb57-258"><a href="#cb57-258" aria-hidden="true" tabindex="-1"></a>income_rst <span class="ot">&lt;-</span> <span class="fu">rasterize</span>(<span class="at">x =</span> <span class="fu">vect</span>(</span>
+<span id="cb57-259"><a href="#cb57-259" aria-hidden="true" tabindex="-1"></a>                         boiseDemo),</span>
+<span id="cb57-260"><a href="#cb57-260" aria-hidden="true" tabindex="-1"></a>                         <span class="at">y =</span> template_rst,</span>
+<span id="cb57-261"><a href="#cb57-261" aria-hidden="true" tabindex="-1"></a>                         <span class="at">field =</span> <span class="st">"hhincome"</span>)</span>
+<span id="cb57-262"><a href="#cb57-262" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb57-263"><a href="#cb57-263" aria-hidden="true" tabindex="-1"></a>segregation_rst <span class="ot">&lt;-</span> <span class="fu">rasterize</span>(<span class="at">x =</span> <span class="fu">vect</span>(</span>
+<span id="cb57-264"><a href="#cb57-264" aria-hidden="true" tabindex="-1"></a>                         boiseDemo),</span>
+<span id="cb57-265"><a href="#cb57-265" aria-hidden="true" tabindex="-1"></a>                         <span class="at">y =</span> template_rst,</span>
+<span id="cb57-266"><a href="#cb57-266" aria-hidden="true" tabindex="-1"></a>                         <span class="at">field =</span> <span class="st">"ls"</span>)</span>
+<span id="cb57-267"><a href="#cb57-267" aria-hidden="true" tabindex="-1"></a>population_rst <span class="ot">&lt;-</span> <span class="fu">rasterize</span>(<span class="at">x =</span> <span class="fu">vect</span>(</span>
+<span id="cb57-268"><a href="#cb57-268" aria-hidden="true" tabindex="-1"></a>                         boiseDemo),</span>
+<span id="cb57-269"><a href="#cb57-269" aria-hidden="true" tabindex="-1"></a>                         <span class="at">y =</span> template_rst,</span>
+<span id="cb57-270"><a href="#cb57-270" aria-hidden="true" tabindex="-1"></a>                         <span class="at">field =</span> <span class="st">"totalpop"</span>)</span>
+<span id="cb57-271"><a href="#cb57-271" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb57-272"><a href="#cb57-272" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb57-273"><a href="#cb57-273" aria-hidden="true" tabindex="-1"></a>Let's bundle all of these together so that we can make life easier later. We can do that by combining our rasters (using <span class="in">`c`</span> for <span class="in">`concatenate`</span>).</span>
+<span id="cb57-274"><a href="#cb57-274" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb57-275"><a href="#cb57-275" aria-hidden="true" tabindex="-1"></a><span class="in">```{r bundle}</span></span>
+<span id="cb57-276"><a href="#cb57-276" aria-hidden="true" tabindex="-1"></a>predictor_rsts <span class="ot">&lt;-</span> <span class="fu">c</span>(dist_lights, dens_lights, dist_parks, dens_parks, income_rst, segregation_rst, population_rst)</span>
+<span id="cb57-277"><a href="#cb57-277" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb57-278"><a href="#cb57-278" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(predictor_rsts) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"dist_lights"</span>, <span class="st">"dens_lights"</span>, <span class="st">"dist_parks"</span>, </span>
+<span id="cb57-279"><a href="#cb57-279" aria-hidden="true" tabindex="-1"></a>                           <span class="st">"dens_parks"</span>, <span class="st">"income"</span>, <span class="st">"segregation"</span>, <span class="st">"population"</span>)</span>
+<span id="cb57-280"><a href="#cb57-280" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb57-281"><a href="#cb57-281" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb57-282"><a href="#cb57-282" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb57-283"><a href="#cb57-283" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb57-284"><a href="#cb57-284" aria-hidden="true" tabindex="-1"></a><span class="fu">## Extract x to y</span></span>
+<span id="cb57-285"><a href="#cb57-285" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb57-286"><a href="#cb57-286" aria-hidden="true" tabindex="-1"></a>One way to get at the correlation between variables is to look at correlations in the crimes rasters and the other predictor rasters. We can use the <span class="in">`cor`</span> function for that, but we need to convert the <span class="in">`SpatRasters`</span> to matrices. That's pretty easy using the <span class="in">`as.matrix`</span> function (you can find a lot of <span class="in">`as._`</span> coercion functions by typing <span class="in">`?as.matrix`</span>). Because we have <span class="in">`NA`</span> in some of our Census data, we provide <span class="in">`"complete"`</span> to the <span class="in">`use`</span> argument of <span class="in">`cor`</span> to have the correlation restricted to complete observations (those where there is no <span class="in">`NA`</span> in any of the rasters being considered)</span>
+<span id="cb57-287"><a href="#cb57-287" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb57-288"><a href="#cb57-288" aria-hidden="true" tabindex="-1"></a><span class="in">```{r rstcor}</span></span>
+<span id="cb57-289"><a href="#cb57-289" aria-hidden="true" tabindex="-1"></a><span class="fu">cor</span>(<span class="fu">as.matrix</span>(dist_crimes), <span class="fu">as.matrix</span>(population_rst), <span class="at">use=</span><span class="st">"complete"</span>)</span>
+<span id="cb57-290"><a href="#cb57-290" aria-hidden="true" tabindex="-1"></a><span class="fu">cor</span>(<span class="fu">as.matrix</span>(dist_crimes), <span class="fu">as.matrix</span>(income_rst), <span class="at">use=</span><span class="st">"complete"</span>)</span>
+<span id="cb57-291"><a href="#cb57-291" aria-hidden="true" tabindex="-1"></a><span class="fu">cor</span>(<span class="fu">as.matrix</span>(dist_crimes), <span class="fu">as.matrix</span>(dist_lights), <span class="at">use=</span><span class="st">"complete"</span>)</span>
+<span id="cb57-292"><a href="#cb57-292" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb57-293"><a href="#cb57-293" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb57-294"><a href="#cb57-294" aria-hidden="true" tabindex="-1"></a>Remember that our <span class="in">`dist_crimes`</span> is the distance from the nearest crime. So a positive correlation with population means that as population goes up so does the distance to a crime. Alternatively, the negative correlation with income means that as income goes up, the distance between crimes goes down.</span>
+<span id="cb57-295"><a href="#cb57-295" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb57-296"><a href="#cb57-296" aria-hidden="true" tabindex="-1"></a>Alternatively, we might want to summarize some of our variables to our boise police district data. We can do this by using using <span class="in">`st_intersection`</span> (which returns the geometry of overlap between our crimes_per_bpd data and our demographic data), calculating the proportion of area overlapped for each blockgroup (the <span class="in">`weight`</span> variable below), and then caluculating a weighted mean for each police district. </span>
+<span id="cb57-297"><a href="#cb57-297" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb57-298"><a href="#cb57-298" aria-hidden="true" tabindex="-1"></a><span class="in">```{r arealsum}</span></span>
+<span id="cb57-299"><a href="#cb57-299" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb57-300"><a href="#cb57-300" aria-hidden="true" tabindex="-1"></a>bpd_demo <span class="ot">&lt;-</span> <span class="fu">st_intersection</span>(boiseDemo, crimes_per_bpd) <span class="sc">%&gt;%</span> </span>
+<span id="cb57-301"><a href="#cb57-301" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">area =</span> <span class="fu">st_area</span>(geometry)) <span class="sc">%&gt;%</span> </span>
+<span id="cb57-302"><a href="#cb57-302" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(PoliceArea) <span class="sc">%&gt;%</span></span>
+<span id="cb57-303"><a href="#cb57-303" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">weight =</span> <span class="fu">as.numeric</span>(area) <span class="sc">/</span> <span class="fu">sum</span>(<span class="fu">as.numeric</span>(area))) <span class="sc">%&gt;%</span> </span>
+<span id="cb57-304"><a href="#cb57-304" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">weighted_mean_inc =</span> <span class="fu">sum</span>(weight <span class="sc">*</span> hhincome, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)) <span class="sc">%&gt;%</span> </span>
+<span id="cb57-305"><a href="#cb57-305" aria-hidden="true" tabindex="-1"></a>  <span class="fu">st_drop_geometry</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb57-306"><a href="#cb57-306" aria-hidden="true" tabindex="-1"></a>  <span class="fu">right_join</span>(., crimes_per_bpd)</span>
+<span id="cb57-307"><a href="#cb57-307" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb57-308"><a href="#cb57-308" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb57-309"><a href="#cb57-309" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb57-310"><a href="#cb57-310" aria-hidden="true" tabindex="-1"></a>We could also calculate a weighted average using <span class="in">`terra::extract`</span>. Use extract essentially produces a weighted average because each cell in a police district is given the value of whichever polygon it came from. As such, when we calculate the mean it is based on the proportional composition of the polygons that were used to create that raster.</span>
+<span id="cb57-311"><a href="#cb57-311" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb57-312"><a href="#cb57-312" aria-hidden="true" tabindex="-1"></a><span class="in">```{r extwtav}</span></span>
+<span id="cb57-313"><a href="#cb57-313" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb57-314"><a href="#cb57-314" aria-hidden="true" tabindex="-1"></a>bpd_ext <span class="ot">&lt;-</span> terra<span class="sc">::</span><span class="fu">extract</span>(predictor_rsts, <span class="fu">vect</span>(crimes_per_bpd),</span>
+<span id="cb57-315"><a href="#cb57-315" aria-hidden="true" tabindex="-1"></a>                          <span class="at">fun =</span> mean, </span>
+<span id="cb57-316"><a href="#cb57-316" aria-hidden="true" tabindex="-1"></a>                          <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb57-317"><a href="#cb57-317" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb57-318"><a href="#cb57-318" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb57-319"><a href="#cb57-319" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb57-320"><a href="#cb57-320" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb57-321"><a href="#cb57-321" aria-hidden="true" tabindex="-1"></a>In the future, you might actually want to fit a model to the crimes data where you need multiple predictors and want to focus only on where crimes are (rather than some sort of correlation across the entirety of the field. One easy way to do that is to extract our predictors from each raster to the locations in our crimes dataset.  Let's use <span class="in">`terra::extract`</span> (note that I'm calling it explicitly because of the conflict with <span class="in">`dplyr::extract`</span>).   The result is a dataframe with the number of rows equal to our crimes dataset and the number of columns equal to the number of rasters. You'll notice that I'm providing the names to the combined dataset to make it easier to identify each variable in the resulting dataframe.</span>
+<span id="cb57-322"><a href="#cb57-322" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb57-323"><a href="#cb57-323" aria-hidden="true" tabindex="-1"></a><span class="in">```{r rstext}</span></span>
+<span id="cb57-324"><a href="#cb57-324" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb57-325"><a href="#cb57-325" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb57-326"><a href="#cb57-326" aria-hidden="true" tabindex="-1"></a>crimes_ext <span class="ot">&lt;-</span> terra<span class="sc">::</span><span class="fu">extract</span>(<span class="at">x =</span> predictor_rsts, </span>
+<span id="cb57-327"><a href="#cb57-327" aria-hidden="true" tabindex="-1"></a>                             <span class="at">y =</span> <span class="fu">vect</span>(boise_crimes))</span>
+<span id="cb57-328"><a href="#cb57-328" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb57-329"><a href="#cb57-329" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb57-330"><a href="#cb57-330" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb57-331"><a href="#cb57-331" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb57-332"><a href="#cb57-332" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb57-333"><a href="#cb57-333" aria-hidden="true" tabindex="-1"></a><span class="fu">## Plot and Summarize</span></span>
+<span id="cb57-334"><a href="#cb57-334" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb57-335"><a href="#cb57-335" aria-hidden="true" tabindex="-1"></a>Thinking through the correlations in this data can be a little tricky. We might start with the summarized data. We can use <span class="in">`ggplot`</span> to do this. We use the <span class="in">`mapping`</span> argument to specify that we want the x-axis to be the weighted mean of income and the y-axis to be the number of crimes.  We use <span class="in">`geom_point()`</span> to tell <span class="in">`ggplot`</span> that we want a dotplot and then add <span class="in">`geom_smooth()`</span> to add a smoothed (in this case using the loess smoother) illustrate the relationship.</span>
+<span id="cb57-336"><a href="#cb57-336" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb57-337"><a href="#cb57-337" aria-hidden="true" tabindex="-1"></a><span class="in">```{r plt}</span></span>
+<span id="cb57-338"><a href="#cb57-338" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb57-339"><a href="#cb57-339" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> bpd_demo,</span>
+<span id="cb57-340"><a href="#cb57-340" aria-hidden="true" tabindex="-1"></a>       <span class="at">mapping =</span> <span class="fu">aes</span>(<span class="at">x =</span> weighted_mean_inc, </span>
+<span id="cb57-341"><a href="#cb57-341" aria-hidden="true" tabindex="-1"></a>                     <span class="at">y =</span> num_crimes)) <span class="sc">+</span></span>
+<span id="cb57-342"><a href="#cb57-342" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<span id="cb57-343"><a href="#cb57-343" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>()</span>
+<span id="cb57-344"><a href="#cb57-344" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb57-345"><a href="#cb57-345" aria-hidden="true" tabindex="-1"></a>Based on the aggregated data, we see that most of the crimes occur in the lower to middle ranges of income, but the correlation is not particularly obvious. Perhaps that's because there is some other variable that's correlated with income. We can use our extracted raster data to see if that might be the case.</span>
+<span id="cb57-346"><a href="#cb57-346" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb57-347"><a href="#cb57-347" aria-hidden="true" tabindex="-1"></a><span class="in">```{r rstplot}</span></span>
+<span id="cb57-348"><a href="#cb57-348" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb57-349"><a href="#cb57-349" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> crimes_ext,</span>
+<span id="cb57-350"><a href="#cb57-350" aria-hidden="true" tabindex="-1"></a>       <span class="at">mapping =</span> <span class="fu">aes</span>(<span class="at">x =</span> income, </span>
+<span id="cb57-351"><a href="#cb57-351" aria-hidden="true" tabindex="-1"></a>                     <span class="at">y =</span> segregation)) <span class="sc">+</span> </span>
+<span id="cb57-352"><a href="#cb57-352" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span> </span>
+<span id="cb57-353"><a href="#cb57-353" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">"lm"</span>)</span>
+<span id="cb57-354"><a href="#cb57-354" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb57-355"><a href="#cb57-355" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb57-356"><a href="#cb57-356" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb57-357"><a href="#cb57-357" aria-hidden="true" tabindex="-1"></a>Based on this plot, it would appear (if you squint at the line) that areas with high incomes tend to have lower segregation than areas with low income. We also see that there are some very high segregation values right in the same income range where we see the peak in the aggregated crimes data. Based on this, what might your next steps be?</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div></div></div></div></div>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">Content <i class="fa-brands fa-creative-commons" aria-hidden="true"></i> 2025 by <a href="https://www.spaseslab.com">Matt Williamson</a> <br> All content licensed under a <i class="fa-brands fa-creative-commons" aria-hidden="true"></i> <i class="fa-brands fa-creative-commons-by" aria-hidden="true"></i> <i class="fa-brands fa-creative-commons-nc" aria-hidden="true"></i> <a href="https://creativecommons.org/licenses/by-nc/4.0/">Creative Commons Attribution-NonCommercial 4.0 International license (CC BY-NC 4.0)</a></div>   
+    <div class="nav-footer-center">
+      &nbsp;
+    </div>
+    <div class="nav-footer-right">Made with <i class="fa-brands fa-r-project" aria-hidden="true"></i> and <a href="https://quarto.org/">Quarto</a><br> <a href="https://www.github.com/mattwilliamson/isdrfall25">View the source at <i class="fa-brands fa-github" aria-hidden="true"></i> GitHub</a> Based on websites designed by <a href="https://github.com/andrewheiss/evalf22.classes.andrewheiss.com">Andrew Heiss</a></div>
+  </div>
+</footer>
+
+
+
+</body></html>

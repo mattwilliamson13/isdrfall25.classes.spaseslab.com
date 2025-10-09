@@ -1,0 +1,75 @@
+---
+title: "Schedule"
+sidebar: false
+toc: false
+page-layout: full
+---
+
+```{r packages-data, include=FALSE}
+library(tidyverse)
+library(knitr)
+library(kableExtra)
+withr::with_dir(here::here(), {
+schedule_nested <- targets::tar_read(schedule_page_data) %>% filter(., !is.na(group))
+  targets::tar_load(schedule_ical_file)
+})
+base_url <- yaml::read_yaml(here::here("_quarto.yml"))$website$`site-url`
+ical_url_absolute <- paste0(base_url, "/", schedule_ical_file)
+```
+
+
+::: {.schedule-page}
+
+Here's your roadmap for the semester!
+
+- [**Content**](/content/) ({{< fa book-open-reader >}}): This page contains the readings, slides, and recorded lectures for the week. Read the various readings **before** our scheduled class time.
+
+- [**Lesson**](/lesson/index.qmd) ({{< fa chalkboard-teacher >}}): This page contains a tutorial video and additional annotated R code and other supplementary information that you can use to help you prepare for the in-class exercises and assignments. These are most helpful if you watch them before in-class sessions so that you can ask questions when we start working through things together. 
+
+- [**Exercises**](/example/) ({{< fa laptop-code >}}): This page the scripts that we work on in class as a reminder of some of the live-coding exercises. These are provided as a reference to help you link your notes to the syntax we use in class.
+
+- [**Assignment**](/assignment/) ({{< fa pen-ruler >}}): This page contains the instructions for each assignment. Assignments are due by *11:59 PM* on the day they're listed. One more time!
+
+::: {.callout-tip}
+
+## Subscribe!
+
+You can subscribe to this calendar URL in Outlook, Google Calendar, or Apple Calendar:
+
+::: {.grid}
+
+::: {.g-col-12 .g-col-md-2}
+<p class="download-btn"><a class="btn btn-danger btn-sm" href="/`r schedule_ical_file`" role="button">{{< fa calendar-alt >}} Download</a></p>
+:::
+
+::: {.g-col-12 .g-col-md-10}
+<p><input class="form-control" type="text" value="`r ical_url_absolute`" onclick="this.select()" readonly></p>
+:::
+
+:::
+
+:::
+
+
+```{r build-table, include=FALSE}
+show_table <- function(group_id) {
+  # Add a heading
+  cat(as.character(paste("\n\n###", schedule_nested$group[[group_id]], "\n\n")))
+  
+  # Make the table
+  tbl <- schedule_nested$data[[group_id]] %>% 
+    kbl(escape = FALSE, align = "rlcccc", table.attr = 'class="schedule-table"') %>% 
+    kable_styling() %>% 
+    column_spec(1, width = "20%", extra_css = "padding-right: 20px;") %>% 
+    column_spec(2, width = "48%") %>% 
+    column_spec(3:6, width = "8%")
+  
+  cat(tbl)
+}
+```
+
+```{r show-table, echo=FALSE, results="asis"}
+walk(seq(1, nrow(schedule_nested)), ~show_table(.x))
+```
+
+:::

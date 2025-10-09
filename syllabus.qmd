@@ -1,0 +1,313 @@
+---
+title: Syllabus
+---
+
+```{r setup, message=FALSE, warning=FALSE, include=FALSE}
+library(dplyr)
+library(tibble)
+library(pander)
+```
+
+::: {.grid .course-details .course-details-smaller}
+
+::: {.g-col-6}
+### Instructor
+
+- {{< fa user >}} &nbsp; [{{< var instructor.name >}}]({{< var instructor.url >}})
+- {{< fa university >}} &nbsp; {{< var instructor.office >}}
+- {{< fa envelope >}} &nbsp; {{< var instructor.email >}}
+- {{< fa calendar-check >}} &nbsp; [Schedule an appointment]({{< var instructor.appointment_url >}})
+:::
+
+::: {.g-col-6}
+### Course details
+
+- {{< fa calendar >}} &nbsp; {{< var course.days >}}
+- {{< fa calendar-alt >}} &nbsp; {{< var course.dates >}}
+- {{< fa clock >}} &nbsp; {{< var course.time >}}
+- {{< fa location-dot >}} &nbsp; {{< var course.location >}}
+- {{< fa brands slack >}} &nbsp; [Slack]({{< var course.slack >}})
+:::
+
+:::
+
+## Course Description
+
+Spatial data are ubiquitous and form the basis for many of our inquiries into social, ecological, and evolutionary processes. As such, developing the skills necessary for incorporating spatial data into reproducible statistical workflows is critical. In this course, we will introduce the core components of manipulating spatial data within the R statistical environment including managing vector and raster data, projections, extraction of data values, interpolation, and plotting. Students will also learn to prototype and benchmark different workflows to aid in applying the appropriate tools to their research questions.
+
+## Course Objectives
+
+Students completing this course should be able to:
+
+* Articulate the opportunities and challenges posed by geographic analysis.
+* Select the appropriate R packages and functions for manipulating different types of spatial data
+* Design statistical analyses that integrate geospatial and tabular data  
+* Construct appropriate data visualizations for conveying geospatial data
+* Develop reproducible workflows for manipulating, visualizing, and analyzing spatial data.
+
+
+## Expectations
+**Be nice. Be honest. Try hard.**
+
+The beauty of working with open source software is the community of users working on problems just like yours (and nothing like yours). Like any community, this one functions best when its members are kind, genuine, and make good-faith efforts to solve their problems along the way (more on this below). 
+
+You can (and should) expect me to:
+
+* Create a space where you can ask questions without fear of embarrassment or retribution
+* Provide feedback on your work within 1 week of submission
+* Respond to email and slack messages within 48 hours
+* Make every attempt to answer your questions (when I can) or point you toward resources that may help
+
+In turn, I expect you to:
+
+* Treat all of us with respect and compassion
+* Make an honest effort to work through the assignments
+* Demonstrate that you have tried to solve your coding errors before asking me
+* Communicate with me when the course isn't working for you
+
+
+## Prerequisite Knowledge and Skills
+You can succeed in this class.
+
+Some familiarity with the R statistical environment is helpful, but not necessary. My goal is to foster an environment where we are all learning from each other and sharing the tips and tricks that help us along the way. Learning `R` can be difficult at first—it's like learning a new language, just like Spanish, French, or Chinese. I find it helpful to remember the following:
+
+> It's easy when you start out programming to get really frustrated and think, "Oh it's me, I'm really stupid," or, "I'm not made out to program." But, that is absolutely not the case. Everyone gets frustrated. I still get frustrated occasionally when writing R code. It's just a natural part of programming. So, it happens to everyone and gets less and less over time. Don't blame yourself. Just take a break, do something fun, and then come back and try again later.
+Even experienced programmers find themselves bashing their heads against seemingly intractable errors. If you're finding yourself taking way too long hitting your head against a wall and not understanding, take a break, talk to classmates, e-mail me, etc. 
+`r tufte::quote_footer('--- Hadley Wickham')`
+
+If you want to start learning a few of the basics, the [Resources](/resources) tab has some background information to get you started. Note that this is not an exhaustive list - the number of new `R` tutorials available on the internet seems to be growing exponentially.
+
+### Getting Help With R problems
+
+I am happy to help you work through your R coding challenges, but there are a lot of you and only one of me. Moreover, I may not always know exactly how to fix your problem any better than you do. In order to make sure that I am not the primary obstacle to your ability to complete the class assignments, I'm asking that you use the following steps prior to emailing/Slacking me with your coding questions. 
+
+::: {.callout-tip}
+When you send me a question, please let me know what you searched, why the solutions you found don't work for you, and what output you are expecting** 
+:::
+
+We'll spend a bit of time on asking better questions and getting better answers so don't worry if you aren't quite sure how this all works.
+
+1. __Google it!__ Searching for help with R on Google can sometimes be tricky. Google is generally smart enough to figure out what you mean when you search for "r reproject polygons", but if it does struggle, try searching for "rstats" instead (e.g. "rstats reproject polygons"). Also, since most of your R work will deal with the [RSpatial packages](https://cran.r-project.org/web/views/Spatial.html), it's often easier to just search for the package name and operation rather than the letter "r" (e.g. "sf reproject polygons"). I often paste the specific error message I get along with the spatial package I'm using to try and help Google find my solutions.
+
+2. __Ask your colleagues__ We have an r_spatial chatroom at [Slack](https://ecostatsbsu.slack.com/archives/CV4DEJ8M7) where anyone in this class can ask questions and anyone can answer. Ask questions about code or class materials. You'll likely have similar questions as your peers, and you'll likely be able to answer other peoples' questions too. As a bonus, Slack allows you to [format code](https://slack.com/slack-tips/share-code-snippets) to make it easy for all of us to copy and paste your code and distinguish it from the rest of your question.
+
+3. __Use the forums__ Two of the most important sources for help with R-coding are [StackOverflow](https://stackoverflow.com/) (a Q&A site with hundreds of thousands of answers to all sorts of programming questions) and [RStudio Community](https://community.rstudio.com/) (a forum specifically designed for people using RStudio and the tidyverse (i.e. you)). If you aren't able to find an answer to your question from the thousands of existing questions, you can post your own. You'll need to create a [reproducible example](https://stackoverflow.com/questions/5963269/how-to-make-a-great-r-reproducible-example) so others can figure out what you're trying to do and what error you're receiving, but you'd be amazed how helpful the community can be.
+
+4. __Ask me!__ Sign up for a time to meet with me during student hours at <https://calendly.com/mattwilliamson/>. I'll want to know what searches you've tried (so I don't chase down answers that you've already seen) and what approaches you've tried and why they haven't worked. Remember, I'm here to help (but not write your code for you).
+
+
+## Course Materials
+
+
+### R and RStudio
+
+`R` is free, but it can sometimes be a pain to install and configure especially when dealing with spatial packages (we'll talk more about why this is during class). To make life easier, I have set up an online [RStudio server](https://rstudio.apps.aws.boisestate.edu/) service, which lets you run a full instance of RStudio in your web browser. This means you won't have to install anything on your computer and we should be able to avoid a number of the machine-specific issues that pop-up when 20 students have 20 different computers, operating systems (OS), etc. If you haven't installed R on your local machine and would like some help getting that set up, there' a useful set of [instructions for installing R, RStudio, and all the tidyverse packages here.](/resource/install/)
+
+
+### Git and Github Classroom
+
+All assignments will be managed using Github classroom. This will allow each you to have your own repositories for each assignment and make it easier for me to comment on and help with your code. To use this, you should sign up for the [GitHub Student Developers Pack](https://education.github.com/pack#offers) as soon as possible and send me your github username. Once I have that, I can add you to the course and make sure that you have access to all of the necessary data and example code.
+
+### Readings
+
+The goal of this course is primarily to get you started with spatial workflows in R. That said, maps (and the spatial data that produce them) are extremely powerful and their use comes with risks and responsibilities. Although most of this course will focus on getting the code right, I'll mix in a few readings each week to help tie the technical details of our code back to the broader contexts of spatial analysis or to illustrate new applications of the methods you are learning.
+
+## Course Schedule
+
+This course is organized in 5 sections:
+
+1. Getting Started: Introducing the course, the tools we'll use, workflow and project management
+
+2. Foundations of Spatial Data: Describing objects in space, modifying and combining spatial data 
+
+3. Describing Spatial Patterns: Using metrics, models, and visualization to identify underlying spatial patterns.
+
+4. Explaining Spatial Patterns: Using statistical methods to identify potential causes of spatial patterns.
+
+5. Predicting Spatial Patterns: Creating and evaluating predictions of new observations based on statistical and spatial patterns
+
+The [schedule page](/schedule/) provides an overview of what to expect each week.
+
+This syllabus reflects a plan for the semester. Deviations may become necessary as the course progresses.
+
+
+
+## Assignments and Grades
+
+I teach this course because I believe that a) we can learn a lot about social and ecological processes by studying _where_ they happen, b) integrating spatial analysis directly into statistical workflows makes those analyses more robust and reproducible, and c) overcoming coding challenges can provide a profound sense of accomplishment. That said, I recognize that there are many reasons that _you_ are taking this course and that my objectives may differ from yours. In order to make sure that you get what you need out of this class, we'll be using a mix of approaches for determining your grade in this course.
+
+```{r}
+#| echo: false
+#| message: false
+library(kableExtra)
+
+points_df <- tibble(`Assignment Group` = c("Self Reflection", "Class Exercises", "Unit Homework", "Homework Revision", "Final Project"),
+                        `Points Possible` = c(25, 81, 100, 200, 150)) %>% mutate(`Percentage of Grade` = round(`Points Possible`/sum(`Points Possible`), digits = 2) *100) 
+
+points_df %>% 
+  kbl() %>% 
+  kable_classic_2()
+
+```
+
+
+**Self-assessment (12.5 pts x 2): ** During the first week of the course, I'm going to ask you to reflect on what you want out of this course (concepts, skills, practice, etc.). This assessment will help me do a better job of aligning the content of the course to your specific needs. Grading for the self-assessment is described on the [assignments page](/assignment/).
+
+**In-Class Excercises (3pts x 30):** The latter part of each class session will involve some hands-on practice in the form of in-class excercises. These exercises are designed to encourage you to work with your peers to practice different skills in class, allow me to identify any challenges you're experiencing, and encourage attendance. **Exercises are due at 3:00PM after each class period. I will not accept submissions after the deadline as these are about in-class participation.** If you turn the assignment in on-time you'll recieve full credit.
+
+::: {.callout-tip}
+You can miss up to 3 in-class exercises and still receive full-credit for this portion of the course.
+:::
+
+**Unit Homework (20pts x 5):** There are five homework assignments, one at the end of each section. These exercises are designed to reinforce the material we cover in lecture, give you practice designing and implementing your own workflows, and build habits that promote reproducibility in science. They also allow me get a sense for your engagement in the course. **Exercises are due at 11:59PM on their due date (generally Thursdays). I will post the "key" within 3 days of the due date and will not accept submissions after the key is posted.** If you turn the assignment in on-time with the required number of commits, you'll recieve full credit.
+
+**Assignment Revisions (50pts x 5):** We will have five "assignment revisions" due during the course. These provide an opportunity for me to check in and see how things are going. You'll be able to update your responses to the homeworks based on the keys and reflect on what you've learned throughout the course of the assignments. You'll also be able to provide additional feedback on how the course is going for you. Rather than assign arbitrary points to each assignment, I'm going to grade your assignment revisions using the following 'levels' (inspired by Sarah K. Johnson's [description](https://sites.tufts.edu/teaching/2022/03/10/ungrading-a-graduate-data-analysis-course/) of her graduate data analysis course at Tufts):
+
+* **Please Resubmit:** This indicates that either your code does not run as written (i.e., your Quarto document will not compile on my computer), you did not use Git as instructed, and/or that your responses to the questions I posed indicate that you do not quite understand the material as well as I would like. You'll need to schedule an appointment to talk with me and we'll work out what you need to do to get credit for the assignment. Although there isn't a hard deadline for this resubmission, the assignments build on each other so it's in your best interest to complete the resubmission before you get to the next assessment. Failure to resubmit will result in no credit for the assessment.
+
+* **Resubmit If You Like:** This indicates that all of the code works as written and that you used Git, but that you may have missed some important concepts. Your are welcome to resubmit the assignment and address my comments to help polish the final product, but it is not required for you to get credit for the assignment.
+
+* **Good To Go:** All of your code works, you completed the necessary Git steps, and all of the pieces are there and polished. I may have some minor comments, but I don't need you to address them for this assignment. 
+
+::: {.callout-tip}
+You can miss 1 assignment revision and still receive full-credit for this portion of the course.
+:::
+
+**Final Project (150pts): ** The final project asks you to conduct an entire spatial analysis from layout to results. Grades on the final project are based on your objectives and your self-assessment of whether or not you achieved those objectives. 
+
+::: {.callout-tip title="Final Project Deadlines and Points"}
+
+Points for the project are broken down by:
+
+  * Grading Contract Submitted (October 1): 10 pts (full credit if submitted)
+  
+  * Proposed Project Description (November 1): 15 pts (full credit if submitted)
+  
+  * First Draft Submitted (December 9): 25 pts (full credit if submitted)
+  
+  * Final Draft Submitted with Self Evaluation (December 19): 100 pts (based on contract grade and self-evaluation)
+  
+:::
+
+
+You can find descriptions for all the assignments on the [assignments page](/assignment/).
+
+### Grades
+
+```{r}
+#| echo: false
+#| message: false
+
+grades_df <- tibble(Grade = c('A','A-','B+','B', 'B-','C+', 'C', 'C-','D+', 'D'),
+                    `Total Points` = 
+                      c(round(0.93*sum(points_df$`Points Possible`), digits = 0),
+                        round(0.90*sum(points_df$`Points Possible`), digits = 0),
+                        round(0.87*sum(points_df$`Points Possible`), digits = 0),
+                        round(0.83*sum(points_df$`Points Possible`), digits = 0),
+                        round(0.8*sum(points_df$`Points Possible`), digits = 0),
+                        round(0.77*sum(points_df$`Points Possible`), digits = 0),
+                        round(0.73*sum(points_df$`Points Possible`), digits = 0),
+                        round(0.7*sum(points_df$`Points Possible`), digits = 0),
+                        round(0.67*sum(points_df$`Points Possible`), digits = 0),
+                        round(0.63*sum(points_df$`Points Possible`), digits = 0)))
+
+
+
+grades_df %>% 
+  kbl() %>% 
+  kable_classic_2()
+
+```
+
+
+### Attendance and incomplete assignments 
+Attendance is an important part of this course. You are allowed to miss 2 classes without providing any justification (stuff happens). Beyond that, each additional absence will result in a 0.5 grading reduction (i.e., an A becomes and A-). Similarly, completing the assignments to a satisfactory level is vital to ensure you have a firm grip on the code and concepts. Hence, each assignment that fails to achieve a "Resubmit If You Like" will result in 0.5 grading reduction.
+
+### Late work
+
+I would **highly recommend** staying caught up as much as possible, but if you need to turn something (other than the exercises and final project) in late, that's fine—there's **no penalty**.
+
+## Academic Integrity
+
+Academic integrity is the principle that asks students to engage with their academic work to the fullest and to behave honestly, transparently, and ethically in every assignment and every interaction with a peer, professor, or research participant. When a strong culture of academic integrity is fostered by students and faculty in an academic program, students learn more, build positive relationships and collaborations, and can feel more confident in the value of their degrees.
+
+In order to cultivate fairness and credibility, everyone must participate in upholding academic integrity. Students in this class are responsible for asking for help or clarification when it’s needed, speaking up when they see unethical behavior taking place, and understanding and adhering to the Student Code of Conduct, including the section on academic misconduct. Boise State and I take academic misconduct very seriously. It’s important to know that when a student engages in academic misconduct, I will report the incident to the Office of the Dean of Students. I also have the right to assign sanctions, which could include requirements to revise or redo work, complete educational assignments to learn about academic integrity, and grade penalties ranging from lower credit on an assignment to failing this class^[So seriously, just don't cheat or plagiarize!]. Students should learn more by reviewing the [Student Code of Conduct](https://www.boisestate.edu/policy/student-affairs/code-of-conduct/).
+
+### A Note on Using AI in This Course
+
+There are a seemingly ever-growing number of AI platforms (e.g., chatgpt, claude, GitHub CoPilot) designed to help you streamline code development (and probably everything else). These tools __can__ help you figure out tricky syntax and make progress when you're stuck. In my experience, they __cannot__ help you learn to recognize when the code they give you actually does what you want. They are also not particularly good at understanding how your analysis relates to your research questions. This course is about being able to do both and so I offer the following _guidelines_:
+
+::: {.callout-warning}
+Please note if you are submitting code generated entirely by an AI agent and tell me which agent you've used (they're not all equally good at different tasks)
+:::
+
+* If you use AI to help you with syntax, it is your responsibility to understand _why_ it works, not just demonstrate that it works.
+
+* Even if you are copying code from an AI-engine, I recommend actually typing the code. This helps you build some "muscle memory" for thinking through programming problems.
+
+::: {.callout-important}
+Using AI for code is ok, using AI for writing responses to the questions in your assignments or your final project, is not. 
+:::
+
+## This course was designed with you in mind
+
+I developed this course to provide a welcoming environment and effective, equitable learning experience for all students. If you encounter barriers in this course, please bring them to my attention so that I may work to address them.
+
+If you tell me you're having trouble, I will not judge you or think less of you. I hope you'll extend me the same grace.
+
+You *never* owe me personal information about your health (mental or physical). You are *always* welcome to talk to me about things that you're going through, though. If I can't help you, I usually know somebody who can.
+
+If you need extra help, or if you need more time with something, or if you feel like you're behind or not understanding everything, **do not suffer in silence!** Talk to me! I will work with you. **I promise.**
+
+If you are struggling for any reason (COVID, relationship, family, or life’s stresses) and believe these may impact your performance in the course, I encourage you to contact the Dean of Students at (208) 426-1527 or email [deanofstundents@boisestate.edu](mailto:deanofstudents@boisestate.edu) for support.  If you notice a significant change in your mood, sleep, feelings of hopelessness or a lack of self worth, consider connecting immediately with Counseling Services (1529 Belmont Street, Norco Building) at (208) 426-1459 or email [healthservices@boisestate.edu](mailto:healthservices@boisestate.edu).  
+
+### This class’s community is inclusive.
+Students in this class represent a rich variety of backgrounds and perspectives. The Human-Environment Systems group is committed to providing an atmosphere for learning that respects diversity and creates inclusive environments in our courses. While working together to build this community, we ask all members to:
+* share their unique experiences, values, and beliefs, if comfortable doing so.
+
+* listen deeply to one another.
+
+* honor the uniqueness of their peers.
+
+* appreciate the opportunity we have to learn from each other in this community.
+
+* use this opportunity together to discuss ways in which we can create an inclusive environment in this course and across the campus community.
+
+* recognize opportunities to invite a community member to exhibit more inclusive, equitable speech or behavior—and then also invite them into further conversation. We also expect community members to respond with gratitude and to take a moment of reflection when they receive such an invitation, rather than react immediately from defensiveness.
+
+* keep confidential any discussions that the community has of a personal (or professional) nature, unless the speaker has given explicit permission to share what they have said.
+
+* respect the right of students to be addressed and referred to by the names and pronouns that correspond to their gender identities, including the use of non-binary pronouns. 
+
+
+### We use each other’s preferred names and pronouns.
+I will ask you to let me know your preferred or adopted name and gender pronoun(s), and I will make those changes to my own records and address you that way in all cases. 
+
+To change to a preferred name so that it displays on all BSU sites, including Canvas and our course roster, contact the Registrar's Office at (208) 426-4249. Note that only a legal name change can alter your name on BSU official and legal documents (e.g., your transcript).
+
+### This course is accessible to students with disabilities.
+I recognize that navigating your education and life can often be more difficult if you have disabilities. I want you to achieve at your highest capacity in this class. If you have a disability, I need to know if you encounter inequitable opportunities in my course related to:
+
+* accessing and understanding course materials
+engaging with course materials and other students in the course
+
+* demonstrating your skills and knowledge on assignments and exams.
+
+
+If you have a documented disability, you may be eligible for accommodations in all of your courses. To learn more, make an appointment with the university’s Educational Access Center. 
+
+### For students responsible for children
+I recognize the unique challenges that can arise for students who are also parents or guardians of children.  Any student needing to temporarily bring children or another dependent to class is welcome to do so to stay engaged with the class.
+
+
+## Note on Course Content and Idaho Law
+Under Idaho law (Section § 67-5909D), some university courses with content related to diversity, equity, inclusion, or critical theory may be subject to certain restrictions. However, the law affirms and does not limit free discussion in the classroom. Like all Boise State courses, this course supports open inquiry, intellectual honesty, and respectful engagement with a range of perspectives, all of which are consistent with student rights and responsibilities described in the Student Code of Conduct (Policy 2020). 
+
+This course may include content that touches on concepts related to diversity, equity, inclusion (DEI), or critical theory—such as systemic inequality, cultural identity, or gender and race in society. If these topics are included, it is because they are relevant to the learning outcomes for this course and are explored to support critical thinking, deeper understanding, and respectful engagement with different perspectives. As part of the course, you may be asked to apply or explain ideas that come from a particular perspective.  However, you are not required to adopt such perspectives as your own.
+
+Our classroom is a space for open dialogue and thoughtful discussion, including complex or challenging topics. Everyone is expected to engage with curiosity, listen respectfully, and contribute in ways that support a productive and welcoming learning environment. Boise State and the Idaho State Board of Education affirm the importance of free expression and academic inquiry. As outlined in SBOE Policy III.B:
+“Membership in the academic community imposes on administrators, faculty members, other institutional employees, and students an obligation to respect the dignity of others, to acknowledge the right of others to express differing opinions, and to foster and defend intellectual honesty, freedom of inquiry and instruction, and free expression on and off the campus of an institution.”
+Disruptive behavior that interferes with the learning environment will not be tolerated and may result in removal from this course, in line with university policy (See Policy 3240 Maintaining Effective Learning Environments).
+
+In this course, I will foster critical discussion and analysis, and a respectful consideration of a wide range of ideas, in accordance with the Faculty Code of Rights, Responsibilities, and Conduct (Policy 4000). You are encouraged to think critically, question ideas, and form your own conclusions. As always, you have the freedom to choose courses that align with your academic goals—if you have concerns about course content, please talk with your instructor or advisor. Refer to the academic calendar for important deadlines related to course withdrawal.
+

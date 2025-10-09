@@ -1,0 +1,31 @@
+author: Matt Williamson
+instructor:
+  name: Dr. Matt Williamson
+  name_no_title: Matt Williamson
+  email: mattwilliamson@boisestate.edu
+  url: "https://www.spaseslab.com"
+  github: mattwilliamson13
+  office: "4125 Environmental Research Building"
+  contact_policy: >-
+    E-mail and Slack are the best ways to get in contact with me. I will try to respond to all course-related e-mails and Slack messages within 48 hours (*really*), but also remember that life can be busy and chaotic for everyone (including me!), so if I don't respond right away, don't worry!
+  appointment_url: https://calendly.com/mattwilliamson/
+
+course:
+  number: "HES 505"
+  semester: "Fall 2025"
+  days: "Mondays and Wednesdays"
+  time: "1:30–2:45 PM"
+  location: "ILC 404"
+  dates: "August 25–December 12, 2025"
+  github: "https://www.github.com/mattwilliamson/isdrfall25"
+  url: "https://isdrfall25.classes.spaseslab.com"
+  copyright_year: "2025"
+  slack: "https://app.slack.com/client/TFDA2L1RQ/CV4DEJ8M7"
+
+university:
+  name: Boise State University
+  url: "https://www.boisestate.edu"
+
+school:
+  name: Human-Environment Systems
+  url: "https://www.boisestate.edu/hes/"

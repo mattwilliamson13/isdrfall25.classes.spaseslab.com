@@ -1,0 +1,47 @@
+group,session,date,end_date,title,flag,deadline,content,lesson,example,assignment,note
+Getting Started,Session 1,2025-08-25,NA,Introduction to the Course,NA,NA,content/01-content,lesson/01-lesson,example/01-example,NA,NA
+Getting Started,Session 2,2025-08-27,NA,Tools of the Trade,NA,NA,content/02-content,lesson/02-lesson,example/02-example,NA,NA
+Getting Started,Session 2,2025-08-29,NA,Self-Evaluation 1 due,TRUE,23:59:00,NA,NA,NA,assignment/self-eval1,NA
+Getting Started,Session 3,2025-09-01,NA,No Class,NA,NA,NA,NA,NA,NA,(Labor Day)
+Getting Started,Session 4,2025-09-03,NA,Meeting Your data,NA,NA,content/04-content,lesson/04-lesson,example/04-example,NA,NA
+Getting Started,Session 5,2025-09-08,NA,Data Manipulation with the tidyverse,NA,NA,content/05-content,lesson/05-lesson,example/05-example,NA,NA
+Getting Started,Session 6,2025-09-10,NA,"Pipes, Functions, and Iteration",NA,NA,content/06-content,lesson/06-lesson,example/06-example,NA,NA
+Getting Started,Session 6,2025-09-26,NA,Homework 1,TRUE,NA,NA,NA,NA,assignment/01-assignment,NA
+Fundamentals of Spatial Data,Session 7,2025-09-15,NA,"Data Models, Coordinates, and Geometries",NA,NA,content/07-content,lesson/07-lesson,example/07-example,NA,NA
+Fundamentals of Spatial Data,Session 8,2025-09-17,NA,"Projections, Extent, and Resolution",NA,NA,content/08-content,lesson/08-lesson,example/08-example,NA,NA
+Fundamentals of Spatial Data,Session 9,2025-09-22,NA,Attribute Data Operations,NA,NA,content/09-content,lesson/09-lesson,example/09-example,NA,NA
+Fundamentals of Spatial Data,Session 10,2025-09-24,NA,Spatial Data Operations,NA,NA,content/10-content,lesson/10-lesson,example/10-example,NA,NA
+Fundamentals of Spatial Data,Session 11,2025-09-29,NA,Geometry Data Operations and Troubleshooting,NA,NA,content/11-content,lesson/11-lesson,example/11-example,NA,NA
+Fundamentals of Spatial Data,Session 12,2025-10-01,NA,Building Spatial Databases,NA,NA,content/12-content,lesson/12-lesson,example/12-example,NA,NA
+Fundamentals of Spatial Data,Session 12,2025-10-01,NA,Final Project Contract Due,TRUE,NA,NA,NA,NA,assignment/final-proj,NA
+Fundamentals of Spatial Data,Session 12,2025-10-02,NA,Homework 2,TRUE,NA,NA,NA,NA,assignment/02-assignment,NA
+Fundamentals of Spatial Data,Session 9,2025-10-06,NA,Homework 1 Revision,TRUE,NA,NA,NA,NA,assignment/01-assignmentrev,NA
+Describing Spatial Patterns,Session 13,2025-10-06,NA,Building Spatial Databases II,NA,NA,content/13-content,lesson/13-lesson,example/13-example,NA,NA
+Describing Spatial Patterns,Session 14,2025-10-08,NA,Workday,NA,NA,content/14-content,lesson/14-lesson,example/14-example,NA,(no inclass session)
+Describing Spatial Patterns,Session 14,2025-10-09,NA,Homework 2 Revision,TRUE,NA,NA,NA,NA,assignment/02-assignmentrev,NA
+Describing Spatial Patterns,Session 15,2025-10-13,NA,Point Patterns I,NA,NA,content/15-content,lesson/15-lesson,example/15-example,NA,NA
+Describing Spatial Patterns,Session 16,2025-10-15,NA,Point Patterns II,NA,NA,content/16-content,lesson/16-lesson,example/16-example,NA,NA
+Describing Spatial Patterns,Session 17,2025-10-20,NA,Surface Metrics,NA,NA,content/17-content,lesson/17-lesson,example/17-example,NA,NA
+Describing Spatial Patterns,Session 18,2025-10-22,NA,Multivariate Description,NA,NA,content/18-content,lesson/18-lesson,example/18-example,NA,NA
+Describing Spatial Patterns,Session 18,2025-10-23,NA,Homework 3,TRUE,NA,NA,NA,NA,assignment/03-assignment,NA
+Explaining Spatial Patterns,Session 19,2025-10-27,NA,Interpolation,NA,NA,content/19-content,lesson/19-lesson,example/19-example,NA,NA
+Explaining Spatial Patterns,Session 20,2025-10-29,NA,Kriging,NA,NA,content/20-content,lesson/20-lesson,example/20-example,NA,NA
+Explaining Spatial Patterns,Session 20,2025-10-30,NA,Homework 3 Revision,TRUE,NA,NA,NA,NA,assignment/03-assignmentrev,NA
+Explaining Spatial Patterns,Session 20,2025-11-01,NA,Final Project Description Due,TRUE,NA,NA,NA,NA,assignment/final-proj,NA
+Explaining Spatial Patterns,Session 21,2025-11-03,NA,Machine Learning Models I,NA,NA,content/21-content,lesson/21-lesson,example/21-example,NA,NA
+Explaining Spatial Patterns,Session 22,2025-11-05,NA,Machine Learning Models II,NA,NA,content/22-content,lesson/22-lesson,example/22-example,NA,NA
+Explaining Spatial Patterns,Session 23,2025-11-10,NA,Statistical Modelling I,NA,NA,content/23-content,lesson/23-lesson,example/23-example,NA,NA
+Explaining Spatial Patterns,Session 24,2025-11-12,NA,Statistical Modelling II,NA,NA,content/24-content,lesson/24-lesson,example/24-example,NA,NA
+Explaining Spatial Patterns,Session 25,2025-11-17,NA,Spatial Autocorrelation I,NA,NA,content/25-content,lesson/25-lesson,example/25-example,NA,NA
+Explaining Spatial Patterns,Session 26,2025-11-19,NA,Spatial Autocorrelation II,NA,NA,content/26-content,lesson/26-lesson,example/26-example,NA,NA
+Explaining Spatial Patterns,Session 26,2025-11-20,NA,Homework 4,TRUE,NA,NA,NA,NA,assignment/04-assignment,NA
+Fall Break,Session 27,2025-11-24,NA,No Class,NA,NA,NA,NA,NA,NA,(Fall Break)
+Fall Break,Session 28,2025-11-26,NA,No Class,NA,NA,NA,NA,NA,NA,(Fall Break)
+Predicting Spatial Patterns,Session 29,2025-12-01,NA,Spatial Predictions,NA,NA,content/29-content,lesson/29-lesson,example/29-example,NA,NA
+Predicting Spatial Patterns,Session 29,2025-12-02,NA,Homework 4 Revision,TRUE,NA,NA,NA,NA,assignment/04-assignmentrev,NA
+Predicting Spatial Patterns,Session 30,2025-12-03,NA,Prediction and Model Evaluation I,NA,NA,content/30-content,lesson/30-lesson,example/30-example,NA,NA
+Predicting Spatial Patterns,Session 31,2025-12-08,NA,Model Evaluation II,NA,NA,content/31-content,lesson/21-lesson,example/31-example,NA,NA
+Wrapup,Session 31,2025-12-08,NA,Draft Final Project Due,TRUE,23:59:00,NA,NA,NA,assignment/final-proj,NA
+Wrapup,Session 32,2025-12-10,NA,Conclusion,NA,NA,content/32-content,lesson/32-lesson,NA,NA,NA
+Wrapup,Final Project,2025-12-18,NA,Final Project Due,TRUE,23:59:00,NA,NA,NA,assignment/final-proj,NA
+Wrapup,Final Project,2025-12-19,NA,Final Self-Evaluation Due,TRUE,23:59:00,NA,NA,NA,assignment/self-eval3,NA
