@@ -60,6 +60,7 @@ boise_metro <- core_based_statistical_areas(cb = TRUE,
                crs = "EPSG:8826")
 
 plot(boise_metro$geometry)
+
 ```
 
 Now that we've got our `crop_region` let's use our new function to read in all of the shapefiles. We can do that by using `list.files` with a regular expression to get all of the `.shp` files in our data folder. We then use our new function with `map` to create a list of projected, cropped shapefiles. Once we've got that, we want to give the shapefiles in each slot of the list a more intuitive name - which we do using `names` (using a `str_remove` from the `stringr` package to clean up the filenames returned by `basenames()`). Finally, we use `map_dfr` to create a summary dataframe returning the number of invalid geometries in each `slot` in our list. Everything looks good (no invalid geometries) so far!
