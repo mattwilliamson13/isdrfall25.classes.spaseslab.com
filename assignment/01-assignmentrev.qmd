@@ -39,7 +39,7 @@ purple_air_list %>%
 purple_air_list %>% 
   map(., \(x) summary(x))
 ```
-[This one should also be pretty straightforward. One thing you'll notice is that I used `walk` for `glimpse`, but had to use `map` for the other two. This is because `glimpse` is part of the `tidyverse` and so was designed to be called in a pipeline where the primary interest is not in saving the result to an object, but rather to get the _side effect_ (which is what `walk` is good for). The other two functions (`dim` and `summary`) are from base `R` and so they behave a little differently.]{style="color: blue;"}
+[This one should also be pretty straightforward. One thing you'll notice is that I used `walk` for `glimpse`, but had to use `map` for the other two. This is because `glimpse` is part of the `tidyverse` and so was designed to be called in a pipeline where the primary interest is not in saving the result to an object, but rather to get the _side effect_ (which is what `walk` is good for). The other two functions (`dim` and `summary`) are from base `R` and so they behave a little differently.I]{style="color: blue;"}
 
 3. Identify at least two potential data quality issues (e.g., missing values, inconsistent categories, unrealistic ranges). Explain why you think these data might be incorrect and how you might go about verifying them.
 

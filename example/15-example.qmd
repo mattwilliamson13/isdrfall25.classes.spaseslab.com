@@ -1,4 +1,7 @@
 ---
-title: "Generic"
+title: "Point Patterns 1"
 ---
 
+1. Choose a single Boise Police District and filter the crimes data to it.
+2. Generate quadrat counts for your BPD (you'll have to change the `win` from the lesson)
+3. Generate a kernel density estimate for 3 bandwidths for your BPD data and submit them to the slack channel.
