@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Intro to Spatial Data in R - Assignment 1: Getting Started</title>
+<title>Intro to Spatial Data in R - Assignment 01 Solutions</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -19,6 +19,40 @@ ul.task-list li input[type="checkbox"] {
   width: 0.8em;
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
 </style>
 
@@ -62,7 +96,8 @@ ul.task-list li input[type="checkbox"] {
 }</script>
 
 
-<meta property="og:title" content="Intro to Spatial Data in R - Assignment 1: Getting Started">
+<meta property="og:title" content="Intro to Spatial Data in R - Assignment 01 Solutions">
+<meta property="og:description" content="">
 <meta property="og:image" content="https://isdrfall25.classes.spaseslab.com/files/social-image-f22.png">
 <meta property="og:site-name" content="Intro to Spatial Data in R">
 <meta property="og:locale" content="en_US">
@@ -300,9 +335,11 @@ ul.task-list li input[type="checkbox"] {
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#objectives" id="toc-objectives" class="nav-link active" data-scroll-target="#objectives">Objectives</a></li>
-  <li><a href="#instructions" id="toc-instructions" class="nav-link" data-scroll-target="#instructions">Instructions</a></li>
-  <li><a href="#questions-to-answer" id="toc-questions-to-answer" class="nav-link" data-scroll-target="#questions-to-answer">Questions to Answer</a></li>
+  <li><a href="#for-your-revision" id="toc-for-your-revision" class="nav-link active" data-scroll-target="#for-your-revision">For Your Revision</a></li>
+  <li><a href="#part-i-importing-and-inspecting" id="toc-part-i-importing-and-inspecting" class="nav-link" data-scroll-target="#part-i-importing-and-inspecting">Part I: Importing and inspecting</a></li>
+  <li><a href="#part-2-data-manipulation-with-tidyverse" id="toc-part-2-data-manipulation-with-tidyverse" class="nav-link" data-scroll-target="#part-2-data-manipulation-with-tidyverse">Part 2: Data Manipulation with tidyverse</a></li>
+  <li><a href="#part-3-functions-and-iteration" id="toc-part-3-functions-and-iteration" class="nav-link" data-scroll-target="#part-3-functions-and-iteration">Part 3: Functions and Iteration</a></li>
+  <li><a href="#part-4-synthesis-and-reflection" id="toc-part-4-synthesis-and-reflection" class="nav-link" data-scroll-target="#part-4-synthesis-and-reflection">Part 4: Synthesis and Reflection</a></li>
   </ul>
 </nav>
     </div>
@@ -311,7 +348,7 @@ ul.task-list li input[type="checkbox"] {
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Assignment 1: Getting Started</h1>
+<h1 class="title">Assignment 01 Solutions</h1>
 </div>
 
 
@@ -326,14 +363,302 @@ ul.task-list li input[type="checkbox"] {
 
 </header>
 
-<section id="objectives" class="level3">
-<h3 class="anchored" data-anchor-id="objectives">Objectives</h3>
+<section id="for-your-revision" class="level2">
+<h2 class="anchored" data-anchor-id="for-your-revision">For Your Revision</h2>
+<p>In order to facilitate you thinking about your assignment, I’m providing how I would approach each of the tasks listed in the assignment. This should allow you to go in</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──
+✔ dplyr     1.1.4     ✔ readr     2.1.5
+✔ forcats   1.0.1     ✔ stringr   1.5.2
+✔ ggplot2   4.0.0     ✔ tibble    3.3.0
+✔ lubridate 1.9.4     ✔ tidyr     1.3.1
+✔ purrr     1.1.0     
+── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
+✖ dplyr::filter() masks stats::filter()
+✖ dplyr::lag()    masks stats::lag()
+ℹ Use the conflicted package (&lt;http://conflicted.r-lib.org/&gt;) to force all conflicts to become errors</code></pre>
+</div>
+</div>
 </section>
-<section id="instructions" class="level3">
-<h3 class="anchored" data-anchor-id="instructions">Instructions</h3>
+<section id="part-i-importing-and-inspecting" class="level2">
+<h2 class="anchored" data-anchor-id="part-i-importing-and-inspecting">Part I: Importing and inspecting</h2>
+<section id="tasks" class="level4">
+<h4 class="anchored" data-anchor-id="tasks">Tasks:</h4>
+<ol type="1">
+<li>Use <code>list.files</code>, <code>read_</code>, and map to load the data into <code>R</code>.</li>
+</ol>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>file_names <span class="ot">&lt;-</span> <span class="fu">list.files</span>(<span class="st">"/Users/mattwilliamson/Websites/isdr_assignments/assignment_01_org/data/original/"</span>, <span class="at">pattern =</span> <span class="st">".csv"</span>, <span class="at">full.names =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>purple_air_list <span class="ot">&lt;-</span> file_names <span class="sc">%&gt;%</span> </span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">map</span>(., read_csv)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Rows: 435 Columns: 9
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: ","
+chr  (1): name
+dbl  (6): id, humidity, temperature, pm2.5_atm, pm2.5_cf_1, uptime
+dttm (2): time_stamp, date_up
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 327 Columns: 9
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: ","
+chr  (1): name
+dbl  (6): id, humidity, temperature, pm2.5_atm, pm2.5_cf_1, uptime
+dttm (2): time_stamp, date_up
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 563 Columns: 9
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: ","
+chr  (1): name
+dbl  (6): id, humidity, temperature, pm2.5_atm, pm2.5_cf_1, uptime
+dttm (2): time_stamp, date_up
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 603 Columns: 9
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: ","
+chr  (1): name
+dbl  (6): id, humidity, temperature, pm2.5_atm, pm2.5_cf_1, uptime
+dttm (2): time_stamp, date_up
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
+</div>
+</div>
+<p><span style="color: blue;">This one should be pretty straightforward. The only tricky bits are that I set the <code>pattern</code> argument to <code>".csv"</code> to make sure that I’m getting the right files for <code>read_csv</code> (which in this case is less important because that’s all that’s in the folder). I also set the <code>full.names</code> argument to <code>TRUE</code> to avoid issues when I render this file.</span></p>
+<ol start="2" type="1">
+<li>Use <code>dim()</code>, <code>names()</code>, <code>glimpse()</code>, and <code>summary()</code> to explore the datasets.</li>
+</ol>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>purple_air_list <span class="sc">%&gt;%</span> </span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">map</span>(., dim)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[[1]]
+[1] 435   9
+
+[[2]]
+[1] 327   9
+
+[[3]]
+[1] 563   9
+
+[[4]]
+[1] 603   9</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>purple_air_list <span class="sc">%&gt;%</span> </span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">walk</span>(., glimpse)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Rows: 435
+Columns: 9
+$ id          &lt;dbl&gt; 7494, 7494, 7494, 7494, 7494, 7494, 7494, 7494, 7494, 7494…
+$ time_stamp  &lt;dttm&gt; 2025-04-01, 2024-04-01, 2021-03-01, 2022-11-01, 2022-07-0…
+$ humidity    &lt;dbl&gt; 30, 30, 30, 41, 20, 27, 21, 30, 35, 29, 32, 24, 33, 46, 30…
+$ temperature &lt;dbl&gt; 63, 63, 56, 45, 91, 83, 91, 76, 66, 79, 57, 82, 66, 45, 86…
+$ pm2.5_atm   &lt;dbl&gt; 3.7, 2.2, 4.7, 18.8, 7.3, 27.4, 30.0, 23.1, 1.8, 20.1, 3.9…
+$ pm2.5_cf_1  &lt;dbl&gt; 3.7, 2.2, 4.8, 20.2, 7.5, 33.8, 38.3, 31.3, 1.8, 25.6, 4.0…
+$ name        &lt;chr&gt; "MesaVista", "MesaVista", "MesaVista", "MesaVista", "MesaV…
+$ date_up     &lt;dttm&gt; 2018-02-10 03:05:11, 2018-02-10 03:05:11, 2018-02-10 03:0…
+$ uptime      &lt;dbl&gt; 42661, 42661, 42661, 42661, 42661, 42661, 42661, 42661, 42…
+Rows: 327
+Columns: 9
+$ id          &lt;dbl&gt; 36673, 36673, 36673, 36673, 36673, 36673, 36673, 36673, 36…
+$ time_stamp  &lt;dttm&gt; 2022-08-01, 2020-05-01, 2024-01-01, 2021-08-01, 2021-03-0…
+$ humidity    &lt;dbl&gt; 37, 45, 47, 46, 40, 48, 49, 41, 47, 48, 39, 40, 47, 44, 50…
+$ temperature &lt;dbl&gt; 77, 60, 32, 71, 46, 39, 42, 45, 40, 35, 64, 52, 55, 59, 38…
+$ pm2.5_atm   &lt;dbl&gt; 12.1, 2.8, 16.4, 29.5, 98.9, 9.4, 10.7, 6.4, 7.3, 8.3, 4.2…
+$ pm2.5_cf_1  &lt;dbl&gt; 12.8, 3.0, 17.2, 37.1, 145.6, 9.9, 11.5, 6.7, 7.7, 8.9, 4.…
+$ name        &lt;chr&gt; "419 S. 4th St", "419 S. 4th St", "419 S. 4th St", "419 S.…
+$ date_up     &lt;dttm&gt; 2019-08-02 19:28:01, 2019-08-02 19:28:01, 2019-08-02 19:2…
+$ uptime      &lt;dbl&gt; 15585, 15585, 15585, 15585, 15585, 15585, 15585, 15585, 15…
+Rows: 563
+Columns: 9
+$ id          &lt;dbl&gt; 9810, 9810, 9810, 9810, 9810, 9810, 9810, 9810, 9810, 9810…
+$ time_stamp  &lt;dttm&gt; 2020-11-01, 2021-05-01, 2020-05-01, 2023-12-01, 2020-09-0…
+$ humidity    &lt;dbl&gt; 45, 32, 38, 52, 30, 43, 22, 49, 35, 38, 38, 51, 25, 46, 37…
+$ temperature &lt;dbl&gt; 46, 63, 62, 46, 72, 47, 89, 45, 69, 54, 55, 44, 55, 41, 48…
+$ pm2.5_atm   &lt;dbl&gt; 23.1, 3.9, 4.5, 23.6, 56.1, 12.6, 31.9, 13.0, 2.7, 6.2, 25…
+$ pm2.5_cf_1  &lt;dbl&gt; 27.4, 4.3, 4.6, 28.3, 79.9, 13.7, 40.5, 14.2, 2.7, 6.3, 30…
+$ name        &lt;chr&gt; "PSU STAR LAB KFP", "PSU STAR LAB KFP", "PSU STAR LAB KFP"…
+$ date_up     &lt;dttm&gt; 2018-04-11 23:19:19, 2018-04-11 23:19:19, 2018-04-11 23:1…
+$ uptime      &lt;dbl&gt; 22520, 22520, 22520, 22520, 22520, 22520, 22520, 22520, 22…
+Rows: 603
+Columns: 9
+$ id          &lt;dbl&gt; 18161, 18161, 18161, 18161, 18161, 18161, 18161, 18161, 18…
+$ time_stamp  &lt;dttm&gt; 2020-08-01, 2023-01-01, 2022-03-01, 2024-01-01, 2023-10-0…
+$ humidity    &lt;dbl&gt; 47, 57, 58, 59, 59, 50, 61, 61, 54, 48, 42, 61, 60, 50, 51…
+$ temperature &lt;dbl&gt; 75, 52, 55, 50, 62, 52, 56, 54, 54, 72, 79, 47, 52, 72, 55…
+$ pm2.5_atm   &lt;dbl&gt; 5.7, 2.8, 4.2, 3.5, 6.4, 3.2, 2.7, 4.6, 3.1, 16.0, 7.5, 4.…
+$ pm2.5_cf_1  &lt;dbl&gt; 5.7, 2.8, 4.4, 3.6, 6.4, 3.3, 2.8, 4.7, 3.2, 18.3, 8.0, 4.…
+$ name        &lt;chr&gt; "Issaquah Highlands", "Issaquah Highlands", "Issaquah High…
+$ date_up     &lt;dttm&gt; 2018-10-29 22:26:57, 2018-10-29 22:26:57, 2018-10-29 22:2…
+$ uptime      &lt;dbl&gt; 13394, 13394, 13394, 13394, 13394, 13394, 13394, 13394, 13…</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>purple_air_list <span class="sc">%&gt;%</span> </span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">map</span>(., \(x) <span class="fu">summary</span>(x))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[[1]]
+       id          time_stamp                     humidity      temperature   
+ Min.   : 7494   Min.   :2020-01-01 00:00:00   Min.   :18.00   Min.   :20.00  
+ 1st Qu.:10906   1st Qu.:2021-07-16 12:00:00   1st Qu.:27.00   1st Qu.:47.00  
+ Median :27287   Median :2023-02-01 00:00:00   Median :34.00   Median :63.00  
+ Mean   :23317   Mean   :2022-12-13 05:17:47   Mean   :35.44   Mean   :61.88  
+ 3rd Qu.:36707   3rd Qu.:2024-06-01 00:00:00   3rd Qu.:42.50   3rd Qu.:74.50  
+ Max.   :40715   Max.   :2025-07-01 00:00:00   Max.   :82.00   Max.   :93.00  
+   pm2.5_atm         pm2.5_cf_1         name          
+ Min.   :   0.00   Min.   :   0.0   Length:435        
+ 1st Qu.:   2.55   1st Qu.:   2.6   Class :character  
+ Median :   5.40   Median :   5.6   Mode  :character  
+ Mean   :  21.34   Mean   :  29.1                     
+ 3rd Qu.:  11.90   3rd Qu.:  12.7                     
+ Max.   :1352.50   Max.   :2008.4                     
+    date_up                        uptime     
+ Min.   :2018-02-10 03:05:11   Min.   : 1114  
+ 1st Qu.:2018-05-16 21:09:00   1st Qu.: 2210  
+ Median :2019-02-20 18:49:10   Median :16424  
+ Mean   :2018-12-19 01:32:17   Mean   :22545  
+ 3rd Qu.:2019-08-06 20:56:44   3rd Qu.:42661  
+ Max.   :2019-11-05 18:27:41   Max.   :51249  
+
+[[2]]
+       id          time_stamp                     humidity      temperature   
+ Min.   : 2851   Min.   :2020-01-01 00:00:00   Min.   :26.00   Min.   :24.00  
+ 1st Qu.:13975   1st Qu.:2021-06-16 00:00:00   1st Qu.:39.00   1st Qu.:41.00  
+ Median :28423   Median :2022-11-01 00:00:00   Median :42.00   Median :52.00  
+ Mean   :22563   Mean   :2022-10-16 10:16:30   Mean   :42.17   Mean   :53.99  
+ 3rd Qu.:31595   3rd Qu.:2024-03-01 00:00:00   3rd Qu.:46.00   3rd Qu.:68.00  
+ Max.   :36673   Max.   :2025-07-01 00:00:00   Max.   :63.00   Max.   :84.00  
+   pm2.5_atm         pm2.5_cf_1          name          
+ Min.   :   1.40   Min.   :   1.50   Length:327        
+ 1st Qu.:   3.55   1st Qu.:   3.65   Class :character  
+ Median :   6.30   Median :   6.50   Mode  :character  
+ Mean   :  15.23   Mean   :  19.52                     
+ 3rd Qu.:  11.45   3rd Qu.:  12.40                     
+ Max.   :1213.90   Max.   :1819.60                     
+    date_up                        uptime     
+ Min.   :2017-08-14 20:26:35   Min.   : 5798  
+ 1st Qu.:2018-08-02 22:50:59   1st Qu.: 8587  
+ Median :2019-03-11 20:13:09   Median :15362  
+ Mean   :2018-11-10 07:57:48   Mean   :16822  
+ 3rd Qu.:2019-05-08 17:02:54   3rd Qu.:15585  
+ Max.   :2019-08-02 19:28:01   Max.   :37460  
+
+[[3]]
+       id          time_stamp                     humidity      temperature   
+ Min.   : 3192   Min.   :2020-01-01 00:00:00   Min.   :22.00   Min.   :34.00  
+ 1st Qu.:14923   1st Qu.:2021-05-01 00:00:00   1st Qu.:40.00   1st Qu.:49.00  
+ Median :24241   Median :2022-11-01 00:00:00   Median :46.00   Median :59.00  
+ Mean   :22478   Mean   :2022-10-19 10:41:59   Mean   :46.65   Mean   :60.25  
+ 3rd Qu.:31141   3rd Qu.:2024-03-01 00:00:00   3rd Qu.:54.00   3rd Qu.:72.00  
+ Max.   :35383   Max.   :2025-07-01 00:00:00   Max.   :75.00   Max.   :93.00  
+   pm2.5_atm         pm2.5_cf_1          name          
+ Min.   :   0.80   Min.   :   0.80   Length:563        
+ 1st Qu.:   4.00   1st Qu.:   4.10   Class :character  
+ Median :   7.10   Median :   7.20   Mode  :character  
+ Mean   :  35.14   Mean   :  49.23                     
+ 3rd Qu.:  13.25   3rd Qu.:  14.90                     
+ Max.   :1878.60   Max.   :2816.70                     
+    date_up                        uptime     
+ Min.   :2017-09-08 19:19:21   Min.   :  394  
+ 1st Qu.:2018-09-04 20:07:59   1st Qu.: 9047  
+ Median :2019-01-09 21:26:33   Median :11514  
+ Mean   :2018-11-23 19:08:32   Mean   :18393  
+ 3rd Qu.:2019-05-01 16:16:43   3rd Qu.:22520  
+ Max.   :2019-07-18 20:12:09   Max.   :46517  
+
+[[4]]
+       id          time_stamp                     humidity      temperature
+ Min.   : 2651   Min.   :2020-01-01 00:00:00   Min.   :19.00   Min.   :29  
+ 1st Qu.:14981   1st Qu.:2021-05-01 00:00:00   1st Qu.:41.00   1st Qu.:49  
+ Median :18161   Median :2022-10-01 00:00:00   Median :50.00   Median :59  
+ Mean   :22431   Mean   :2022-10-01 03:56:25   Mean   :48.28   Mean   :60  
+ 3rd Qu.:36463   3rd Qu.:2024-03-01 00:00:00   3rd Qu.:56.00   3rd Qu.:71  
+ Max.   :42073   Max.   :2025-07-01 00:00:00   Max.   :71.00   Max.   :92  
+   pm2.5_atm         pm2.5_cf_1          name          
+ Min.   :   0.60   Min.   :   0.60   Length:603        
+ 1st Qu.:   3.40   1st Qu.:   3.50   Class :character  
+ Median :   5.20   Median :   5.30   Mode  :character  
+ Mean   :  18.24   Mean   :  24.51                     
+ 3rd Qu.:   8.50   3rd Qu.:   8.85                     
+ Max.   :1934.70   Max.   :2902.10                     
+    date_up                        uptime     
+ Min.   :2017-08-08 18:14:55   Min.   : 1242  
+ 1st Qu.:2018-09-04 20:17:30   1st Qu.: 4217  
+ Median :2018-10-29 22:26:57   Median : 6789  
+ Mean   :2018-12-08 04:09:13   Mean   :10275  
+ 3rd Qu.:2019-08-01 19:33:48   3rd Qu.:10340  
+ Max.   :2019-11-21 18:34:00   Max.   :39183  </code></pre>
+</div>
+</div>
+<p><span style="color: blue;">This one should also be pretty straightforward. One thing you’ll notice is that I used <code>walk</code> for <code>glimpse</code>, but had to use <code>map</code> for the other two. This is because <code>glimpse</code> is part of the <code>tidyverse</code> and so was designed to be called in a pipeline where the primary interest is not in saving the result to an object, but rather to get the <em>side effect</em> (which is what <code>walk</code> is good for). The other two functions (<code>dim</code> and <code>summary</code>) are from base <code>R</code> and so they behave a little differently.</span></p>
+<ol start="3" type="1">
+<li>Identify at least two potential data quality issues (e.g., missing values, inconsistent categories, unrealistic ranges). Explain why you think these data might be incorrect and how you might go about verifying them.</li>
+</ol>
 </section>
-<section id="questions-to-answer" class="level3">
-<h3 class="anchored" data-anchor-id="questions-to-answer">Questions to Answer</h3>
+<section id="reflection" class="level4">
+<h4 class="anchored" data-anchor-id="reflection">Reflection</h4>
+<ol type="1">
+<li>What assumptions are you making about the data? Are they a reasonable sample? What biases that might exist? Do the potential errors you’ve spotted impact your analysis?</li>
+</ol>
+</section>
+</section>
+<section id="part-2-data-manipulation-with-tidyverse" class="level2">
+<h2 class="anchored" data-anchor-id="part-2-data-manipulation-with-tidyverse">Part 2: Data Manipulation with tidyverse</h2>
+<section id="tasks-1" class="level4">
+<h4 class="anchored" data-anchor-id="tasks-1">Tasks</h4>
+<p>Use <code>dplyr</code> to:</p>
+<ol type="1">
+<li><p>Combine all of the datasets into a single dataframe</p></li>
+<li><p>Select variables relevant to the overarching research question.</p></li>
+<li><p>Filter the data to observations from the last 2 years and create a new column that calculates the monthly change in pm2.5 (hint: you’ll need <code>mutate</code>, <code>arrange</code>, and <code>lag</code>)</p></li>
+<li><p>Group the data by year and state to calculate the annual mean and standard deviation of all numeric variables for each state.</p></li>
+<li><p>Convert the ungrouped dataset from wide to long format.</p></li>
+</ol>
+</section>
+<section id="reflection-1" class="level4">
+<h4 class="anchored" data-anchor-id="reflection-1">Reflection</h4>
+<ol type="1">
+<li><p>How does tidyverse syntax support transparent and reproducible analysis?</p></li>
+<li><p>In what ways could poor coding style or inconsistent workflows make this analysis harder for collaborators?</p></li>
+</ol>
+</section>
+</section>
+<section id="part-3-functions-and-iteration" class="level2">
+<h2 class="anchored" data-anchor-id="part-3-functions-and-iteration">Part 3: Functions and Iteration</h2>
+<section id="tasks-2" class="level4">
+<h4 class="anchored" data-anchor-id="tasks-2">Tasks</h4>
+<ol type="1">
+<li>Write a function that filters your long-format data by a variable and generates a plot of that variable through time for each state. Do this in two steps. Write the function in pseudocode in this block:</li>
+</ol>
+<p>Then create the function in this block:</p>
+<ol start="2" type="1">
+<li><p>Create a vector of variables and use your function to generate a list of plots (using <code>map</code>).</p></li>
+<li><p>Inspect your plots and choose the variable that follows the trends in pm2.5 the closest. Make a plot of pm2.5 and your chosen variable (one on the x axis and one on the y axis).</p></li>
+</ol>
+</section>
+<section id="reflection-2" class="level4">
+<h4 class="anchored" data-anchor-id="reflection-2">Reflection</h4>
+<ol type="1">
+<li><p>Why is functional programming (functions + iteration) valuable in research workflows?</p></li>
+<li><p>Compare this approach to manual repetition: what are the long-term costs/benefits?</p></li>
+</ol>
+</section>
+</section>
+<section id="part-4-synthesis-and-reflection" class="level2">
+<h2 class="anchored" data-anchor-id="part-4-synthesis-and-reflection">Part 4: Synthesis and Reflection</h2>
+<p>Write a short (200–300 word) reflection connecting this assignment to <strong>your own graduate research</strong>. You should reflect on the following questions:</p>
+<ul>
+<li><p>How do these skills apply to the kinds of data you will encounter?</p></li>
+<li><p>What challenges do you anticipate when implementing reproducible workflows in your field?</p></li>
+<li><p>How might these practices make your research more transparent, credible, and impactful?</p></li>
+</ul>
 
 
 </section>

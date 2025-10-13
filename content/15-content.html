@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Intro to Spatial Data in R - Combining Spatial and Tabular Data</title>
+<title>Intro to Spatial Data in R - Point Patterns I</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -81,7 +81,7 @@ div.csl-indent {
 }</script>
 
 
-<meta property="og:title" content="Intro to Spatial Data in R - Combining Spatial and Tabular Data">
+<meta property="og:title" content="Intro to Spatial Data in R - Point Patterns I">
 <meta property="og:description" content="">
 <meta property="og:image" content="https://isdrfall25.classes.spaseslab.com/files/social-image-f22.png">
 <meta property="og:site-name" content="Intro to Spatial Data in R">
@@ -383,7 +383,11 @@ div.csl-indent {
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#resources" id="toc-resources" class="nav-link active" data-scroll-target="#resources">Resources</a></li>
+  <li><a href="#resources" id="toc-resources" class="nav-link active" data-scroll-target="#resources">Resources</a>
+  <ul class="collapse">
+  <li><a href="#bigger-picture" id="toc-bigger-picture" class="nav-link" data-scroll-target="#bigger-picture">Bigger Picture</a></li>
+  <li><a href="#technical-details" id="toc-technical-details" class="nav-link" data-scroll-target="#technical-details">Technical Details</a></li>
+  </ul></li>
   <li><a href="#objectives" id="toc-objectives" class="nav-link" data-scroll-target="#objectives">Objectives</a></li>
   <li><a href="#slides" id="toc-slides" class="nav-link" data-scroll-target="#slides">Slides</a></li>
   </ul>
@@ -393,33 +397,40 @@ div.csl-indent {
 <main class="content" id="quarto-document-content">
 
 <header id="title-block-header">
-<h1 class="title display-7">Combining Spatial and Tabular Data</h1>
+<h1 class="title display-7">Point Patterns I</h1>
 
 <div class="date-block bg-content text-white p-2">
-  <p class="date">Content for Monday, October 9, 2023</p>
+  <p class="date">Content for Monday, October 13, 2025</p>
 </div>
 </header>
 
-<p>Today we’ll begin exploring typical workflows for spatial analysis by working with attribute data. Attributes generally provide additional information about a location that we can use for visualization and analysis. Unlike spatial operations that we’ll explore next week, attribute data do not all require geographic information (but they do need some means of relating to a geography). These chapters are not ‘prerequisite’ reading for the week, but provide a lot of helpful background for attribute operations in R.</p>
+<p>Point patterns, where the only data are the location of a set of points (and potentially a few attributes of the points), are among the simplest (in terms of data structure) and ubiquitous (in terms of their frequency in the real world) spatial data we will encounter. That said, statistical analysis of point patterns remains an area of rapid methodological development which continues to inform many areas of spatial statistical development.</p>
 <section id="resources" class="level2">
 <h2 class="anchored" data-anchor-id="resources">Resources</h2>
+<section id="bigger-picture" class="level3">
+<h3 class="anchored" data-anchor-id="bigger-picture">Bigger Picture</h3>
 <ul>
-<li><p><i class="fas fa-book"></i> The <a href="https://r4ds.had.co.nz/tidy-data.html">Tidy Data</a> and <a href="https://r4ds.had.co.nz/relational-data.html">Relational Data</a> sections from <strong>R For Data Science</strong> <span class="citation" data-cites="wickham2016r">(<a href="#ref-wickham2016r" role="doc-biblioref">Wickham and Grolemund 2016</a>)</span> provide a great overview to data cleaning and manipulation functions available in the <code>tidyverse</code>.</p></li>
-<li><p><i class="fas fa-book"></i> <a href="https://ready4r.netlify.app/labbook/part-5-doing-useful-things-with-multiple-tables.html">Doing things with multiple tables</a> has a lot of nice visual examples of for using the <code>_join</code> functions in <code>dplyr</code>.</p></li>
-<li><p><i class="fas fa-book"></i> This <a href="https://www.cell.com/trends/ecology-evolution/fulltext/S0169-5347(21)00227-5">article</a> <span class="citation" data-cites="di2021conservation">(<a href="#ref-di2021conservation" role="doc-biblioref">Di Minin et al. 2021</a>)</span> provides a recent recap of a variety of reasons why we may need to combine data from multiple, often disparate, sources.</p></li>
-<li><p><i class="fas fa-book"></i> The <a href="https://geocompr.robinlovelace.net/spatial-operations.html">Spatial Data Operations Chapter</a> in <span class="citation" data-cites="lovelace_geocomputation_2019">(<a href="#ref-lovelace_geocomputation_2019" role="doc-biblioref">Lovelace et al. 2019</a>)</span> makes the concepts of a network concrete (literally) by using a transportation route example to illustrate the various components of a network analysis in <code>R</code>.</p></li>
+<li><p><i class="fas fa-external-link-square-alt"></i> <a href="https://mgimond.github.io/Spatial/chp11_0.html">Chapter 11: Point Pattern Analysis</a> in Manuel Gimond’s Introduction to GIS and Spatial Analysis <code>bookdown</code> project provides a nice (and free) introduction to some of these introductory point process methods.</p></li>
+<li><p><i class="fas fa-external-link-square-alt"></i> <a href="https://onlinelibrary.wiley.com/doi/full/10.1111/j.0030-1299.2004.12497.x?casa_token=D8RfesZ_AjUAAAAA%3AkLmb_B8BubHk4swR3flI9QS4sQnO87wZSImZXsQFD41Q9iEExMEO_bDTPvnvOHtERcit-3YmShhyU0g">Rings, circles, and null-models for point pattern analysis in ecology</a> by <span class="citation" data-cites="wiegand">(<a href="#ref-wiegand" role="doc-biblioref">Wiegand and A. Moloney 2004</a>)</span> provides an introduction to metrics for spatial clustering with applications in ecology.</p></li>
+<li><p><i class="fas fa-external-link-square-alt"></i> <a href="https://besjournals.onlinelibrary.wiley.com/doi/full/10.1111/j.1365-2745.2009.01510.x">Ecological information from spatial patterns of plants: insights from point process theory</a> by <span class="citation" data-cites="law2009">(<a href="#ref-law2009" role="doc-biblioref">Law et al. 2009</a>)</span> provides a “plants-eye view” linkage between the sorts of the data ecologists often collect and the (somewhat esoteric) math of point patterns. Don’t get intimidated by the math here, just try to get an intuition for how the density and distance metrics relate to theories of spatial processes.</p></li>
+<li><p><i class="fas fa-external-link-square-alt"></i> <a href="https://www.jstor.org/stable/pdf/622936.pdf">Spatial Point Pattern Analysis and Its Application in Geographical Epidemiology</a> by <span class="citation" data-cites="gatrell1996">(<a href="#ref-gatrell1996" role="doc-biblioref">Gatrell et al. 1996</a>)</span> provides a broad overview of point patterns and processes along with some extensions and critiques based on the nature of epidemiological data. Some important points here for anyone thinking about a process that might be considered “contagious” (or spreading).</p></li>
 </ul>
+</section>
+<section id="technical-details" class="level3">
+<h3 class="anchored" data-anchor-id="technical-details">Technical Details</h3>
+<ul>
+<li><p><i class="fas fa-book"></i> <a href="https://www.paulamoraga.com/book-spatial/spatial-point-patterns.html">Chapters 17 and 18</a> on Spatial Point Processes and the <code>spatstat</code> package in Paula Moraga’s book <em>Spatial Statistics for Data Science: Theory and Practice with R</em>.</p></li>
+<li><p><i class="fas fa-book"></i> <a href="https://r-spatial.org/book/11-PointPattern.html">Chapter 11</a> in <span class="citation" data-cites="sds">(<a href="#ref-sds" role="doc-biblioref">Pebesma and Bivand 2023</a>)</span> illustrates the interaction between the <code>sf</code> package and <code>spatstat</code> package for point pattern analysis.</p></li>
+</ul>
+</section>
 </section>
 <section id="objectives" class="level2">
 <h2 class="anchored" data-anchor-id="objectives">Objectives</h2>
 <p>By the end of today, you should be able to:</p>
 <ul>
-<li><p>Define <em>spatial analysis</em></p></li>
-<li><p>Describe the steps in planning a spatial analysis</p></li>
-<li><p>Understand the structure of relational databases</p></li>
-<li><p>Use attributes and topology to subset data</p></li>
-<li><p>Generate new features using geographic data</p></li>
-<li><p>Join data based on attributes and location</p></li>
+<li><p><strong>Define</strong> first, and second order effects in point patterns</p></li>
+<li><p><strong>Simulate</strong> point patterns in <code>spatstat</code></p></li>
+<li><p><strong>Compare</strong> quadrat counts to kernel density estimates for describing point patterns</p></li>
 </ul>
 </section>
 <section id="slides" class="level2">
@@ -437,14 +448,17 @@ div.csl-indent {
 </section>
 
 <div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" role="doc-bibliography"><h2 class="anchored quarto-appendix-heading">References</h2><div id="refs" class="references csl-bib-body hanging-indent" data-line-spacing="2" role="list">
-<div id="ref-di2021conservation" class="csl-entry" role="listitem">
-Di Minin, E., R. A. Correia, and T. Toivonen. 2021. Conservation geography. Trends in Ecology &amp; Evolution.
+<div id="ref-gatrell1996" class="csl-entry" role="listitem">
+Gatrell, A. C., T. C. Bailey, P. J. Diggle, and B. S. Rowlingson. 1996. Spatial point pattern analysis and its application in geographical epidemiology. Transactions of the Institute of British geographers:256–274.
 </div>
-<div id="ref-lovelace_geocomputation_2019" class="csl-entry" role="listitem">
-Lovelace, R., J. Nowosad, and J. Muenchow. 2019. Geocomputation with <span>R</span>. <span>CRC Press</span>.
+<div id="ref-law2009" class="csl-entry" role="listitem">
+Law, R., J. Illian, D. F. Burslem, G. Gratzer, C. Gunatilleke, and I. Gunatilleke. 2009. Ecological information from spatial patterns of plants: Insights from point process theory. Journal of Ecology 97:616–628.
 </div>
-<div id="ref-wickham2016r" class="csl-entry" role="listitem">
-Wickham, H., and G. Grolemund. 2016. R for data science: Import, tidy, transform, visualize, and model data. " O’Reilly Media, Inc.".
+<div id="ref-sds" class="csl-entry" role="listitem">
+Pebesma, E., and R. Bivand. 2023. <a href="https://doi.org/10.1201/9780429459016">Spatial data science: With applications in <span>R</span></a>. Chapman; Hall/CRC, Boca Raton.
+</div>
+<div id="ref-wiegand" class="csl-entry" role="listitem">
+Wiegand, T., and K. A. Moloney. 2004. <a href="https://doi.org/10.1111/j.0030-1299.2004.12497.x">Rings, circles, and null-models for point pattern analysis in ecology</a>. Oikos 104:209–229.
 </div>
 </div></section></div></main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">

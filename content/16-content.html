@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Intro to Spatial Data in R - Integrating Rasters and Vector Data</title>
+<title>Intro to Spatial Data in R - Point Patterns II</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -81,7 +81,7 @@ div.csl-indent {
 }</script>
 
 
-<meta property="og:title" content="Intro to Spatial Data in R - Integrating Rasters and Vector Data">
+<meta property="og:title" content="Intro to Spatial Data in R - Point Patterns II">
 <meta property="og:description" content="">
 <meta property="og:image" content="https://isdrfall25.classes.spaseslab.com/files/social-image-f22.png">
 <meta property="og:site-name" content="Intro to Spatial Data in R">
@@ -383,7 +383,11 @@ div.csl-indent {
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#resources" id="toc-resources" class="nav-link active" data-scroll-target="#resources">Resources</a></li>
+  <li><a href="#resources" id="toc-resources" class="nav-link active" data-scroll-target="#resources">Resources</a>
+  <ul class="collapse">
+  <li><a href="#bigger-picture" id="toc-bigger-picture" class="nav-link" data-scroll-target="#bigger-picture">Bigger Picture</a></li>
+  <li><a href="#technical-details" id="toc-technical-details" class="nav-link" data-scroll-target="#technical-details">Technical Details</a></li>
+  </ul></li>
   <li><a href="#objectives" id="toc-objectives" class="nav-link" data-scroll-target="#objectives">Objectives</a></li>
   <li><a href="#slides" id="toc-slides" class="nav-link" data-scroll-target="#slides">Slides</a></li>
   </ul>
@@ -393,22 +397,30 @@ div.csl-indent {
 <main class="content" id="quarto-document-content">
 
 <header id="title-block-header">
-<h1 class="title display-7">Integrating Rasters and Vector Data</h1>
+<h1 class="title display-7">Point Patterns II</h1>
 
 <div class="date-block bg-content text-white p-2">
-  <p class="date">Content for Monday, October 16, 2023</p>
+  <p class="date">Content for Wednesday, October 15, 2025</p>
 </div>
 </header>
 
-<p>The goal of much of our spatial data “munging” is to create a dataframe that can be used in subsequent statistical analyses. It can be difficult to link all of the steps of filtering, selecting, extracting, etc into a coherent problem when you are just being exposed to the syntax (as we discovered last week). Today, I’ll try to use a motivating example to help you see a path forward.</p>
+<p>We’ll continue our discussion of point patterns by looking at second-order effects and approaches for incorporating “marks” into our analysis.</p>
 <section id="resources" class="level2">
 <h2 class="anchored" data-anchor-id="resources">Resources</h2>
+<section id="bigger-picture" class="level3">
+<h3 class="anchored" data-anchor-id="bigger-picture">Bigger Picture</h3>
 <ul>
-<li><p><i class="fas fa-book"></i> The <a href="https://geocompr.robinlovelace.net/spatial-operations.html">Spatial Data Operations Chapter</a> in <span class="citation" data-cites="lovelace_geocomputation_2019">(<a href="#ref-lovelace_geocomputation_2019" role="doc-biblioref">Lovelace et al. 2019</a>)</span> makes the concepts of a network concrete (literally) by using a transportation route example to illustrate the various components of a network analysis in <code>R</code>.</p></li>
-<li><p><i class="fas fa-book"></i> <a href="https://bookdown.org/mcwimberly/gdswr-book/tables.html">Chapter 3. Processing Tabular Data</a> from <em>Geographic Data Science with R</em> by Michael C. Wimberly has a nice introduction to many of the <code>dplyr</code> verbs for manipulating tabular data.</p></li>
-<li><p><i class="fas fa-book"></i> <a href="https://bookdown.org/mcwimberly/gdswr-book/combining-vector-data-with-continuous-raster-data.html">Chapter 9. Combining Vector Data with Continuous Raster Data</a> from <em>Geographic Data Science with R</em> by Michael C. Wimberly introduces data extraction and zonal statistics for raster data.</p></li>
-<li><p><i class="fas fa-book"></i> <a href="https://bookdown.org/mcwimberly/gdswr-book/tables.html">Chapter 10. Combining Vector Data with Discrete Raster Data</a> from <em>Geographic Data Science with R</em> by Michael C. Wimberly extends Chapter 9 for discrete rasters, but also adds some additional buffering and data manipulation syntax.</p></li>
+<li><p><i class="fas fa-external-link-square-alt"></i> <a href="https://besjournals.onlinelibrary.wiley.com/doi/full/10.1111/2041-210X.12352">Point process models for presence-only analysis</a> by <span class="citation" data-cites="Renner2015">(<a href="#ref-Renner2015" role="doc-biblioref">Renner et al. 2015</a>)</span> has an excellent overview of ways to treat presence-only data (i.e., things from citizen science datasets, herbariums, arrest locations, etc where there was not a systematic sample for presences <strong>and</strong> absences) in a point process modeling framework.</p></li>
+<li><p><i class="fas fa-external-link-square-alt"></i> <a href="https://www.jstor.org/stable/pdf/622936.pdf">Spatial Point Pattern Analysis and Its Application in Geographical Epidemiology</a> by <span class="citation" data-cites="gatrell1996">(<a href="#ref-gatrell1996" role="doc-biblioref">Gatrell et al. 1996</a>)</span> provides a broad overview of point patterns and processes along with some extensions and critiques based on the nature of epidemiological data. Some important points here for anyone thinking about a process that might be considered “contagious” (or spreading).</p></li>
 </ul>
+</section>
+<section id="technical-details" class="level3">
+<h3 class="anchored" data-anchor-id="technical-details">Technical Details</h3>
+<ul>
+<li><p><i class="fas fa-book"></i> <a href="https://www.paulamoraga.com/book-spatial/spatial-point-patterns.html">Chapters 17 and 18</a> on Spatial Point Processes and the <code>spatstat</code> package in Paula Moraga’s book <em>Spatial Statistics for Data Science: Theory and Practice with R</em>.</p></li>
+<li><p><i class="fas fa-book"></i> <a href="https://r-spatial.org/book/11-PointPattern.html">Chapter 11</a> in <span class="citation" data-cites="sds">(<a href="#ref-sds" role="doc-biblioref">Pebesma and Bivand 2023</a>)</span> illustrates the interaction between the <code>sf</code> package and <code>spatstat</code> package for point pattern analysis.</p></li>
+</ul>
+</section>
 </section>
 <section id="objectives" class="level2">
 <h2 class="anchored" data-anchor-id="objectives">Objectives</h2>
@@ -436,8 +448,14 @@ div.csl-indent {
 </section>
 
 <div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" role="doc-bibliography"><h2 class="anchored quarto-appendix-heading">References</h2><div id="refs" class="references csl-bib-body hanging-indent" data-line-spacing="2" role="list">
-<div id="ref-lovelace_geocomputation_2019" class="csl-entry" role="listitem">
-Lovelace, R., J. Nowosad, and J. Muenchow. 2019. Geocomputation with <span>R</span>. <span>CRC Press</span>.
+<div id="ref-gatrell1996" class="csl-entry" role="listitem">
+Gatrell, A. C., T. C. Bailey, P. J. Diggle, and B. S. Rowlingson. 1996. Spatial point pattern analysis and its application in geographical epidemiology. Transactions of the Institute of British geographers:256–274.
+</div>
+<div id="ref-sds" class="csl-entry" role="listitem">
+Pebesma, E., and R. Bivand. 2023. <a href="https://doi.org/10.1201/9780429459016">Spatial data science: With applications in <span>R</span></a>. Chapman; Hall/CRC, Boca Raton.
+</div>
+<div id="ref-Renner2015" class="csl-entry" role="listitem">
+Renner, I. W., J. Elith, A. Baddeley, W. Fithian, T. Hastie, S. J. Phillips, G. Popovic, and D. I. Warton. 2015. Point process models for presence‐only analysis. Methods Ecol. Evol. 6:366–379.
 </div>
 </div></section></div></main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
