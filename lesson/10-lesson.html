@@ -298,17 +298,14 @@ The following object is masked from 'package:terra':
 <pre><code>ℹ The googledrive package is using a cached token for
   'mattwilliamson@boisestate.edu'.</code></pre>
 </div>
-<div class="cell-output cell-output-stderr">
-<pre><code>Auto-refreshing stale OAuth token.</code></pre>
-</div>
 <details open="">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>file_list <span class="sc">%&gt;%</span> </span>
-<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(id, name) <span class="sc">%&gt;%</span></span>
-<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>  purrr<span class="sc">::</span><span class="fu">pmap</span>(<span class="cf">function</span>(id, name) {</span>
-<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">gdrive_folder_download</span>(<span class="fu">list</span>(<span class="at">id =</span> id, <span class="at">name =</span> name),</span>
-<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>                           <span class="at">dstfldr =</span> <span class="st">"inclass10"</span>)</span>
-<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>  })</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>file_list <span class="sc">%&gt;%</span> </span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(id, name) <span class="sc">%&gt;%</span></span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>  purrr<span class="sc">::</span><span class="fu">pmap</span>(<span class="cf">function</span>(id, name) {</span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">gdrive_folder_download</span>(<span class="fu">list</span>(<span class="at">id =</span> id, <span class="at">name =</span> name),</span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>                           <span class="at">dstfldr =</span> <span class="st">"inclass10"</span>)</span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>  })</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stderr">
 <pre><code>File downloaded:</code></pre>
@@ -544,11 +541,11 @@ The following object is masked from 'package:terra':
 <div class="cell">
 <details open="">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb80"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb80-1"><a href="#cb80-1" aria-hidden="true" tabindex="-1"></a>population_data <span class="ot">&lt;-</span> <span class="fu">read_sf</span>(<span class="st">"data/original/inclass10/blockgroupPop.shp"</span>)</span>
-<span id="cb80-2"><a href="#cb80-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb80-3"><a href="#cb80-3" aria-hidden="true" tabindex="-1"></a>pa_locs <span class="ot">&lt;-</span> <span class="fu">read_sf</span>(<span class="st">"data/original/inclass10/pa.shp"</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb80-4"><a href="#cb80-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">st_transform</span>(., <span class="at">crs=</span><span class="fu">crs</span>(population_data)) <span class="sc">%&gt;%</span> </span>
-<span id="cb80-5"><a href="#cb80-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">st_crop</span>(., population_data)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb79"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb79-1"><a href="#cb79-1" aria-hidden="true" tabindex="-1"></a>population_data <span class="ot">&lt;-</span> <span class="fu">read_sf</span>(<span class="st">"data/original/inclass10/blockgroupPop.shp"</span>)</span>
+<span id="cb79-2"><a href="#cb79-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb79-3"><a href="#cb79-3" aria-hidden="true" tabindex="-1"></a>pa_locs <span class="ot">&lt;-</span> <span class="fu">read_sf</span>(<span class="st">"data/original/inclass10/pa.shp"</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb79-4"><a href="#cb79-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">st_transform</span>(., <span class="at">crs=</span><span class="fu">crs</span>(population_data)) <span class="sc">%&gt;%</span> </span>
+<span id="cb79-5"><a href="#cb79-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">st_crop</span>(., population_data)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stderr">
 <pre><code>Warning: attribute variables are assumed to be spatially constant throughout
@@ -556,7 +553,7 @@ all geometries</code></pre>
 </div>
 <details open="">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb82"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb82-1"><a href="#cb82-1" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(population_data)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb81"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb81-1"><a href="#cb81-1" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(population_data)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>Rows: 511
@@ -569,14 +566,14 @@ $ geometry &lt;POLYGON [°]&gt; POLYGON ((-116.3939 43.5239..., POLYGON ((-116.5
 </div>
 <details open="">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb84"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb84-1"><a href="#cb84-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(population_data<span class="sc">$</span>geometry)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb83"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb83-1"><a href="#cb83-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(population_data<span class="sc">$</span>geometry)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
 <p><img src="10-lesson_files/figure-html/lddata-1.png" class="img-fluid" width="672"></p>
 </div>
 <details open="">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb85"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb85-1"><a href="#cb85-1" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(pa_locs)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb84"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb84-1"><a href="#cb84-1" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(pa_locs)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>Rows: 64
@@ -591,7 +588,7 @@ $ geometry &lt;POINT [°]&gt; POINT (-116.2082 43.59602), POINT (-116.143 43.541
 </div>
 <details open="">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb87"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb87-1"><a href="#cb87-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(pa_locs<span class="sc">$</span>geometry)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb86"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb86-1"><a href="#cb86-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(pa_locs<span class="sc">$</span>geometry)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
 <p><img src="10-lesson_files/figure-html/lddata-2.png" class="img-fluid" width="672"></p>
@@ -608,28 +605,28 @@ $ geometry &lt;POINT [°]&gt; POINT (-116.2082 43.59602), POINT (-116.143 43.541
 <div class="cell">
 <details open="">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb88"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb88-1"><a href="#cb88-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">42</span>)</span>
-<span id="cb88-2"><a href="#cb88-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb88-3"><a href="#cb88-3" aria-hidden="true" tabindex="-1"></a><span class="co"># raster template</span></span>
-<span id="cb88-4"><a href="#cb88-4" aria-hidden="true" tabindex="-1"></a>r_template <span class="ot">&lt;-</span> <span class="fu">rast</span>(<span class="at">ncol=</span><span class="dv">100</span>, <span class="at">nrow=</span><span class="dv">100</span>, </span>
-<span id="cb88-5"><a href="#cb88-5" aria-hidden="true" tabindex="-1"></a>                   <span class="at">crs =</span> <span class="fu">crs</span>(<span class="fu">vect</span>(population_data)), </span>
-<span id="cb88-6"><a href="#cb88-6" aria-hidden="true" tabindex="-1"></a>                   <span class="at">extent =</span> <span class="fu">ext</span>(<span class="fu">vect</span>(population_data)))</span>
-<span id="cb88-7"><a href="#cb88-7" aria-hidden="true" tabindex="-1"></a>nvals <span class="ot">&lt;-</span> <span class="fu">ncell</span>(r_template)</span>
-<span id="cb88-8"><a href="#cb88-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb88-9"><a href="#cb88-9" aria-hidden="true" tabindex="-1"></a><span class="co"># desired covariance / correlation matrix (2x2)</span></span>
-<span id="cb88-10"><a href="#cb88-10" aria-hidden="true" tabindex="-1"></a>rho <span class="ot">&lt;-</span> <span class="fl">0.7</span></span>
-<span id="cb88-11"><a href="#cb88-11" aria-hidden="true" tabindex="-1"></a>sd1 <span class="ot">&lt;-</span> <span class="dv">1</span>; sd2 <span class="ot">&lt;-</span> <span class="dv">2</span></span>
-<span id="cb88-12"><a href="#cb88-12" aria-hidden="true" tabindex="-1"></a>Sigma <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="fu">c</span>(sd1<span class="sc">^</span><span class="dv">2</span>, rho<span class="sc">*</span>sd1<span class="sc">*</span>sd2, rho<span class="sc">*</span>sd1<span class="sc">*</span>sd2, sd2<span class="sc">^</span><span class="dv">2</span>), <span class="at">nrow=</span><span class="dv">2</span>)</span>
-<span id="cb88-13"><a href="#cb88-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb88-14"><a href="#cb88-14" aria-hidden="true" tabindex="-1"></a><span class="co"># draw nvals independent bivariate normals</span></span>
-<span id="cb88-15"><a href="#cb88-15" aria-hidden="true" tabindex="-1"></a>draws <span class="ot">&lt;-</span> <span class="fu">rmvnorm</span>(<span class="at">n =</span> nvals, <span class="at">sigma =</span> Sigma)  <span class="co"># n x 2 matrix</span></span>
-<span id="cb88-16"><a href="#cb88-16" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb88-17"><a href="#cb88-17" aria-hidden="true" tabindex="-1"></a><span class="co"># convert to rasters</span></span>
-<span id="cb88-18"><a href="#cb88-18" aria-hidden="true" tabindex="-1"></a>r1 <span class="ot">&lt;-</span> <span class="fu">setValues</span>(r_template, draws[,<span class="dv">1</span>])</span>
-<span id="cb88-19"><a href="#cb88-19" aria-hidden="true" tabindex="-1"></a>r2 <span class="ot">&lt;-</span> <span class="fu">setValues</span>(r_template, draws[,<span class="dv">2</span>])</span>
-<span id="cb88-20"><a href="#cb88-20" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb88-21"><a href="#cb88-21" aria-hidden="true" tabindex="-1"></a><span class="co"># quick check empirical correlation (across cells)</span></span>
-<span id="cb88-22"><a href="#cb88-22" aria-hidden="true" tabindex="-1"></a><span class="fu">cor</span>(<span class="fu">values</span>(r1), <span class="fu">values</span>(r2))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb87"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb87-1"><a href="#cb87-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">42</span>)</span>
+<span id="cb87-2"><a href="#cb87-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb87-3"><a href="#cb87-3" aria-hidden="true" tabindex="-1"></a><span class="co"># raster template</span></span>
+<span id="cb87-4"><a href="#cb87-4" aria-hidden="true" tabindex="-1"></a>r_template <span class="ot">&lt;-</span> <span class="fu">rast</span>(<span class="at">ncol=</span><span class="dv">100</span>, <span class="at">nrow=</span><span class="dv">100</span>, </span>
+<span id="cb87-5"><a href="#cb87-5" aria-hidden="true" tabindex="-1"></a>                   <span class="at">crs =</span> <span class="fu">crs</span>(<span class="fu">vect</span>(population_data)), </span>
+<span id="cb87-6"><a href="#cb87-6" aria-hidden="true" tabindex="-1"></a>                   <span class="at">extent =</span> <span class="fu">ext</span>(<span class="fu">vect</span>(population_data)))</span>
+<span id="cb87-7"><a href="#cb87-7" aria-hidden="true" tabindex="-1"></a>nvals <span class="ot">&lt;-</span> <span class="fu">ncell</span>(r_template)</span>
+<span id="cb87-8"><a href="#cb87-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb87-9"><a href="#cb87-9" aria-hidden="true" tabindex="-1"></a><span class="co"># desired covariance / correlation matrix (2x2)</span></span>
+<span id="cb87-10"><a href="#cb87-10" aria-hidden="true" tabindex="-1"></a>rho <span class="ot">&lt;-</span> <span class="fl">0.7</span></span>
+<span id="cb87-11"><a href="#cb87-11" aria-hidden="true" tabindex="-1"></a>sd1 <span class="ot">&lt;-</span> <span class="dv">1</span>; sd2 <span class="ot">&lt;-</span> <span class="dv">2</span></span>
+<span id="cb87-12"><a href="#cb87-12" aria-hidden="true" tabindex="-1"></a>Sigma <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="fu">c</span>(sd1<span class="sc">^</span><span class="dv">2</span>, rho<span class="sc">*</span>sd1<span class="sc">*</span>sd2, rho<span class="sc">*</span>sd1<span class="sc">*</span>sd2, sd2<span class="sc">^</span><span class="dv">2</span>), <span class="at">nrow=</span><span class="dv">2</span>)</span>
+<span id="cb87-13"><a href="#cb87-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb87-14"><a href="#cb87-14" aria-hidden="true" tabindex="-1"></a><span class="co"># draw nvals independent bivariate normals</span></span>
+<span id="cb87-15"><a href="#cb87-15" aria-hidden="true" tabindex="-1"></a>draws <span class="ot">&lt;-</span> <span class="fu">rmvnorm</span>(<span class="at">n =</span> nvals, <span class="at">sigma =</span> Sigma)  <span class="co"># n x 2 matrix</span></span>
+<span id="cb87-16"><a href="#cb87-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb87-17"><a href="#cb87-17" aria-hidden="true" tabindex="-1"></a><span class="co"># convert to rasters</span></span>
+<span id="cb87-18"><a href="#cb87-18" aria-hidden="true" tabindex="-1"></a>r1 <span class="ot">&lt;-</span> <span class="fu">setValues</span>(r_template, draws[,<span class="dv">1</span>])</span>
+<span id="cb87-19"><a href="#cb87-19" aria-hidden="true" tabindex="-1"></a>r2 <span class="ot">&lt;-</span> <span class="fu">setValues</span>(r_template, draws[,<span class="dv">2</span>])</span>
+<span id="cb87-20"><a href="#cb87-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb87-21"><a href="#cb87-21" aria-hidden="true" tabindex="-1"></a><span class="co"># quick check empirical correlation (across cells)</span></span>
+<span id="cb87-22"><a href="#cb87-22" aria-hidden="true" tabindex="-1"></a><span class="fu">cor</span>(<span class="fu">values</span>(r1), <span class="fu">values</span>(r2))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>          lyr.1
@@ -637,16 +634,16 @@ lyr.1 0.6918958</code></pre>
 </div>
 <details open="">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb90"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb90-1"><a href="#cb90-1" aria-hidden="true" tabindex="-1"></a><span class="co"># plot</span></span>
-<span id="cb90-2"><a href="#cb90-2" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(<span class="fu">c</span>(r1, r2))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb89"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb89-1"><a href="#cb89-1" aria-hidden="true" tabindex="-1"></a><span class="co"># plot</span></span>
+<span id="cb89-2"><a href="#cb89-2" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(<span class="fu">c</span>(r1, r2))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
 <p><img src="10-lesson_files/figure-html/unnamed-chunk-2-1.png" class="img-fluid" width="672"></p>
 </div>
 <details open="">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb91"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb91-1"><a href="#cb91-1" aria-hidden="true" tabindex="-1"></a>rsts <span class="ot">&lt;-</span> <span class="fu">c</span>(r1,r2)</span>
-<span id="cb91-2"><a href="#cb91-2" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(rsts) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"var1"</span>, <span class="st">"var2"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb90"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb90-1"><a href="#cb90-1" aria-hidden="true" tabindex="-1"></a>rsts <span class="ot">&lt;-</span> <span class="fu">c</span>(r1,r2)</span>
+<span id="cb90-2"><a href="#cb90-2" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(rsts) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"var1"</span>, <span class="st">"var2"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
 </section>
@@ -661,75 +658,75 @@ lyr.1 0.6918958</code></pre>
 <div class="cell">
 <details open="">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb92"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb92-1"><a href="#cb92-1" aria-hidden="true" tabindex="-1"></a>aggregate_polygons <span class="ot">&lt;-</span> <span class="cf">function</span>(sf_obj, <span class="at">pop_col =</span> <span class="st">"pop"</span>, <span class="at">threshold =</span> <span class="dv">1000</span>,</span>
-<span id="cb92-2"><a href="#cb92-2" aria-hidden="true" tabindex="-1"></a>                                   <span class="at">method =</span> <span class="fu">c</span>(<span class="st">"greedy"</span>, <span class="st">"random"</span>), <span class="at">seed =</span> <span class="cn">NULL</span>) {</span>
-<span id="cb92-3"><a href="#cb92-3" aria-hidden="true" tabindex="-1"></a>  method <span class="ot">&lt;-</span> <span class="fu">match.arg</span>(method)</span>
-<span id="cb92-4"><a href="#cb92-4" aria-hidden="true" tabindex="-1"></a>  sf_obj <span class="ot">&lt;-</span> sf_obj <span class="sc">%&gt;%</span></span>
-<span id="cb92-5"><a href="#cb92-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">agg_id =</span> <span class="fu">row_number</span>(),</span>
-<span id="cb92-6"><a href="#cb92-6" aria-hidden="true" tabindex="-1"></a>           <span class="sc">!!</span><span class="at">pop_col :=</span> <span class="sc">!!</span><span class="fu">sym</span>(pop_col))</span>
-<span id="cb92-7"><a href="#cb92-7" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb92-8"><a href="#cb92-8" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="sc">!</span><span class="fu">is.null</span>(seed)) <span class="fu">set.seed</span>(seed)</span>
-<span id="cb92-9"><a href="#cb92-9" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb92-10"><a href="#cb92-10" aria-hidden="true" tabindex="-1"></a>  <span class="cf">repeat</span> {</span>
-<span id="cb92-11"><a href="#cb92-11" aria-hidden="true" tabindex="-1"></a>    below <span class="ot">&lt;-</span> <span class="fu">which</span>(sf_obj[[pop_col]] <span class="sc">&lt;</span> threshold)</span>
-<span id="cb92-12"><a href="#cb92-12" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (<span class="fu">length</span>(below) <span class="sc">==</span> <span class="dv">0</span>) <span class="cf">break</span></span>
-<span id="cb92-13"><a href="#cb92-13" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb92-14"><a href="#cb92-14" aria-hidden="true" tabindex="-1"></a>    <span class="co"># --- choose starting polygon ---</span></span>
-<span id="cb92-15"><a href="#cb92-15" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (method <span class="sc">==</span> <span class="st">"greedy"</span>) {</span>
-<span id="cb92-16"><a href="#cb92-16" aria-hidden="true" tabindex="-1"></a>      idx <span class="ot">&lt;-</span> below[<span class="fu">which.min</span>(sf_obj[[pop_col]][below])]</span>
-<span id="cb92-17"><a href="#cb92-17" aria-hidden="true" tabindex="-1"></a>    } <span class="cf">else</span> <span class="cf">if</span> (method <span class="sc">==</span> <span class="st">"random"</span>) {</span>
-<span id="cb92-18"><a href="#cb92-18" aria-hidden="true" tabindex="-1"></a>      idx <span class="ot">&lt;-</span> <span class="fu">sample</span>(below, <span class="dv">1</span>)</span>
-<span id="cb92-19"><a href="#cb92-19" aria-hidden="true" tabindex="-1"></a>    }</span>
-<span id="cb92-20"><a href="#cb92-20" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb92-21"><a href="#cb92-21" aria-hidden="true" tabindex="-1"></a>    <span class="co"># find neighbors</span></span>
-<span id="cb92-22"><a href="#cb92-22" aria-hidden="true" tabindex="-1"></a>    nb <span class="ot">&lt;-</span> <span class="fu">st_touches</span>(<span class="fu">st_make_valid</span>(sf_obj))[[idx]]</span>
-<span id="cb92-23"><a href="#cb92-23" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (<span class="fu">length</span>(nb) <span class="sc">==</span> <span class="dv">0</span>) {</span>
-<span id="cb92-24"><a href="#cb92-24" aria-hidden="true" tabindex="-1"></a>      <span class="fu">warning</span>(<span class="st">"Polygon "</span>, idx, <span class="st">" has no neighbors to merge"</span>)</span>
-<span id="cb92-25"><a href="#cb92-25" aria-hidden="true" tabindex="-1"></a>      sf_obj[[pop_col]][idx] <span class="ot">&lt;-</span> threshold</span>
-<span id="cb92-26"><a href="#cb92-26" aria-hidden="true" tabindex="-1"></a>      <span class="cf">next</span></span>
-<span id="cb92-27"><a href="#cb92-27" aria-hidden="true" tabindex="-1"></a>    }</span>
-<span id="cb92-28"><a href="#cb92-28" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb92-29"><a href="#cb92-29" aria-hidden="true" tabindex="-1"></a>    <span class="co"># --- pick neighbor ---</span></span>
-<span id="cb92-30"><a href="#cb92-30" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (method <span class="sc">==</span> <span class="st">"greedy"</span>) {</span>
-<span id="cb92-31"><a href="#cb92-31" aria-hidden="true" tabindex="-1"></a>      nb_idx <span class="ot">&lt;-</span> nb[<span class="fu">which.min</span>(sf_obj[[pop_col]][nb])]</span>
-<span id="cb92-32"><a href="#cb92-32" aria-hidden="true" tabindex="-1"></a>    } <span class="cf">else</span> <span class="cf">if</span> (method <span class="sc">==</span> <span class="st">"random"</span>) {</span>
-<span id="cb92-33"><a href="#cb92-33" aria-hidden="true" tabindex="-1"></a>      nb_idx <span class="ot">&lt;-</span> <span class="fu">sample</span>(nb, <span class="dv">1</span>)</span>
-<span id="cb92-34"><a href="#cb92-34" aria-hidden="true" tabindex="-1"></a>    }</span>
-<span id="cb92-35"><a href="#cb92-35" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb92-36"><a href="#cb92-36" aria-hidden="true" tabindex="-1"></a>    <span class="co"># merge geometry and population</span></span>
-<span id="cb92-37"><a href="#cb92-37" aria-hidden="true" tabindex="-1"></a>    sf_obj<span class="sc">$</span>geometry[idx] <span class="ot">&lt;-</span><span class="fu">st_union</span>(<span class="fu">st_make_valid</span>(sf_obj<span class="sc">$</span>geometry[<span class="fu">c</span>(idx, nb_idx)]))</span>
-<span id="cb92-38"><a href="#cb92-38" aria-hidden="true" tabindex="-1"></a>    sf_obj[[pop_col]][idx] <span class="ot">&lt;-</span> <span class="fu">sum</span>(sf_obj[[pop_col]][<span class="fu">c</span>(idx, nb_idx)])</span>
-<span id="cb92-39"><a href="#cb92-39" aria-hidden="true" tabindex="-1"></a>    sf_obj<span class="sc">$</span>agg_id[idx] <span class="ot">&lt;-</span> <span class="fu">min</span>(sf_obj<span class="sc">$</span>agg_id[<span class="fu">c</span>(idx, nb_idx)])</span>
-<span id="cb92-40"><a href="#cb92-40" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb92-41"><a href="#cb92-41" aria-hidden="true" tabindex="-1"></a>    <span class="co"># drop merged neighbor</span></span>
-<span id="cb92-42"><a href="#cb92-42" aria-hidden="true" tabindex="-1"></a>    sf_obj <span class="ot">&lt;-</span> sf_obj[<span class="sc">-</span>nb_idx, ]</span>
-<span id="cb92-43"><a href="#cb92-43" aria-hidden="true" tabindex="-1"></a>  }</span>
-<span id="cb92-44"><a href="#cb92-44" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb92-45"><a href="#cb92-45" aria-hidden="true" tabindex="-1"></a>  sf_obj <span class="sc">%&gt;%</span> </span>
-<span id="cb92-46"><a href="#cb92-46" aria-hidden="true" tabindex="-1"></a>    <span class="fu">group_by</span>(agg_id) <span class="sc">%&gt;%</span> </span>
-<span id="cb92-47"><a href="#cb92-47" aria-hidden="true" tabindex="-1"></a>    <span class="fu">summarise</span>(<span class="at">pop =</span> <span class="fu">sum</span>(<span class="sc">!!</span><span class="fu">sym</span>(pop_col)), <span class="at">geometry =</span> <span class="fu">st_union</span>(geometry), <span class="at">.groups =</span> <span class="st">"drop"</span>)</span>
-<span id="cb92-48"><a href="#cb92-48" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb91"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb91-1"><a href="#cb91-1" aria-hidden="true" tabindex="-1"></a>aggregate_polygons <span class="ot">&lt;-</span> <span class="cf">function</span>(sf_obj, <span class="at">pop_col =</span> <span class="st">"pop"</span>, <span class="at">threshold =</span> <span class="dv">1000</span>,</span>
+<span id="cb91-2"><a href="#cb91-2" aria-hidden="true" tabindex="-1"></a>                                   <span class="at">method =</span> <span class="fu">c</span>(<span class="st">"greedy"</span>, <span class="st">"random"</span>), <span class="at">seed =</span> <span class="cn">NULL</span>) {</span>
+<span id="cb91-3"><a href="#cb91-3" aria-hidden="true" tabindex="-1"></a>  method <span class="ot">&lt;-</span> <span class="fu">match.arg</span>(method)</span>
+<span id="cb91-4"><a href="#cb91-4" aria-hidden="true" tabindex="-1"></a>  sf_obj <span class="ot">&lt;-</span> sf_obj <span class="sc">%&gt;%</span></span>
+<span id="cb91-5"><a href="#cb91-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">agg_id =</span> <span class="fu">row_number</span>(),</span>
+<span id="cb91-6"><a href="#cb91-6" aria-hidden="true" tabindex="-1"></a>           <span class="sc">!!</span><span class="at">pop_col :=</span> <span class="sc">!!</span><span class="fu">sym</span>(pop_col))</span>
+<span id="cb91-7"><a href="#cb91-7" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb91-8"><a href="#cb91-8" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="sc">!</span><span class="fu">is.null</span>(seed)) <span class="fu">set.seed</span>(seed)</span>
+<span id="cb91-9"><a href="#cb91-9" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb91-10"><a href="#cb91-10" aria-hidden="true" tabindex="-1"></a>  <span class="cf">repeat</span> {</span>
+<span id="cb91-11"><a href="#cb91-11" aria-hidden="true" tabindex="-1"></a>    below <span class="ot">&lt;-</span> <span class="fu">which</span>(sf_obj[[pop_col]] <span class="sc">&lt;</span> threshold)</span>
+<span id="cb91-12"><a href="#cb91-12" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (<span class="fu">length</span>(below) <span class="sc">==</span> <span class="dv">0</span>) <span class="cf">break</span></span>
+<span id="cb91-13"><a href="#cb91-13" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb91-14"><a href="#cb91-14" aria-hidden="true" tabindex="-1"></a>    <span class="co"># --- choose starting polygon ---</span></span>
+<span id="cb91-15"><a href="#cb91-15" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (method <span class="sc">==</span> <span class="st">"greedy"</span>) {</span>
+<span id="cb91-16"><a href="#cb91-16" aria-hidden="true" tabindex="-1"></a>      idx <span class="ot">&lt;-</span> below[<span class="fu">which.min</span>(sf_obj[[pop_col]][below])]</span>
+<span id="cb91-17"><a href="#cb91-17" aria-hidden="true" tabindex="-1"></a>    } <span class="cf">else</span> <span class="cf">if</span> (method <span class="sc">==</span> <span class="st">"random"</span>) {</span>
+<span id="cb91-18"><a href="#cb91-18" aria-hidden="true" tabindex="-1"></a>      idx <span class="ot">&lt;-</span> <span class="fu">sample</span>(below, <span class="dv">1</span>)</span>
+<span id="cb91-19"><a href="#cb91-19" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb91-20"><a href="#cb91-20" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb91-21"><a href="#cb91-21" aria-hidden="true" tabindex="-1"></a>    <span class="co"># find neighbors</span></span>
+<span id="cb91-22"><a href="#cb91-22" aria-hidden="true" tabindex="-1"></a>    nb <span class="ot">&lt;-</span> <span class="fu">st_touches</span>(<span class="fu">st_make_valid</span>(sf_obj))[[idx]]</span>
+<span id="cb91-23"><a href="#cb91-23" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (<span class="fu">length</span>(nb) <span class="sc">==</span> <span class="dv">0</span>) {</span>
+<span id="cb91-24"><a href="#cb91-24" aria-hidden="true" tabindex="-1"></a>      <span class="fu">warning</span>(<span class="st">"Polygon "</span>, idx, <span class="st">" has no neighbors to merge"</span>)</span>
+<span id="cb91-25"><a href="#cb91-25" aria-hidden="true" tabindex="-1"></a>      sf_obj[[pop_col]][idx] <span class="ot">&lt;-</span> threshold</span>
+<span id="cb91-26"><a href="#cb91-26" aria-hidden="true" tabindex="-1"></a>      <span class="cf">next</span></span>
+<span id="cb91-27"><a href="#cb91-27" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb91-28"><a href="#cb91-28" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb91-29"><a href="#cb91-29" aria-hidden="true" tabindex="-1"></a>    <span class="co"># --- pick neighbor ---</span></span>
+<span id="cb91-30"><a href="#cb91-30" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (method <span class="sc">==</span> <span class="st">"greedy"</span>) {</span>
+<span id="cb91-31"><a href="#cb91-31" aria-hidden="true" tabindex="-1"></a>      nb_idx <span class="ot">&lt;-</span> nb[<span class="fu">which.min</span>(sf_obj[[pop_col]][nb])]</span>
+<span id="cb91-32"><a href="#cb91-32" aria-hidden="true" tabindex="-1"></a>    } <span class="cf">else</span> <span class="cf">if</span> (method <span class="sc">==</span> <span class="st">"random"</span>) {</span>
+<span id="cb91-33"><a href="#cb91-33" aria-hidden="true" tabindex="-1"></a>      nb_idx <span class="ot">&lt;-</span> <span class="fu">sample</span>(nb, <span class="dv">1</span>)</span>
+<span id="cb91-34"><a href="#cb91-34" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb91-35"><a href="#cb91-35" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb91-36"><a href="#cb91-36" aria-hidden="true" tabindex="-1"></a>    <span class="co"># merge geometry and population</span></span>
+<span id="cb91-37"><a href="#cb91-37" aria-hidden="true" tabindex="-1"></a>    sf_obj<span class="sc">$</span>geometry[idx] <span class="ot">&lt;-</span><span class="fu">st_union</span>(<span class="fu">st_make_valid</span>(sf_obj<span class="sc">$</span>geometry[<span class="fu">c</span>(idx, nb_idx)]))</span>
+<span id="cb91-38"><a href="#cb91-38" aria-hidden="true" tabindex="-1"></a>    sf_obj[[pop_col]][idx] <span class="ot">&lt;-</span> <span class="fu">sum</span>(sf_obj[[pop_col]][<span class="fu">c</span>(idx, nb_idx)])</span>
+<span id="cb91-39"><a href="#cb91-39" aria-hidden="true" tabindex="-1"></a>    sf_obj<span class="sc">$</span>agg_id[idx] <span class="ot">&lt;-</span> <span class="fu">min</span>(sf_obj<span class="sc">$</span>agg_id[<span class="fu">c</span>(idx, nb_idx)])</span>
+<span id="cb91-40"><a href="#cb91-40" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb91-41"><a href="#cb91-41" aria-hidden="true" tabindex="-1"></a>    <span class="co"># drop merged neighbor</span></span>
+<span id="cb91-42"><a href="#cb91-42" aria-hidden="true" tabindex="-1"></a>    sf_obj <span class="ot">&lt;-</span> sf_obj[<span class="sc">-</span>nb_idx, ]</span>
+<span id="cb91-43"><a href="#cb91-43" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb91-44"><a href="#cb91-44" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb91-45"><a href="#cb91-45" aria-hidden="true" tabindex="-1"></a>  sf_obj <span class="sc">%&gt;%</span> </span>
+<span id="cb91-46"><a href="#cb91-46" aria-hidden="true" tabindex="-1"></a>    <span class="fu">group_by</span>(agg_id) <span class="sc">%&gt;%</span> </span>
+<span id="cb91-47"><a href="#cb91-47" aria-hidden="true" tabindex="-1"></a>    <span class="fu">summarise</span>(<span class="at">pop =</span> <span class="fu">sum</span>(<span class="sc">!!</span><span class="fu">sym</span>(pop_col)), <span class="at">geometry =</span> <span class="fu">st_union</span>(geometry), <span class="at">.groups =</span> <span class="st">"drop"</span>)</span>
+<span id="cb91-48"><a href="#cb91-48" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
 <p>Let’s try it out and see how it goes. We’ll set a series of thresholds and pass them with <code>map</code> to create a list of <code>sf</code> objects. We’ll then use a second function to generate the maps. Finally, we use <code>wrap_plots</code> from <code>patchwork</code> to make a multiplanel plot.</p>
 <div class="cell">
 <details open="">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb93"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb93-1"><a href="#cb93-1" aria-hidden="true" tabindex="-1"></a>thresholds <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">750</span>, <span class="dv">1500</span>, <span class="dv">3000</span>, <span class="dv">6000</span>, <span class="dv">12000</span>)  <span class="co"># population cutoffs</span></span>
-<span id="cb93-2"><a href="#cb93-2" aria-hidden="true" tabindex="-1"></a>aggregate_pop <span class="ot">&lt;-</span> <span class="fu">map</span>(thresholds, </span>
-<span id="cb93-3"><a href="#cb93-3" aria-hidden="true" tabindex="-1"></a>  <span class="sc">~</span><span class="fu">aggregate_polygons</span>(<span class="at">sf_obj =</span> population_data, </span>
-<span id="cb93-4"><a href="#cb93-4" aria-hidden="true" tabindex="-1"></a>                                    <span class="at">pop_col =</span> <span class="st">"value"</span>, <span class="at">threshold =</span> .x,</span>
-<span id="cb93-5"><a href="#cb93-5" aria-hidden="true" tabindex="-1"></a>                                   <span class="at">method =</span> <span class="st">"greedy"</span>)</span>
-<span id="cb93-6"><a href="#cb93-6" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb93-7"><a href="#cb93-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb93-8"><a href="#cb93-8" aria-hidden="true" tabindex="-1"></a>plots <span class="ot">&lt;-</span> <span class="fu">map</span>(aggregate_pop, </span>
-<span id="cb93-9"><a href="#cb93-9" aria-hidden="true" tabindex="-1"></a>  <span class="sc">~</span><span class="fu">ggplot</span>(<span class="at">data =</span> .x) <span class="sc">+</span></span>
-<span id="cb93-10"><a href="#cb93-10" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_sf</span>(<span class="at">col =</span> <span class="st">"red"</span>) <span class="sc">+</span></span>
-<span id="cb93-11"><a href="#cb93-11" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme_bw</span>()</span>
-<span id="cb93-12"><a href="#cb93-12" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb93-13"><a href="#cb93-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb93-14"><a href="#cb93-14" aria-hidden="true" tabindex="-1"></a><span class="co"># Combine automatically into a multipanel layout</span></span>
-<span id="cb93-15"><a href="#cb93-15" aria-hidden="true" tabindex="-1"></a><span class="fu">wrap_plots</span>(plots, <span class="at">ncol =</span> <span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb92"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb92-1"><a href="#cb92-1" aria-hidden="true" tabindex="-1"></a>thresholds <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">750</span>, <span class="dv">1500</span>, <span class="dv">3000</span>, <span class="dv">6000</span>, <span class="dv">12000</span>)  <span class="co"># population cutoffs</span></span>
+<span id="cb92-2"><a href="#cb92-2" aria-hidden="true" tabindex="-1"></a>aggregate_pop <span class="ot">&lt;-</span> <span class="fu">map</span>(thresholds, </span>
+<span id="cb92-3"><a href="#cb92-3" aria-hidden="true" tabindex="-1"></a>  <span class="sc">~</span><span class="fu">aggregate_polygons</span>(<span class="at">sf_obj =</span> population_data, </span>
+<span id="cb92-4"><a href="#cb92-4" aria-hidden="true" tabindex="-1"></a>                                    <span class="at">pop_col =</span> <span class="st">"value"</span>, <span class="at">threshold =</span> .x,</span>
+<span id="cb92-5"><a href="#cb92-5" aria-hidden="true" tabindex="-1"></a>                                   <span class="at">method =</span> <span class="st">"greedy"</span>)</span>
+<span id="cb92-6"><a href="#cb92-6" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb92-7"><a href="#cb92-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb92-8"><a href="#cb92-8" aria-hidden="true" tabindex="-1"></a>plots <span class="ot">&lt;-</span> <span class="fu">map</span>(aggregate_pop, </span>
+<span id="cb92-9"><a href="#cb92-9" aria-hidden="true" tabindex="-1"></a>  <span class="sc">~</span><span class="fu">ggplot</span>(<span class="at">data =</span> .x) <span class="sc">+</span></span>
+<span id="cb92-10"><a href="#cb92-10" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_sf</span>(<span class="at">col =</span> <span class="st">"red"</span>) <span class="sc">+</span></span>
+<span id="cb92-11"><a href="#cb92-11" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme_bw</span>()</span>
+<span id="cb92-12"><a href="#cb92-12" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb92-13"><a href="#cb92-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb92-14"><a href="#cb92-14" aria-hidden="true" tabindex="-1"></a><span class="co"># Combine automatically into a multipanel layout</span></span>
+<span id="cb92-15"><a href="#cb92-15" aria-hidden="true" tabindex="-1"></a><span class="fu">wrap_plots</span>(plots, <span class="at">ncol =</span> <span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
 <p><img src="10-lesson_files/figure-html/unnamed-chunk-4-1.png" class="img-fluid" width="672"></p>
@@ -742,35 +739,35 @@ lyr.1 0.6918958</code></pre>
 <div class="cell">
 <details open="">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb94"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb94-1"><a href="#cb94-1" aria-hidden="true" tabindex="-1"></a>corr_at_threshold <span class="ot">&lt;-</span> <span class="cf">function</span>(threshold, polygons, pop_col, r1, <span class="at">method =</span> <span class="st">"greedy"</span>, <span class="at">seed =</span> <span class="cn">NULL</span>) {</span>
-<span id="cb94-2"><a href="#cb94-2" aria-hidden="true" tabindex="-1"></a>  <span class="co"># aggregate polygons</span></span>
-<span id="cb94-3"><a href="#cb94-3" aria-hidden="true" tabindex="-1"></a>  agg_polys <span class="ot">&lt;-</span> <span class="fu">aggregate_polygons</span>(polygons, pop_col, threshold, <span class="at">method =</span> method, <span class="at">seed =</span> seed)</span>
-<span id="cb94-4"><a href="#cb94-4" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb94-5"><a href="#cb94-5" aria-hidden="true" tabindex="-1"></a>  <span class="co"># extract raster values (mean within each polygon)</span></span>
-<span id="cb94-6"><a href="#cb94-6" aria-hidden="true" tabindex="-1"></a>  v1 <span class="ot">&lt;-</span> terra<span class="sc">::</span><span class="fu">extract</span>(r1, <span class="fu">vect</span>(agg_polys), <span class="at">fun =</span> mean, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)[, <span class="sc">-</span><span class="dv">1</span>]</span>
-<span id="cb94-7"><a href="#cb94-7" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb94-8"><a href="#cb94-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tibble</span>(<span class="at">threshold =</span> threshold,</span>
-<span id="cb94-9"><a href="#cb94-9" aria-hidden="true" tabindex="-1"></a>         <span class="at">correlation =</span> <span class="fu">cor</span>(v1[,<span class="dv">1</span>], v1[,<span class="dv">2</span>], <span class="at">use =</span> <span class="st">"complete.obs"</span>))</span>
-<span id="cb94-10"><a href="#cb94-10" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb93"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb93-1"><a href="#cb93-1" aria-hidden="true" tabindex="-1"></a>corr_at_threshold <span class="ot">&lt;-</span> <span class="cf">function</span>(threshold, polygons, pop_col, r1, <span class="at">method =</span> <span class="st">"greedy"</span>, <span class="at">seed =</span> <span class="cn">NULL</span>) {</span>
+<span id="cb93-2"><a href="#cb93-2" aria-hidden="true" tabindex="-1"></a>  <span class="co"># aggregate polygons</span></span>
+<span id="cb93-3"><a href="#cb93-3" aria-hidden="true" tabindex="-1"></a>  agg_polys <span class="ot">&lt;-</span> <span class="fu">aggregate_polygons</span>(polygons, pop_col, threshold, <span class="at">method =</span> method, <span class="at">seed =</span> seed)</span>
+<span id="cb93-4"><a href="#cb93-4" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb93-5"><a href="#cb93-5" aria-hidden="true" tabindex="-1"></a>  <span class="co"># extract raster values (mean within each polygon)</span></span>
+<span id="cb93-6"><a href="#cb93-6" aria-hidden="true" tabindex="-1"></a>  v1 <span class="ot">&lt;-</span> terra<span class="sc">::</span><span class="fu">extract</span>(r1, <span class="fu">vect</span>(agg_polys), <span class="at">fun =</span> mean, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)[, <span class="sc">-</span><span class="dv">1</span>]</span>
+<span id="cb93-7"><a href="#cb93-7" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb93-8"><a href="#cb93-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tibble</span>(<span class="at">threshold =</span> threshold,</span>
+<span id="cb93-9"><a href="#cb93-9" aria-hidden="true" tabindex="-1"></a>         <span class="at">correlation =</span> <span class="fu">cor</span>(v1[,<span class="dv">1</span>], v1[,<span class="dv">2</span>], <span class="at">use =</span> <span class="st">"complete.obs"</span>))</span>
+<span id="cb93-10"><a href="#cb93-10" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
 <p>Once we’ve got the function written, we can apply the function using <code>map</code> across our <code>threshold</code> values. You’ll notice that we use <code>map_dfr</code> because the outcome of our function is a single row <code>tibble</code> that we ultimately want this as a <code>data.frame</code> (hence the <code>_dfr</code>).</p>
 <div class="cell">
 <details open="">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb95"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb95-1"><a href="#cb95-1" aria-hidden="true" tabindex="-1"></a><span class="co"># --- apply across thresholds ---</span></span>
-<span id="cb95-2"><a href="#cb95-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb95-3"><a href="#cb95-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb95-4"><a href="#cb95-4" aria-hidden="true" tabindex="-1"></a>results <span class="ot">&lt;-</span> <span class="fu">map_dfr</span>(thresholds, <span class="sc">~</span><span class="fu">corr_at_threshold</span>(.x, <span class="at">polygons =</span> population_data, <span class="st">"value"</span>, <span class="at">r1=</span>rsts, <span class="at">method =</span> <span class="st">"greedy"</span>))</span>
-<span id="cb95-5"><a href="#cb95-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb95-6"><a href="#cb95-6" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(results, <span class="fu">aes</span>(<span class="at">x =</span> threshold, <span class="at">y =</span> correlation)) <span class="sc">+</span></span>
-<span id="cb95-7"><a href="#cb95-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>() <span class="sc">+</span></span>
-<span id="cb95-8"><a href="#cb95-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="dv">2</span>) <span class="sc">+</span></span>
-<span id="cb95-9"><a href="#cb95-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> rho, <span class="at">linetype =</span> <span class="dv">2</span>, <span class="at">color =</span> <span class="st">"red"</span>) <span class="sc">+</span></span>
-<span id="cb95-10"><a href="#cb95-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
-<span id="cb95-11"><a href="#cb95-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Population aggregation threshold"</span>,</span>
-<span id="cb95-12"><a href="#cb95-12" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">"Correlation (r1 vs r2)"</span>,</span>
-<span id="cb95-13"><a href="#cb95-13" aria-hidden="true" tabindex="-1"></a>       <span class="at">title =</span> <span class="st">"Effect of polygon aggregation on observed correlation"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb94"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb94-1"><a href="#cb94-1" aria-hidden="true" tabindex="-1"></a><span class="co"># --- apply across thresholds ---</span></span>
+<span id="cb94-2"><a href="#cb94-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb94-3"><a href="#cb94-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb94-4"><a href="#cb94-4" aria-hidden="true" tabindex="-1"></a>results <span class="ot">&lt;-</span> <span class="fu">map_dfr</span>(thresholds, <span class="sc">~</span><span class="fu">corr_at_threshold</span>(.x, <span class="at">polygons =</span> population_data, <span class="st">"value"</span>, <span class="at">r1=</span>rsts, <span class="at">method =</span> <span class="st">"greedy"</span>))</span>
+<span id="cb94-5"><a href="#cb94-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb94-6"><a href="#cb94-6" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(results, <span class="fu">aes</span>(<span class="at">x =</span> threshold, <span class="at">y =</span> correlation)) <span class="sc">+</span></span>
+<span id="cb94-7"><a href="#cb94-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>() <span class="sc">+</span></span>
+<span id="cb94-8"><a href="#cb94-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="dv">2</span>) <span class="sc">+</span></span>
+<span id="cb94-9"><a href="#cb94-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> rho, <span class="at">linetype =</span> <span class="dv">2</span>, <span class="at">color =</span> <span class="st">"red"</span>) <span class="sc">+</span></span>
+<span id="cb94-10"><a href="#cb94-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
+<span id="cb94-11"><a href="#cb94-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Population aggregation threshold"</span>,</span>
+<span id="cb94-12"><a href="#cb94-12" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">"Correlation (r1 vs r2)"</span>,</span>
+<span id="cb94-13"><a href="#cb94-13" aria-hidden="true" tabindex="-1"></a>       <span class="at">title =</span> <span class="st">"Effect of polygon aggregation on observed correlation"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
 <p><img src="10-lesson_files/figure-html/unnamed-chunk-6-1.png" class="img-fluid" width="672"></p>
@@ -784,8 +781,8 @@ lyr.1 0.6918958</code></pre>
 <div class="cell">
 <details open="">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb96"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb96-1"><a href="#cb96-1" aria-hidden="true" tabindex="-1"></a>rsts2 <span class="ot">&lt;-</span> terra<span class="sc">::</span><span class="fu">aggregate</span>(rsts, <span class="at">fact =</span> <span class="dv">4</span>, <span class="at">method =</span> <span class="st">"bilinear"</span>)</span>
-<span id="cb96-2"><a href="#cb96-2" aria-hidden="true" tabindex="-1"></a><span class="fu">cor</span>(<span class="fu">values</span>(rsts2[[<span class="dv">1</span>]]), <span class="fu">values</span>(rsts2[[<span class="dv">2</span>]]))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb95"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb95-1"><a href="#cb95-1" aria-hidden="true" tabindex="-1"></a>rsts2 <span class="ot">&lt;-</span> terra<span class="sc">::</span><span class="fu">aggregate</span>(rsts, <span class="at">fact =</span> <span class="dv">4</span>, <span class="at">method =</span> <span class="st">"bilinear"</span>)</span>
+<span id="cb95-2"><a href="#cb95-2" aria-hidden="true" tabindex="-1"></a><span class="fu">cor</span>(<span class="fu">values</span>(rsts2[[<span class="dv">1</span>]]), <span class="fu">values</span>(rsts2[[<span class="dv">2</span>]]))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>          var2
@@ -793,23 +790,23 @@ var1 0.6777005</code></pre>
 </div>
 <details open="">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb98"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb98-1"><a href="#cb98-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(rsts2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb97"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb97-1"><a href="#cb97-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(rsts2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
 <p><img src="10-lesson_files/figure-html/unnamed-chunk-7-1.png" class="img-fluid" width="672"></p>
 </div>
 <details open="">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb99"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb99-1"><a href="#cb99-1" aria-hidden="true" tabindex="-1"></a>results2 <span class="ot">&lt;-</span> <span class="fu">map_dfr</span>(thresholds, <span class="sc">~</span><span class="fu">corr_at_threshold</span>(.x, <span class="at">polygons =</span> population_data, <span class="st">"value"</span>, <span class="at">r1=</span>rsts2, <span class="at">method =</span> <span class="st">"greedy"</span>))</span>
-<span id="cb99-2"><a href="#cb99-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb99-3"><a href="#cb99-3" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(results2, <span class="fu">aes</span>(<span class="at">x =</span> threshold, <span class="at">y =</span> correlation)) <span class="sc">+</span></span>
-<span id="cb99-4"><a href="#cb99-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>() <span class="sc">+</span></span>
-<span id="cb99-5"><a href="#cb99-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="dv">2</span>) <span class="sc">+</span></span>
-<span id="cb99-6"><a href="#cb99-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> rho, <span class="at">linetype =</span> <span class="dv">2</span>, <span class="at">color =</span> <span class="st">"red"</span>) <span class="sc">+</span></span>
-<span id="cb99-7"><a href="#cb99-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
-<span id="cb99-8"><a href="#cb99-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Population aggregation threshold"</span>,</span>
-<span id="cb99-9"><a href="#cb99-9" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">"Correlation (r1 vs r2)"</span>,</span>
-<span id="cb99-10"><a href="#cb99-10" aria-hidden="true" tabindex="-1"></a>       <span class="at">title =</span> <span class="st">"Effect of polygon aggregation on observed correlation"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb98"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb98-1"><a href="#cb98-1" aria-hidden="true" tabindex="-1"></a>results2 <span class="ot">&lt;-</span> <span class="fu">map_dfr</span>(thresholds, <span class="sc">~</span><span class="fu">corr_at_threshold</span>(.x, <span class="at">polygons =</span> population_data, <span class="st">"value"</span>, <span class="at">r1=</span>rsts2, <span class="at">method =</span> <span class="st">"greedy"</span>))</span>
+<span id="cb98-2"><a href="#cb98-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb98-3"><a href="#cb98-3" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(results2, <span class="fu">aes</span>(<span class="at">x =</span> threshold, <span class="at">y =</span> correlation)) <span class="sc">+</span></span>
+<span id="cb98-4"><a href="#cb98-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>() <span class="sc">+</span></span>
+<span id="cb98-5"><a href="#cb98-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="dv">2</span>) <span class="sc">+</span></span>
+<span id="cb98-6"><a href="#cb98-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> rho, <span class="at">linetype =</span> <span class="dv">2</span>, <span class="at">color =</span> <span class="st">"red"</span>) <span class="sc">+</span></span>
+<span id="cb98-7"><a href="#cb98-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
+<span id="cb98-8"><a href="#cb98-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Population aggregation threshold"</span>,</span>
+<span id="cb98-9"><a href="#cb98-9" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">"Correlation (r1 vs r2)"</span>,</span>
+<span id="cb98-10"><a href="#cb98-10" aria-hidden="true" tabindex="-1"></a>       <span class="at">title =</span> <span class="st">"Effect of polygon aggregation on observed correlation"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
 <p><img src="10-lesson_files/figure-html/unnamed-chunk-7-2.png" class="img-fluid" width="672"></p>
@@ -823,9 +820,9 @@ var1 0.6777005</code></pre>
 <div class="cell">
 <details open="">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb100"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb100-1"><a href="#cb100-1" aria-hidden="true" tabindex="-1"></a>pa_locs <span class="ot">&lt;-</span> <span class="fu">read_sf</span>(<span class="st">"data/original/inclass10/pa.shp"</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb100-2"><a href="#cb100-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">st_transform</span>(., <span class="at">crs=</span><span class="fu">crs</span>(rsts)) <span class="sc">%&gt;%</span> </span>
-<span id="cb100-3"><a href="#cb100-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">st_crop</span>(., population_data)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb99"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb99-1"><a href="#cb99-1" aria-hidden="true" tabindex="-1"></a>pa_locs <span class="ot">&lt;-</span> <span class="fu">read_sf</span>(<span class="st">"data/original/inclass10/pa.shp"</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb99-2"><a href="#cb99-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">st_transform</span>(., <span class="at">crs=</span><span class="fu">crs</span>(rsts)) <span class="sc">%&gt;%</span> </span>
+<span id="cb99-3"><a href="#cb99-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">st_crop</span>(., population_data)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stderr">
 <pre><code>Warning: attribute variables are assumed to be spatially constant throughout
@@ -833,22 +830,22 @@ all geometries</code></pre>
 </div>
 <details open="">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb102"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb102-1"><a href="#cb102-1" aria-hidden="true" tabindex="-1"></a>buffer_dist <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">10</span>, <span class="dv">1000</span>, <span class="dv">10000</span>, <span class="dv">25000</span>)</span>
-<span id="cb102-2"><a href="#cb102-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb102-3"><a href="#cb102-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb102-4"><a href="#cb102-4" aria-hidden="true" tabindex="-1"></a>pa_buffs <span class="ot">&lt;-</span> buffer_dist <span class="sc">%&gt;%</span> </span>
-<span id="cb102-5"><a href="#cb102-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">map</span>(., <span class="sc">~</span><span class="fu">st_buffer</span>(<span class="at">x =</span> pa_locs, <span class="at">dist =</span> .x) <span class="sc">%&gt;%</span> </span>
-<span id="cb102-6"><a href="#cb102-6" aria-hidden="true" tabindex="-1"></a>        <span class="fu">mutate</span>(<span class="at">buff_dist =</span> .x) </span>
-<span id="cb102-7"><a href="#cb102-7" aria-hidden="true" tabindex="-1"></a>        )</span>
-<span id="cb102-8"><a href="#cb102-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb102-9"><a href="#cb102-9" aria-hidden="true" tabindex="-1"></a>plots_buff <span class="ot">&lt;-</span> <span class="fu">map</span>(pa_buffs, </span>
-<span id="cb102-10"><a href="#cb102-10" aria-hidden="true" tabindex="-1"></a>  <span class="sc">~</span><span class="fu">ggplot</span>(<span class="at">data =</span> .x) <span class="sc">+</span></span>
-<span id="cb102-11"><a href="#cb102-11" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_sf</span>(<span class="at">col =</span> <span class="st">"red"</span>) <span class="sc">+</span></span>
-<span id="cb102-12"><a href="#cb102-12" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme_bw</span>()</span>
-<span id="cb102-13"><a href="#cb102-13" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb102-14"><a href="#cb102-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb102-15"><a href="#cb102-15" aria-hidden="true" tabindex="-1"></a><span class="co"># Combine automatically into a multipanel layout</span></span>
-<span id="cb102-16"><a href="#cb102-16" aria-hidden="true" tabindex="-1"></a><span class="fu">wrap_plots</span>(plots_buff, <span class="at">ncol =</span> <span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb101"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb101-1"><a href="#cb101-1" aria-hidden="true" tabindex="-1"></a>buffer_dist <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">10</span>, <span class="dv">1000</span>, <span class="dv">10000</span>, <span class="dv">25000</span>)</span>
+<span id="cb101-2"><a href="#cb101-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb101-3"><a href="#cb101-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb101-4"><a href="#cb101-4" aria-hidden="true" tabindex="-1"></a>pa_buffs <span class="ot">&lt;-</span> buffer_dist <span class="sc">%&gt;%</span> </span>
+<span id="cb101-5"><a href="#cb101-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">map</span>(., <span class="sc">~</span><span class="fu">st_buffer</span>(<span class="at">x =</span> pa_locs, <span class="at">dist =</span> .x) <span class="sc">%&gt;%</span> </span>
+<span id="cb101-6"><a href="#cb101-6" aria-hidden="true" tabindex="-1"></a>        <span class="fu">mutate</span>(<span class="at">buff_dist =</span> .x) </span>
+<span id="cb101-7"><a href="#cb101-7" aria-hidden="true" tabindex="-1"></a>        )</span>
+<span id="cb101-8"><a href="#cb101-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb101-9"><a href="#cb101-9" aria-hidden="true" tabindex="-1"></a>plots_buff <span class="ot">&lt;-</span> <span class="fu">map</span>(pa_buffs, </span>
+<span id="cb101-10"><a href="#cb101-10" aria-hidden="true" tabindex="-1"></a>  <span class="sc">~</span><span class="fu">ggplot</span>(<span class="at">data =</span> .x) <span class="sc">+</span></span>
+<span id="cb101-11"><a href="#cb101-11" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_sf</span>(<span class="at">col =</span> <span class="st">"red"</span>) <span class="sc">+</span></span>
+<span id="cb101-12"><a href="#cb101-12" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme_bw</span>()</span>
+<span id="cb101-13"><a href="#cb101-13" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb101-14"><a href="#cb101-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb101-15"><a href="#cb101-15" aria-hidden="true" tabindex="-1"></a><span class="co"># Combine automatically into a multipanel layout</span></span>
+<span id="cb101-16"><a href="#cb101-16" aria-hidden="true" tabindex="-1"></a><span class="fu">wrap_plots</span>(plots_buff, <span class="at">ncol =</span> <span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
 <p><img src="10-lesson_files/figure-html/unnamed-chunk-8-1.png" class="img-fluid" width="672"></p>
@@ -858,29 +855,29 @@ all geometries</code></pre>
 <div class="cell">
 <details open="">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb103"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb103-1"><a href="#cb103-1" aria-hidden="true" tabindex="-1"></a>corr_at_buff <span class="ot">&lt;-</span> <span class="cf">function</span>(polys, r1) {</span>
-<span id="cb103-2"><a href="#cb103-2" aria-hidden="true" tabindex="-1"></a>  <span class="co"># extract raster values (mean within each polygon)</span></span>
-<span id="cb103-3"><a href="#cb103-3" aria-hidden="true" tabindex="-1"></a>  v1 <span class="ot">&lt;-</span> terra<span class="sc">::</span><span class="fu">extract</span>(r1, <span class="fu">vect</span>(polys), <span class="at">fun =</span> mean, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)[, <span class="sc">-</span><span class="dv">1</span>]</span>
-<span id="cb103-4"><a href="#cb103-4" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb103-5"><a href="#cb103-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tibble</span>(<span class="at">buff_dist =</span> <span class="fu">unique</span>(polys<span class="sc">$</span>buff_dist),</span>
-<span id="cb103-6"><a href="#cb103-6" aria-hidden="true" tabindex="-1"></a>         <span class="at">correlation =</span> <span class="fu">cor</span>(v1[,<span class="dv">1</span>], v1[,<span class="dv">2</span>], <span class="at">use =</span> <span class="st">"complete.obs"</span>))</span>
-<span id="cb103-7"><a href="#cb103-7" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb102"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb102-1"><a href="#cb102-1" aria-hidden="true" tabindex="-1"></a>corr_at_buff <span class="ot">&lt;-</span> <span class="cf">function</span>(polys, r1) {</span>
+<span id="cb102-2"><a href="#cb102-2" aria-hidden="true" tabindex="-1"></a>  <span class="co"># extract raster values (mean within each polygon)</span></span>
+<span id="cb102-3"><a href="#cb102-3" aria-hidden="true" tabindex="-1"></a>  v1 <span class="ot">&lt;-</span> terra<span class="sc">::</span><span class="fu">extract</span>(r1, <span class="fu">vect</span>(polys), <span class="at">fun =</span> mean, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)[, <span class="sc">-</span><span class="dv">1</span>]</span>
+<span id="cb102-4"><a href="#cb102-4" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb102-5"><a href="#cb102-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tibble</span>(<span class="at">buff_dist =</span> <span class="fu">unique</span>(polys<span class="sc">$</span>buff_dist),</span>
+<span id="cb102-6"><a href="#cb102-6" aria-hidden="true" tabindex="-1"></a>         <span class="at">correlation =</span> <span class="fu">cor</span>(v1[,<span class="dv">1</span>], v1[,<span class="dv">2</span>], <span class="at">use =</span> <span class="st">"complete.obs"</span>))</span>
+<span id="cb102-7"><a href="#cb102-7" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
 <p>Finally, we run this new function one more time to generate our comparison plot.</p>
 <div class="cell">
 <details open="">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb104"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb104-1"><a href="#cb104-1" aria-hidden="true" tabindex="-1"></a>results3 <span class="ot">&lt;-</span> <span class="fu">map_dfr</span>(pa_buffs, <span class="sc">~</span><span class="fu">corr_at_buff</span>(<span class="at">polys =</span> .x,  <span class="at">r1=</span>rsts))</span>
-<span id="cb104-2"><a href="#cb104-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb104-3"><a href="#cb104-3" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(results3, <span class="fu">aes</span>(<span class="at">x =</span> buff_dist, <span class="at">y =</span> correlation)) <span class="sc">+</span></span>
-<span id="cb104-4"><a href="#cb104-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>() <span class="sc">+</span></span>
-<span id="cb104-5"><a href="#cb104-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="dv">2</span>) <span class="sc">+</span></span>
-<span id="cb104-6"><a href="#cb104-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> rho, <span class="at">linetype =</span> <span class="dv">2</span>, <span class="at">color =</span> <span class="st">"red"</span>) <span class="sc">+</span></span>
-<span id="cb104-7"><a href="#cb104-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
-<span id="cb104-8"><a href="#cb104-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Population aggregation buffer"</span>,</span>
-<span id="cb104-9"><a href="#cb104-9" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">"Correlation (r1 vs r2)"</span>,</span>
-<span id="cb104-10"><a href="#cb104-10" aria-hidden="true" tabindex="-1"></a>       <span class="at">title =</span> <span class="st">"Effect of polygon buffer on observed correlation"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb103"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb103-1"><a href="#cb103-1" aria-hidden="true" tabindex="-1"></a>results3 <span class="ot">&lt;-</span> <span class="fu">map_dfr</span>(pa_buffs, <span class="sc">~</span><span class="fu">corr_at_buff</span>(<span class="at">polys =</span> .x,  <span class="at">r1=</span>rsts))</span>
+<span id="cb103-2"><a href="#cb103-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb103-3"><a href="#cb103-3" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(results3, <span class="fu">aes</span>(<span class="at">x =</span> buff_dist, <span class="at">y =</span> correlation)) <span class="sc">+</span></span>
+<span id="cb103-4"><a href="#cb103-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>() <span class="sc">+</span></span>
+<span id="cb103-5"><a href="#cb103-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="dv">2</span>) <span class="sc">+</span></span>
+<span id="cb103-6"><a href="#cb103-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> rho, <span class="at">linetype =</span> <span class="dv">2</span>, <span class="at">color =</span> <span class="st">"red"</span>) <span class="sc">+</span></span>
+<span id="cb103-7"><a href="#cb103-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
+<span id="cb103-8"><a href="#cb103-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Population aggregation buffer"</span>,</span>
+<span id="cb103-9"><a href="#cb103-9" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">"Correlation (r1 vs r2)"</span>,</span>
+<span id="cb103-10"><a href="#cb103-10" aria-hidden="true" tabindex="-1"></a>       <span class="at">title =</span> <span class="st">"Effect of polygon buffer on observed correlation"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
 <p><img src="10-lesson_files/figure-html/unnamed-chunk-10-1.png" class="img-fluid" width="672"></p>
@@ -1181,316 +1178,316 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
   }
 });
 </script><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Source Code</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">
-<div class="sourceCode" id="cb105" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb105-1"><a href="#cb105-1" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
-<span id="cb105-2"><a href="#cb105-2" aria-hidden="true" tabindex="-1"></a><span class="an">title:</span><span class="co"> "Using Spatial Operations to Change Geometries and Explore MAUP"</span></span>
-<span id="cb105-3"><a href="#cb105-3" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
-<span id="cb105-4"><a href="#cb105-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb105-5"><a href="#cb105-5" aria-hidden="true" tabindex="-1"></a><span class="fu">## Objectives</span></span>
-<span id="cb105-6"><a href="#cb105-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb105-7"><a href="#cb105-7" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>Practice spatial operations to modify vector and raster data</span>
-<span id="cb105-8"><a href="#cb105-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb105-9"><a href="#cb105-9" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>Practice simulating data to explore ideas</span>
-<span id="cb105-10"><a href="#cb105-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb105-11"><a href="#cb105-11" aria-hidden="true" tabindex="-1"></a><span class="ss">3. </span>Explore the Modifiable Areal Unit Problem with known data.</span>
-<span id="cb105-12"><a href="#cb105-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb105-13"><a href="#cb105-13" aria-hidden="true" tabindex="-1"></a><span class="fu">## Getting Started</span></span>
-<span id="cb105-14"><a href="#cb105-14" aria-hidden="true" tabindex="-1"></a>First, we'll have to <span class="co">[</span><span class="ot">get our credentials</span><span class="co">](https://rstudio.aws.boisestate.edu/)</span> and login to a <span class="co">[</span><span class="ot">new RStudio session</span><span class="co">](https://rstudio.apps.aws.boisestate.edu/)</span>. You can create your own repository if you'd like to track these things. You'll have to copy your googledrive download function from a previous repo.</span>
-<span id="cb105-15"><a href="#cb105-15" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb105-16"><a href="#cb105-16" aria-hidden="true" tabindex="-1"></a>We'll start like we usually do, by loading packages. There are a few new packages here. The <span class="in">`mvtnorm`</span> packages is a way for generating random numbers from a multivariate normal distribution (like <span class="in">`rnorm`</span>). The <span class="in">`patchwork`</span> package provides a lot of functionality for making multipanel plots. We'll also <span class="in">`source`</span> our utility function.</span>
-<span id="cb105-17"><a href="#cb105-17" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb105-20"><a href="#cb105-20" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb105-21"><a href="#cb105-21" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(sf)</span>
-<span id="cb105-22"><a href="#cb105-22" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(terra)</span>
-<span id="cb105-23"><a href="#cb105-23" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(mvtnorm)</span>
-<span id="cb105-24"><a href="#cb105-24" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
-<span id="cb105-25"><a href="#cb105-25" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(patchwork)</span>
-<span id="cb105-26"><a href="#cb105-26" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(googledrive)</span>
-<span id="cb105-27"><a href="#cb105-27" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">"scripts/utilities/download_utils.R"</span>)</span>
-<span id="cb105-28"><a href="#cb105-28" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb105-29"><a href="#cb105-29" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb105-30"><a href="#cb105-30" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb105-31"><a href="#cb105-31" aria-hidden="true" tabindex="-1"></a><span class="in">```{r dldata}</span></span>
-<span id="cb105-32"><a href="#cb105-32" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb105-33"><a href="#cb105-33" aria-hidden="true" tabindex="-1"></a>file_list <span class="ot">&lt;-</span> <span class="fu">drive_ls</span>(<span class="fu">drive_get</span>(<span class="fu">as_id</span>(<span class="st">"https://drive.google.com/drive/u/1/folders/1PwfUX2hnJlbnqBe3qvl33tFBImtNFTuR"</span>)))[<span class="sc">-</span><span class="dv">1</span>,]</span>
-<span id="cb105-34"><a href="#cb105-34" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb105-35"><a href="#cb105-35" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb105-36"><a href="#cb105-36" aria-hidden="true" tabindex="-1"></a>file_list <span class="sc">%&gt;%</span> </span>
-<span id="cb105-37"><a href="#cb105-37" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(id, name) <span class="sc">%&gt;%</span></span>
-<span id="cb105-38"><a href="#cb105-38" aria-hidden="true" tabindex="-1"></a>  purrr<span class="sc">::</span><span class="fu">pmap</span>(<span class="cf">function</span>(id, name) {</span>
-<span id="cb105-39"><a href="#cb105-39" aria-hidden="true" tabindex="-1"></a>    <span class="fu">gdrive_folder_download</span>(<span class="fu">list</span>(<span class="at">id =</span> id, <span class="at">name =</span> name),</span>
-<span id="cb105-40"><a href="#cb105-40" aria-hidden="true" tabindex="-1"></a>                           <span class="at">dstfldr =</span> <span class="st">"inclass10"</span>)</span>
-<span id="cb105-41"><a href="#cb105-41" aria-hidden="true" tabindex="-1"></a>  })</span>
-<span id="cb105-42"><a href="#cb105-42" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb105-43"><a href="#cb105-43" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb105-44"><a href="#cb105-44" aria-hidden="true" tabindex="-1"></a><span class="fu">## Loading the Data We Have</span></span>
-<span id="cb105-45"><a href="#cb105-45" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb105-46"><a href="#cb105-46" aria-hidden="true" tabindex="-1"></a>There are two different vector datasets we're going to use for this example. The first (<span class="in">`pa.shp`</span>) is our old friend, the Purple Air sensors. This is a <span class="in">`POINT`</span> dataset. The second (<span class="in">`blockgroupPop.shp`</span>) contains a number of <span class="in">`POLYGONS`</span> for the Census block groups in Ada, Gem, Canyon, Elmore, and Owyhee counties in Idaho along with an attribute for their total population as of the 2020 Census. We'll load those here and take a quick look.</span>
-<span id="cb105-47"><a href="#cb105-47" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb105-48"><a href="#cb105-48" aria-hidden="true" tabindex="-1"></a><span class="in">```{r lddata}</span></span>
-<span id="cb105-49"><a href="#cb105-49" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb105-50"><a href="#cb105-50" aria-hidden="true" tabindex="-1"></a>population_data <span class="ot">&lt;-</span> <span class="fu">read_sf</span>(<span class="st">"data/original/inclass10/blockgroupPop.shp"</span>)</span>
-<span id="cb105-51"><a href="#cb105-51" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb105-52"><a href="#cb105-52" aria-hidden="true" tabindex="-1"></a>pa_locs <span class="ot">&lt;-</span> <span class="fu">read_sf</span>(<span class="st">"data/original/inclass10/pa.shp"</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb105-53"><a href="#cb105-53" aria-hidden="true" tabindex="-1"></a>  <span class="fu">st_transform</span>(., <span class="at">crs=</span><span class="fu">crs</span>(population_data)) <span class="sc">%&gt;%</span> </span>
-<span id="cb105-54"><a href="#cb105-54" aria-hidden="true" tabindex="-1"></a>  <span class="fu">st_crop</span>(., population_data)</span>
-<span id="cb105-55"><a href="#cb105-55" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb105-56"><a href="#cb105-56" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(population_data)</span>
-<span id="cb105-57"><a href="#cb105-57" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(population_data<span class="sc">$</span>geometry)</span>
-<span id="cb105-58"><a href="#cb105-58" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(pa_locs)</span>
-<span id="cb105-59"><a href="#cb105-59" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(pa_locs<span class="sc">$</span>geometry)</span>
-<span id="cb105-60"><a href="#cb105-60" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb105-61"><a href="#cb105-61" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb105-62"><a href="#cb105-62" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb105-63"><a href="#cb105-63" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb105-64"><a href="#cb105-64" aria-hidden="true" tabindex="-1"></a><span class="fu">## Simulating Some Data</span></span>
-<span id="cb105-65"><a href="#cb105-65" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb105-66"><a href="#cb105-66" aria-hidden="true" tabindex="-1"></a>In order to explore how MAUP plays out in an analysis, we need some data where the relationship between the two datasets **is known**. Simulation is a great way to gain some intuition for how things work without getting trapped by the subtleties and imperfections of a dataset. Plus, if you're ever fitting complicated statistical models, running them first on data where you know the relationships (because you made them) is a great way to make sure your model is well specified.</span>
-<span id="cb105-67"><a href="#cb105-67" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb105-68"><a href="#cb105-68" aria-hidden="true" tabindex="-1"></a>There are a few things happening here, so I'll walk you through it.</span>
-<span id="cb105-69"><a href="#cb105-69" aria-hidden="true" tabindex="-1"></a>First, we set a "seed" (<span class="in">`set.seed()`</span>) - this ensures that the random numbers you generate on your computer are the same as those generated on my computer. It also ensures that no matter how many times you run this, you should get the same outputs. This is great for reproducibility, but not necessarily for sensitivity (where we want to make sure that our results aren't just a function of the one set of random numbers we drew).</span>
-<span id="cb105-70"><a href="#cb105-70" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb105-71"><a href="#cb105-71" aria-hidden="true" tabindex="-1"></a>Next we have to create a raster template that we can fill in with the random data we generate. You'll notice that we used <span class="in">`rast`</span> (the same function we use to read in existing raster data) to do this **and** that we use the CRS (<span class="in">`crs()`</span>) and extent (<span class="in">`ext()`</span>) of our <span class="in">`population_data`</span> shapefile. To make sure all of this works in the <span class="in">`terra`</span> structure, we convert (temporarily) our <span class="in">`population_data`</span> object to a <span class="in">`SpatVector`</span> (using <span class="in">`vect()`</span>). Finally, we use <span class="in">`ncell()`</span> to count the total number of cells in our template raster so that we can make sure we draw enough values.</span>
-<span id="cb105-72"><a href="#cb105-72" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb105-73"><a href="#cb105-73" aria-hidden="true" tabindex="-1"></a>Now we want to create some data that is random, but correlated. We can use the multivariate normal distribution for this. It behaves similar to a regular normal distribution (which we'd specify a mean and standard deviation). The difference is that in a multivariate normal distribution, there are multiple means that are related to each other through their covariance or correlation matrices. A correlation matrix simply expresses the correlations between the variables - the diagonals are always 1 (because that is the self-correlation) and the off-diagonal cells express the correlation (or covariance depending on the structure) between the 2 variables. Here, we build this by hand by specifying <span class="in">`Rho`</span> (the correlation coefficient). Finally, we use the <span class="in">`rmvnorm`</span> function to generate <span class="in">`nvall`</span> numbers from 2 different normal distributions that have covariance matrix <span class="in">`Sigma`</span> and should have a correlation equal to <span class="in">`Rho`</span>.</span>
-<span id="cb105-74"><a href="#cb105-74" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb105-75"><a href="#cb105-75" aria-hidden="true" tabindex="-1"></a>We plug these values back into our template using <span class="in">`setValues`</span> and then double-check the results. We expect a little difference between <span class="in">`Rho`</span> and the results of <span class="in">`cor`</span> because of the random number generation, but it is clear that we are pretty close so we can move on.</span>
-<span id="cb105-76"><a href="#cb105-76" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb105-79"><a href="#cb105-79" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb105-80"><a href="#cb105-80" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">42</span>)</span>
-<span id="cb105-81"><a href="#cb105-81" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb105-82"><a href="#cb105-82" aria-hidden="true" tabindex="-1"></a><span class="co"># raster template</span></span>
-<span id="cb105-83"><a href="#cb105-83" aria-hidden="true" tabindex="-1"></a>r_template <span class="ot">&lt;-</span> <span class="fu">rast</span>(<span class="at">ncol=</span><span class="dv">100</span>, <span class="at">nrow=</span><span class="dv">100</span>, </span>
-<span id="cb105-84"><a href="#cb105-84" aria-hidden="true" tabindex="-1"></a>                   <span class="at">crs =</span> <span class="fu">crs</span>(<span class="fu">vect</span>(population_data)), </span>
-<span id="cb105-85"><a href="#cb105-85" aria-hidden="true" tabindex="-1"></a>                   <span class="at">extent =</span> <span class="fu">ext</span>(<span class="fu">vect</span>(population_data)))</span>
-<span id="cb105-86"><a href="#cb105-86" aria-hidden="true" tabindex="-1"></a>nvals <span class="ot">&lt;-</span> <span class="fu">ncell</span>(r_template)</span>
-<span id="cb105-87"><a href="#cb105-87" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb105-88"><a href="#cb105-88" aria-hidden="true" tabindex="-1"></a><span class="co"># desired covariance / correlation matrix (2x2)</span></span>
-<span id="cb105-89"><a href="#cb105-89" aria-hidden="true" tabindex="-1"></a>rho <span class="ot">&lt;-</span> <span class="fl">0.7</span></span>
-<span id="cb105-90"><a href="#cb105-90" aria-hidden="true" tabindex="-1"></a>sd1 <span class="ot">&lt;-</span> <span class="dv">1</span>; sd2 <span class="ot">&lt;-</span> <span class="dv">2</span></span>
-<span id="cb105-91"><a href="#cb105-91" aria-hidden="true" tabindex="-1"></a>Sigma <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="fu">c</span>(sd1<span class="sc">^</span><span class="dv">2</span>, rho<span class="sc">*</span>sd1<span class="sc">*</span>sd2, rho<span class="sc">*</span>sd1<span class="sc">*</span>sd2, sd2<span class="sc">^</span><span class="dv">2</span>), <span class="at">nrow=</span><span class="dv">2</span>)</span>
-<span id="cb105-92"><a href="#cb105-92" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb105-93"><a href="#cb105-93" aria-hidden="true" tabindex="-1"></a><span class="co"># draw nvals independent bivariate normals</span></span>
-<span id="cb105-94"><a href="#cb105-94" aria-hidden="true" tabindex="-1"></a>draws <span class="ot">&lt;-</span> <span class="fu">rmvnorm</span>(<span class="at">n =</span> nvals, <span class="at">sigma =</span> Sigma)  <span class="co"># n x 2 matrix</span></span>
-<span id="cb105-95"><a href="#cb105-95" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb105-96"><a href="#cb105-96" aria-hidden="true" tabindex="-1"></a><span class="co"># convert to rasters</span></span>
-<span id="cb105-97"><a href="#cb105-97" aria-hidden="true" tabindex="-1"></a>r1 <span class="ot">&lt;-</span> <span class="fu">setValues</span>(r_template, draws[,<span class="dv">1</span>])</span>
-<span id="cb105-98"><a href="#cb105-98" aria-hidden="true" tabindex="-1"></a>r2 <span class="ot">&lt;-</span> <span class="fu">setValues</span>(r_template, draws[,<span class="dv">2</span>])</span>
-<span id="cb105-99"><a href="#cb105-99" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb105-100"><a href="#cb105-100" aria-hidden="true" tabindex="-1"></a><span class="co"># quick check empirical correlation (across cells)</span></span>
-<span id="cb105-101"><a href="#cb105-101" aria-hidden="true" tabindex="-1"></a><span class="fu">cor</span>(<span class="fu">values</span>(r1), <span class="fu">values</span>(r2))</span>
-<span id="cb105-102"><a href="#cb105-102" aria-hidden="true" tabindex="-1"></a><span class="co"># plot</span></span>
-<span id="cb105-103"><a href="#cb105-103" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(<span class="fu">c</span>(r1, r2))</span>
-<span id="cb105-104"><a href="#cb105-104" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb105-105"><a href="#cb105-105" aria-hidden="true" tabindex="-1"></a>rsts <span class="ot">&lt;-</span> <span class="fu">c</span>(r1,r2)</span>
-<span id="cb105-106"><a href="#cb105-106" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(rsts) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"var1"</span>, <span class="st">"var2"</span>)</span>
-<span id="cb105-107"><a href="#cb105-107" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb105-108"><a href="#cb105-108" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb105-109"><a href="#cb105-109" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb105-110"><a href="#cb105-110" aria-hidden="true" tabindex="-1"></a><span class="fu">## Changing Aggregation</span></span>
-<span id="cb105-111"><a href="#cb105-111" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb105-112"><a href="#cb105-112" aria-hidden="true" tabindex="-1"></a>Now that we have some data with a known relationship, we can start to experiment with the effects of aggregation. To do this efficiently, we'll use a function. I've written out some of the pseudocode below, but I want to point out a few things:</span>
-<span id="cb105-113"><a href="#cb105-113" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb105-114"><a href="#cb105-114" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>In the definition of the function I've specified some defaults (like <span class="in">`pop_cal = "pop"`</span> or <span class="in">`threshold = 1000`</span>). This allows the function to run even if I don't give those values, but they are replaced if I provide any parameters to those arguments.</span>
-<span id="cb105-115"><a href="#cb105-115" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb105-116"><a href="#cb105-116" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>There are two different methods (<span class="in">`greedy`</span> or <span class="in">`random`</span>) for aggregating the data. The greedy algorithm chooses the smallest polygons first, the random chooses polygons at random (subject to seed.)</span>
-<span id="cb105-117"><a href="#cb105-117" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb105-118"><a href="#cb105-118" aria-hidden="true" tabindex="-1"></a><span class="ss">3. </span>We use the **binary operator** `st_touches` to find all of the polygons touching the polygon indexed by `sf_obj[[idx]]` and the **binary transformer** <span class="in">`st_union`</span> to combine the geometries of the neighboring polygons into a single polygon. We do this in the context of a <span class="in">`group_by`</span>, <span class="in">`summarize`</span> pipeline to combine both the population data and the geometries.</span>
-<span id="cb105-119"><a href="#cb105-119" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb105-122"><a href="#cb105-122" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb105-123"><a href="#cb105-123" aria-hidden="true" tabindex="-1"></a>aggregate_polygons <span class="ot">&lt;-</span> <span class="cf">function</span>(sf_obj, <span class="at">pop_col =</span> <span class="st">"pop"</span>, <span class="at">threshold =</span> <span class="dv">1000</span>,</span>
-<span id="cb105-124"><a href="#cb105-124" aria-hidden="true" tabindex="-1"></a>                                   <span class="at">method =</span> <span class="fu">c</span>(<span class="st">"greedy"</span>, <span class="st">"random"</span>), <span class="at">seed =</span> <span class="cn">NULL</span>) {</span>
-<span id="cb105-125"><a href="#cb105-125" aria-hidden="true" tabindex="-1"></a>  method <span class="ot">&lt;-</span> <span class="fu">match.arg</span>(method)</span>
-<span id="cb105-126"><a href="#cb105-126" aria-hidden="true" tabindex="-1"></a>  sf_obj <span class="ot">&lt;-</span> sf_obj <span class="sc">%&gt;%</span></span>
-<span id="cb105-127"><a href="#cb105-127" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">agg_id =</span> <span class="fu">row_number</span>(),</span>
-<span id="cb105-128"><a href="#cb105-128" aria-hidden="true" tabindex="-1"></a>           <span class="sc">!!</span><span class="at">pop_col :=</span> <span class="sc">!!</span><span class="fu">sym</span>(pop_col))</span>
-<span id="cb105-129"><a href="#cb105-129" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb105-130"><a href="#cb105-130" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="sc">!</span><span class="fu">is.null</span>(seed)) <span class="fu">set.seed</span>(seed)</span>
-<span id="cb105-131"><a href="#cb105-131" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb105-132"><a href="#cb105-132" aria-hidden="true" tabindex="-1"></a>  <span class="cf">repeat</span> {</span>
-<span id="cb105-133"><a href="#cb105-133" aria-hidden="true" tabindex="-1"></a>    below <span class="ot">&lt;-</span> <span class="fu">which</span>(sf_obj[[pop_col]] <span class="sc">&lt;</span> threshold)</span>
-<span id="cb105-134"><a href="#cb105-134" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (<span class="fu">length</span>(below) <span class="sc">==</span> <span class="dv">0</span>) <span class="cf">break</span></span>
-<span id="cb105-135"><a href="#cb105-135" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb105-136"><a href="#cb105-136" aria-hidden="true" tabindex="-1"></a>    <span class="co"># --- choose starting polygon ---</span></span>
-<span id="cb105-137"><a href="#cb105-137" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (method <span class="sc">==</span> <span class="st">"greedy"</span>) {</span>
-<span id="cb105-138"><a href="#cb105-138" aria-hidden="true" tabindex="-1"></a>      idx <span class="ot">&lt;-</span> below[<span class="fu">which.min</span>(sf_obj[[pop_col]][below])]</span>
-<span id="cb105-139"><a href="#cb105-139" aria-hidden="true" tabindex="-1"></a>    } <span class="cf">else</span> <span class="cf">if</span> (method <span class="sc">==</span> <span class="st">"random"</span>) {</span>
-<span id="cb105-140"><a href="#cb105-140" aria-hidden="true" tabindex="-1"></a>      idx <span class="ot">&lt;-</span> <span class="fu">sample</span>(below, <span class="dv">1</span>)</span>
-<span id="cb105-141"><a href="#cb105-141" aria-hidden="true" tabindex="-1"></a>    }</span>
-<span id="cb105-142"><a href="#cb105-142" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb105-143"><a href="#cb105-143" aria-hidden="true" tabindex="-1"></a>    <span class="co"># find neighbors</span></span>
-<span id="cb105-144"><a href="#cb105-144" aria-hidden="true" tabindex="-1"></a>    nb <span class="ot">&lt;-</span> <span class="fu">st_touches</span>(<span class="fu">st_make_valid</span>(sf_obj))[[idx]]</span>
-<span id="cb105-145"><a href="#cb105-145" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (<span class="fu">length</span>(nb) <span class="sc">==</span> <span class="dv">0</span>) {</span>
-<span id="cb105-146"><a href="#cb105-146" aria-hidden="true" tabindex="-1"></a>      <span class="fu">warning</span>(<span class="st">"Polygon "</span>, idx, <span class="st">" has no neighbors to merge"</span>)</span>
-<span id="cb105-147"><a href="#cb105-147" aria-hidden="true" tabindex="-1"></a>      sf_obj[[pop_col]][idx] <span class="ot">&lt;-</span> threshold</span>
-<span id="cb105-148"><a href="#cb105-148" aria-hidden="true" tabindex="-1"></a>      <span class="cf">next</span></span>
-<span id="cb105-149"><a href="#cb105-149" aria-hidden="true" tabindex="-1"></a>    }</span>
-<span id="cb105-150"><a href="#cb105-150" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb105-151"><a href="#cb105-151" aria-hidden="true" tabindex="-1"></a>    <span class="co"># --- pick neighbor ---</span></span>
-<span id="cb105-152"><a href="#cb105-152" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (method <span class="sc">==</span> <span class="st">"greedy"</span>) {</span>
-<span id="cb105-153"><a href="#cb105-153" aria-hidden="true" tabindex="-1"></a>      nb_idx <span class="ot">&lt;-</span> nb[<span class="fu">which.min</span>(sf_obj[[pop_col]][nb])]</span>
-<span id="cb105-154"><a href="#cb105-154" aria-hidden="true" tabindex="-1"></a>    } <span class="cf">else</span> <span class="cf">if</span> (method <span class="sc">==</span> <span class="st">"random"</span>) {</span>
-<span id="cb105-155"><a href="#cb105-155" aria-hidden="true" tabindex="-1"></a>      nb_idx <span class="ot">&lt;-</span> <span class="fu">sample</span>(nb, <span class="dv">1</span>)</span>
-<span id="cb105-156"><a href="#cb105-156" aria-hidden="true" tabindex="-1"></a>    }</span>
-<span id="cb105-157"><a href="#cb105-157" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb105-158"><a href="#cb105-158" aria-hidden="true" tabindex="-1"></a>    <span class="co"># merge geometry and population</span></span>
-<span id="cb105-159"><a href="#cb105-159" aria-hidden="true" tabindex="-1"></a>    sf_obj<span class="sc">$</span>geometry[idx] <span class="ot">&lt;-</span><span class="fu">st_union</span>(<span class="fu">st_make_valid</span>(sf_obj<span class="sc">$</span>geometry[<span class="fu">c</span>(idx, nb_idx)]))</span>
-<span id="cb105-160"><a href="#cb105-160" aria-hidden="true" tabindex="-1"></a>    sf_obj[[pop_col]][idx] <span class="ot">&lt;-</span> <span class="fu">sum</span>(sf_obj[[pop_col]][<span class="fu">c</span>(idx, nb_idx)])</span>
-<span id="cb105-161"><a href="#cb105-161" aria-hidden="true" tabindex="-1"></a>    sf_obj<span class="sc">$</span>agg_id[idx] <span class="ot">&lt;-</span> <span class="fu">min</span>(sf_obj<span class="sc">$</span>agg_id[<span class="fu">c</span>(idx, nb_idx)])</span>
-<span id="cb105-162"><a href="#cb105-162" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb105-163"><a href="#cb105-163" aria-hidden="true" tabindex="-1"></a>    <span class="co"># drop merged neighbor</span></span>
-<span id="cb105-164"><a href="#cb105-164" aria-hidden="true" tabindex="-1"></a>    sf_obj <span class="ot">&lt;-</span> sf_obj[<span class="sc">-</span>nb_idx, ]</span>
-<span id="cb105-165"><a href="#cb105-165" aria-hidden="true" tabindex="-1"></a>  }</span>
-<span id="cb105-166"><a href="#cb105-166" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb105-167"><a href="#cb105-167" aria-hidden="true" tabindex="-1"></a>  sf_obj <span class="sc">%&gt;%</span> </span>
-<span id="cb105-168"><a href="#cb105-168" aria-hidden="true" tabindex="-1"></a>    <span class="fu">group_by</span>(agg_id) <span class="sc">%&gt;%</span> </span>
-<span id="cb105-169"><a href="#cb105-169" aria-hidden="true" tabindex="-1"></a>    <span class="fu">summarise</span>(<span class="at">pop =</span> <span class="fu">sum</span>(<span class="sc">!!</span><span class="fu">sym</span>(pop_col)), <span class="at">geometry =</span> <span class="fu">st_union</span>(geometry), <span class="at">.groups =</span> <span class="st">"drop"</span>)</span>
-<span id="cb105-170"><a href="#cb105-170" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb105-171"><a href="#cb105-171" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb105-172"><a href="#cb105-172" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb105-173"><a href="#cb105-173" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb105-174"><a href="#cb105-174" aria-hidden="true" tabindex="-1"></a>Let's try it out and see how it goes. We'll set a series of thresholds and pass them with <span class="in">`map`</span> to create a list of <span class="in">`sf`</span> objects. We'll then use a second function to generate the maps. Finally, we use <span class="in">`wrap_plots`</span> from <span class="in">`patchwork`</span> to make a multiplanel plot.</span>
-<span id="cb105-175"><a href="#cb105-175" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb105-178"><a href="#cb105-178" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb105-179"><a href="#cb105-179" aria-hidden="true" tabindex="-1"></a>thresholds <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">750</span>, <span class="dv">1500</span>, <span class="dv">3000</span>, <span class="dv">6000</span>, <span class="dv">12000</span>)  <span class="co"># population cutoffs</span></span>
-<span id="cb105-180"><a href="#cb105-180" aria-hidden="true" tabindex="-1"></a>aggregate_pop <span class="ot">&lt;-</span> <span class="fu">map</span>(thresholds, </span>
-<span id="cb105-181"><a href="#cb105-181" aria-hidden="true" tabindex="-1"></a>  <span class="sc">~</span><span class="fu">aggregate_polygons</span>(<span class="at">sf_obj =</span> population_data, </span>
-<span id="cb105-182"><a href="#cb105-182" aria-hidden="true" tabindex="-1"></a>                                    <span class="at">pop_col =</span> <span class="st">"value"</span>, <span class="at">threshold =</span> .x,</span>
-<span id="cb105-183"><a href="#cb105-183" aria-hidden="true" tabindex="-1"></a>                                   <span class="at">method =</span> <span class="st">"greedy"</span>)</span>
-<span id="cb105-184"><a href="#cb105-184" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb105-185"><a href="#cb105-185" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb105-186"><a href="#cb105-186" aria-hidden="true" tabindex="-1"></a>plots <span class="ot">&lt;-</span> <span class="fu">map</span>(aggregate_pop, </span>
-<span id="cb105-187"><a href="#cb105-187" aria-hidden="true" tabindex="-1"></a>  <span class="sc">~</span><span class="fu">ggplot</span>(<span class="at">data =</span> .x) <span class="sc">+</span></span>
-<span id="cb105-188"><a href="#cb105-188" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_sf</span>(<span class="at">col =</span> <span class="st">"red"</span>) <span class="sc">+</span></span>
-<span id="cb105-189"><a href="#cb105-189" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme_bw</span>()</span>
-<span id="cb105-190"><a href="#cb105-190" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb105-191"><a href="#cb105-191" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb105-192"><a href="#cb105-192" aria-hidden="true" tabindex="-1"></a><span class="co"># Combine automatically into a multipanel layout</span></span>
-<span id="cb105-193"><a href="#cb105-193" aria-hidden="true" tabindex="-1"></a><span class="fu">wrap_plots</span>(plots, <span class="at">ncol =</span> <span class="dv">3</span>)</span>
-<span id="cb105-194"><a href="#cb105-194" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb105-195"><a href="#cb105-195" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb105-196"><a href="#cb105-196" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb105-197"><a href="#cb105-197" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb105-198"><a href="#cb105-198" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb105-199"><a href="#cb105-199" aria-hidden="true" tabindex="-1"></a><span class="fu">## How Does Aggregation Affect Measured Correlation</span></span>
-<span id="cb105-200"><a href="#cb105-200" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb105-201"><a href="#cb105-201" aria-hidden="true" tabindex="-1"></a>Now that we have developed some different spatial aggregations, let's see how that affects our conclusions about the correlation between the two datasets. We'll use the same function above, but nest it inside another function to make this easier. You'll notice that we first create the aggregated polygons, then we extract the values from the raster (using <span class="in">`extract`</span>) and convert that into a table with our results.</span>
-<span id="cb105-202"><a href="#cb105-202" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb105-205"><a href="#cb105-205" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb105-206"><a href="#cb105-206" aria-hidden="true" tabindex="-1"></a>corr_at_threshold <span class="ot">&lt;-</span> <span class="cf">function</span>(threshold, polygons, pop_col, r1, <span class="at">method =</span> <span class="st">"greedy"</span>, <span class="at">seed =</span> <span class="cn">NULL</span>) {</span>
-<span id="cb105-207"><a href="#cb105-207" aria-hidden="true" tabindex="-1"></a>  <span class="co"># aggregate polygons</span></span>
-<span id="cb105-208"><a href="#cb105-208" aria-hidden="true" tabindex="-1"></a>  agg_polys <span class="ot">&lt;-</span> <span class="fu">aggregate_polygons</span>(polygons, pop_col, threshold, <span class="at">method =</span> method, <span class="at">seed =</span> seed)</span>
-<span id="cb105-209"><a href="#cb105-209" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb105-210"><a href="#cb105-210" aria-hidden="true" tabindex="-1"></a>  <span class="co"># extract raster values (mean within each polygon)</span></span>
-<span id="cb105-211"><a href="#cb105-211" aria-hidden="true" tabindex="-1"></a>  v1 <span class="ot">&lt;-</span> terra<span class="sc">::</span><span class="fu">extract</span>(r1, <span class="fu">vect</span>(agg_polys), <span class="at">fun =</span> mean, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)[, <span class="sc">-</span><span class="dv">1</span>]</span>
-<span id="cb105-212"><a href="#cb105-212" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb105-213"><a href="#cb105-213" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tibble</span>(<span class="at">threshold =</span> threshold,</span>
-<span id="cb105-214"><a href="#cb105-214" aria-hidden="true" tabindex="-1"></a>         <span class="at">correlation =</span> <span class="fu">cor</span>(v1[,<span class="dv">1</span>], v1[,<span class="dv">2</span>], <span class="at">use =</span> <span class="st">"complete.obs"</span>))</span>
-<span id="cb105-215"><a href="#cb105-215" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb105-216"><a href="#cb105-216" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb105-217"><a href="#cb105-217" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb105-218"><a href="#cb105-218" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb105-219"><a href="#cb105-219" aria-hidden="true" tabindex="-1"></a>Once we've got the function written, we can apply the function using <span class="in">`map`</span> across our <span class="in">`threshold`</span> values. You'll notice that we use <span class="in">`map_dfr`</span> because the outcome of our function is a single row <span class="in">`tibble`</span> that we ultimately want this as a <span class="in">`data.frame`</span> (hence the <span class="in">`_dfr`</span>).</span>
-<span id="cb105-220"><a href="#cb105-220" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb105-223"><a href="#cb105-223" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb105-224"><a href="#cb105-224" aria-hidden="true" tabindex="-1"></a><span class="co"># --- apply across thresholds ---</span></span>
-<span id="cb105-225"><a href="#cb105-225" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb105-226"><a href="#cb105-226" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb105-227"><a href="#cb105-227" aria-hidden="true" tabindex="-1"></a>results <span class="ot">&lt;-</span> <span class="fu">map_dfr</span>(thresholds, <span class="sc">~</span><span class="fu">corr_at_threshold</span>(.x, <span class="at">polygons =</span> population_data, <span class="st">"value"</span>, <span class="at">r1=</span>rsts, <span class="at">method =</span> <span class="st">"greedy"</span>))</span>
-<span id="cb105-228"><a href="#cb105-228" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb105-229"><a href="#cb105-229" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(results, <span class="fu">aes</span>(<span class="at">x =</span> threshold, <span class="at">y =</span> correlation)) <span class="sc">+</span></span>
-<span id="cb105-230"><a href="#cb105-230" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>() <span class="sc">+</span></span>
-<span id="cb105-231"><a href="#cb105-231" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="dv">2</span>) <span class="sc">+</span></span>
-<span id="cb105-232"><a href="#cb105-232" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> rho, <span class="at">linetype =</span> <span class="dv">2</span>, <span class="at">color =</span> <span class="st">"red"</span>) <span class="sc">+</span></span>
-<span id="cb105-233"><a href="#cb105-233" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
-<span id="cb105-234"><a href="#cb105-234" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Population aggregation threshold"</span>,</span>
-<span id="cb105-235"><a href="#cb105-235" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">"Correlation (r1 vs r2)"</span>,</span>
-<span id="cb105-236"><a href="#cb105-236" aria-hidden="true" tabindex="-1"></a>       <span class="at">title =</span> <span class="st">"Effect of polygon aggregation on observed correlation"</span>)</span>
-<span id="cb105-237"><a href="#cb105-237" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb105-238"><a href="#cb105-238" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb105-239"><a href="#cb105-239" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb105-240"><a href="#cb105-240" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb105-241"><a href="#cb105-241" aria-hidden="true" tabindex="-1"></a><span class="fu">## What if the Underlying Data is More Coarse?</span></span>
-<span id="cb105-242"><a href="#cb105-242" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb105-243"><a href="#cb105-243" aria-hidden="true" tabindex="-1"></a>You might imagine that you get data from a source that is at a coarser resolution than the process you're actually interested in. We can mimic this situation by using<span class="in">`aggregate`</span> to "upscale" the underlying rasters.</span>
-<span id="cb105-244"><a href="#cb105-244" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb105-245"><a href="#cb105-245" aria-hidden="true" tabindex="-1"></a>Once we do that, it's basically the same process as before, but we change the <span class="in">`r1`</span> argument to <span class="in">`rsts2`</span> instead of <span class="in">`rsts`</span>.</span>
-<span id="cb105-246"><a href="#cb105-246" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb105-249"><a href="#cb105-249" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb105-250"><a href="#cb105-250" aria-hidden="true" tabindex="-1"></a>rsts2 <span class="ot">&lt;-</span> terra<span class="sc">::</span><span class="fu">aggregate</span>(rsts, <span class="at">fact =</span> <span class="dv">4</span>, <span class="at">method =</span> <span class="st">"bilinear"</span>)</span>
-<span id="cb105-251"><a href="#cb105-251" aria-hidden="true" tabindex="-1"></a><span class="fu">cor</span>(<span class="fu">values</span>(rsts2[[<span class="dv">1</span>]]), <span class="fu">values</span>(rsts2[[<span class="dv">2</span>]]))</span>
-<span id="cb105-252"><a href="#cb105-252" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(rsts2)</span>
-<span id="cb105-253"><a href="#cb105-253" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb105-254"><a href="#cb105-254" aria-hidden="true" tabindex="-1"></a>results2 <span class="ot">&lt;-</span> <span class="fu">map_dfr</span>(thresholds, <span class="sc">~</span><span class="fu">corr_at_threshold</span>(.x, <span class="at">polygons =</span> population_data, <span class="st">"value"</span>, <span class="at">r1=</span>rsts2, <span class="at">method =</span> <span class="st">"greedy"</span>))</span>
-<span id="cb105-255"><a href="#cb105-255" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb105-256"><a href="#cb105-256" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(results2, <span class="fu">aes</span>(<span class="at">x =</span> threshold, <span class="at">y =</span> correlation)) <span class="sc">+</span></span>
-<span id="cb105-257"><a href="#cb105-257" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>() <span class="sc">+</span></span>
-<span id="cb105-258"><a href="#cb105-258" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="dv">2</span>) <span class="sc">+</span></span>
-<span id="cb105-259"><a href="#cb105-259" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> rho, <span class="at">linetype =</span> <span class="dv">2</span>, <span class="at">color =</span> <span class="st">"red"</span>) <span class="sc">+</span></span>
-<span id="cb105-260"><a href="#cb105-260" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
-<span id="cb105-261"><a href="#cb105-261" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Population aggregation threshold"</span>,</span>
-<span id="cb105-262"><a href="#cb105-262" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">"Correlation (r1 vs r2)"</span>,</span>
-<span id="cb105-263"><a href="#cb105-263" aria-hidden="true" tabindex="-1"></a>       <span class="at">title =</span> <span class="st">"Effect of polygon aggregation on observed correlation"</span>)</span>
-<span id="cb105-264"><a href="#cb105-264" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb105-265"><a href="#cb105-265" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb105-266"><a href="#cb105-266" aria-hidden="true" tabindex="-1"></a><span class="fu">## What if We Change Our Sampling Frame</span></span>
-<span id="cb105-267"><a href="#cb105-267" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb105-268"><a href="#cb105-268" aria-hidden="true" tabindex="-1"></a>In the previous examples, we rely on aggregation differences that arise from combining units based on their existing population. What if we have point data? We might imagine that we think our points capture some broader area of the landscape. We might also imagine that our choice of sampling frame affects the relatioiships we uncover.</span>
-<span id="cb105-269"><a href="#cb105-269" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb105-270"><a href="#cb105-270" aria-hidden="true" tabindex="-1"></a>We do a few new things here. First we use **unary transformers** like <span class="in">`st_transform`</span> and <span class="in">`st_crop`</span> to get our purple air sensors into the right projection and to reduce (crop) the dataset so that we're only using the points that are within our existing study area. Then we use a final transformer, <span class="in">`st_buffer`</span> to draw a new, circular polygon around the points with a radius equal to the <span class="in">`dist`</span> argument. We pass a <span class="in">`vector`</span> of buffer distances to <span class="in">`st_buffer`</span> using <span class="in">`map`</span> and then plot the resulting outcome. </span>
-<span id="cb105-271"><a href="#cb105-271" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb105-274"><a href="#cb105-274" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb105-275"><a href="#cb105-275" aria-hidden="true" tabindex="-1"></a>pa_locs <span class="ot">&lt;-</span> <span class="fu">read_sf</span>(<span class="st">"data/original/inclass10/pa.shp"</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb105-276"><a href="#cb105-276" aria-hidden="true" tabindex="-1"></a>  <span class="fu">st_transform</span>(., <span class="at">crs=</span><span class="fu">crs</span>(rsts)) <span class="sc">%&gt;%</span> </span>
-<span id="cb105-277"><a href="#cb105-277" aria-hidden="true" tabindex="-1"></a>  <span class="fu">st_crop</span>(., population_data)</span>
-<span id="cb105-278"><a href="#cb105-278" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb105-279"><a href="#cb105-279" aria-hidden="true" tabindex="-1"></a>buffer_dist <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">10</span>, <span class="dv">1000</span>, <span class="dv">10000</span>, <span class="dv">25000</span>)</span>
-<span id="cb105-280"><a href="#cb105-280" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb105-281"><a href="#cb105-281" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb105-282"><a href="#cb105-282" aria-hidden="true" tabindex="-1"></a>pa_buffs <span class="ot">&lt;-</span> buffer_dist <span class="sc">%&gt;%</span> </span>
-<span id="cb105-283"><a href="#cb105-283" aria-hidden="true" tabindex="-1"></a>  <span class="fu">map</span>(., <span class="sc">~</span><span class="fu">st_buffer</span>(<span class="at">x =</span> pa_locs, <span class="at">dist =</span> .x) <span class="sc">%&gt;%</span> </span>
-<span id="cb105-284"><a href="#cb105-284" aria-hidden="true" tabindex="-1"></a>        <span class="fu">mutate</span>(<span class="at">buff_dist =</span> .x) </span>
-<span id="cb105-285"><a href="#cb105-285" aria-hidden="true" tabindex="-1"></a>        )</span>
-<span id="cb105-286"><a href="#cb105-286" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb105-287"><a href="#cb105-287" aria-hidden="true" tabindex="-1"></a>plots_buff <span class="ot">&lt;-</span> <span class="fu">map</span>(pa_buffs, </span>
-<span id="cb105-288"><a href="#cb105-288" aria-hidden="true" tabindex="-1"></a>  <span class="sc">~</span><span class="fu">ggplot</span>(<span class="at">data =</span> .x) <span class="sc">+</span></span>
-<span id="cb105-289"><a href="#cb105-289" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_sf</span>(<span class="at">col =</span> <span class="st">"red"</span>) <span class="sc">+</span></span>
-<span id="cb105-290"><a href="#cb105-290" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme_bw</span>()</span>
-<span id="cb105-291"><a href="#cb105-291" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb105-292"><a href="#cb105-292" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb105-293"><a href="#cb105-293" aria-hidden="true" tabindex="-1"></a><span class="co"># Combine automatically into a multipanel layout</span></span>
-<span id="cb105-294"><a href="#cb105-294" aria-hidden="true" tabindex="-1"></a><span class="fu">wrap_plots</span>(plots_buff, <span class="at">ncol =</span> <span class="dv">3</span>)</span>
-<span id="cb105-295"><a href="#cb105-295" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb105-296"><a href="#cb105-296" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb105-297"><a href="#cb105-297" aria-hidden="true" tabindex="-1"></a>We modify our original correlation function to deal with the buffers and return a slightly different tibble as an output.</span>
-<span id="cb105-298"><a href="#cb105-298" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb105-301"><a href="#cb105-301" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb105-302"><a href="#cb105-302" aria-hidden="true" tabindex="-1"></a>corr_at_buff <span class="ot">&lt;-</span> <span class="cf">function</span>(polys, r1) {</span>
-<span id="cb105-303"><a href="#cb105-303" aria-hidden="true" tabindex="-1"></a>  <span class="co"># extract raster values (mean within each polygon)</span></span>
-<span id="cb105-304"><a href="#cb105-304" aria-hidden="true" tabindex="-1"></a>  v1 <span class="ot">&lt;-</span> terra<span class="sc">::</span><span class="fu">extract</span>(r1, <span class="fu">vect</span>(polys), <span class="at">fun =</span> mean, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)[, <span class="sc">-</span><span class="dv">1</span>]</span>
-<span id="cb105-305"><a href="#cb105-305" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb105-306"><a href="#cb105-306" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tibble</span>(<span class="at">buff_dist =</span> <span class="fu">unique</span>(polys<span class="sc">$</span>buff_dist),</span>
-<span id="cb105-307"><a href="#cb105-307" aria-hidden="true" tabindex="-1"></a>         <span class="at">correlation =</span> <span class="fu">cor</span>(v1[,<span class="dv">1</span>], v1[,<span class="dv">2</span>], <span class="at">use =</span> <span class="st">"complete.obs"</span>))</span>
-<span id="cb105-308"><a href="#cb105-308" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb105-309"><a href="#cb105-309" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb105-310"><a href="#cb105-310" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb105-311"><a href="#cb105-311" aria-hidden="true" tabindex="-1"></a>Finally, we run this new function one more time to generate our comparison plot.</span>
-<span id="cb105-312"><a href="#cb105-312" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb105-315"><a href="#cb105-315" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb105-316"><a href="#cb105-316" aria-hidden="true" tabindex="-1"></a>results3 <span class="ot">&lt;-</span> <span class="fu">map_dfr</span>(pa_buffs, <span class="sc">~</span><span class="fu">corr_at_buff</span>(<span class="at">polys =</span> .x,  <span class="at">r1=</span>rsts))</span>
-<span id="cb105-317"><a href="#cb105-317" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb105-318"><a href="#cb105-318" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(results3, <span class="fu">aes</span>(<span class="at">x =</span> buff_dist, <span class="at">y =</span> correlation)) <span class="sc">+</span></span>
-<span id="cb105-319"><a href="#cb105-319" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>() <span class="sc">+</span></span>
-<span id="cb105-320"><a href="#cb105-320" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="dv">2</span>) <span class="sc">+</span></span>
-<span id="cb105-321"><a href="#cb105-321" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> rho, <span class="at">linetype =</span> <span class="dv">2</span>, <span class="at">color =</span> <span class="st">"red"</span>) <span class="sc">+</span></span>
-<span id="cb105-322"><a href="#cb105-322" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
-<span id="cb105-323"><a href="#cb105-323" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Population aggregation buffer"</span>,</span>
-<span id="cb105-324"><a href="#cb105-324" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">"Correlation (r1 vs r2)"</span>,</span>
-<span id="cb105-325"><a href="#cb105-325" aria-hidden="true" tabindex="-1"></a>       <span class="at">title =</span> <span class="st">"Effect of polygon buffer on observed correlation"</span>)</span>
-<span id="cb105-326"><a href="#cb105-326" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb105-327"><a href="#cb105-327" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb105-328"><a href="#cb105-328" aria-hidden="true" tabindex="-1"></a><span class="fu">## Final Thoughts</span></span>
-<span id="cb105-329"><a href="#cb105-329" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb105-330"><a href="#cb105-330" aria-hidden="true" tabindex="-1"></a>Hopefully this exercise has illustrated the unpredictable nature of how aggregation affects the observed correlation between variables. You've also gotten to practice a variety of spatial operations in increasingly complicated functions. </span>
+<div class="sourceCode" id="cb104" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb104-1"><a href="#cb104-1" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb104-2"><a href="#cb104-2" aria-hidden="true" tabindex="-1"></a><span class="an">title:</span><span class="co"> "Using Spatial Operations to Change Geometries and Explore MAUP"</span></span>
+<span id="cb104-3"><a href="#cb104-3" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb104-4"><a href="#cb104-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb104-5"><a href="#cb104-5" aria-hidden="true" tabindex="-1"></a><span class="fu">## Objectives</span></span>
+<span id="cb104-6"><a href="#cb104-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb104-7"><a href="#cb104-7" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>Practice spatial operations to modify vector and raster data</span>
+<span id="cb104-8"><a href="#cb104-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb104-9"><a href="#cb104-9" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>Practice simulating data to explore ideas</span>
+<span id="cb104-10"><a href="#cb104-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb104-11"><a href="#cb104-11" aria-hidden="true" tabindex="-1"></a><span class="ss">3. </span>Explore the Modifiable Areal Unit Problem with known data.</span>
+<span id="cb104-12"><a href="#cb104-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb104-13"><a href="#cb104-13" aria-hidden="true" tabindex="-1"></a><span class="fu">## Getting Started</span></span>
+<span id="cb104-14"><a href="#cb104-14" aria-hidden="true" tabindex="-1"></a>First, we'll have to <span class="co">[</span><span class="ot">get our credentials</span><span class="co">](https://rstudio.aws.boisestate.edu/)</span> and login to a <span class="co">[</span><span class="ot">new RStudio session</span><span class="co">](https://rstudio.apps.aws.boisestate.edu/)</span>. You can create your own repository if you'd like to track these things. You'll have to copy your googledrive download function from a previous repo.</span>
+<span id="cb104-15"><a href="#cb104-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb104-16"><a href="#cb104-16" aria-hidden="true" tabindex="-1"></a>We'll start like we usually do, by loading packages. There are a few new packages here. The <span class="in">`mvtnorm`</span> packages is a way for generating random numbers from a multivariate normal distribution (like <span class="in">`rnorm`</span>). The <span class="in">`patchwork`</span> package provides a lot of functionality for making multipanel plots. We'll also <span class="in">`source`</span> our utility function.</span>
+<span id="cb104-17"><a href="#cb104-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb104-20"><a href="#cb104-20" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb104-21"><a href="#cb104-21" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(sf)</span>
+<span id="cb104-22"><a href="#cb104-22" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(terra)</span>
+<span id="cb104-23"><a href="#cb104-23" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(mvtnorm)</span>
+<span id="cb104-24"><a href="#cb104-24" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb104-25"><a href="#cb104-25" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(patchwork)</span>
+<span id="cb104-26"><a href="#cb104-26" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(googledrive)</span>
+<span id="cb104-27"><a href="#cb104-27" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">"scripts/utilities/download_utils.R"</span>)</span>
+<span id="cb104-28"><a href="#cb104-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb104-29"><a href="#cb104-29" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb104-30"><a href="#cb104-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb104-31"><a href="#cb104-31" aria-hidden="true" tabindex="-1"></a><span class="in">```{r dldata}</span></span>
+<span id="cb104-32"><a href="#cb104-32" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb104-33"><a href="#cb104-33" aria-hidden="true" tabindex="-1"></a>file_list <span class="ot">&lt;-</span> <span class="fu">drive_ls</span>(<span class="fu">drive_get</span>(<span class="fu">as_id</span>(<span class="st">"https://drive.google.com/drive/u/1/folders/1PwfUX2hnJlbnqBe3qvl33tFBImtNFTuR"</span>)))[<span class="sc">-</span><span class="dv">1</span>,]</span>
+<span id="cb104-34"><a href="#cb104-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb104-35"><a href="#cb104-35" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb104-36"><a href="#cb104-36" aria-hidden="true" tabindex="-1"></a>file_list <span class="sc">%&gt;%</span> </span>
+<span id="cb104-37"><a href="#cb104-37" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(id, name) <span class="sc">%&gt;%</span></span>
+<span id="cb104-38"><a href="#cb104-38" aria-hidden="true" tabindex="-1"></a>  purrr<span class="sc">::</span><span class="fu">pmap</span>(<span class="cf">function</span>(id, name) {</span>
+<span id="cb104-39"><a href="#cb104-39" aria-hidden="true" tabindex="-1"></a>    <span class="fu">gdrive_folder_download</span>(<span class="fu">list</span>(<span class="at">id =</span> id, <span class="at">name =</span> name),</span>
+<span id="cb104-40"><a href="#cb104-40" aria-hidden="true" tabindex="-1"></a>                           <span class="at">dstfldr =</span> <span class="st">"inclass10"</span>)</span>
+<span id="cb104-41"><a href="#cb104-41" aria-hidden="true" tabindex="-1"></a>  })</span>
+<span id="cb104-42"><a href="#cb104-42" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb104-43"><a href="#cb104-43" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb104-44"><a href="#cb104-44" aria-hidden="true" tabindex="-1"></a><span class="fu">## Loading the Data We Have</span></span>
+<span id="cb104-45"><a href="#cb104-45" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb104-46"><a href="#cb104-46" aria-hidden="true" tabindex="-1"></a>There are two different vector datasets we're going to use for this example. The first (<span class="in">`pa.shp`</span>) is our old friend, the Purple Air sensors. This is a <span class="in">`POINT`</span> dataset. The second (<span class="in">`blockgroupPop.shp`</span>) contains a number of <span class="in">`POLYGONS`</span> for the Census block groups in Ada, Gem, Canyon, Elmore, and Owyhee counties in Idaho along with an attribute for their total population as of the 2020 Census. We'll load those here and take a quick look.</span>
+<span id="cb104-47"><a href="#cb104-47" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb104-48"><a href="#cb104-48" aria-hidden="true" tabindex="-1"></a><span class="in">```{r lddata}</span></span>
+<span id="cb104-49"><a href="#cb104-49" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb104-50"><a href="#cb104-50" aria-hidden="true" tabindex="-1"></a>population_data <span class="ot">&lt;-</span> <span class="fu">read_sf</span>(<span class="st">"data/original/inclass10/blockgroupPop.shp"</span>)</span>
+<span id="cb104-51"><a href="#cb104-51" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb104-52"><a href="#cb104-52" aria-hidden="true" tabindex="-1"></a>pa_locs <span class="ot">&lt;-</span> <span class="fu">read_sf</span>(<span class="st">"data/original/inclass10/pa.shp"</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb104-53"><a href="#cb104-53" aria-hidden="true" tabindex="-1"></a>  <span class="fu">st_transform</span>(., <span class="at">crs=</span><span class="fu">crs</span>(population_data)) <span class="sc">%&gt;%</span> </span>
+<span id="cb104-54"><a href="#cb104-54" aria-hidden="true" tabindex="-1"></a>  <span class="fu">st_crop</span>(., population_data)</span>
+<span id="cb104-55"><a href="#cb104-55" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb104-56"><a href="#cb104-56" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(population_data)</span>
+<span id="cb104-57"><a href="#cb104-57" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(population_data<span class="sc">$</span>geometry)</span>
+<span id="cb104-58"><a href="#cb104-58" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(pa_locs)</span>
+<span id="cb104-59"><a href="#cb104-59" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(pa_locs<span class="sc">$</span>geometry)</span>
+<span id="cb104-60"><a href="#cb104-60" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb104-61"><a href="#cb104-61" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb104-62"><a href="#cb104-62" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb104-63"><a href="#cb104-63" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb104-64"><a href="#cb104-64" aria-hidden="true" tabindex="-1"></a><span class="fu">## Simulating Some Data</span></span>
+<span id="cb104-65"><a href="#cb104-65" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb104-66"><a href="#cb104-66" aria-hidden="true" tabindex="-1"></a>In order to explore how MAUP plays out in an analysis, we need some data where the relationship between the two datasets **is known**. Simulation is a great way to gain some intuition for how things work without getting trapped by the subtleties and imperfections of a dataset. Plus, if you're ever fitting complicated statistical models, running them first on data where you know the relationships (because you made them) is a great way to make sure your model is well specified.</span>
+<span id="cb104-67"><a href="#cb104-67" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb104-68"><a href="#cb104-68" aria-hidden="true" tabindex="-1"></a>There are a few things happening here, so I'll walk you through it.</span>
+<span id="cb104-69"><a href="#cb104-69" aria-hidden="true" tabindex="-1"></a>First, we set a "seed" (<span class="in">`set.seed()`</span>) - this ensures that the random numbers you generate on your computer are the same as those generated on my computer. It also ensures that no matter how many times you run this, you should get the same outputs. This is great for reproducibility, but not necessarily for sensitivity (where we want to make sure that our results aren't just a function of the one set of random numbers we drew).</span>
+<span id="cb104-70"><a href="#cb104-70" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb104-71"><a href="#cb104-71" aria-hidden="true" tabindex="-1"></a>Next we have to create a raster template that we can fill in with the random data we generate. You'll notice that we used <span class="in">`rast`</span> (the same function we use to read in existing raster data) to do this **and** that we use the CRS (<span class="in">`crs()`</span>) and extent (<span class="in">`ext()`</span>) of our <span class="in">`population_data`</span> shapefile. To make sure all of this works in the <span class="in">`terra`</span> structure, we convert (temporarily) our <span class="in">`population_data`</span> object to a <span class="in">`SpatVector`</span> (using <span class="in">`vect()`</span>). Finally, we use <span class="in">`ncell()`</span> to count the total number of cells in our template raster so that we can make sure we draw enough values.</span>
+<span id="cb104-72"><a href="#cb104-72" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb104-73"><a href="#cb104-73" aria-hidden="true" tabindex="-1"></a>Now we want to create some data that is random, but correlated. We can use the multivariate normal distribution for this. It behaves similar to a regular normal distribution (which we'd specify a mean and standard deviation). The difference is that in a multivariate normal distribution, there are multiple means that are related to each other through their covariance or correlation matrices. A correlation matrix simply expresses the correlations between the variables - the diagonals are always 1 (because that is the self-correlation) and the off-diagonal cells express the correlation (or covariance depending on the structure) between the 2 variables. Here, we build this by hand by specifying <span class="in">`Rho`</span> (the correlation coefficient). Finally, we use the <span class="in">`rmvnorm`</span> function to generate <span class="in">`nvall`</span> numbers from 2 different normal distributions that have covariance matrix <span class="in">`Sigma`</span> and should have a correlation equal to <span class="in">`Rho`</span>.</span>
+<span id="cb104-74"><a href="#cb104-74" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb104-75"><a href="#cb104-75" aria-hidden="true" tabindex="-1"></a>We plug these values back into our template using <span class="in">`setValues`</span> and then double-check the results. We expect a little difference between <span class="in">`Rho`</span> and the results of <span class="in">`cor`</span> because of the random number generation, but it is clear that we are pretty close so we can move on.</span>
+<span id="cb104-76"><a href="#cb104-76" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb104-79"><a href="#cb104-79" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb104-80"><a href="#cb104-80" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">42</span>)</span>
+<span id="cb104-81"><a href="#cb104-81" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb104-82"><a href="#cb104-82" aria-hidden="true" tabindex="-1"></a><span class="co"># raster template</span></span>
+<span id="cb104-83"><a href="#cb104-83" aria-hidden="true" tabindex="-1"></a>r_template <span class="ot">&lt;-</span> <span class="fu">rast</span>(<span class="at">ncol=</span><span class="dv">100</span>, <span class="at">nrow=</span><span class="dv">100</span>, </span>
+<span id="cb104-84"><a href="#cb104-84" aria-hidden="true" tabindex="-1"></a>                   <span class="at">crs =</span> <span class="fu">crs</span>(<span class="fu">vect</span>(population_data)), </span>
+<span id="cb104-85"><a href="#cb104-85" aria-hidden="true" tabindex="-1"></a>                   <span class="at">extent =</span> <span class="fu">ext</span>(<span class="fu">vect</span>(population_data)))</span>
+<span id="cb104-86"><a href="#cb104-86" aria-hidden="true" tabindex="-1"></a>nvals <span class="ot">&lt;-</span> <span class="fu">ncell</span>(r_template)</span>
+<span id="cb104-87"><a href="#cb104-87" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb104-88"><a href="#cb104-88" aria-hidden="true" tabindex="-1"></a><span class="co"># desired covariance / correlation matrix (2x2)</span></span>
+<span id="cb104-89"><a href="#cb104-89" aria-hidden="true" tabindex="-1"></a>rho <span class="ot">&lt;-</span> <span class="fl">0.7</span></span>
+<span id="cb104-90"><a href="#cb104-90" aria-hidden="true" tabindex="-1"></a>sd1 <span class="ot">&lt;-</span> <span class="dv">1</span>; sd2 <span class="ot">&lt;-</span> <span class="dv">2</span></span>
+<span id="cb104-91"><a href="#cb104-91" aria-hidden="true" tabindex="-1"></a>Sigma <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="fu">c</span>(sd1<span class="sc">^</span><span class="dv">2</span>, rho<span class="sc">*</span>sd1<span class="sc">*</span>sd2, rho<span class="sc">*</span>sd1<span class="sc">*</span>sd2, sd2<span class="sc">^</span><span class="dv">2</span>), <span class="at">nrow=</span><span class="dv">2</span>)</span>
+<span id="cb104-92"><a href="#cb104-92" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb104-93"><a href="#cb104-93" aria-hidden="true" tabindex="-1"></a><span class="co"># draw nvals independent bivariate normals</span></span>
+<span id="cb104-94"><a href="#cb104-94" aria-hidden="true" tabindex="-1"></a>draws <span class="ot">&lt;-</span> <span class="fu">rmvnorm</span>(<span class="at">n =</span> nvals, <span class="at">sigma =</span> Sigma)  <span class="co"># n x 2 matrix</span></span>
+<span id="cb104-95"><a href="#cb104-95" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb104-96"><a href="#cb104-96" aria-hidden="true" tabindex="-1"></a><span class="co"># convert to rasters</span></span>
+<span id="cb104-97"><a href="#cb104-97" aria-hidden="true" tabindex="-1"></a>r1 <span class="ot">&lt;-</span> <span class="fu">setValues</span>(r_template, draws[,<span class="dv">1</span>])</span>
+<span id="cb104-98"><a href="#cb104-98" aria-hidden="true" tabindex="-1"></a>r2 <span class="ot">&lt;-</span> <span class="fu">setValues</span>(r_template, draws[,<span class="dv">2</span>])</span>
+<span id="cb104-99"><a href="#cb104-99" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb104-100"><a href="#cb104-100" aria-hidden="true" tabindex="-1"></a><span class="co"># quick check empirical correlation (across cells)</span></span>
+<span id="cb104-101"><a href="#cb104-101" aria-hidden="true" tabindex="-1"></a><span class="fu">cor</span>(<span class="fu">values</span>(r1), <span class="fu">values</span>(r2))</span>
+<span id="cb104-102"><a href="#cb104-102" aria-hidden="true" tabindex="-1"></a><span class="co"># plot</span></span>
+<span id="cb104-103"><a href="#cb104-103" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(<span class="fu">c</span>(r1, r2))</span>
+<span id="cb104-104"><a href="#cb104-104" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb104-105"><a href="#cb104-105" aria-hidden="true" tabindex="-1"></a>rsts <span class="ot">&lt;-</span> <span class="fu">c</span>(r1,r2)</span>
+<span id="cb104-106"><a href="#cb104-106" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(rsts) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"var1"</span>, <span class="st">"var2"</span>)</span>
+<span id="cb104-107"><a href="#cb104-107" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb104-108"><a href="#cb104-108" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb104-109"><a href="#cb104-109" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb104-110"><a href="#cb104-110" aria-hidden="true" tabindex="-1"></a><span class="fu">## Changing Aggregation</span></span>
+<span id="cb104-111"><a href="#cb104-111" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb104-112"><a href="#cb104-112" aria-hidden="true" tabindex="-1"></a>Now that we have some data with a known relationship, we can start to experiment with the effects of aggregation. To do this efficiently, we'll use a function. I've written out some of the pseudocode below, but I want to point out a few things:</span>
+<span id="cb104-113"><a href="#cb104-113" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb104-114"><a href="#cb104-114" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>In the definition of the function I've specified some defaults (like <span class="in">`pop_cal = "pop"`</span> or <span class="in">`threshold = 1000`</span>). This allows the function to run even if I don't give those values, but they are replaced if I provide any parameters to those arguments.</span>
+<span id="cb104-115"><a href="#cb104-115" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb104-116"><a href="#cb104-116" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>There are two different methods (<span class="in">`greedy`</span> or <span class="in">`random`</span>) for aggregating the data. The greedy algorithm chooses the smallest polygons first, the random chooses polygons at random (subject to seed.)</span>
+<span id="cb104-117"><a href="#cb104-117" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb104-118"><a href="#cb104-118" aria-hidden="true" tabindex="-1"></a><span class="ss">3. </span>We use the **binary operator** `st_touches` to find all of the polygons touching the polygon indexed by `sf_obj[[idx]]` and the **binary transformer** <span class="in">`st_union`</span> to combine the geometries of the neighboring polygons into a single polygon. We do this in the context of a <span class="in">`group_by`</span>, <span class="in">`summarize`</span> pipeline to combine both the population data and the geometries.</span>
+<span id="cb104-119"><a href="#cb104-119" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb104-122"><a href="#cb104-122" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb104-123"><a href="#cb104-123" aria-hidden="true" tabindex="-1"></a>aggregate_polygons <span class="ot">&lt;-</span> <span class="cf">function</span>(sf_obj, <span class="at">pop_col =</span> <span class="st">"pop"</span>, <span class="at">threshold =</span> <span class="dv">1000</span>,</span>
+<span id="cb104-124"><a href="#cb104-124" aria-hidden="true" tabindex="-1"></a>                                   <span class="at">method =</span> <span class="fu">c</span>(<span class="st">"greedy"</span>, <span class="st">"random"</span>), <span class="at">seed =</span> <span class="cn">NULL</span>) {</span>
+<span id="cb104-125"><a href="#cb104-125" aria-hidden="true" tabindex="-1"></a>  method <span class="ot">&lt;-</span> <span class="fu">match.arg</span>(method)</span>
+<span id="cb104-126"><a href="#cb104-126" aria-hidden="true" tabindex="-1"></a>  sf_obj <span class="ot">&lt;-</span> sf_obj <span class="sc">%&gt;%</span></span>
+<span id="cb104-127"><a href="#cb104-127" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">agg_id =</span> <span class="fu">row_number</span>(),</span>
+<span id="cb104-128"><a href="#cb104-128" aria-hidden="true" tabindex="-1"></a>           <span class="sc">!!</span><span class="at">pop_col :=</span> <span class="sc">!!</span><span class="fu">sym</span>(pop_col))</span>
+<span id="cb104-129"><a href="#cb104-129" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb104-130"><a href="#cb104-130" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="sc">!</span><span class="fu">is.null</span>(seed)) <span class="fu">set.seed</span>(seed)</span>
+<span id="cb104-131"><a href="#cb104-131" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb104-132"><a href="#cb104-132" aria-hidden="true" tabindex="-1"></a>  <span class="cf">repeat</span> {</span>
+<span id="cb104-133"><a href="#cb104-133" aria-hidden="true" tabindex="-1"></a>    below <span class="ot">&lt;-</span> <span class="fu">which</span>(sf_obj[[pop_col]] <span class="sc">&lt;</span> threshold)</span>
+<span id="cb104-134"><a href="#cb104-134" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (<span class="fu">length</span>(below) <span class="sc">==</span> <span class="dv">0</span>) <span class="cf">break</span></span>
+<span id="cb104-135"><a href="#cb104-135" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb104-136"><a href="#cb104-136" aria-hidden="true" tabindex="-1"></a>    <span class="co"># --- choose starting polygon ---</span></span>
+<span id="cb104-137"><a href="#cb104-137" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (method <span class="sc">==</span> <span class="st">"greedy"</span>) {</span>
+<span id="cb104-138"><a href="#cb104-138" aria-hidden="true" tabindex="-1"></a>      idx <span class="ot">&lt;-</span> below[<span class="fu">which.min</span>(sf_obj[[pop_col]][below])]</span>
+<span id="cb104-139"><a href="#cb104-139" aria-hidden="true" tabindex="-1"></a>    } <span class="cf">else</span> <span class="cf">if</span> (method <span class="sc">==</span> <span class="st">"random"</span>) {</span>
+<span id="cb104-140"><a href="#cb104-140" aria-hidden="true" tabindex="-1"></a>      idx <span class="ot">&lt;-</span> <span class="fu">sample</span>(below, <span class="dv">1</span>)</span>
+<span id="cb104-141"><a href="#cb104-141" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb104-142"><a href="#cb104-142" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb104-143"><a href="#cb104-143" aria-hidden="true" tabindex="-1"></a>    <span class="co"># find neighbors</span></span>
+<span id="cb104-144"><a href="#cb104-144" aria-hidden="true" tabindex="-1"></a>    nb <span class="ot">&lt;-</span> <span class="fu">st_touches</span>(<span class="fu">st_make_valid</span>(sf_obj))[[idx]]</span>
+<span id="cb104-145"><a href="#cb104-145" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (<span class="fu">length</span>(nb) <span class="sc">==</span> <span class="dv">0</span>) {</span>
+<span id="cb104-146"><a href="#cb104-146" aria-hidden="true" tabindex="-1"></a>      <span class="fu">warning</span>(<span class="st">"Polygon "</span>, idx, <span class="st">" has no neighbors to merge"</span>)</span>
+<span id="cb104-147"><a href="#cb104-147" aria-hidden="true" tabindex="-1"></a>      sf_obj[[pop_col]][idx] <span class="ot">&lt;-</span> threshold</span>
+<span id="cb104-148"><a href="#cb104-148" aria-hidden="true" tabindex="-1"></a>      <span class="cf">next</span></span>
+<span id="cb104-149"><a href="#cb104-149" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb104-150"><a href="#cb104-150" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb104-151"><a href="#cb104-151" aria-hidden="true" tabindex="-1"></a>    <span class="co"># --- pick neighbor ---</span></span>
+<span id="cb104-152"><a href="#cb104-152" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (method <span class="sc">==</span> <span class="st">"greedy"</span>) {</span>
+<span id="cb104-153"><a href="#cb104-153" aria-hidden="true" tabindex="-1"></a>      nb_idx <span class="ot">&lt;-</span> nb[<span class="fu">which.min</span>(sf_obj[[pop_col]][nb])]</span>
+<span id="cb104-154"><a href="#cb104-154" aria-hidden="true" tabindex="-1"></a>    } <span class="cf">else</span> <span class="cf">if</span> (method <span class="sc">==</span> <span class="st">"random"</span>) {</span>
+<span id="cb104-155"><a href="#cb104-155" aria-hidden="true" tabindex="-1"></a>      nb_idx <span class="ot">&lt;-</span> <span class="fu">sample</span>(nb, <span class="dv">1</span>)</span>
+<span id="cb104-156"><a href="#cb104-156" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb104-157"><a href="#cb104-157" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb104-158"><a href="#cb104-158" aria-hidden="true" tabindex="-1"></a>    <span class="co"># merge geometry and population</span></span>
+<span id="cb104-159"><a href="#cb104-159" aria-hidden="true" tabindex="-1"></a>    sf_obj<span class="sc">$</span>geometry[idx] <span class="ot">&lt;-</span><span class="fu">st_union</span>(<span class="fu">st_make_valid</span>(sf_obj<span class="sc">$</span>geometry[<span class="fu">c</span>(idx, nb_idx)]))</span>
+<span id="cb104-160"><a href="#cb104-160" aria-hidden="true" tabindex="-1"></a>    sf_obj[[pop_col]][idx] <span class="ot">&lt;-</span> <span class="fu">sum</span>(sf_obj[[pop_col]][<span class="fu">c</span>(idx, nb_idx)])</span>
+<span id="cb104-161"><a href="#cb104-161" aria-hidden="true" tabindex="-1"></a>    sf_obj<span class="sc">$</span>agg_id[idx] <span class="ot">&lt;-</span> <span class="fu">min</span>(sf_obj<span class="sc">$</span>agg_id[<span class="fu">c</span>(idx, nb_idx)])</span>
+<span id="cb104-162"><a href="#cb104-162" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb104-163"><a href="#cb104-163" aria-hidden="true" tabindex="-1"></a>    <span class="co"># drop merged neighbor</span></span>
+<span id="cb104-164"><a href="#cb104-164" aria-hidden="true" tabindex="-1"></a>    sf_obj <span class="ot">&lt;-</span> sf_obj[<span class="sc">-</span>nb_idx, ]</span>
+<span id="cb104-165"><a href="#cb104-165" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb104-166"><a href="#cb104-166" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb104-167"><a href="#cb104-167" aria-hidden="true" tabindex="-1"></a>  sf_obj <span class="sc">%&gt;%</span> </span>
+<span id="cb104-168"><a href="#cb104-168" aria-hidden="true" tabindex="-1"></a>    <span class="fu">group_by</span>(agg_id) <span class="sc">%&gt;%</span> </span>
+<span id="cb104-169"><a href="#cb104-169" aria-hidden="true" tabindex="-1"></a>    <span class="fu">summarise</span>(<span class="at">pop =</span> <span class="fu">sum</span>(<span class="sc">!!</span><span class="fu">sym</span>(pop_col)), <span class="at">geometry =</span> <span class="fu">st_union</span>(geometry), <span class="at">.groups =</span> <span class="st">"drop"</span>)</span>
+<span id="cb104-170"><a href="#cb104-170" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb104-171"><a href="#cb104-171" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb104-172"><a href="#cb104-172" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb104-173"><a href="#cb104-173" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb104-174"><a href="#cb104-174" aria-hidden="true" tabindex="-1"></a>Let's try it out and see how it goes. We'll set a series of thresholds and pass them with <span class="in">`map`</span> to create a list of <span class="in">`sf`</span> objects. We'll then use a second function to generate the maps. Finally, we use <span class="in">`wrap_plots`</span> from <span class="in">`patchwork`</span> to make a multiplanel plot.</span>
+<span id="cb104-175"><a href="#cb104-175" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb104-178"><a href="#cb104-178" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb104-179"><a href="#cb104-179" aria-hidden="true" tabindex="-1"></a>thresholds <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">750</span>, <span class="dv">1500</span>, <span class="dv">3000</span>, <span class="dv">6000</span>, <span class="dv">12000</span>)  <span class="co"># population cutoffs</span></span>
+<span id="cb104-180"><a href="#cb104-180" aria-hidden="true" tabindex="-1"></a>aggregate_pop <span class="ot">&lt;-</span> <span class="fu">map</span>(thresholds, </span>
+<span id="cb104-181"><a href="#cb104-181" aria-hidden="true" tabindex="-1"></a>  <span class="sc">~</span><span class="fu">aggregate_polygons</span>(<span class="at">sf_obj =</span> population_data, </span>
+<span id="cb104-182"><a href="#cb104-182" aria-hidden="true" tabindex="-1"></a>                                    <span class="at">pop_col =</span> <span class="st">"value"</span>, <span class="at">threshold =</span> .x,</span>
+<span id="cb104-183"><a href="#cb104-183" aria-hidden="true" tabindex="-1"></a>                                   <span class="at">method =</span> <span class="st">"greedy"</span>)</span>
+<span id="cb104-184"><a href="#cb104-184" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb104-185"><a href="#cb104-185" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb104-186"><a href="#cb104-186" aria-hidden="true" tabindex="-1"></a>plots <span class="ot">&lt;-</span> <span class="fu">map</span>(aggregate_pop, </span>
+<span id="cb104-187"><a href="#cb104-187" aria-hidden="true" tabindex="-1"></a>  <span class="sc">~</span><span class="fu">ggplot</span>(<span class="at">data =</span> .x) <span class="sc">+</span></span>
+<span id="cb104-188"><a href="#cb104-188" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_sf</span>(<span class="at">col =</span> <span class="st">"red"</span>) <span class="sc">+</span></span>
+<span id="cb104-189"><a href="#cb104-189" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme_bw</span>()</span>
+<span id="cb104-190"><a href="#cb104-190" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb104-191"><a href="#cb104-191" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb104-192"><a href="#cb104-192" aria-hidden="true" tabindex="-1"></a><span class="co"># Combine automatically into a multipanel layout</span></span>
+<span id="cb104-193"><a href="#cb104-193" aria-hidden="true" tabindex="-1"></a><span class="fu">wrap_plots</span>(plots, <span class="at">ncol =</span> <span class="dv">3</span>)</span>
+<span id="cb104-194"><a href="#cb104-194" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb104-195"><a href="#cb104-195" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb104-196"><a href="#cb104-196" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb104-197"><a href="#cb104-197" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb104-198"><a href="#cb104-198" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb104-199"><a href="#cb104-199" aria-hidden="true" tabindex="-1"></a><span class="fu">## How Does Aggregation Affect Measured Correlation</span></span>
+<span id="cb104-200"><a href="#cb104-200" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb104-201"><a href="#cb104-201" aria-hidden="true" tabindex="-1"></a>Now that we have developed some different spatial aggregations, let's see how that affects our conclusions about the correlation between the two datasets. We'll use the same function above, but nest it inside another function to make this easier. You'll notice that we first create the aggregated polygons, then we extract the values from the raster (using <span class="in">`extract`</span>) and convert that into a table with our results.</span>
+<span id="cb104-202"><a href="#cb104-202" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb104-205"><a href="#cb104-205" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb104-206"><a href="#cb104-206" aria-hidden="true" tabindex="-1"></a>corr_at_threshold <span class="ot">&lt;-</span> <span class="cf">function</span>(threshold, polygons, pop_col, r1, <span class="at">method =</span> <span class="st">"greedy"</span>, <span class="at">seed =</span> <span class="cn">NULL</span>) {</span>
+<span id="cb104-207"><a href="#cb104-207" aria-hidden="true" tabindex="-1"></a>  <span class="co"># aggregate polygons</span></span>
+<span id="cb104-208"><a href="#cb104-208" aria-hidden="true" tabindex="-1"></a>  agg_polys <span class="ot">&lt;-</span> <span class="fu">aggregate_polygons</span>(polygons, pop_col, threshold, <span class="at">method =</span> method, <span class="at">seed =</span> seed)</span>
+<span id="cb104-209"><a href="#cb104-209" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb104-210"><a href="#cb104-210" aria-hidden="true" tabindex="-1"></a>  <span class="co"># extract raster values (mean within each polygon)</span></span>
+<span id="cb104-211"><a href="#cb104-211" aria-hidden="true" tabindex="-1"></a>  v1 <span class="ot">&lt;-</span> terra<span class="sc">::</span><span class="fu">extract</span>(r1, <span class="fu">vect</span>(agg_polys), <span class="at">fun =</span> mean, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)[, <span class="sc">-</span><span class="dv">1</span>]</span>
+<span id="cb104-212"><a href="#cb104-212" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb104-213"><a href="#cb104-213" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tibble</span>(<span class="at">threshold =</span> threshold,</span>
+<span id="cb104-214"><a href="#cb104-214" aria-hidden="true" tabindex="-1"></a>         <span class="at">correlation =</span> <span class="fu">cor</span>(v1[,<span class="dv">1</span>], v1[,<span class="dv">2</span>], <span class="at">use =</span> <span class="st">"complete.obs"</span>))</span>
+<span id="cb104-215"><a href="#cb104-215" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb104-216"><a href="#cb104-216" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb104-217"><a href="#cb104-217" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb104-218"><a href="#cb104-218" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb104-219"><a href="#cb104-219" aria-hidden="true" tabindex="-1"></a>Once we've got the function written, we can apply the function using <span class="in">`map`</span> across our <span class="in">`threshold`</span> values. You'll notice that we use <span class="in">`map_dfr`</span> because the outcome of our function is a single row <span class="in">`tibble`</span> that we ultimately want this as a <span class="in">`data.frame`</span> (hence the <span class="in">`_dfr`</span>).</span>
+<span id="cb104-220"><a href="#cb104-220" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb104-223"><a href="#cb104-223" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb104-224"><a href="#cb104-224" aria-hidden="true" tabindex="-1"></a><span class="co"># --- apply across thresholds ---</span></span>
+<span id="cb104-225"><a href="#cb104-225" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb104-226"><a href="#cb104-226" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb104-227"><a href="#cb104-227" aria-hidden="true" tabindex="-1"></a>results <span class="ot">&lt;-</span> <span class="fu">map_dfr</span>(thresholds, <span class="sc">~</span><span class="fu">corr_at_threshold</span>(.x, <span class="at">polygons =</span> population_data, <span class="st">"value"</span>, <span class="at">r1=</span>rsts, <span class="at">method =</span> <span class="st">"greedy"</span>))</span>
+<span id="cb104-228"><a href="#cb104-228" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb104-229"><a href="#cb104-229" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(results, <span class="fu">aes</span>(<span class="at">x =</span> threshold, <span class="at">y =</span> correlation)) <span class="sc">+</span></span>
+<span id="cb104-230"><a href="#cb104-230" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>() <span class="sc">+</span></span>
+<span id="cb104-231"><a href="#cb104-231" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="dv">2</span>) <span class="sc">+</span></span>
+<span id="cb104-232"><a href="#cb104-232" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> rho, <span class="at">linetype =</span> <span class="dv">2</span>, <span class="at">color =</span> <span class="st">"red"</span>) <span class="sc">+</span></span>
+<span id="cb104-233"><a href="#cb104-233" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
+<span id="cb104-234"><a href="#cb104-234" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Population aggregation threshold"</span>,</span>
+<span id="cb104-235"><a href="#cb104-235" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">"Correlation (r1 vs r2)"</span>,</span>
+<span id="cb104-236"><a href="#cb104-236" aria-hidden="true" tabindex="-1"></a>       <span class="at">title =</span> <span class="st">"Effect of polygon aggregation on observed correlation"</span>)</span>
+<span id="cb104-237"><a href="#cb104-237" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb104-238"><a href="#cb104-238" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb104-239"><a href="#cb104-239" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb104-240"><a href="#cb104-240" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb104-241"><a href="#cb104-241" aria-hidden="true" tabindex="-1"></a><span class="fu">## What if the Underlying Data is More Coarse?</span></span>
+<span id="cb104-242"><a href="#cb104-242" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb104-243"><a href="#cb104-243" aria-hidden="true" tabindex="-1"></a>You might imagine that you get data from a source that is at a coarser resolution than the process you're actually interested in. We can mimic this situation by using<span class="in">`aggregate`</span> to "upscale" the underlying rasters.</span>
+<span id="cb104-244"><a href="#cb104-244" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb104-245"><a href="#cb104-245" aria-hidden="true" tabindex="-1"></a>Once we do that, it's basically the same process as before, but we change the <span class="in">`r1`</span> argument to <span class="in">`rsts2`</span> instead of <span class="in">`rsts`</span>.</span>
+<span id="cb104-246"><a href="#cb104-246" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb104-249"><a href="#cb104-249" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb104-250"><a href="#cb104-250" aria-hidden="true" tabindex="-1"></a>rsts2 <span class="ot">&lt;-</span> terra<span class="sc">::</span><span class="fu">aggregate</span>(rsts, <span class="at">fact =</span> <span class="dv">4</span>, <span class="at">method =</span> <span class="st">"bilinear"</span>)</span>
+<span id="cb104-251"><a href="#cb104-251" aria-hidden="true" tabindex="-1"></a><span class="fu">cor</span>(<span class="fu">values</span>(rsts2[[<span class="dv">1</span>]]), <span class="fu">values</span>(rsts2[[<span class="dv">2</span>]]))</span>
+<span id="cb104-252"><a href="#cb104-252" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(rsts2)</span>
+<span id="cb104-253"><a href="#cb104-253" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb104-254"><a href="#cb104-254" aria-hidden="true" tabindex="-1"></a>results2 <span class="ot">&lt;-</span> <span class="fu">map_dfr</span>(thresholds, <span class="sc">~</span><span class="fu">corr_at_threshold</span>(.x, <span class="at">polygons =</span> population_data, <span class="st">"value"</span>, <span class="at">r1=</span>rsts2, <span class="at">method =</span> <span class="st">"greedy"</span>))</span>
+<span id="cb104-255"><a href="#cb104-255" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb104-256"><a href="#cb104-256" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(results2, <span class="fu">aes</span>(<span class="at">x =</span> threshold, <span class="at">y =</span> correlation)) <span class="sc">+</span></span>
+<span id="cb104-257"><a href="#cb104-257" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>() <span class="sc">+</span></span>
+<span id="cb104-258"><a href="#cb104-258" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="dv">2</span>) <span class="sc">+</span></span>
+<span id="cb104-259"><a href="#cb104-259" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> rho, <span class="at">linetype =</span> <span class="dv">2</span>, <span class="at">color =</span> <span class="st">"red"</span>) <span class="sc">+</span></span>
+<span id="cb104-260"><a href="#cb104-260" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
+<span id="cb104-261"><a href="#cb104-261" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Population aggregation threshold"</span>,</span>
+<span id="cb104-262"><a href="#cb104-262" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">"Correlation (r1 vs r2)"</span>,</span>
+<span id="cb104-263"><a href="#cb104-263" aria-hidden="true" tabindex="-1"></a>       <span class="at">title =</span> <span class="st">"Effect of polygon aggregation on observed correlation"</span>)</span>
+<span id="cb104-264"><a href="#cb104-264" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb104-265"><a href="#cb104-265" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb104-266"><a href="#cb104-266" aria-hidden="true" tabindex="-1"></a><span class="fu">## What if We Change Our Sampling Frame</span></span>
+<span id="cb104-267"><a href="#cb104-267" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb104-268"><a href="#cb104-268" aria-hidden="true" tabindex="-1"></a>In the previous examples, we rely on aggregation differences that arise from combining units based on their existing population. What if we have point data? We might imagine that we think our points capture some broader area of the landscape. We might also imagine that our choice of sampling frame affects the relatioiships we uncover.</span>
+<span id="cb104-269"><a href="#cb104-269" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb104-270"><a href="#cb104-270" aria-hidden="true" tabindex="-1"></a>We do a few new things here. First we use **unary transformers** like <span class="in">`st_transform`</span> and <span class="in">`st_crop`</span> to get our purple air sensors into the right projection and to reduce (crop) the dataset so that we're only using the points that are within our existing study area. Then we use a final transformer, <span class="in">`st_buffer`</span> to draw a new, circular polygon around the points with a radius equal to the <span class="in">`dist`</span> argument. We pass a <span class="in">`vector`</span> of buffer distances to <span class="in">`st_buffer`</span> using <span class="in">`map`</span> and then plot the resulting outcome. </span>
+<span id="cb104-271"><a href="#cb104-271" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb104-274"><a href="#cb104-274" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb104-275"><a href="#cb104-275" aria-hidden="true" tabindex="-1"></a>pa_locs <span class="ot">&lt;-</span> <span class="fu">read_sf</span>(<span class="st">"data/original/inclass10/pa.shp"</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb104-276"><a href="#cb104-276" aria-hidden="true" tabindex="-1"></a>  <span class="fu">st_transform</span>(., <span class="at">crs=</span><span class="fu">crs</span>(rsts)) <span class="sc">%&gt;%</span> </span>
+<span id="cb104-277"><a href="#cb104-277" aria-hidden="true" tabindex="-1"></a>  <span class="fu">st_crop</span>(., population_data)</span>
+<span id="cb104-278"><a href="#cb104-278" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb104-279"><a href="#cb104-279" aria-hidden="true" tabindex="-1"></a>buffer_dist <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">10</span>, <span class="dv">1000</span>, <span class="dv">10000</span>, <span class="dv">25000</span>)</span>
+<span id="cb104-280"><a href="#cb104-280" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb104-281"><a href="#cb104-281" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb104-282"><a href="#cb104-282" aria-hidden="true" tabindex="-1"></a>pa_buffs <span class="ot">&lt;-</span> buffer_dist <span class="sc">%&gt;%</span> </span>
+<span id="cb104-283"><a href="#cb104-283" aria-hidden="true" tabindex="-1"></a>  <span class="fu">map</span>(., <span class="sc">~</span><span class="fu">st_buffer</span>(<span class="at">x =</span> pa_locs, <span class="at">dist =</span> .x) <span class="sc">%&gt;%</span> </span>
+<span id="cb104-284"><a href="#cb104-284" aria-hidden="true" tabindex="-1"></a>        <span class="fu">mutate</span>(<span class="at">buff_dist =</span> .x) </span>
+<span id="cb104-285"><a href="#cb104-285" aria-hidden="true" tabindex="-1"></a>        )</span>
+<span id="cb104-286"><a href="#cb104-286" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb104-287"><a href="#cb104-287" aria-hidden="true" tabindex="-1"></a>plots_buff <span class="ot">&lt;-</span> <span class="fu">map</span>(pa_buffs, </span>
+<span id="cb104-288"><a href="#cb104-288" aria-hidden="true" tabindex="-1"></a>  <span class="sc">~</span><span class="fu">ggplot</span>(<span class="at">data =</span> .x) <span class="sc">+</span></span>
+<span id="cb104-289"><a href="#cb104-289" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_sf</span>(<span class="at">col =</span> <span class="st">"red"</span>) <span class="sc">+</span></span>
+<span id="cb104-290"><a href="#cb104-290" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme_bw</span>()</span>
+<span id="cb104-291"><a href="#cb104-291" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb104-292"><a href="#cb104-292" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb104-293"><a href="#cb104-293" aria-hidden="true" tabindex="-1"></a><span class="co"># Combine automatically into a multipanel layout</span></span>
+<span id="cb104-294"><a href="#cb104-294" aria-hidden="true" tabindex="-1"></a><span class="fu">wrap_plots</span>(plots_buff, <span class="at">ncol =</span> <span class="dv">3</span>)</span>
+<span id="cb104-295"><a href="#cb104-295" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb104-296"><a href="#cb104-296" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb104-297"><a href="#cb104-297" aria-hidden="true" tabindex="-1"></a>We modify our original correlation function to deal with the buffers and return a slightly different tibble as an output.</span>
+<span id="cb104-298"><a href="#cb104-298" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb104-301"><a href="#cb104-301" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb104-302"><a href="#cb104-302" aria-hidden="true" tabindex="-1"></a>corr_at_buff <span class="ot">&lt;-</span> <span class="cf">function</span>(polys, r1) {</span>
+<span id="cb104-303"><a href="#cb104-303" aria-hidden="true" tabindex="-1"></a>  <span class="co"># extract raster values (mean within each polygon)</span></span>
+<span id="cb104-304"><a href="#cb104-304" aria-hidden="true" tabindex="-1"></a>  v1 <span class="ot">&lt;-</span> terra<span class="sc">::</span><span class="fu">extract</span>(r1, <span class="fu">vect</span>(polys), <span class="at">fun =</span> mean, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)[, <span class="sc">-</span><span class="dv">1</span>]</span>
+<span id="cb104-305"><a href="#cb104-305" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb104-306"><a href="#cb104-306" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tibble</span>(<span class="at">buff_dist =</span> <span class="fu">unique</span>(polys<span class="sc">$</span>buff_dist),</span>
+<span id="cb104-307"><a href="#cb104-307" aria-hidden="true" tabindex="-1"></a>         <span class="at">correlation =</span> <span class="fu">cor</span>(v1[,<span class="dv">1</span>], v1[,<span class="dv">2</span>], <span class="at">use =</span> <span class="st">"complete.obs"</span>))</span>
+<span id="cb104-308"><a href="#cb104-308" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb104-309"><a href="#cb104-309" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb104-310"><a href="#cb104-310" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb104-311"><a href="#cb104-311" aria-hidden="true" tabindex="-1"></a>Finally, we run this new function one more time to generate our comparison plot.</span>
+<span id="cb104-312"><a href="#cb104-312" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb104-315"><a href="#cb104-315" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb104-316"><a href="#cb104-316" aria-hidden="true" tabindex="-1"></a>results3 <span class="ot">&lt;-</span> <span class="fu">map_dfr</span>(pa_buffs, <span class="sc">~</span><span class="fu">corr_at_buff</span>(<span class="at">polys =</span> .x,  <span class="at">r1=</span>rsts))</span>
+<span id="cb104-317"><a href="#cb104-317" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb104-318"><a href="#cb104-318" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(results3, <span class="fu">aes</span>(<span class="at">x =</span> buff_dist, <span class="at">y =</span> correlation)) <span class="sc">+</span></span>
+<span id="cb104-319"><a href="#cb104-319" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>() <span class="sc">+</span></span>
+<span id="cb104-320"><a href="#cb104-320" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="dv">2</span>) <span class="sc">+</span></span>
+<span id="cb104-321"><a href="#cb104-321" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> rho, <span class="at">linetype =</span> <span class="dv">2</span>, <span class="at">color =</span> <span class="st">"red"</span>) <span class="sc">+</span></span>
+<span id="cb104-322"><a href="#cb104-322" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
+<span id="cb104-323"><a href="#cb104-323" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Population aggregation buffer"</span>,</span>
+<span id="cb104-324"><a href="#cb104-324" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">"Correlation (r1 vs r2)"</span>,</span>
+<span id="cb104-325"><a href="#cb104-325" aria-hidden="true" tabindex="-1"></a>       <span class="at">title =</span> <span class="st">"Effect of polygon buffer on observed correlation"</span>)</span>
+<span id="cb104-326"><a href="#cb104-326" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb104-327"><a href="#cb104-327" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb104-328"><a href="#cb104-328" aria-hidden="true" tabindex="-1"></a><span class="fu">## Final Thoughts</span></span>
+<span id="cb104-329"><a href="#cb104-329" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb104-330"><a href="#cb104-330" aria-hidden="true" tabindex="-1"></a>Hopefully this exercise has illustrated the unpredictable nature of how aggregation affects the observed correlation between variables. You've also gotten to practice a variety of spatial operations in increasingly complicated functions. </span>
 </code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div></div></div></div></div>
 </div> <!-- /content -->

@@ -20,12 +20,18 @@ library(tidyverse)
 
 file_names <- list.files("/Users/mattwilliamson/Websites/isdr_assignments/assignment_01_org/data/original/", pattern = ".csv", full.names = TRUE)
 
-purple_air_list <- file_names %>% 
-  map(., read_csv)
+state_abbr <- file_names %>%
+  basename() %>% 
+  str_extract("(?<=_)[:alpha:]+(?=\\.csv$)")
 
+purple_air_list <- file_names %>% 
+  map(., read_csv) %>% 
+  set_names(state_abbr)
+
+names(purple_air_list)
 
 ```
-[This one should be pretty straightforward. The only tricky bits are that I set the `pattern` argument to `".csv"` to make sure that I'm getting the right files for `read_csv` (which in this case is less important because that's all that's in the folder). I also set the `full.names` argument to `TRUE` to avoid issues when I render this file.]{style="color: blue;"}
+[This one should be pretty straightforward. The only tricky bits are that I set the `pattern` argument to `".csv"` to make sure that I'm getting the right files for `read_csv` (which in this case is less important because that's all that's in the folder). I also set the `full.names` argument to `TRUE` to avoid issues when I render this file. The second tricky bit is getting the geography (i.e., state) from the data. To do this, i have to use a bit of regex wizardry in the `str_exract` function. The `"(?<=_)[:alpha:]+(?=\\.csv$)"` translates to "take any and all letters that appear after the last `_` and before `.csv` appears at the end of the `basename()`. This is a generic way to extract any text between an underscore and a file extension so I show you it here, but with 4 files you could probably do this manually.]{style="color: blue;"}
 
 2. Use `dim()`, `names()`, `glimpse()`, and `summary()` to explore the datasets.
 
@@ -43,9 +49,23 @@ purple_air_list %>%
 
 3. Identify at least two potential data quality issues (e.g., missing values, inconsistent categories, unrealistic ranges). Explain why you think these data might be incorrect and how you might go about verifying them.
 
+[To me, the biggest risks here are the fact that the `id` column has been treated as numeric when it's almost certainly supposed to be a character. Beyond that, the `Max` values for the pm2.5 columns are quite a bit larger than the mean or median suggesting they may be spurious. However, we imagine that these values should "spike" when there's a fire, so we might check to see when those observations occur.]{style="color: blue;"}
+
+```{r chkfire}
+purple_air_list %>% 
+  map(.,\(x) slice_max(x,
+                       order_by = pm2.5_atm,
+                       n=3))
+
+```
+[Looking at the results doesn't give us any real reason to believe that all of these correspond with fires (because several of them happen in the winter or spring), but also don't give us a ton of reason to suspect that they're wrong (because within a state they correspond to relatively consistent time periods). We'll go forward and trust that PurpleAir's data cleaners have done a good job.]{style="color: blue;"}
+
 #### Reflection
 
 1. What assumptions are you making about the data? Are they a reasonable sample? What biases that might exist? Do the potential errors you've spotted impact your analysis? 
+
+[This one is mostly for you, but my initial thoughts are: These data come from people/places where air quality was a concern for some reason. The sensors cost money so they aren't distributed randomly on the landscape or with respect to other socio-demgraphic data. For something as "global" as atmospheric movements of smoke, we might imagine that these finer-scale factors aren't going to bias the broader spatial trend in smoke. But there are some pretty big "holes" in where these data exist that might make it tough to argue that. I also think the strange "max" values in the data suggest that in some places, we risk misattributing pm2.5 to fire when it might actually be caused by something else.]{style="color: blue;"}
+
 
 ## Part 2: Data Manipulation with tidyverse
 
@@ -55,20 +75,94 @@ Use `dplyr` to:
 
 1. Combine all of the datasets into a single dataframe 
 
+```{r combcalc}
+pm25_df <- purple_air_list %>% 
+  list_rbind(., names_to = "state")
+
+sum(
+  map_vec(
+    purple_air_list, \(x) nrow(x))
+    )
+colnames(pm25_df)
+```
+
+[I'll walk through each of these steps, though can really do many of them in a single pipeline. First, I use `list_rbind` to collapse the lists into a single dataframe and use the `names` for each slot in the list as an entry into a new column called `state`(in class, we used `bind_rows` and they will both work, but the syntax for `list_rbind` is a little cleaner in the case where we want each name to be a part of the data). I can do this because all of the elements in my list have the same columns. I then perform a "sanity check" to make sure that this worked as expected by comparing the number of rows (`nrow`) in my resulting `pm25_df` object to the number of rows I get when accessing each dataframe in my list. I calculate this by using `map_vec` (because I want a vector with the `nrow` from each df in the list) and passing the result to `sum`. Both numbers are equal so we can move on, but if they weren't, I'd be concerned that `bind_rows` had dropped some observations.]{style="color: blue;"}
+
 2. Select variables relevant to the overarching research question.
+
+```{r slvar}
+
+pm25_df <- purple_air_list %>% 
+   list_rbind(., names_to = "state") %>% 
+  select(id, time_stamp, humidity, temperature, pm2.5_atm, state)
+
+colnames(pm25_df)
+
+```
+
+[I build on the previous pipeline by adding a simple `select` call for the variables we want. I keep the `id` and `time_stamp` variables because I know we'll need them for filtering and pivoting later. Otherwise, I focus only on the columns with the information I want related to the research question.]{style="color: blue;"}
 
 3. Filter the data to observations from the last 2 years and create a new column that calculates the monthly change in pm2.5 (hint: you'll need `mutate`, `arrange`, and `lag`)
 
+```{r flvar}
+
+pm25_df <- purple_air_list %>% 
+   list_rbind(., names_to = "state") %>% 
+  select(id, time_stamp, humidity, temperature, pm2.5_atm, state) %>% 
+  filter(time_stamp > ymd("2023-08-31")) %>% 
+  mutate(
+    month = floor_date(time_stamp, "month")  # round timestamps to the month
+  ) %>% 
+  group_by(id) %>% 
+  arrange(month, .by_group = TRUE) %>%
+  mutate(pm25_change = pm2.5_atm - lag(pm2.5_atm))
+
+summary(pm25_df$pm25_change)
+length(unique(pm25_df$id))
+
+```
+
+[Building on our pipeline from before, I add a `filter` call. The `time_stamp` variable has a `dttm` class which means that it encodes dates (and times) in a particular way (in this case as a]{style="color: blue;"} [POSIXct object](https://stackoverflow.com/questions/44778721/what-do-ct-and-lt-in-posixct-and-posixlt-mean)). [I use the `lubridate::ymd` function to convert a string (`"08-31-2023"`) to a year-month-date object (which is how the dates in `time_stamp` are formatted) and filter for all observations before that date. Then comes the tricky bit, I use `floor_date` (a function which rounds down to the nearest month) to create a new variable, `month`, inside of a `mutate` call. I then `group_by` each id (to keep the sensors separate) and `arrange` by month within each group (`.by_group=TRUE`). This sorts the data from the earliest month for each id. Finally, I calculate the change in pm2.5 by using the `lag` function to subtract the previous row's value from the current row's value. I expect `NAs` in this calculation for the first observation in each id, because there's nothing to subtract. I double check this by comparing the results of the `summary` and `length` calls for each data set. Note that there are other ways to do this, but this is the most literal translation of the instructions to code.]{style="color: blue;"}
+
 4. Group the data by year and state to calculate the annual mean and standard deviation of all numeric variables for each state.
 
+```{r grpdata}
+pm25_df_grp <- pm25_df %>%  
+  group_by(state, year = year(time_stamp)) %>% 
+  select(!id) %>% 
+  summarise(across(
+      where(is.numeric),
+      list(mean = ~mean(.x, na.rm = TRUE),
+           sd   = ~sd(.x, na.rm = TRUE)),
+      .names = "{.col}_{.fn}"
+    ),
+    .groups = "drop"
+  )
+
+```
+
+[I took the dataframe from our previous step and passed it to `group_by` using `lubridate::year` to create a new grouping variable called `year`. Then, because I want to create a new value based on the grouped data, I use `summarise` with some helpers. The `across(where())` combination says that I want to apply the summary function across all the columns where `is.numeric==TRUE` (the `across` and `where` functions are `dplyr::select` helpers). Because I want to apply two different summaries across the selected columns and be able to drop `NA` values, I have to provide those functions inside a `list`. The `list` contains the functions (applied to the columns selected by the helpers) and any additional arguments to the functions (like `na.rm=TRUE`). Finally, I provide the `.names=` argument to tell `across` what I want the names to be. You'll notice that I used `select` to drop the `id` variable (`!id` means _not_ id) because it was considered numeric when we read the data into R. I knew this would come back to haunt me!! ]{style="color: blue;"}
+
 5. Convert the ungrouped dataset from wide to long format. 
+
+```{r pivotdf}
+pm25_df_long <- pm25_df %>% 
+  pivot_longer(cols=c(humidity:pm2.5_atm, 
+                      pm25_change), 
+               names_to = "measure")
+
+pm25_df_grp_long <- pm25_df_grp %>% 
+  pivot_longer(cols = humidity_mean:pm25_change_sd, 
+               names_to = "measure")
+```
+[In case you were confused about which dataset I mean, I show you `pivot_longer` for both. The key here is that we have more than one column that uniquely identifies each observation (`id` and `time_stamp` in the original dataset, `state` and `year` in the second). I use the `:` to specify column a _through_ column b for columns that are contiguous in the data. For the `pm25_df` data, I need to skip a few columns so I use the `:` in combination with the `c` function to put them all together. Finally, I use the `names_to` agrument to `pivot_longer` to specify what I want the new variable column to be called.]{style="color: blue;"}
 
 #### Reflection
 
 1. How does tidyverse syntax support transparent and reproducible analysis?
-
+[You'll notice in my explanation above, that many of my sentences are actually just narrating the exact code I wrote. This is the power of tidyverse - it translates computer language into human-readable language. The pipes combine functions such that they "read" like instructions. In addition, I am able to run all of these commands within the `tidyverse` making the codestyle consistent and reducing dependencies on packages that may be updated less frequently.]{style="color: blue;"}
 2. In what ways could poor coding style or inconsistent workflows make this analysis harder for collaborators?
-
+[This one's for you!!]{style="color: blue;"}
 ## Part 3: Functions and Iteration
 
 #### Tasks
@@ -78,18 +172,62 @@ Use `dplyr` to:
 #| echo: true
 #| eval: false
 
+1. pass data to function
+2. filter `measure` for `variable`
+3. plot `value` 
+4. add trend
+4. facet
+
+
 
 ```
+[This is a bit of a "dealers choice" you should write this in a way that helps you focus on what you need the function to do. I wanted to think through the things I wanted on the plot - namely, the data themselves and a smoothed trendline]{style="color: blue;"}
 
 Then create the function in this block:
-```{r}
+```{r fundev}
 #| echo: true
 
+plot_through_time <- function(df, variable){
+  df_filt <- df %>% 
+    filter(measure == variable)
+  ggplot(data = df_filt, aes(x = time_stamp, 
+                             y = value)) +
+    geom_point()+
+    geom_smooth() +
+    facet_wrap(~state) +
+    ggtitle(variable)
+}
+
 ```
+[I gave my function a useful, but generic name and assumed I would only need two arguments, `df` for the original data and `variable` for the measure I wanted to use. Having the data in long format helps us here as we don't have to deal with embracing variable names. Once, we've got the filtering correct, it's a matter of preference for plot elements.]{style="color: blue;"}
 
 2. Create a vector of variables and use your function to generate a list of plots (using `map`).
 
+```{r funiter}
+plot_vars <- c("temperature", "humidity", "pm2.5_atm","pm25_change")
+
+time_series_plots <- map(plot_vars, ~ plot_through_time(df = pm25_df_long, variable = .x))
+
+walk(time_series_plots, print)
+```
+
+[Now that we've got our function, I'll just pass a vector of `measure`s (in `plot_vars`) to `map` and iterate through it. I can then use `walk` to pass each element in the my `time_series_plots` list to `print` to be able to see them all. The plots aren't particularly pretty, though we do see some nice seasonal signatures in temperature and humidity and variation in the intensity of those cycles across states. The `pm2.5_atm` and `pm25_change` variables don't show a ton, but that's partially because there some outliers that are orders-of-magnitude larger than the rest of the values. We'll see if we can dig in a little more in the next plot.]{style="color: blue;"}
+
 3. Inspect your plots and choose the variable that follows the trends in pm2.5 the closest. Make a plot of pm2.5 and your chosen variable (one on the x axis and one on the y axis).
+
+```{r}
+
+pm25_df_long %>% 
+  filter(measure  %in% c("pm2.5_atm", "humidity")) %>% 
+  pivot_wider(., names_from = measure) %>% 
+  ggplot(data = ., aes(y = log(`pm2.5_atm`), x = humidity)) +
+  geom_point() +
+  geom_smooth()
+
+
+```
+
+[I find it easier to plot bivariate correlation plots with the data in wide format so that I can assign the columns to specific axes though with some thought there's probably a way to write my own function for that. Once I've used `pivot_wider` to go from long to wide format, I start my `ggplot` call. You'll notice that I was able to convert `pm2.5_atm` to the `log(pm2.5_atm)` directly in the ggplot call. This can be handy when you want to look at transformed data (without changing the data themselves). When we reduce the impact of the outliers, we can see the rest of the variation in the data; however, there's still not a ton of variation (at least not with respect to humidity). It doesn't seem like pm25 corresponds well to regional fire seasons - but maybe we should expect that? After all, smoke isn't in the air during every fire season, only when there's a fire!! It's also not guarenteed that the smoke we might expect comes from fires burning here, but may be from elsewhere with different seasonality. I'm guessing this isn't the most satisfying conclusion, but hopefully you feel better about your datawrangling skills and have thought about other, more realistic analyses you might do with the PurpleAir data!]{style="color: blue;"}
 
 #### Reflection
 
