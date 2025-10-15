@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Intro to Spatial Data in R – Point Patterns II</title>
+<title>Intro to Spatial Data in R - Point Patterns II</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -97,7 +97,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 
 <meta property="og:title" content="Intro to Spatial Data in R - Point Patterns II">
-<meta property="og:description" content="We’re going to focus on using spatstat to simulate and analyze point patterns so the only things you’ll need are packages for this lesson.">
+<meta property="og:description" content="">
 <meta property="og:image" content="https://isdrfall25.classes.spaseslab.com/files/social-image-f22.png">
 <meta property="og:site-name" content="Intro to Spatial Data in R">
 <meta property="og:locale" content="en_US">
@@ -186,11 +186,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <ul class="collapse">
   <li><a href="#ippp-with-a-raster" id="toc-ippp-with-a-raster" class="nav-link" data-scroll-target="#ippp-with-a-raster">IPPP with a <code>raster</code></a></li>
   </ul></li>
-  <li><a href="#getting-intuition-for-the-poisson-distribution-1" id="toc-getting-intuition-for-the-poisson-distribution-1" class="nav-link" data-scroll-target="#getting-intuition-for-the-poisson-distribution-1">Getting intuition for the Poisson Distribution</a></li>
-  <li><a href="#homogenous-point-processes-1" id="toc-homogenous-point-processes-1" class="nav-link" data-scroll-target="#homogenous-point-processes-1">Homogenous Point Processes</a></li>
-  <li><a href="#inhomogeneous-poisson-point-processes-1" id="toc-inhomogeneous-poisson-point-processes-1" class="nav-link" data-scroll-target="#inhomogeneous-poisson-point-processes-1">Inhomogeneous Poisson Point Processes</a>
+  <li><a href="#clustered-patterns" id="toc-clustered-patterns" class="nav-link" data-scroll-target="#clustered-patterns">Clustered patterns</a></li>
+  <li><a href="#characterizing-distance" id="toc-characterizing-distance" class="nav-link" data-scroll-target="#characterizing-distance">Characterizing Distance</a>
   <ul class="collapse">
-  <li><a href="#ippp-with-a-raster-1" id="toc-ippp-with-a-raster-1" class="nav-link" data-scroll-target="#ippp-with-a-raster-1">IPPP with a <code>raster</code></a></li>
+  <li><a href="#nearest-neighbor-distance" id="toc-nearest-neighbor-distance" class="nav-link" data-scroll-target="#nearest-neighbor-distance">Nearest neighbor distance</a></li>
+  <li><a href="#estimating-k" id="toc-estimating-k" class="nav-link" data-scroll-target="#estimating-k">Estimating $K</a></li>
   </ul></li>
   </ul>
 </nav>
@@ -350,6 +350,7 @@ The following object is masked from 'package:tidyr':
 <p>You’ll notice two things. First, the number of points tends to be higher in the upper right corner of the window. This is because we’ve made lambda a quadratic function of the x,y coordinates (meaning that for every unit you move right or up, the intensity doubles from the previous location). You’ll also notice that the actual, realized rate is less predictable (as the mean ends up being 200 despite our expectation that it should be 300).</p>
 <section id="ippp-with-a-raster" class="level3">
 <h3 class="anchored" data-anchor-id="ippp-with-a-raster">IPPP with a <code>raster</code></h3>
+<p>You don’t have to be restricted to (admittedly abstract) functions for generating IPPP. You can also use a raster to depict spatial variation in intensity. You might imagine a situation where you have data on a covariate (like elevation or vegetation type) that you think influences the rate of event occurrenc. I’ll demonstrate that here with a simulated raster:</p>
 <div class="cell">
 <details open="">
 <summary>Code</summary>
@@ -364,155 +365,82 @@ The following object is masked from 'package:tidyr':
 <span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>              <span class="at">xrange =</span> <span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">1</span>),</span>
 <span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>              <span class="at">yrange =</span> <span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">1</span>))</span>
 <span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a><span class="co"># 3️⃣ Generate an inhomogeneous Poisson process</span></span>
-<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">123</span>)</span>
-<span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a>pp_inhom <span class="ot">&lt;-</span> <span class="fu">rpoispp</span>(<span class="at">lambda =</span> r_im)</span>
-<span id="cb12-15"><a href="#cb12-15" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-16"><a href="#cb12-16" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-17"><a href="#cb12-17" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mfrow=</span><span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">2</span>))</span>
-<span id="cb12-18"><a href="#cb12-18" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(r_im, <span class="at">main=</span><span class="st">"Simulated Intensity (raster)"</span>)</span>
-<span id="cb12-19"><a href="#cb12-19" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(pp_inhom, <span class="at">add=</span><span class="cn">TRUE</span>, <span class="at">pch=</span><span class="dv">19</span>, <span class="at">cex=</span><span class="fl">0.5</span>)</span>
-<span id="cb12-20"><a href="#cb12-20" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(pp_inhom, <span class="at">main=</span><span class="st">"Inhomogeneous Poisson Process"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a>pp_inhom_rast <span class="ot">&lt;-</span> <span class="fu">rpoispp</span>(<span class="at">lambda =</span> r_im)</span>
+<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-15"><a href="#cb12-15" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mfrow=</span><span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">2</span>))</span>
+<span id="cb12-16"><a href="#cb12-16" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(r_im, <span class="at">main=</span><span class="st">"Simulated Intensity (raster)"</span>)</span>
+<span id="cb12-17"><a href="#cb12-17" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(pp_inhom_rast, <span class="at">add=</span><span class="cn">TRUE</span>, <span class="at">pch=</span><span class="dv">19</span>, <span class="at">cex=</span><span class="fl">0.5</span>)</span>
+<span id="cb12-18"><a href="#cb12-18" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(pp_inhom_rast, <span class="at">main=</span><span class="st">"Inhomogeneous Poisson Process"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
 <p><img src="16-lesson_files/figure-html/unnamed-chunk-4-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
-<p>lambda_parent &lt;- function(x, y){ 30 * (x + y + 0.2) } clustered &lt;- rThomas(kappa = lambda_parent, sigma = 0.05, mu = 10, win = W) plot(clustered, main = “Inhomogeneous Cluster Process”)</p>
-<p>plot(hpp, main=“Homogeneous Poisson”) plot(density(hpp), main=“Estimated Intensity (HPP)”)</p>
-<p>plot(ipp, main=“Inhomogeneous Poisson”) plot(density(ipp), main=“Estimated Intensity (IPP)”)</p>
-<p>plot(clustered, main=“Clustered Process”) plot(density(clustered), main=“Estimated Intensity (Clustered)”)</p>
-<p>plot(Kest(hpp), main=“K: Homogeneous Poisson”) plot(Kest(ipp), main=“Kinhom: Inhomogeneous Poisson”) plot(Kest(clustered), main=“Kinhom: Clustered”)</p>
-<pre><code>
-
-
-:::{#quarto-navigation-envelope .hidden}
-[Intro to Spatial Data in R]{.hidden render-id="quarto-int-sidebar-title"}
-[Intro to Spatial Data in R]{.hidden render-id="quarto-int-navbar-title"}
-[Syllabus]{.hidden render-id="quarto-int-navbar:Syllabus"}
-[/syllabus.html]{.hidden render-id="quarto-int-navbar:/syllabus.html"}
-[Schedule]{.hidden render-id="quarto-int-navbar:Schedule"}
-[/schedule.html]{.hidden render-id="quarto-int-navbar:/schedule.html"}
-[Content]{.hidden render-id="quarto-int-navbar:Content"}
-[/content/index.html]{.hidden render-id="quarto-int-navbar:/content/index.html"}
-[Assignments]{.hidden render-id="quarto-int-navbar:Assignments"}
-[/assignment/index.html]{.hidden render-id="quarto-int-navbar:/assignment/index.html"}
-[Examples]{.hidden render-id="quarto-int-navbar:Examples"}
-[/example/index.html]{.hidden render-id="quarto-int-navbar:/example/index.html"}
-[Lessons]{.hidden render-id="quarto-int-navbar:Lessons"}
-[/lesson/index.html]{.hidden render-id="quarto-int-navbar:/lesson/index.html"}
-[Resources]{.hidden render-id="quarto-int-navbar:Resources"}
-[/resource/index.html]{.hidden render-id="quarto-int-navbar:/resource/index.html"}
-[https://ecostatsbsu.slack.com/archives/CV4DEJ8M7]{.hidden render-id="quarto-int-navbar:https://ecostatsbsu.slack.com/archives/CV4DEJ8M7"}
-[https://github.com/BSU-Spatial-Data-in-R-Fall2025]{.hidden render-id="quarto-int-navbar:https://github.com/BSU-Spatial-Data-in-R-Fall2025"}
-[https://rstudio.apps.aws.boisestate.edu/]{.hidden render-id="quarto-int-navbar:https://rstudio.apps.aws.boisestate.edu/"}
-[Content  2025 by [Matt Williamson](https://www.spaseslab.com) &lt;br&gt;
-All content licensed under a 
- 
-[Creative Commons Attribution-NonCommercial 4.0 International license (CC BY-NC 4.0)](https://creativecommons.org/licenses/by-nc/4.0/)
-]{.hidden render-id="footer-left"}
-[Made with  and [Quarto](https://quarto.org/)&lt;br&gt;
-[View the source at  GitHub](https://www.github.com/mattwilliamson/isdrfall25)
-Based on websites designed by [Andrew Heiss](https://github.com/andrewheiss/evalf22.classes.andrewheiss.com)
-]{.hidden render-id="footer-right"}
-:::
-
-
-
-:::{#quarto-meta-markdown .hidden}
-[Intro to Spatial Data in R - Point Patterns II]{.hidden render-id="quarto-metatitle"}
-[Intro to Spatial Data in R - Point Patterns II]{.hidden render-id="quarto-twittercardtitle"}
-[Intro to Spatial Data in R - Point Patterns II]{.hidden render-id="quarto-ogcardtitle"}
-[Intro to Spatial Data in R]{.hidden render-id="quarto-metasitename"}
-[]{.hidden render-id="quarto-twittercarddesc"}
-[]{.hidden render-id="quarto-ogcardddesc"}
-:::
-
-
-
-
-&lt;!-- --&gt;
-
-::: {.quarto-embedded-source-code}
-```````````````````{.markdown shortcodes="false"}
----
-title: "Point Patterns II"
----
-
-## Getting Started
-
-We're going to focus on using `spatstat` to simulate and analyze point patterns so the only things you'll need are packages for this lesson. You'll still have to [get our credentials](https://rstudio.aws.boisestate.edu/) and login to a [new RStudio session](https://rstudio.apps.aws.boisestate.edu/).
-
-```{r ldlb}
-library(tidyverse)
-library(spatstat)
-library(terra)
-</code></pre>
+<p>The only thing that’s new here is the conversion of the simulated raster into an <code>im</code> object. <code>spatstat</code> requires rasters to be in this <code>im</code> class for many of the calculations, but it’s easy enough to convert a <code>SpatRaster</code> into an <code>im</code> by using the matrix of values from the raster and providing a few addtional arguments (see <code>?im</code> for more details).</p>
 </section>
 </section>
-<section id="getting-intuition-for-the-poisson-distribution-1" class="level2">
-<h2 class="anchored" data-anchor-id="getting-intuition-for-the-poisson-distribution-1">Getting intuition for the Poisson Distribution</h2>
-<p>An important starting point for these point processes is an understanding of the Poisson distribution. The easiest way to do this is with the <code>rpois</code> function which generates random draws from a Poisson distribution defined by the value passed to <code>lambda</code>.</p>
-<p>quarto-executable-code-5450563D</p>
-<div class="sourceCode" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">hist</span>(<span class="fu">rpois</span>(<span class="at">n =</span> <span class="dv">1000</span>, <span class="at">lambda =</span> <span class="dv">100</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>You can play around with <code>lambda</code> to see how this shifts the number of points you might expect under a fixed spatial domain.</p>
+<section id="clustered-patterns" class="level2">
+<h2 class="anchored" data-anchor-id="clustered-patterns">Clustered patterns</h2>
+<p>The last version of point processes we’ve discussed are those that display second-order inhomogeneity. These are situations where lambada may or may not vary across the landscape <strong>AND</strong> events are not independent of each other (there is attraction or repurepulsion). We can simulate this situation by again providing a function for lambda - to reflect heterogeneity in the rate - and then providing it to one of the clustered pattern generators in <code>spatstat</code> (check out <code>?rThomas</code> or <code>?rMatClust</code> for examples of clustering simulators).</p>
+<div class="cell">
+<details open="">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>lambda_parent <span class="ot">&lt;-</span> <span class="cf">function</span>(x, y){ <span class="dv">30</span> <span class="sc">*</span> (x <span class="sc">+</span> y <span class="sc">+</span> <span class="fl">0.2</span>) }</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>clustered <span class="ot">&lt;-</span> <span class="fu">rThomas</span>(<span class="at">kappa =</span> lambda_parent, <span class="at">sigma =</span> <span class="fl">0.05</span>, <span class="at">mu =</span> <span class="dv">10</span>, <span class="at">win =</span> W)</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(clustered, <span class="at">main =</span> <span class="st">"Inhomogeneous Cluster Process"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<p><img src="16-lesson_files/figure-html/unnamed-chunk-5-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
 </section>
-<section id="homogenous-point-processes-1" class="level2">
-<h2 class="anchored" data-anchor-id="homogenous-point-processes-1">Homogenous Point Processes</h2>
-<p>As we’ve discussed, homogeneous point processes are those with a fixed lambda - meaning everywhere on the landscape has the same probability of having an event (determined by <code>lambda</code>). We can demonstrate this with <code>spatstat</code></p>
-<p>quarto-executable-code-5450563D</p>
-<div class="sourceCode" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">2025</span>)</span>
-<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>W <span class="ot">&lt;-</span> <span class="fu">owin</span>(<span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">1</span>), <span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">1</span>))</span>
-<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>hpp <span class="ot">&lt;-</span> <span class="fu">rpoispp</span>(<span class="at">lambda =</span> <span class="dv">100</span>, <span class="at">win =</span> W, <span class="at">nsim =</span> <span class="dv">1000</span>)</span>
-<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(hpp[<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>], <span class="at">main =</span> <span class="st">"Homogeneous Poisson Process (CSR)"</span>)</span>
-<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a><span class="fu">hist</span>(<span class="fu">map_vec</span>(hpp, npoints))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>As before, you set the window for the analysis using <code>owin</code> and then use <code>rpoispp</code> to generate the homogeneous Poisson point process with <code>lambda=100</code>. I use <code>map_vec</code> to pass the list of 1000 point processes (generated because I set <code>nsim=1000</code>) to the <code>spatstat</code> function <code>npoints</code> which simply counts the number of points in each <code>ppp</code> object. I used <code>map_vec</code> because I want this collapsed into a vector that I can pass to <code>hist</code> so that you can see that the mean value of the simulations is around 100 and equal to our rate.</p>
+<section id="characterizing-distance" class="level2">
+<h2 class="anchored" data-anchor-id="characterizing-distance">Characterizing Distance</h2>
+<section id="nearest-neighbor-distance" class="level3">
+<h3 class="anchored" data-anchor-id="nearest-neighbor-distance">Nearest neighbor distance</h3>
+<p>Estimating nearest neighbor distances is a little different in <code>spatstat</code> because we aren’t using the <code>tidyverse</code>. Don’t sweat that too much - <code>apply</code> behaves in a similar way to the <code>map</code> family of functions. The key bit here is the use of the <code>nndist</code> function.</p>
+<div class="cell">
+<details open="">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>ANN <span class="ot">&lt;-</span> <span class="fu">apply</span>(<span class="fu">nndist</span>(clustered, <span class="at">k=</span><span class="dv">1</span><span class="sc">:</span><span class="dv">50</span>),<span class="dv">2</span>,<span class="at">FUN=</span>mean)</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(ANN <span class="sc">~</span> <span class="fu">eval</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">50</span>), <span class="at">type=</span><span class="st">"b"</span>, <span class="at">las=</span><span class="dv">1</span>, <span class="at">main =</span> <span class="st">"ANN for Homogeneous PP"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<p><img src="16-lesson_files/figure-html/unnamed-chunk-6-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
 </section>
-<section id="inhomogeneous-poisson-point-processes-1" class="level2">
-<h2 class="anchored" data-anchor-id="inhomogeneous-poisson-point-processes-1">Inhomogeneous Poisson Point Processes</h2>
-<p>An IPPP arises in situations where the rate is higher in some parts of the landscape than others. That is, <code>lambda</code> varies spatially. This might simply be a function of location (for example moving from north to south on the globe produces predictable changes in temperature). We can simulate this directly by writing a function for <code>lambda</code> that depends upon coordinates rather than leaving it a single fixed, number.</p>
-<p>quarto-executable-code-5450563D</p>
-<div class="sourceCode" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>lambda_fun <span class="ot">&lt;-</span> <span class="cf">function</span>(x, y){ <span class="dv">300</span> <span class="sc">*</span> (x<span class="sc">^</span><span class="dv">2</span> <span class="sc">+</span> y<span class="sc">^</span><span class="dv">2</span>) }</span>
-<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>ipp <span class="ot">&lt;-</span> <span class="fu">rpoispp</span>(<span class="at">lambda =</span> lambda_fun, <span class="at">win =</span> W, <span class="at">nsim =</span> <span class="dv">1000</span>)</span>
-<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(ipp[<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>], <span class="at">main =</span> <span class="st">"Inhomogeneous Poisson Process"</span>)</span>
-<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a><span class="fu">hist</span>(<span class="fu">map_vec</span>(ipp, npoints))</span>
-<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>You’ll notice two things. First, the number of points tends to be higher in the upper right corner of the window. This is because we’ve made lambda a quadratic function of the x,y coordinates (meaning that for every unit you move right or up, the intensity doubles from the previous location). You’ll also notice that the actual, realized rate is less predictable (as the mean ends up being 200 despite our expectation that it should be 300).</p>
-<section id="ippp-with-a-raster-1" class="level3">
-<h3 class="anchored" data-anchor-id="ippp-with-a-raster-1">IPPP with a <code>raster</code></h3>
-<p>quarto-executable-code-5450563D</p>
-<div class="sourceCode" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(spatstat.geom)</span>
-<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>r <span class="ot">&lt;-</span> <span class="fu">rast</span>(<span class="at">nrows=</span><span class="dv">50</span>, <span class="at">ncols=</span><span class="dv">50</span>, <span class="at">xmin=</span><span class="dv">0</span>, <span class="at">xmax=</span><span class="dv">1</span>, <span class="at">ymin=</span><span class="dv">0</span>, <span class="at">ymax=</span><span class="dv">1</span>)</span>
-<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a><span class="fu">values</span>(r) <span class="ot">&lt;-</span> <span class="fu">exp</span>(<span class="sc">-</span><span class="dv">3</span> <span class="sc">*</span> ((<span class="fu">xFromCell</span>(r, <span class="dv">1</span><span class="sc">:</span><span class="fu">ncell</span>(r)) <span class="sc">-</span> <span class="fl">0.5</span>)<span class="sc">^</span><span class="dv">2</span> <span class="sc">+</span></span>
-<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>                       (<span class="fu">yFromCell</span>(r, <span class="dv">1</span><span class="sc">:</span><span class="fu">ncell</span>(r)) <span class="sc">-</span> <span class="fl">0.5</span>)<span class="sc">^</span><span class="dv">2</span>))</span>
-<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a>r_im <span class="ot">&lt;-</span> <span class="fu">as.im</span>(<span class="fu">as.matrix</span>(r),</span>
-<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a>              <span class="at">xrange =</span> <span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">1</span>),</span>
-<span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a>              <span class="at">yrange =</span> <span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">1</span>))</span>
-<span id="cb17-11"><a href="#cb17-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-12"><a href="#cb17-12" aria-hidden="true" tabindex="-1"></a><span class="co"># 3️⃣ Generate an inhomogeneous Poisson process</span></span>
-<span id="cb17-13"><a href="#cb17-13" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">123</span>)</span>
-<span id="cb17-14"><a href="#cb17-14" aria-hidden="true" tabindex="-1"></a>pp_inhom <span class="ot">&lt;-</span> <span class="fu">rpoispp</span>(<span class="at">lambda =</span> r_im)</span>
-<span id="cb17-15"><a href="#cb17-15" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-16"><a href="#cb17-16" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-17"><a href="#cb17-17" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mfrow=</span><span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">2</span>))</span>
-<span id="cb17-18"><a href="#cb17-18" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(r_im, <span class="at">main=</span><span class="st">"Simulated Intensity (raster)"</span>)</span>
-<span id="cb17-19"><a href="#cb17-19" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(pp_inhom, <span class="at">add=</span><span class="cn">TRUE</span>, <span class="at">pch=</span><span class="dv">19</span>, <span class="at">cex=</span><span class="fl">0.5</span>)</span>
-<span id="cb17-20"><a href="#cb17-20" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(pp_inhom, <span class="at">main=</span><span class="st">"Inhomogeneous Poisson Process"</span>)</span>
-<span id="cb17-21"><a href="#cb17-21" aria-hidden="true" tabindex="-1"></a></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>lambda_parent &lt;- function(x, y){ 30 * (x + y + 0.2) } clustered &lt;- rThomas(kappa = lambda_parent, sigma = 0.05, mu = 10, win = W) plot(clustered, main = “Inhomogeneous Cluster Process”)</p>
-<p>plot(hpp, main=“Homogeneous Poisson”) plot(density(hpp), main=“Estimated Intensity (HPP)”)</p>
-<p>plot(ipp, main=“Inhomogeneous Poisson”) plot(density(ipp), main=“Estimated Intensity (IPP)”)</p>
-<p>plot(clustered, main=“Clustered Process”) plot(density(clustered), main=“Estimated Intensity (Clustered)”)</p>
-<p>plot(Kest(hpp), main=“K: Homogeneous Poisson”) plot(Kest(ipp), main=“Kinhom: Inhomogeneous Poisson”) plot(Kest(clustered), main=“Kinhom: Clustered”)</p>
-<pre><code></code></pre>
-<p>:::</p>
+<section id="estimating-k" class="level3">
+<h3 class="anchored" data-anchor-id="estimating-k">Estimating $K</h3>
+<p>Finally, you can use the <code>spatstat::Kest</code> function to generate the Ripley’s K estimates we discussed in class. Try swapping <code>Kest</code> with <code>Kinhom</code> and check out the differences!</p>
+<div class="cell">
+<details open="">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(<span class="fu">Kest</span>(hpp[[<span class="dv">1</span>]]), <span class="at">main=</span><span class="st">"K: Homogeneous Poisson"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<p><img src="16-lesson_files/figure-html/unnamed-chunk-7-1.png" class="img-fluid" width="672"></p>
+</div>
+<details open="">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(<span class="fu">Kest</span>(ipp[[<span class="dv">1</span>]]), <span class="at">main=</span><span class="st">"Kinhom: Inhomogeneous Poisson"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<p><img src="16-lesson_files/figure-html/unnamed-chunk-7-2.png" class="img-fluid" width="672"></p>
+</div>
+<details open="">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(<span class="fu">Kest</span>(clustered), <span class="at">main=</span><span class="st">"Kinhom: Clustered"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<p><img src="16-lesson_files/figure-html/unnamed-chunk-7-3.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+
+
+<!-- -->
+
 </section>
 </section>
 
@@ -800,26 +728,137 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     }
   }
 });
-</script>
+</script><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Source Code</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">
+<div class="sourceCode" id="cb18" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a><span class="an">title:</span><span class="co"> "Point Patterns II"</span></span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a><span class="fu">## Getting Started</span></span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a>We're going to focus on using <span class="in">`spatstat`</span> to simulate and analyze point patterns so the only things you'll need are packages for this lesson. You'll still have to <span class="co">[</span><span class="ot">get our credentials</span><span class="co">](https://rstudio.aws.boisestate.edu/)</span> and login to a <span class="co">[</span><span class="ot">new RStudio session</span><span class="co">](https://rstudio.apps.aws.boisestate.edu/)</span>.</span>
+<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a><span class="in">```{r ldlb}</span></span>
+<span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb18-11"><a href="#cb18-11" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(spatstat)</span>
+<span id="cb18-12"><a href="#cb18-12" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(terra)</span>
+<span id="cb18-13"><a href="#cb18-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-14"><a href="#cb18-14" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb18-15"><a href="#cb18-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-16"><a href="#cb18-16" aria-hidden="true" tabindex="-1"></a><span class="fu">## Getting intuition for the Poisson Distribution</span></span>
+<span id="cb18-17"><a href="#cb18-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-18"><a href="#cb18-18" aria-hidden="true" tabindex="-1"></a>An important starting point for these point processes is an understanding of the Poisson distribution. The easiest way to do this is with the <span class="in">`rpois`</span> function which generates random draws from a Poisson distribution defined by the value passed to <span class="in">`lambda`</span>.</span>
+<span id="cb18-19"><a href="#cb18-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-22"><a href="#cb18-22" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb18-23"><a href="#cb18-23" aria-hidden="true" tabindex="-1"></a><span class="fu">hist</span>(<span class="fu">rpois</span>(<span class="at">n =</span> <span class="dv">1000</span>, <span class="at">lambda =</span> <span class="dv">100</span>))</span>
+<span id="cb18-24"><a href="#cb18-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-25"><a href="#cb18-25" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb18-26"><a href="#cb18-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-27"><a href="#cb18-27" aria-hidden="true" tabindex="-1"></a>You can play around with <span class="in">`lambda`</span> to see how this shifts the number of points you might expect under a fixed spatial domain.</span>
+<span id="cb18-28"><a href="#cb18-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-29"><a href="#cb18-29" aria-hidden="true" tabindex="-1"></a><span class="fu">## Homogenous Point Processes</span></span>
+<span id="cb18-30"><a href="#cb18-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-31"><a href="#cb18-31" aria-hidden="true" tabindex="-1"></a>As we've discussed, homogeneous point processes are those with a fixed lambda - meaning everywhere on the landscape has the same probability of having an event (determined by <span class="in">`lambda`</span>). We can demonstrate this with <span class="in">`spatstat`</span></span>
+<span id="cb18-32"><a href="#cb18-32" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-35"><a href="#cb18-35" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb18-36"><a href="#cb18-36" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">2025</span>)</span>
+<span id="cb18-37"><a href="#cb18-37" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-38"><a href="#cb18-38" aria-hidden="true" tabindex="-1"></a>W <span class="ot">&lt;-</span> <span class="fu">owin</span>(<span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">1</span>), <span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">1</span>))</span>
+<span id="cb18-39"><a href="#cb18-39" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-40"><a href="#cb18-40" aria-hidden="true" tabindex="-1"></a>hpp <span class="ot">&lt;-</span> <span class="fu">rpoispp</span>(<span class="at">lambda =</span> <span class="dv">100</span>, <span class="at">win =</span> W, <span class="at">nsim =</span> <span class="dv">1000</span>)</span>
+<span id="cb18-41"><a href="#cb18-41" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(hpp[<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>], <span class="at">main =</span> <span class="st">"Homogeneous Poisson Process (CSR)"</span>)</span>
+<span id="cb18-42"><a href="#cb18-42" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-43"><a href="#cb18-43" aria-hidden="true" tabindex="-1"></a><span class="fu">hist</span>(<span class="fu">map_vec</span>(hpp, npoints))</span>
+<span id="cb18-44"><a href="#cb18-44" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-45"><a href="#cb18-45" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb18-46"><a href="#cb18-46" aria-hidden="true" tabindex="-1"></a>As before, you set the window for the analysis using <span class="in">`owin`</span> and then use <span class="in">`rpoispp`</span> to generate the homogeneous Poisson point process with <span class="in">`lambda=100`</span>. I use <span class="in">`map_vec`</span> to pass the list of 1000 point processes (generated because I set <span class="in">`nsim=1000`</span>) to the <span class="in">`spatstat`</span> function <span class="in">`npoints`</span> which simply counts the number of points in each <span class="in">`ppp`</span> object. I used <span class="in">`map_vec`</span> because I want this collapsed into a vector that I can pass to <span class="in">`hist`</span> so that you can see that the mean value of the simulations is around 100 and equal to our rate. </span>
+<span id="cb18-47"><a href="#cb18-47" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-48"><a href="#cb18-48" aria-hidden="true" tabindex="-1"></a><span class="fu">## Inhomogeneous Poisson Point Processes</span></span>
+<span id="cb18-49"><a href="#cb18-49" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-50"><a href="#cb18-50" aria-hidden="true" tabindex="-1"></a>An IPPP arises in situations where the rate is higher in some parts of the landscape than others. That is, <span class="in">`lambda`</span> varies spatially. This might simply be a function of location (for example moving from north to south on the globe produces predictable changes in temperature). We can simulate this directly by writing a function for <span class="in">`lambda`</span> that depends upon coordinates rather than leaving it a single fixed, number.</span>
+<span id="cb18-51"><a href="#cb18-51" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-54"><a href="#cb18-54" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb18-55"><a href="#cb18-55" aria-hidden="true" tabindex="-1"></a>lambda_fun <span class="ot">&lt;-</span> <span class="cf">function</span>(x, y){ <span class="dv">300</span> <span class="sc">*</span> (x<span class="sc">^</span><span class="dv">2</span> <span class="sc">+</span> y<span class="sc">^</span><span class="dv">2</span>) }</span>
+<span id="cb18-56"><a href="#cb18-56" aria-hidden="true" tabindex="-1"></a>ipp <span class="ot">&lt;-</span> <span class="fu">rpoispp</span>(<span class="at">lambda =</span> lambda_fun, <span class="at">win =</span> W, <span class="at">nsim =</span> <span class="dv">1000</span>)</span>
+<span id="cb18-57"><a href="#cb18-57" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(ipp[<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>], <span class="at">main =</span> <span class="st">"Inhomogeneous Poisson Process"</span>)</span>
+<span id="cb18-58"><a href="#cb18-58" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-59"><a href="#cb18-59" aria-hidden="true" tabindex="-1"></a><span class="fu">hist</span>(<span class="fu">map_vec</span>(ipp, npoints))</span>
+<span id="cb18-60"><a href="#cb18-60" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-61"><a href="#cb18-61" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-62"><a href="#cb18-62" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb18-63"><a href="#cb18-63" aria-hidden="true" tabindex="-1"></a>You'll notice two things. First, the number of points tends to be higher in the upper right corner of the window. This is because we've made lambda a quadratic function of the x,y coordinates (meaning that for every unit you move right or up, the intensity doubles from the previous location). You'll also notice that the actual, realized rate is less predictable (as the mean ends up being 200 despite our expectation that it should be 300).</span>
+<span id="cb18-64"><a href="#cb18-64" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-65"><a href="#cb18-65" aria-hidden="true" tabindex="-1"></a><span class="fu">### IPPP with a `raster`</span></span>
+<span id="cb18-66"><a href="#cb18-66" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-67"><a href="#cb18-67" aria-hidden="true" tabindex="-1"></a>You don't have to be restricted to (admittedly abstract) functions for generating IPPP. You can also use a raster to depict spatial variation in intensity. You might imagine a situation where you have data on a covariate (like elevation or vegetation type) that you think influences the rate of event occurrenc. I'll demonstrate that here with a simulated raster:</span>
+<span id="cb18-68"><a href="#cb18-68" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-69"><a href="#cb18-69" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-72"><a href="#cb18-72" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb18-73"><a href="#cb18-73" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(spatstat.geom)</span>
+<span id="cb18-74"><a href="#cb18-74" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-75"><a href="#cb18-75" aria-hidden="true" tabindex="-1"></a>r <span class="ot">&lt;-</span> <span class="fu">rast</span>(<span class="at">nrows=</span><span class="dv">50</span>, <span class="at">ncols=</span><span class="dv">50</span>, <span class="at">xmin=</span><span class="dv">0</span>, <span class="at">xmax=</span><span class="dv">1</span>, <span class="at">ymin=</span><span class="dv">0</span>, <span class="at">ymax=</span><span class="dv">1</span>)</span>
+<span id="cb18-76"><a href="#cb18-76" aria-hidden="true" tabindex="-1"></a><span class="fu">values</span>(r) <span class="ot">&lt;-</span> <span class="fu">exp</span>(<span class="sc">-</span><span class="dv">3</span> <span class="sc">*</span> ((<span class="fu">xFromCell</span>(r, <span class="dv">1</span><span class="sc">:</span><span class="fu">ncell</span>(r)) <span class="sc">-</span> <span class="fl">0.5</span>)<span class="sc">^</span><span class="dv">2</span> <span class="sc">+</span></span>
+<span id="cb18-77"><a href="#cb18-77" aria-hidden="true" tabindex="-1"></a>                       (<span class="fu">yFromCell</span>(r, <span class="dv">1</span><span class="sc">:</span><span class="fu">ncell</span>(r)) <span class="sc">-</span> <span class="fl">0.5</span>)<span class="sc">^</span><span class="dv">2</span>))</span>
+<span id="cb18-78"><a href="#cb18-78" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-79"><a href="#cb18-79" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-80"><a href="#cb18-80" aria-hidden="true" tabindex="-1"></a>r_im <span class="ot">&lt;-</span> <span class="fu">as.im</span>(<span class="fu">as.matrix</span>(r),</span>
+<span id="cb18-81"><a href="#cb18-81" aria-hidden="true" tabindex="-1"></a>              <span class="at">xrange =</span> <span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">1</span>),</span>
+<span id="cb18-82"><a href="#cb18-82" aria-hidden="true" tabindex="-1"></a>              <span class="at">yrange =</span> <span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">1</span>))</span>
+<span id="cb18-83"><a href="#cb18-83" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-84"><a href="#cb18-84" aria-hidden="true" tabindex="-1"></a>pp_inhom_rast <span class="ot">&lt;-</span> <span class="fu">rpoispp</span>(<span class="at">lambda =</span> r_im)</span>
+<span id="cb18-85"><a href="#cb18-85" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-86"><a href="#cb18-86" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-87"><a href="#cb18-87" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mfrow=</span><span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">2</span>))</span>
+<span id="cb18-88"><a href="#cb18-88" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(r_im, <span class="at">main=</span><span class="st">"Simulated Intensity (raster)"</span>)</span>
+<span id="cb18-89"><a href="#cb18-89" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(pp_inhom_rast, <span class="at">add=</span><span class="cn">TRUE</span>, <span class="at">pch=</span><span class="dv">19</span>, <span class="at">cex=</span><span class="fl">0.5</span>)</span>
+<span id="cb18-90"><a href="#cb18-90" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(pp_inhom_rast, <span class="at">main=</span><span class="st">"Inhomogeneous Poisson Process"</span>)</span>
+<span id="cb18-91"><a href="#cb18-91" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-92"><a href="#cb18-92" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-93"><a href="#cb18-93" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb18-94"><a href="#cb18-94" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-95"><a href="#cb18-95" aria-hidden="true" tabindex="-1"></a>The only thing that's new here is the conversion of the simulated raster into an <span class="in">`im`</span> object. <span class="in">`spatstat`</span> requires rasters to be in this <span class="in">`im`</span> class for many of the calculations, but it's easy enough to convert a <span class="in">`SpatRaster`</span> into an <span class="in">`im`</span> by using the matrix of values from the raster and providing a few addtional arguments (see <span class="in">`?im`</span> for more details).</span>
+<span id="cb18-96"><a href="#cb18-96" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-97"><a href="#cb18-97" aria-hidden="true" tabindex="-1"></a><span class="fu">## Clustered patterns</span></span>
+<span id="cb18-98"><a href="#cb18-98" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-99"><a href="#cb18-99" aria-hidden="true" tabindex="-1"></a>The last version of point processes we've discussed are those that display second-order inhomogeneity. These are situations where lambada may or may not vary across the landscape **AND** events are not independent of each other (there is attraction or repurepulsion).</span>
+<span id="cb18-100"><a href="#cb18-100" aria-hidden="true" tabindex="-1"></a>We can simulate this situation by again providing a function for lambda - to reflect heterogeneity in the rate - and then providing it to one of the clustered pattern generators in <span class="in">`spatstat`</span> (check out <span class="in">`?rThomas`</span> or <span class="in">`?rMatClust`</span> for examples of clustering simulators).</span>
+<span id="cb18-101"><a href="#cb18-101" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-104"><a href="#cb18-104" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb18-105"><a href="#cb18-105" aria-hidden="true" tabindex="-1"></a>lambda_parent <span class="ot">&lt;-</span> <span class="cf">function</span>(x, y){ <span class="dv">30</span> <span class="sc">*</span> (x <span class="sc">+</span> y <span class="sc">+</span> <span class="fl">0.2</span>) }</span>
+<span id="cb18-106"><a href="#cb18-106" aria-hidden="true" tabindex="-1"></a>clustered <span class="ot">&lt;-</span> <span class="fu">rThomas</span>(<span class="at">kappa =</span> lambda_parent, <span class="at">sigma =</span> <span class="fl">0.05</span>, <span class="at">mu =</span> <span class="dv">10</span>, <span class="at">win =</span> W)</span>
+<span id="cb18-107"><a href="#cb18-107" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(clustered, <span class="at">main =</span> <span class="st">"Inhomogeneous Cluster Process"</span>)</span>
+<span id="cb18-108"><a href="#cb18-108" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb18-109"><a href="#cb18-109" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-110"><a href="#cb18-110" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-111"><a href="#cb18-111" aria-hidden="true" tabindex="-1"></a><span class="fu">## Characterizing Distance</span></span>
+<span id="cb18-112"><a href="#cb18-112" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-113"><a href="#cb18-113" aria-hidden="true" tabindex="-1"></a><span class="fu">### Nearest neighbor distance</span></span>
+<span id="cb18-114"><a href="#cb18-114" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-115"><a href="#cb18-115" aria-hidden="true" tabindex="-1"></a>Estimating nearest neighbor distances is a little different in <span class="in">`spatstat`</span> because we aren't using the <span class="in">`tidyverse`</span>. Don't sweat that too much - <span class="in">`apply`</span> behaves in a similar way to the <span class="in">`map`</span> family of functions. The key bit here is the use of the <span class="in">`nndist`</span> function. </span>
+<span id="cb18-118"><a href="#cb18-118" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb18-119"><a href="#cb18-119" aria-hidden="true" tabindex="-1"></a>ANN <span class="ot">&lt;-</span> <span class="fu">apply</span>(<span class="fu">nndist</span>(clustered, <span class="at">k=</span><span class="dv">1</span><span class="sc">:</span><span class="dv">50</span>),<span class="dv">2</span>,<span class="at">FUN=</span>mean)</span>
+<span id="cb18-120"><a href="#cb18-120" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(ANN <span class="sc">~</span> <span class="fu">eval</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">50</span>), <span class="at">type=</span><span class="st">"b"</span>, <span class="at">las=</span><span class="dv">1</span>, <span class="at">main =</span> <span class="st">"ANN for Homogeneous PP"</span>)</span>
+<span id="cb18-121"><a href="#cb18-121" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-122"><a href="#cb18-122" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb18-123"><a href="#cb18-123" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-124"><a href="#cb18-124" aria-hidden="true" tabindex="-1"></a><span class="fu">### Estimating $K#</span></span>
+<span id="cb18-125"><a href="#cb18-125" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-126"><a href="#cb18-126" aria-hidden="true" tabindex="-1"></a>Finally, you can use the <span class="in">`spatstat::Kest`</span> function to generate the Ripley's K estimates we discussed in class. Try swapping <span class="in">`Kest`</span> with <span class="in">`Kinhom`</span> and check out the differences!</span>
+<span id="cb18-127"><a href="#cb18-127" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-130"><a href="#cb18-130" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb18-131"><a href="#cb18-131" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(<span class="fu">Kest</span>(hpp[[<span class="dv">1</span>]]), <span class="at">main=</span><span class="st">"K: Homogeneous Poisson"</span>)</span>
+<span id="cb18-132"><a href="#cb18-132" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(<span class="fu">Kest</span>(ipp[[<span class="dv">1</span>]]), <span class="at">main=</span><span class="st">"Kinhom: Inhomogeneous Poisson"</span>)</span>
+<span id="cb18-133"><a href="#cb18-133" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(<span class="fu">Kest</span>(clustered), <span class="at">main=</span><span class="st">"Kinhom: Clustered"</span>)</span>
+<span id="cb18-134"><a href="#cb18-134" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+</code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div></div></div></div></div>
 </div> <!-- /content -->
 <footer class="footer">
   <div class="nav-footer">
-    <div class="nav-footer-left">
-      <div class="footer-contents">Content  2025 by [Matt Williamson](https://www.spaseslab.com) <br>
-All content licensed under a 
- 
-[Creative Commons Attribution-NonCommercial 4.0 International license (CC BY-NC 4.0)](https://creativecommons.org/licenses/by-nc/4.0/)
-</div>  
-    </div>   
+    <div class="nav-footer-left">Content <i class="fa-brands fa-creative-commons" aria-hidden="true"></i> 2025 by <a href="https://www.spaseslab.com">Matt Williamson</a> <br> All content licensed under a <i class="fa-brands fa-creative-commons" aria-hidden="true"></i> <i class="fa-brands fa-creative-commons-by" aria-hidden="true"></i> <i class="fa-brands fa-creative-commons-nc" aria-hidden="true"></i> <a href="https://creativecommons.org/licenses/by-nc/4.0/">Creative Commons Attribution-NonCommercial 4.0 International license (CC BY-NC 4.0)</a></div>   
     <div class="nav-footer-center">
       &nbsp;
     </div>
-    <div class="nav-footer-right">
-      <div class="footer-contents">Made with  and [Quarto](https://quarto.org/)<br>
-[View the source at  GitHub](https://www.github.com/mattwilliamson/isdrfall25)
-Based on websites designed by [Andrew Heiss](https://github.com/andrewheiss/evalf22.classes.andrewheiss.com)
-</div>  
-    </div>
+    <div class="nav-footer-right">Made with <i class="fa-brands fa-r-project" aria-hidden="true"></i> and <a href="https://quarto.org/">Quarto</a><br> <a href="https://www.github.com/mattwilliamson/isdrfall25">View the source at <i class="fa-brands fa-github" aria-hidden="true"></i> GitHub</a> Based on websites designed by <a href="https://github.com/andrewheiss/evalf22.classes.andrewheiss.com">Andrew Heiss</a></div>
   </div>
 </footer>
 

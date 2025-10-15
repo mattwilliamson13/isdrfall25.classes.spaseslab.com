@@ -1,0 +1,56 @@
+---
+title: "Data Models, Coordinates, and Geometries"
+date: "2025-09-15"
+---
+
+```{r slides-videos, echo=FALSE, include=FALSE}
+source(here::here("R", "slide-things.R"))
+
+```
+
+Now that you've gotten an introduction (or refresher) to the logic of tidy data and the `tidyverse`, we can move into the actual spatial portion of the class! The first step in doing that is understanding how/why spatial data differs from more traditional tabular datasets.  
+
+## Readings
+
+### Setting the Stage
+
+[Data Types and Spatial Data Models](https://www.opengeomatics.ca/types-of-data.html) by Skeeter and Pickell provides a general overview of different data types and how we might think about storing them spatially.
+
+{{< fa arrow-up-right-from-square >}} [Types of Spatial Data](https://www.paulamoraga.com/book-spatial/types-of-spatial-data.html) from Paula Moraga's new book Spatial Statistics for Data Science: Theory and Practice with `R` provides a nice overview of the types of spatial data from the perspective of a statistical analyst.
+
+{{< fa arrow-up-right-from-square >}} [Attributes and Support](https://r-spatial.org/book/05-Attributes.html) from Pebesma and Bivand's Spatial Data Science with Applications in `R` gives more info and examples on the nature of the relationship between geometries and support.
+
+### Technical Details
+
+- <i class="fas fa-external-link-square-alt"></i> The introductory vignette for the [`sf` package](https://r-spatial.github.io/sf/articles/sf1.html) has a lot of useful info on `sf` objects and conventions.
+
+{{< fa arrow-up-right-from-square >}} [Chapter 2](https://r.geocompx.org/spatial-class) in Geocomputation with R [@lovelace_geocomputation_2019] provides and overview of using `sf` for vector datasets and `terra` for raster data.
+
+
+## Objectives
+By the end of today you should be able to:
+
+
+* **Contrast** the different "views" of spatial data and their incorporation in GIS.
+
+* **Identify** key elements that make data "spatial".
+
+* **Recognize** the relationship between geometries and support.
+
+* **Access** geographic attributes of spatial objects using `sf` and `terra`
+
+## Slides
+The slides for today's lesson are available online as an HTML file. Use the buttons below to open the slides either as an interactive website or as a static PDF (for printing or storing for later). You can also click in the slides below and navigate through them with your left and right arrow keys.
+
+```{r show-slide-tabs, echo=FALSE, results="asis"}
+slide_buttons("/slides/07-slides")
+```
+
+<div>
+
+```{=html}
+<iframe class="slide-deck" src="/slides/07-slides.html"></iframe>
+```
+
+</div>
+

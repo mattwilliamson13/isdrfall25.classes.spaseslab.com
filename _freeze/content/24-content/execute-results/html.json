@@ -1,0 +1,14 @@
+{
+  "hash": "82bfa2ea6435fe55c5ca4da775745177",
+  "result": {
+    "markdown": "---\ntitle: \"Statistical Modelling III\"\ndate: \"2023-11-8\"\n---\n\n\n\n\nIn our last class on multivariate analysis, we'll take on one of the more underappreciated elements of modeling: understanding if your model is good enough for prediction or inference. We'll spend a bit of time differentiating the uses of models as a means of understanding what it means to be a \"good\" model.\n\n\n## Resources\n\n- <i class=\"fas fa-external-link-square-alt\"></i> [A practical guide to selecting models for exploration, inference, and prediction in ecology](https://esajournals.onlinelibrary.wiley.com/doi/full/10.1002/ecy.3336) by [@Tredennick2021] highlights the importance of understanding model performance before making inference on predictor effects.\n\n- <i class=\"fas fa-external-link-square-alt\"></i> [Model selection using information criteria, but is the “best” model any good?](https://besjournals.onlinelibrary.wiley.com/doi/10.1111/1365-2664.13060) by [@Mac_Nally2018] highlights the importance of understanding model performance before making inference on predictor effects.\n\n- <i class=\"fas fa-external-link-square-alt\"></i> [Standards for distribution models in biodiversity assessments](https://www.science.org/doi/10.1126/sciadv.aat4858) by [@Araujo2019] highlights the importance of understanding model performance before making inference on predictor effects.\n\n## Objectives\n\nBy the end of today you should be able to:\n\n- Articulate three different reasons for modeling and how they link to assessments of fit\n\n- Describe and implement several test statistics for assessing model fit\n\n- Describe and implement several assessments of classification\n\n- Describe and implement resampling techniques to estimate predictive performance\n\n\n<p class=\"text-center buttons\"><a class=\"btn btn-danger\" target=\"_blank\" href=\"/slides/24-slides.html\"><i class=\"fa-solid fa-arrow-up-right-from-square\"></i> View all slides in new window</a> <a class=\"btn btn-danger\" target=\"_blank\" href=\"/slides/24-slides.pdf\" role=\"button\"><i class=\"fa-solid fa-file-pdf\"></i> Download PDF of all slides</a></p>\n\n\n<div>\n\n\n```{=html}\n<iframe class=\"slide-deck\" src=\"/slides/24-slides.html\"></iframe>\n```\n\n\n</div>\n\n[Panopto Video](https://boisestate.hosted.panopto.com/Panopto/Pages/Viewer.aspx?id=4490849b-8188-40a6-b657-b0b201521f29&start=0)\n",
+    "supporting": [],
+    "filters": [
+      "rmarkdown/pagebreak.lua"
+    ],
+    "includes": {},
+    "engineDependencies": {},
+    "preserve": {},
+    "postProcess": true
+  }
+}

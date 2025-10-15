@@ -1,0 +1,14 @@
+{
+  "hash": "1e968a7a62ea13a6ee5c8493c2526bed",
+  "result": {
+    "markdown": "---\ntitle: \"Movement and Networks I\"\ndate: \"2023-11-13\"\n---\n\n\n\n\nToday we're going to finish up some of the model evaluation and prediction pieces from last week and then take a brief detour into the use of spatial information in networks. To do that, we'll need to introduce some basic concepts of networks before getting too far down the road of the syntax.\n\n## Resources\n\n- <i class=\"fas fa-external-link-square-alt\"></i> [Landscape connectivity: A graph-theoretic perspective](https://esajournals.onlinelibrary.wiley.com/doi/full/10.1890/0012-9658%282001%29082%5B1205%3ALCAGTP%5D2.0.CO%3B2) by [@urban] introduces the notion of using networks and graphs to understand ecological connectivity.\n\n- <i class=\"fas fa-external-link-square-alt\"></i> [Connectivity for conservation: a framework to classify network measures](https://esajournals.onlinelibrary.wiley.com/doi/full/10.1890/09-2190.1) by [@rayfield] helps simplify the (often overwhelming nature) of terminology and network metrics.\n\n- <i class=\"fas fa-external-link-square-alt\"></i> [Graphs and network science: and introduction](https://livebook.manning.com/book/graphs-and-network-science-an-introduction/chapter-1/) provides a little simpler, but less spatially informed introduction to the tasks of network analysis.\n\n\n## Objectives\n\nBy the end of today you should be able to:\n\n- Use cross-validation to evaluate your models\n\n- Define a network and it's key components\n\n- Identify major questions that we can address with networks\n\n\n<p class=\"text-center buttons\"><a class=\"btn btn-danger\" target=\"_blank\" href=\"/slides/25-slides.html\"><i class=\"fa-solid fa-arrow-up-right-from-square\"></i> View all slides in new window</a> <a class=\"btn btn-danger\" target=\"_blank\" href=\"/slides/25-slides.pdf\" role=\"button\"><i class=\"fa-solid fa-file-pdf\"></i> Download PDF of all slides</a></p>\n\n\n<div>\n\n\n```{=html}\n<iframe class=\"slide-deck\" src=\"/slides/25-slides.html\"></iframe>\n```\n\n\n</div>\n\n\n[Panopto Video](https://boisestate.hosted.panopto.com/Panopto/Pages/Viewer.aspx?id=abc2638d-a228-42a8-b585-b0b9015323a0)",
+    "supporting": [],
+    "filters": [
+      "rmarkdown/pagebreak.lua"
+    ],
+    "includes": {},
+    "engineDependencies": {},
+    "preserve": {},
+    "postProcess": true
+  }
+}

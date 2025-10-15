@@ -1,0 +1,55 @@
+---
+title: "Point Patterns II"
+date: "2025-10-15"
+---
+
+```{r slides-videos, echo=FALSE, include=FALSE}
+source(here::here("R", "slide-things.R"))
+
+```
+
+We'll continue our discussion of point patterns by looking at second-order effects and approaches for incorporating "marks" into our analysis.
+
+## Resources
+
+### Bigger Picture
+
+- <i class="fas fa-external-link-square-alt"></i> [Point process models for presence-only analysis](https://besjournals.onlinelibrary.wiley.com/doi/full/10.1111/2041-210X.12352) by [@Renner2015] has an excellent overview of ways to treat presence-only data (i.e., things from citizen science datasets, herbariums, arrest locations, etc where there was not a systematic sample for presences **and** absences) in a point process modeling framework.
+
+- <i class="fas fa-external-link-square-alt"></i> [Spatial Point Pattern Analysis and Its Application in Geographical Epidemiology](https://www.jstor.org/stable/pdf/622936.pdf) by [@gatrell1996] provides a broad overview of point patterns and processes along with some extensions and critiques based on the nature of epidemiological data. Some important points here for anyone thinking about a process that might be considered "contagious" (or spreading). 
+
+### Technical Details
+
+- <i class="fas fa-book"></i> [Chapters 17 and 18](https://www.paulamoraga.com/book-spatial/spatial-point-patterns.html) on Spatial Point Processes and the `spatstat` package in Paula Moraga's book _Spatial Statistics for Data Science: Theory and Practice with R_.
+
+- <i class="fas fa-book"></i> [Chapter 11](https://r-spatial.org/book/11-PointPattern.html) in [@sds] illustrates the interaction between the `sf` package and `spatstat` package for point pattern analysis.
+
+## Objectives
+
+By the end of today you should be able to:
+
+- **Recognize** the linkage between point process models and the Poisson Distribution
+
+- **Differentiate** between first- and second-order effects in point processes
+
+- **Simulate** point patterns and use density and distance functions to assess first- and second-order effects
+
+
+
+
+## Slides
+
+The slides for today's lesson are available online as an HTML file. Use the buttons below to open the slides either as an interactive website or as a static PDF (for printing or storing for later). You can also click in the slides below and navigate through them with your left and right arrow keys.
+
+```{r show-slide-tabs, echo=FALSE, results="asis"}
+slide_buttons("/slides/16-slides")
+```
+
+<div>
+
+```{=html}
+<iframe class="slide-deck" src="/slides/16-slides.html"></iframe>
+```
+
+</div>
+[Link to Zoom Recording](https://boisestate.zoom.us/rec/share/VWjWFUjEP0QUAw0gbDCfB8AwskdY0qUx_z534eYjuyimlqs1BdQhfYZTfJusTAg2.WMmVMKEYMcahXAG2)
