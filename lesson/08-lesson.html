@@ -1,0 +1,1723 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.3.450">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Intro to Spatial Data in R - Projections, Extent, and Resolution</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<link href="..//files/iSDR_logo.png" rel="icon" type="image/png">
+<script src="../site_libs/quarto-html/quarto.js"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/quarto-contrib/fontawesome6-0.1.0/all.css" rel="stylesheet">
+<link href="../site_libs/quarto-contrib/fontawesome6-0.1.0/latex-fontsize.css" rel="stylesheet">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+
+<meta property="og:title" content="Intro to Spatial Data in R - Projections, Extent, and Resolution">
+<meta property="og:description" content="">
+<meta property="og:image" content="https://isdrfall25.classes.spaseslab.com/files/social-image-f22.png">
+<meta property="og:site-name" content="Intro to Spatial Data in R">
+<meta property="og:locale" content="en_US">
+</head>
+
+<body class="nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg navbar-dark ">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container">
+    <a class="navbar-brand" href="../index.html">
+    <span class="navbar-title">Intro to Spatial Data in R</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../syllabus.html" rel="" target="">
+ <span class="menu-text">Syllabus</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../schedule.html" rel="" target="">
+ <span class="menu-text">Schedule</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../content/index.html" rel="" target="">
+ <span class="menu-text">Content</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../assignment/index.html" rel="" target="">
+ <span class="menu-text">Assignments</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../example/index.html" rel="" target="">
+ <span class="menu-text">Examples</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../lesson/index.html" rel="" target="">
+ <span class="menu-text">Lessons</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../resource/index.html" rel="" target="">
+ <span class="menu-text">Resources</span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://ecostatsbsu.slack.com/archives/CV4DEJ8M7" rel="" target=""><i class="bi bi-slack" role="img" aria-label="Slack">
+</i> 
+ <span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/BSU-Spatial-Data-in-R-Fall2025" rel="" target=""><i class="bi bi-github" role="img" aria-label="GitHub">
+</i> 
+ <span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://rstudio.apps.aws.boisestate.edu/" rel="" target=""><i class="bi bi-cloud-fill" role="img" aria-label="Rstudio">
+</i> 
+ <span class="menu-text"></span></a>
+  </li>  
+</ul>
+            <div class="quarto-navbar-tools">
+</div>
+          </div> <!-- /navcollapse -->
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#objectives" id="toc-objectives" class="nav-link active" data-scroll-target="#objectives">Objectives</a></li>
+  <li><a href="#getting-started" id="toc-getting-started" class="nav-link" data-scroll-target="#getting-started">Getting Started</a></li>
+  <li><a href="#some-context" id="toc-some-context" class="nav-link" data-scroll-target="#some-context">Some Context</a></li>
+  <li><a href="#what-is-the-current-extent" id="toc-what-is-the-current-extent" class="nav-link" data-scroll-target="#what-is-the-current-extent">What is the Current Extent?</a>
+  <ul class="collapse">
+  <li><a href="#vector-data" id="toc-vector-data" class="nav-link" data-scroll-target="#vector-data">Vector Data</a></li>
+  <li><a href="#raster-data" id="toc-raster-data" class="nav-link" data-scroll-target="#raster-data">Raster Data</a></li>
+  </ul></li>
+  <li><a href="#how-can-i-change-the-extent" id="toc-how-can-i-change-the-extent" class="nav-link" data-scroll-target="#how-can-i-change-the-extent">How Can I Change the Extent?</a>
+  <ul class="collapse">
+  <li><a href="#vector-data-1" id="toc-vector-data-1" class="nav-link" data-scroll-target="#vector-data-1">Vector Data</a></li>
+  <li><a href="#raster-data-1" id="toc-raster-data-1" class="nav-link" data-scroll-target="#raster-data-1">Raster Data</a></li>
+  </ul></li>
+  <li><a href="#what-is-the-current-resolution" id="toc-what-is-the-current-resolution" class="nav-link" data-scroll-target="#what-is-the-current-resolution">What is the Current Resolution?</a></li>
+  <li><a href="#how-can-i-change-the-current-resolution" id="toc-how-can-i-change-the-current-resolution" class="nav-link" data-scroll-target="#how-can-i-change-the-current-resolution">How Can I Change the Current Resolution?</a></li>
+  <li><a href="#what-is-the-current-projection" id="toc-what-is-the-current-projection" class="nav-link" data-scroll-target="#what-is-the-current-projection">What is the Current Projection?</a>
+  <ul class="collapse">
+  <li><a href="#vector-data-2" id="toc-vector-data-2" class="nav-link" data-scroll-target="#vector-data-2">Vector Data</a></li>
+  <li><a href="#raster-data-2" id="toc-raster-data-2" class="nav-link" data-scroll-target="#raster-data-2">Raster Data</a></li>
+  </ul></li>
+  <li><a href="#how-can-i-change-the-projection" id="toc-how-can-i-change-the-projection" class="nav-link" data-scroll-target="#how-can-i-change-the-projection">How Can I Change the Projection?</a>
+  <ul class="collapse">
+  <li><a href="#vector-data-3" id="toc-vector-data-3" class="nav-link" data-scroll-target="#vector-data-3">Vector Data</a></li>
+  <li><a href="#raster-data-3" id="toc-raster-data-3" class="nav-link" data-scroll-target="#raster-data-3">Raster Data</a></li>
+  </ul></li>
+  <li><a href="#a-final-note-on-making-tabular-data-spatial" id="toc-a-final-note-on-making-tabular-data-spatial" class="nav-link" data-scroll-target="#a-final-note-on-making-tabular-data-spatial">A Final Note on Making Tabular Data Spatial</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<div class="quarto-title-block"><div><h1 class="title">Projections, Extent, and Resolution</h1><button type="button" class="btn code-tools-button dropdown-toggle" id="quarto-code-tools-menu" data-bs-toggle="dropdown" aria-expanded="false"><i class="bi"></i> Code</button><ul class="dropdown-menu dropdown-menu-end" aria-labelelledby="quarto-code-tools-menu"><li><a id="quarto-show-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Show All Code</a></li><li><a id="quarto-hide-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Hide All Code</a></li><li><hr class="dropdown-divider"></li><li><a id="quarto-view-source" class="dropdown-item" href="javascript:void(0)" role="button">View Source</a></li></ul></div></div>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+</header>
+
+<section id="objectives" class="level2">
+<h2 class="anchored" data-anchor-id="objectives">Objectives</h2>
+<p>Now that you know how to read in some spatial data, we’ll spend a bit of time learning the <code>sf</code> and <code>terra</code> syntax for accessing and changing the projection, extent, and resolution. By the end of this lesson, you should be able to:</p>
+<ol type="1">
+<li><p>Access the current CRS, extent, and resolution of a spatial data object</p></li>
+<li><p>Use <code>sf</code> and <code>terra</code> to modify 1 spatial attribute or all 3 at once</p></li>
+<li><p>Align vector and raster data for analysis and combination</p></li>
+</ol>
+</section>
+<section id="getting-started" class="level2">
+<h2 class="anchored" data-anchor-id="getting-started">Getting Started</h2>
+<p>First, <a href="https://classroom.github.com/a/XWzfBM16">join the repository</a>. Then, we’ll have to <a href="https://rstudio.aws.boisestate.edu/">get our credentials</a> and login to a <a href="https://rstudio.apps.aws.boisestate.edu/">new RStudio session</a>. Finally, create a new, version control, git-based project (using the link to the repo you just created).</p>
+<p>Once you’ve done that, you’ll need to load your packages. We’re going to use the same packages as last time and source our custom download function.</p>
+<div class="cell">
+<details open="">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(googledrive)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(sf)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stderr">
+<pre><code>Linking to GEOS 3.13.0, GDAL 3.8.5, PROJ 9.5.1; sf_use_s2() is TRUE</code></pre>
+</div>
+<details open="">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(terra)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stderr">
+<pre><code>terra 1.8.70</code></pre>
+</div>
+<details open="">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyterra)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stderr">
+<pre><code>
+Attaching package: 'tidyterra'</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>The following object is masked from 'package:stats':
+
+    filter</code></pre>
+</div>
+<details open="">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stderr">
+<pre><code>── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──
+✔ dplyr     1.1.4     ✔ readr     2.1.5
+✔ forcats   1.0.1     ✔ stringr   1.5.2
+✔ ggplot2   4.0.0     ✔ tibble    3.3.0
+✔ lubridate 1.9.4     ✔ tidyr     1.3.1
+✔ purrr     1.1.0     </code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
+✖ tidyr::extract() masks terra::extract()
+✖ dplyr::filter()  masks tidyterra::filter(), stats::filter()
+✖ dplyr::lag()     masks stats::lag()
+ℹ Use the conflicted package (&lt;http://conflicted.r-lib.org/&gt;) to force all conflicts to become errors</code></pre>
+</div>
+<details open="">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">"scripts/utilities/download_utils.R"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+</section>
+<section id="some-context" class="level2">
+<h2 class="anchored" data-anchor-id="some-context">Some Context</h2>
+<p>You likely noticed in your quick maps that the two datasets look different. Sure, one is a vector with lots of <code>POLYGON</code> elements and the other is a raster (stored as a <code>SpatRaster</code>). If you looked a little, you probably noticed that the orienation (angle) of the areas was a bit different. If you looked a little harder, you probably saw that the general shapes of the states is a bit different, too. And, maybe if you squint, you can see that the boundaries of the maps looks a little different. We’ll work through some ways of looking at and fixing those things today! Let’s load our datasets and get started!</p>
+<div class="cell">
+<details open="">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>file_list <span class="ot">&lt;-</span> <span class="fu">drive_ls</span>(<span class="fu">drive_get</span>(<span class="fu">as_id</span>(<span class="st">"https://drive.google.com/drive/u/1/folders/1PwfUX2hnJlbnqBe3qvl33tFBImtNFTuR"</span>)))[<span class="sc">-</span><span class="dv">1</span>,]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stderr">
+<pre><code>! Using an auto-discovered, cached token.</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>  To suppress this message, modify your code or options to clearly consent to
+  the use of a cached token.</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>  See gargle's "Non-interactive auth" vignette for more details:</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>  &lt;https://gargle.r-lib.org/articles/non-interactive-auth.html&gt;</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>ℹ The googledrive package is using a cached token for
+  'mattwilliamson@boisestate.edu'.</code></pre>
+</div>
+<details open="">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>file_list <span class="sc">%&gt;%</span> </span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(id, name) <span class="sc">%&gt;%</span></span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>  purrr<span class="sc">::</span><span class="fu">pmap</span>(<span class="cf">function</span>(id, name) {</span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">gdrive_folder_download</span>(<span class="fu">list</span>(<span class="at">id =</span> id, <span class="at">name =</span> name),</span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>                           <span class="at">dstfldr =</span> <span class="st">"inclass08"</span>)</span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>  })</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stderr">
+<pre><code>File downloaded:</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>• 'blockgroupPop.shx' &lt;id: 10RKLXNzoNfYQralSDDbsAkxgwSGgc46w&gt;</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Saved locally as:</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>• 'data/original/inclass08/blockgroupPop.shx'</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>File downloaded:</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>• 'blockgroupPop.shp' &lt;id: 19HSGozYvuqmXQ-CtPVkwFcFmDK-V6aIr&gt;</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Saved locally as:</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>• 'data/original/inclass08/blockgroupPop.shp'</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>File downloaded:</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>• 'blockgroupPop.dbf' &lt;id: 14alTpZHGZ067Ez1270Q7ffiVKO4zbY3p&gt;</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Saved locally as:</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>• 'data/original/inclass08/blockgroupPop.dbf'</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>File downloaded:</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>• 'blockgroupPop.prj' &lt;id: 1QbV7Dn53zM_KvuUKc7rBug9R5lRg3rFy&gt;</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Saved locally as:</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>• 'data/original/inclass08/blockgroupPop.prj'</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>File downloaded:</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>• 'paReadings.csv' &lt;id: 184wxWw1DQrllUAFUnXtR0TSMYVqWUJ_G&gt;</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Saved locally as:</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>• 'data/original/inclass08/paReadings.csv'</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>File downloaded:</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>• 'pa_pt_locations.shx' &lt;id: 14rFc7Hxgxl6QfuhfYtRDvNE6TOYUnho4&gt;</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Saved locally as:</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>• 'data/original/inclass08/pa.shx'</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>File downloaded:</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>• 'pa_pt_locations.shp' &lt;id: 15zHbHjWhcuxT0sgOuElDAh1QgOYEbjZN&gt;</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Saved locally as:</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>• 'data/original/inclass08/pa.shp'</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>File downloaded:</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>• 'pa_pt_locations.dbf' &lt;id: 13yZY6gkyd7GT7MVL5vOwI8xMcPCCZrTs&gt;</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Saved locally as:</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>• 'data/original/inclass08/pa.dbf'</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>File downloaded:</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>• 'pa_pt_locations.prj' &lt;id: 1yC1NjbbrbWAMiiJjcTobzfg252ah-pek&gt;</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Saved locally as:</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>• 'data/original/inclass08/pa.prj'</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>File downloaded:</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>• 'pa_censors_loc.csv' &lt;id: 13ZPu8E96ERWdUNlwQ5MB_vXrPCqvzxj_&gt;</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Saved locally as:</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>• 'data/original/inclass08/pa.csv'</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>File downloaded:</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>• 'wildfire_hazard_agg.tif' &lt;id: 135PvMlKu17i7tZcrF7XiWxzrzaX-aCLn&gt;</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Saved locally as:</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>• 'data/original/inclass08/wildfire.tif'</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>File downloaded:</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>• 'cejst_nw.shx' &lt;id: 1IXDayQ35MwCfq1UtuDHCtf5iNYq5VUqu&gt;</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Saved locally as:</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>• 'data/original/inclass08/cejst.shx'</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>File downloaded:</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>• 'cejst_nw.dbf' &lt;id: 1PgCOsZsVEOhxQs2Dpz21MNz0kMb32amB&gt;</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Saved locally as:</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>• 'data/original/inclass08/cejst.dbf'</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>File downloaded:</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>• 'cejst_nw.shp' &lt;id: 1ZeL_683mTTWdCDjQ4dY6oJsxyVZtQT6O&gt;</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Saved locally as:</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>• 'data/original/inclass08/cejst.shp'</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>File downloaded:</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>• 'cejst_nw.prj' &lt;id: 1r7OHK1DHhoEMBToiM2FmuK5xmEzWSdrc&gt;</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Saved locally as:</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>• 'data/original/inclass08/cejst.prj'</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[[1]]
+[1] "data/original/inclass08/blockgroupPop.shx"
+
+[[2]]
+[1] "data/original/inclass08/blockgroupPop.shp"
+
+[[3]]
+[1] "data/original/inclass08/blockgroupPop.dbf"
+
+[[4]]
+[1] "data/original/inclass08/blockgroupPop.prj"
+
+[[5]]
+[1] "data/original/inclass08/paReadings.csv"
+
+[[6]]
+[1] "data/original/inclass08/pa.shx"
+
+[[7]]
+[1] "data/original/inclass08/pa.shp"
+
+[[8]]
+[1] "data/original/inclass08/pa.dbf"
+
+[[9]]
+[1] "data/original/inclass08/pa.prj"
+
+[[10]]
+[1] "data/original/inclass08/pa.csv"
+
+[[11]]
+[1] "data/original/inclass08/wildfire.tif"
+
+[[12]]
+[1] "data/original/inclass08/cejst.shx"
+
+[[13]]
+[1] "data/original/inclass08/cejst.dbf"
+
+[[14]]
+[1] "data/original/inclass08/cejst.shp"
+
+[[15]]
+[1] "data/original/inclass08/cejst.prj"</code></pre>
+</div>
+<details open="">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb80"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb80-1"><a href="#cb80-1" aria-hidden="true" tabindex="-1"></a>cejst_shp <span class="ot">&lt;-</span> <span class="fu">read_sf</span>(<span class="st">"data/original/inclass08/cejst.shp"</span>)</span>
+<span id="cb80-2"><a href="#cb80-2" aria-hidden="true" tabindex="-1"></a>fire_prob <span class="ot">&lt;-</span> <span class="fu">rast</span>(<span class="st">"data/original/inclass08/wildfire.tif"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+</section>
+<section id="what-is-the-current-extent" class="level2">
+<h2 class="anchored" data-anchor-id="what-is-the-current-extent">What is the Current Extent?</h2>
+<p>Because extent is part of our internal definition of scale and because getting our extents aligned is a big part of making sure our data sandwich doesn’t fall apart, we’ll start by checking to see what the extent is for each dataset.</p>
+<section id="vector-data" class="level3">
+<h3 class="anchored" data-anchor-id="vector-data">Vector Data</h3>
+<p>By convention, the <code>sf</code> package uses a standard syntax for spatial operations that starts with <code>st_</code>. In addition, the extent of a vector dataset is known as the <strong>bounding box</strong>. We can access that using <code>st_bbox</code></p>
+<div class="cell">
+<details open="">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb81"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb81-1"><a href="#cb81-1" aria-hidden="true" tabindex="-1"></a><span class="fu">st_bbox</span>(cejst_shp)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>      xmin       ymin       xmax       ymax 
+-124.76255   41.98801 -111.04349   49.00249 </code></pre>
+</div>
+<details open="">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb83"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb83-1"><a href="#cb83-1" aria-hidden="true" tabindex="-1"></a>cejst_shp <span class="sc">%&gt;%</span> </span>
+<span id="cb83-2"><a href="#cb83-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(., SF <span class="sc">==</span> <span class="st">"Idaho"</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb83-3"><a href="#cb83-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">st_bbox</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>      xmin       ymin       xmax       ymax 
+-117.24303   41.98801 -111.04349   49.00115 </code></pre>
+</div>
+</div>
+<p>There are three things to know about the bounding box. First, it is, by definition, a rectangle that encompases the vertices of your vector object. So, even if you’ve got an irregularly shaped <code>POLYGON</code> or a series of <code>POINTS</code>, the bounding box necessarily returns the rectangle that encompasses all of the vertices in the object. Second, using <code>st_bbox</code> returns an object of class <code>bbox</code> (you can check this by running <code>st_bbox(your_data) %&gt;% class()</code> which is a special kind of object. Finally, if you use <code>dplyr</code> verbs to alter your the composition of your vector dataset, the bounding box will update to reflect those changes. You can see that in the values returned in the example above, but you can also plot it.</p>
+<p>To do that, we have to convert the <code>bbox</code>to a simple feature collection (<code>sfc</code>) we can do that using the <code>st_as_sfc</code> command and then use base <code>plot</code> to give us a sense for how different the two bounding boxes are.</p>
+<div class="cell">
+<details open="">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb85"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb85-1"><a href="#cb85-1" aria-hidden="true" tabindex="-1"></a>all_bbox <span class="ot">&lt;-</span> <span class="fu">st_bbox</span>(cejst_shp) <span class="sc">%&gt;%</span> </span>
+<span id="cb85-2"><a href="#cb85-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">st_as_sfc</span>()</span>
+<span id="cb85-3"><a href="#cb85-3" aria-hidden="true" tabindex="-1"></a>id_bbox <span class="ot">&lt;-</span> cejst_shp <span class="sc">%&gt;%</span> </span>
+<span id="cb85-4"><a href="#cb85-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(., SF <span class="sc">==</span> <span class="st">"Idaho"</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb85-5"><a href="#cb85-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">st_bbox</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb85-6"><a href="#cb85-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">st_as_sfc</span>()</span>
+<span id="cb85-7"><a href="#cb85-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb85-8"><a href="#cb85-8" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(all_bbox)</span>
+<span id="cb85-9"><a href="#cb85-9" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(id_bbox, <span class="at">add=</span><span class="cn">TRUE</span>, <span class="at">border =</span><span class="st">"red"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<p><img src="08-lesson_files/figure-html/pltbbox-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>One nice thing about <code>sf</code> objects is that there is a built-in <code>geom_</code> in <code>ggplot2</code> that will allow us to make maps with all of the flexibility of <code>ggplot</code>.</p>
+<div class="cell">
+<details open="">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb86"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb86-1"><a href="#cb86-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>() <span class="sc">+</span></span>
+<span id="cb86-2"><a href="#cb86-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_sf</span>(<span class="at">data =</span> all_bbox, <span class="at">color =</span> <span class="st">"yellow"</span>, <span class="at">fill =</span> <span class="st">"darkorchid4"</span>) <span class="sc">+</span></span>
+<span id="cb86-3"><a href="#cb86-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_sf</span>(<span class="at">data=</span> id_bbox, <span class="at">fill =</span> <span class="st">"orangered"</span>) <span class="sc">+</span></span>
+<span id="cb86-4"><a href="#cb86-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<p><img src="08-lesson_files/figure-html/ggbbox-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>In the <code>ggplot</code> call, I’ve done several things. First, I used <code>geom_sf</code> to add each vector dataset. Then instead of using the <code>mapping = aes()</code> to tell <code>ggplot</code> which column I want to use for the colors, I set the <code>color</code> and <code>fill</code> manually by specifying them outside of the <code>aes()</code> call and setting them manually. Finally, I called <code>theme_bw()</code> to set the plotting options <a href="https://r-charts.com/ggplot2/themes/">using one of the preset <code>ggplot</code> themes</a>. Using <code>ggplot</code> gives a lot more flexibility and allows us to layer data on top of each other to create maps!</p>
+</section>
+<section id="raster-data" class="level3">
+<h3 class="anchored" data-anchor-id="raster-data">Raster Data</h3>
+<p>Unfortunately, the <code>terra</code> package uses some different conventions and <code>tidyterra</code> only provides functionality for some operations that are more complex. That said, many of the functions in <code>terra</code> match our intuition for the operations we’d like to use so it doesn’t take too much to figure out how to get what we need. In this case, we are interested in the <strong>extent</strong> of our raster. If you look at the <code>terra</code> helpfile (<code>?terra</code>), you’ll see the entire list of functions available within the package. If you look for the “Getting and setting dimensions” section, you’ll see that there are a number of functions for getting information about <code>SpatRaster</code> objects. A quick scan reveals that the function for getting the extent is <code>ext</code>.</p>
+<div class="cell">
+<details open="">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb87"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb87-1"><a href="#cb87-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ext</span>(fire_prob)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>SpatExtent : -2294745, -1189065, 2208735, 3172575 (xmin, xmax, ymin, ymax)</code></pre>
+</div>
+</div>
+<p>You’ll notice a few things about this object. First, it has a new <code>class</code>, a <code>SpatExtent</code>. Next, you’ll notice that the ordering and structure of the data is different from that of <code>sf</code>’s <code>bbox</code>.</p>
+<p>We can use <code>plot</code> directly on a <code>SpatExtent</code> object to be able to look at the extent.</p>
+<div class="cell">
+<details open="">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb89"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb89-1"><a href="#cb89-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(<span class="fu">ext</span>(fire_prob), <span class="at">border =</span> <span class="st">"red"</span>)</span>
+<span id="cb89-2"><a href="#cb89-2" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(fire_prob, <span class="at">add=</span><span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<p><img src="08-lesson_files/figure-html/plotext-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>Similar to the <code>bbox</code> from <code>sf</code>, <code>ext</code> returns a rectangle encompassing the entire <code>SpatRaster</code> object. The <code>tidyterra</code> package allows us to use <code>filter</code> as a way to subset rasters without using indexing. We can use that here to find all of the cells whose wildfire hazard potential is greater than 30000. While the behavior of <code>filter</code> is the same for both <code>sf</code> and <code>terra</code> (meaning it keeps only the values that meet your <code>filter</code> criteria), you’ll notice that, unlike the <code>bbox</code> of <code>sf</code>, the extent of a <code>SpatRaster</code> does not change to match the subset data.</p>
+<div class="cell">
+<details open="">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb90"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb90-1"><a href="#cb90-1" aria-hidden="true" tabindex="-1"></a>fire_subset <span class="ot">&lt;-</span> fire_prob <span class="sc">%&gt;%</span> </span>
+<span id="cb90-2"><a href="#cb90-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(WHP_ID <span class="sc">&gt;</span> <span class="dv">30000</span>)</span>
+<span id="cb90-3"><a href="#cb90-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb90-4"><a href="#cb90-4" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(<span class="fu">ext</span>(fire_subset), <span class="at">border =</span> <span class="st">"red"</span>)</span>
+<span id="cb90-5"><a href="#cb90-5" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(fire_subset, <span class="at">add=</span><span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<p><img src="08-lesson_files/figure-html/subrst-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+</section>
+</section>
+<section id="how-can-i-change-the-extent" class="level2">
+<h2 class="anchored" data-anchor-id="how-can-i-change-the-extent">How Can I Change the Extent?</h2>
+<p>There may be occasions where you want to manually change the extent of your spatial objects. Both <code>sf</code> and <code>terra</code> provide multiple functions for changing the <code>extent</code> as part of additional spatial operations (we’ll talk more about this in the coming weeks), but sometimes you might want to adjust the extent of an object without modifying anything else about it. Sometimes we might do this to create inset maps. Sometimes we might want to create asymmetric buffers around an existing extent. This is a somewhat rare, but it’s worth knowing how to do it just to get a feel for how extents work.</p>
+<section id="vector-data-1" class="level3">
+<h3 class="anchored" data-anchor-id="vector-data-1">Vector Data</h3>
+<p>If you look at <code>?st_bbox</code> you’ll see an example of the manual creation of a <code>bbox</code> object. We can exploit the fact that <code>st_bbox</code> returns a <code>named.vector</code> to access the values in the original bounding box and “shrink” it by adding (or subtracting) values from the existing bounding box. Two things are tricky here. First, the original data is in a <strong>geodetic</strong> projection so the units are in degrees (which I have no real intuition for). Second, the goal of “shrinking” the bounding box means we have to think about how we might move “up” or “in” along the graticules. I exploited the plot above to figure out some reasonable numbers and add them here.</p>
+<div class="cell">
+<details open="">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb91"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb91-1"><a href="#cb91-1" aria-hidden="true" tabindex="-1"></a>orig_bbox <span class="ot">&lt;-</span> <span class="fu">st_bbox</span>(cejst_shp)</span>
+<span id="cb91-2"><a href="#cb91-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb91-3"><a href="#cb91-3" aria-hidden="true" tabindex="-1"></a>new_bbox <span class="ot">&lt;-</span> <span class="fu">st_bbox</span>(<span class="fu">c</span>(orig_bbox[<span class="st">"xmin"</span>] <span class="sc">+</span> <span class="dv">1</span>, orig_bbox[<span class="st">"xmax"</span>] <span class="sc">-</span> <span class="dv">1</span>,  orig_bbox[<span class="st">"ymax"</span>] <span class="sc">-</span> <span class="dv">1</span>, orig_bbox[<span class="st">"ymin"</span>] <span class="sc">+</span> <span class="dv">1</span>), <span class="at">crs =</span> <span class="fu">st_crs</span>(orig_bbox)) <span class="sc">%&gt;%</span> <span class="fu">st_as_sfc</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p>You can verify this again with a plot.</p>
+<div class="cell">
+<details open="">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb92"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb92-1"><a href="#cb92-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>() <span class="sc">+</span></span>
+<span id="cb92-2"><a href="#cb92-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_sf</span>(<span class="at">data =</span> <span class="fu">st_as_sfc</span>(orig_bbox), <span class="at">color =</span> <span class="st">"yellow"</span>, <span class="at">fill =</span> <span class="st">"darkorchid4"</span>) <span class="sc">+</span></span>
+<span id="cb92-3"><a href="#cb92-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_sf</span>(<span class="at">data=</span> new_bbox, <span class="at">fill =</span> <span class="st">"orangered"</span>) <span class="sc">+</span></span>
+<span id="cb92-4"><a href="#cb92-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<p><img src="08-lesson_files/figure-html/bboxchg-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+</section>
+<section id="raster-data-1" class="level3">
+<h3 class="anchored" data-anchor-id="raster-data-1">Raster Data</h3>
+<p>The process is similar for rasters with <code>terra</code>, but we need to get the <code>SpatExtent</code> object into a more useable format. The other thing to notice is that our raster is in a projection that uses meters as its measurement unit (you can tell by the differene in the orders of magnitude in the values). This means we need to think a bit differently about how to shift the box.</p>
+<div class="cell">
+<details open="">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb93"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb93-1"><a href="#cb93-1" aria-hidden="true" tabindex="-1"></a>orig_ext <span class="ot">&lt;-</span> <span class="fu">as.vector</span>(<span class="fu">ext</span>(fire_prob))</span>
+<span id="cb93-2"><a href="#cb93-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb93-3"><a href="#cb93-3" aria-hidden="true" tabindex="-1"></a>new_ext <span class="ot">&lt;-</span> <span class="fu">ext</span>(<span class="fu">as.numeric</span>(<span class="fu">c</span>(</span>
+<span id="cb93-4"><a href="#cb93-4" aria-hidden="true" tabindex="-1"></a>  orig_ext[<span class="st">"xmin"</span>] <span class="sc">+</span> <span class="dv">100000</span>,</span>
+<span id="cb93-5"><a href="#cb93-5" aria-hidden="true" tabindex="-1"></a>  orig_ext[<span class="st">"xmax"</span>] <span class="sc">-</span> <span class="dv">100000</span>,</span>
+<span id="cb93-6"><a href="#cb93-6" aria-hidden="true" tabindex="-1"></a>  orig_ext[<span class="st">"ymin"</span>] <span class="sc">+</span> <span class="dv">100000</span>,</span>
+<span id="cb93-7"><a href="#cb93-7" aria-hidden="true" tabindex="-1"></a>  orig_ext[<span class="st">"ymax"</span>] <span class="sc">-</span> <span class="dv">100000</span></span>
+<span id="cb93-8"><a href="#cb93-8" aria-hidden="true" tabindex="-1"></a>)))</span>
+<span id="cb93-9"><a href="#cb93-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb93-10"><a href="#cb93-10" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(orig_ext)</span>
+<span id="cb93-11"><a href="#cb93-11" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(new_ext, <span class="at">add=</span><span class="cn">TRUE</span>, <span class="at">border =</span> <span class="st">"red"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<p><img src="08-lesson_files/figure-html/chgext-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+</section>
+</section>
+<section id="what-is-the-current-resolution" class="level2">
+<h2 class="anchored" data-anchor-id="what-is-the-current-resolution">What is the Current Resolution?</h2>
+<p>For vector datsets, we don’t tend to think about resolution because vectors can be stretched or subset. Instead, we need to think about the <strong>support</strong> underlying the data. This isn’t readily apparent in the data itself. Instead, you’ll need to look into the metadata or the sources of the data to understand what the “true” resolution of the data is.</p>
+<p>For raster data, this is easy enough using the <code>res</code> function in <code>terra</code></p>
+<div class="cell">
+<details open="">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb94"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb94-1"><a href="#cb94-1" aria-hidden="true" tabindex="-1"></a><span class="fu">res</span>(fire_prob)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 240 240</code></pre>
+</div>
+</div>
+</section>
+<section id="how-can-i-change-the-current-resolution" class="level2">
+<h2 class="anchored" data-anchor-id="how-can-i-change-the-current-resolution">How Can I Change the Current Resolution?</h2>
+<p>In some cases you may want to sharpen or coarsen the resolution. You can use <code>aggregate</code> or <code>disagg</code> in <code>terra</code> to do this. The key bit is the <code>fact</code> argument. Which tells you the factor by which we create that surface.</p>
+<div class="cell">
+<details open="">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb96"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb96-1"><a href="#cb96-1" aria-hidden="true" tabindex="-1"></a>coarser_fire <span class="ot">&lt;-</span> <span class="fu">aggregate</span>(fire_prob, <span class="at">fact =</span> <span class="dv">5</span>)</span>
+<span id="cb96-2"><a href="#cb96-2" aria-hidden="true" tabindex="-1"></a>finer_fire <span class="ot">&lt;-</span> <span class="fu">disagg</span>(fire_prob, <span class="at">fact =</span> <span class="dv">5</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+|---------|---------|---------|---------|
+======
+                                          </code></pre>
+</div>
+<details open="">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb98"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb98-1"><a href="#cb98-1" aria-hidden="true" tabindex="-1"></a><span class="fu">res</span>(coarser_fire)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 1200 1200</code></pre>
+</div>
+<details open="">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb100"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb100-1"><a href="#cb100-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ext</span>(coarser_fire)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>SpatExtent : -2294745, -1188345, 2207775, 3172575 (xmin, xmax, ymin, ymax)</code></pre>
+</div>
+<details open="">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb102"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb102-1"><a href="#cb102-1" aria-hidden="true" tabindex="-1"></a><span class="fu">res</span>(finer_fire)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 48 48</code></pre>
+</div>
+<details open="">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb104"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb104-1"><a href="#cb104-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ext</span>(finer_fire)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>SpatExtent : -2294745, -1189065, 2208735, 3172575 (xmin, xmax, ymin, ymax)</code></pre>
+</div>
+<details open="">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb106"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb106-1"><a href="#cb106-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(coarser_fire)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<p><img src="08-lesson_files/figure-html/reschg-1.png" class="img-fluid" width="672"></p>
+</div>
+<details open="">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb107"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb107-1"><a href="#cb107-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(finer_fire)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<p><img src="08-lesson_files/figure-html/reschg-2.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+</section>
+<section id="what-is-the-current-projection" class="level2">
+<h2 class="anchored" data-anchor-id="what-is-the-current-projection">What is the Current Projection?</h2>
+<p>You probably noticed from your initial plots that the “shapes” of the data are different. This is a pretty good clue that the data is in different projections. We can verify that relatively easily in both <code>sf</code> and <code>terra</code>.</p>
+<section id="vector-data-2" class="level3">
+<h3 class="anchored" data-anchor-id="vector-data-2">Vector Data</h3>
+<p>When we are considering projections, our true interest is in the Coordinate Reference System (CRS). For <code>sf</code> we can use <code>st_crs</code> to access the CRS for a vector object.</p>
+<div class="cell">
+<details open="">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb108"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb108-1"><a href="#cb108-1" aria-hidden="true" tabindex="-1"></a><span class="fu">st_crs</span>(cejst_shp)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Coordinate Reference System:
+  User input: WGS 84 
+  wkt:
+GEOGCRS["WGS 84",
+    DATUM["World Geodetic System 1984",
+        ELLIPSOID["WGS 84",6378137,298.257223563,
+            LENGTHUNIT["metre",1]]],
+    PRIMEM["Greenwich",0,
+        ANGLEUNIT["degree",0.0174532925199433]],
+    CS[ellipsoidal,2],
+        AXIS["latitude",north,
+            ORDER[1],
+            ANGLEUNIT["degree",0.0174532925199433]],
+        AXIS["longitude",east,
+            ORDER[2],
+            ANGLEUNIT["degree",0.0174532925199433]],
+    ID["EPSG",4326]]</code></pre>
+</div>
+</div>
+<p>You’ll notice a fairly verbose output from this. This is a <code>.wkt</code>(well-known text) output that describes all of the parameters underlying the projection (here it’s WGS84). You’ll notice in the last line that there is “EPSG” code. EPSG stands for European Petroleum Survey Group, an entity that standardizes codes and parameters for projections. These codes can be used as shorthand in <code>R</code> to alter projections so that you don’t have to know all of the .wkt parameters.</p>
+</section>
+<section id="raster-data-2" class="level3">
+<h3 class="anchored" data-anchor-id="raster-data-2">Raster Data</h3>
+<p>The process is largely the same for <code>terra</code>, but without the <code>st_</code> prefix.</p>
+<div class="cell">
+<details open="">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb110"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb110-1"><a href="#cb110-1" aria-hidden="true" tabindex="-1"></a><span class="fu">crs</span>(fire_prob)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "PROJCRS[\"unnamed\",\n    BASEGEOGCRS[\"NAD83\",\n        DATUM[\"North American Datum 1983\",\n            ELLIPSOID[\"GRS 1980\",6378137,298.257222101004,\n                LENGTHUNIT[\"metre\",1]]],\n        PRIMEM[\"Greenwich\",0,\n            ANGLEUNIT[\"degree\",0.0174532925199433]],\n        ID[\"EPSG\",4269]],\n    CONVERSION[\"Albers Equal Area\",\n        METHOD[\"Albers Equal Area\",\n            ID[\"EPSG\",9822]],\n        PARAMETER[\"Latitude of false origin\",23,\n            ANGLEUNIT[\"degree\",0.0174532925199433],\n            ID[\"EPSG\",8821]],\n        PARAMETER[\"Longitude of false origin\",-96,\n            ANGLEUNIT[\"degree\",0.0174532925199433],\n            ID[\"EPSG\",8822]],\n        PARAMETER[\"Latitude of 1st standard parallel\",29.5,\n            ANGLEUNIT[\"degree\",0.0174532925199433],\n            ID[\"EPSG\",8823]],\n        PARAMETER[\"Latitude of 2nd standard parallel\",45.5,\n            ANGLEUNIT[\"degree\",0.0174532925199433],\n            ID[\"EPSG\",8824]],\n        PARAMETER[\"Easting at false origin\",0,\n            LENGTHUNIT[\"metre\",1],\n            ID[\"EPSG\",8826]],\n        PARAMETER[\"Northing at false origin\",0,\n            LENGTHUNIT[\"metre\",1],\n            ID[\"EPSG\",8827]]],\n    CS[Cartesian,2],\n        AXIS[\"easting\",east,\n            ORDER[1],\n            LENGTHUNIT[\"metre\",1,\n                ID[\"EPSG\",9001]]],\n        AXIS[\"northing\",north,\n            ORDER[2],\n            LENGTHUNIT[\"metre\",1,\n                ID[\"EPSG\",9001]]]]"</code></pre>
+</div>
+</div>
+<p>Here again, you get the .wkt output, but it’s in a slightly different format. This makes difficult to compare projections programmatically. Instead you’ve got to look to see if things match. One thing you’ll notice is that the wkt says “unnamed” suggesting that <code>R</code> isn’t entirely sure what this is. However, all of the necessary parameters are there, so we’ll move on for now.</p>
+</section>
+</section>
+<section id="how-can-i-change-the-projection" class="level2">
+<h2 class="anchored" data-anchor-id="how-can-i-change-the-projection">How Can I Change the Projection?</h2>
+<p>In order to make sure that our “data sandwich” is lined up that any combinations of data we create truly correspond to the same location. We can <strong>reproject</strong> the data to ensure alignment. In <code>sf</code>, we can use <code>st_transform</code> to <em>transform</em> the CRS of a spatial layer.</p>
+<div class="callout callout-style-default callout-warning callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Warning
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>In general, it is better to re-project vector data to match raster data, as the vector form is more flexible (because vectors can stretch, but raster cells can’t).</p>
+</div>
+</div>
+<section id="vector-data-3" class="level3">
+<h3 class="anchored" data-anchor-id="vector-data-3">Vector Data</h3>
+<p>Let’s start by reprojecting the vector dataset.</p>
+<div class="cell">
+<details open="">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb112"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb112-1"><a href="#cb112-1" aria-hidden="true" tabindex="-1"></a>cejst_reproject <span class="ot">&lt;-</span> cejst_shp <span class="sc">%&gt;%</span> </span>
+<span id="cb112-2"><a href="#cb112-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">st_transform</span>(., <span class="at">crs =</span> <span class="fu">st_crs</span>(fire_prob))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p>The <code>st_transform</code> function is the reprojection function. The <code>.</code> tells <code>st_transform</code> to project the object that is piped (<code>%&gt;%</code>) in and the <code>crs</code> argument tells the function what the new Coordinate Reference System should be. You’ll notice here that we used <code>st_crs</code> to extract the CRS from our raster dataset. For several common functions (like accessing CRS), <code>sf</code> will accept <code>terra</code> objects and vice versa. This is not generally the case, though, and if we need to use <code>terra</code> to work on vector data we’ll need to convert our <code>sf</code> object to a <code>vect</code> object using <code>terra</code>’s <code>vect()</code> function.</p>
+<p>Now let’s look at what’s changed about the vector data.</p>
+<div class="cell">
+<details open="">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb113"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb113-1"><a href="#cb113-1" aria-hidden="true" tabindex="-1"></a><span class="fu">st_crs</span>(cejst_reproject)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Coordinate Reference System:
+  User input: unnamed 
+  wkt:
+PROJCRS["unnamed",
+    BASEGEOGCRS["NAD83",
+        DATUM["North American Datum 1983",
+            ELLIPSOID["GRS 1980",6378137,298.257222101004,
+                LENGTHUNIT["metre",1]]],
+        PRIMEM["Greenwich",0,
+            ANGLEUNIT["degree",0.0174532925199433]],
+        ID["EPSG",4269]],
+    CONVERSION["Albers Equal Area",
+        METHOD["Albers Equal Area",
+            ID["EPSG",9822]],
+        PARAMETER["Latitude of false origin",23,
+            ANGLEUNIT["degree",0.0174532925199433],
+            ID["EPSG",8821]],
+        PARAMETER["Longitude of false origin",-96,
+            ANGLEUNIT["degree",0.0174532925199433],
+            ID["EPSG",8822]],
+        PARAMETER["Latitude of 1st standard parallel",29.5,
+            ANGLEUNIT["degree",0.0174532925199433],
+            ID["EPSG",8823]],
+        PARAMETER["Latitude of 2nd standard parallel",45.5,
+            ANGLEUNIT["degree",0.0174532925199433],
+            ID["EPSG",8824]],
+        PARAMETER["Easting at false origin",0,
+            LENGTHUNIT["metre",1],
+            ID["EPSG",8826]],
+        PARAMETER["Northing at false origin",0,
+            LENGTHUNIT["metre",1],
+            ID["EPSG",8827]]],
+    CS[Cartesian,2],
+        AXIS["easting",east,
+            ORDER[1],
+            LENGTHUNIT["metre",1,
+                ID["EPSG",9001]]],
+        AXIS["northing",north,
+            ORDER[2],
+            LENGTHUNIT["metre",1,
+                ID["EPSG",9001]]]]</code></pre>
+</div>
+<details open="">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb115"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb115-1"><a href="#cb115-1" aria-hidden="true" tabindex="-1"></a><span class="fu">st_crs</span>(cejst_shp)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Coordinate Reference System:
+  User input: WGS 84 
+  wkt:
+GEOGCRS["WGS 84",
+    DATUM["World Geodetic System 1984",
+        ELLIPSOID["WGS 84",6378137,298.257223563,
+            LENGTHUNIT["metre",1]]],
+    PRIMEM["Greenwich",0,
+        ANGLEUNIT["degree",0.0174532925199433]],
+    CS[ellipsoidal,2],
+        AXIS["latitude",north,
+            ORDER[1],
+            ANGLEUNIT["degree",0.0174532925199433]],
+        AXIS["longitude",east,
+            ORDER[2],
+            ANGLEUNIT["degree",0.0174532925199433]],
+    ID["EPSG",4326]]</code></pre>
+</div>
+<details open="">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb117"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb117-1"><a href="#cb117-1" aria-hidden="true" tabindex="-1"></a><span class="fu">st_bbox</span>(cejst_reproject)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>    xmin     ymin     xmax     ymax 
+-2295337  2208875 -1189292  3177417 </code></pre>
+</div>
+<details open="">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb119"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb119-1"><a href="#cb119-1" aria-hidden="true" tabindex="-1"></a><span class="fu">st_bbox</span>(cejst_shp)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>      xmin       ymin       xmax       ymax 
+-124.76255   41.98801 -111.04349   49.00249 </code></pre>
+</div>
+</div>
+</section>
+<section id="raster-data-3" class="level3">
+<h3 class="anchored" data-anchor-id="raster-data-3">Raster Data</h3>
+<p>Even though it’s not a particularly great idea, we can reproject the raster to match our existing shapefile too. You can learn more about this from <code>?project</code>. You’ll also notice that there are a number of recommendations to help you do this safely and without breaking something.</p>
+<p>For this to work, we need to get the crs from our data in a format the <code>terra</code> can understand. Unlike <code>sf</code>, <code>terra</code> relies primarily on the wkt form (instead of epsg), so we get that first. Then we can use <code>terra</code>s <code>project</code> function. We’ll do more projecting and resampling of rasters in the coming weeks, but for now it’s worth understanding the mechanics and reading the helpfile to understand the limitations of approaching it this way.</p>
+<div class="cell">
+<details open="">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb121"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb121-1"><a href="#cb121-1" aria-hidden="true" tabindex="-1"></a>target_crs <span class="ot">&lt;-</span> <span class="fu">st_crs</span>(cejst_shp)<span class="sc">$</span>wkt  <span class="co"># WKT string</span></span>
+<span id="cb121-2"><a href="#cb121-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb121-3"><a href="#cb121-3" aria-hidden="true" tabindex="-1"></a>fire_reproj <span class="ot">&lt;-</span> <span class="fu">project</span>(fire_prob, target_crs)</span>
+<span id="cb121-4"><a href="#cb121-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb121-5"><a href="#cb121-5" aria-hidden="true" tabindex="-1"></a><span class="fu">crs</span>(fire_reproj)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "GEOGCRS[\"WGS 84\",\n    DATUM[\"World Geodetic System 1984\",\n        ELLIPSOID[\"WGS 84\",6378137,298.257223563,\n            LENGTHUNIT[\"metre\",1]]],\n    PRIMEM[\"Greenwich\",0,\n        ANGLEUNIT[\"degree\",0.0174532925199433]],\n    CS[ellipsoidal,2],\n        AXIS[\"geodetic latitude (Lat)\",north,\n            ORDER[1],\n            ANGLEUNIT[\"degree\",0.0174532925199433]],\n        AXIS[\"geodetic longitude (Lon)\",east,\n            ORDER[2],\n            ANGLEUNIT[\"degree\",0.0174532925199433]],\n    ID[\"EPSG\",4326]]"</code></pre>
+</div>
+<details open="">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb123"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb123-1"><a href="#cb123-1" aria-hidden="true" tabindex="-1"></a><span class="fu">crs</span>(fire_prob)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "PROJCRS[\"unnamed\",\n    BASEGEOGCRS[\"NAD83\",\n        DATUM[\"North American Datum 1983\",\n            ELLIPSOID[\"GRS 1980\",6378137,298.257222101004,\n                LENGTHUNIT[\"metre\",1]]],\n        PRIMEM[\"Greenwich\",0,\n            ANGLEUNIT[\"degree\",0.0174532925199433]],\n        ID[\"EPSG\",4269]],\n    CONVERSION[\"Albers Equal Area\",\n        METHOD[\"Albers Equal Area\",\n            ID[\"EPSG\",9822]],\n        PARAMETER[\"Latitude of false origin\",23,\n            ANGLEUNIT[\"degree\",0.0174532925199433],\n            ID[\"EPSG\",8821]],\n        PARAMETER[\"Longitude of false origin\",-96,\n            ANGLEUNIT[\"degree\",0.0174532925199433],\n            ID[\"EPSG\",8822]],\n        PARAMETER[\"Latitude of 1st standard parallel\",29.5,\n            ANGLEUNIT[\"degree\",0.0174532925199433],\n            ID[\"EPSG\",8823]],\n        PARAMETER[\"Latitude of 2nd standard parallel\",45.5,\n            ANGLEUNIT[\"degree\",0.0174532925199433],\n            ID[\"EPSG\",8824]],\n        PARAMETER[\"Easting at false origin\",0,\n            LENGTHUNIT[\"metre\",1],\n            ID[\"EPSG\",8826]],\n        PARAMETER[\"Northing at false origin\",0,\n            LENGTHUNIT[\"metre\",1],\n            ID[\"EPSG\",8827]]],\n    CS[Cartesian,2],\n        AXIS[\"easting\",east,\n            ORDER[1],\n            LENGTHUNIT[\"metre\",1,\n                ID[\"EPSG\",9001]]],\n        AXIS[\"northing\",north,\n            ORDER[2],\n            LENGTHUNIT[\"metre\",1,\n                ID[\"EPSG\",9001]]]]"</code></pre>
+</div>
+<details open="">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb125"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb125-1"><a href="#cb125-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ext</span>(fire_reproj)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>SpatExtent : -127.115548067219, -110.522091793501, 39.8909768922204, 50.6496893498793 (xmin, xmax, ymin, ymax)</code></pre>
+</div>
+<details open="">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb127"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb127-1"><a href="#cb127-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ext</span>(fire_prob)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>SpatExtent : -2294745, -1189065, 2208735, 3172575 (xmin, xmax, ymin, ymax)</code></pre>
+</div>
+<details open="">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb129"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb129-1"><a href="#cb129-1" aria-hidden="true" tabindex="-1"></a><span class="fu">res</span>(fire_reproj)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.00289135 0.00289135</code></pre>
+</div>
+<details open="">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb131"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb131-1"><a href="#cb131-1" aria-hidden="true" tabindex="-1"></a><span class="fu">res</span>(fire_prob)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 240 240</code></pre>
+</div>
+</div>
+<p>This is a pretty good indication of the impacts of moving from a degree-based CRS to one that relies on meters. On the one hand, we can express location with smaller values (we learn more from less) with the degree-based CRS. On the other hand, it’s almost impossible to reason about how big a 0.002 degree square pixel is….</p>
+</section>
+</section>
+<section id="a-final-note-on-making-tabular-data-spatial" class="level2">
+<h2 class="anchored" data-anchor-id="a-final-note-on-making-tabular-data-spatial">A Final Note on Making Tabular Data Spatial</h2>
+<p>One thing that happens fairly regularly is that we get a spreadsheet with coordinates that isn’t otherwise spatial. The PurpleAir data that we used in the last unit is a great example of this. The sensor information data comes with info about the sensors along with the latitude and longitude for each sensor.</p>
+<p>We can make this spatial (and maybe even start to think about smoke in the context of both fire probability and social vulnerability). But how do we do that?? The first clue is that the coordinates are in latitude and longitude. This tells us that we are dealing with a geocentric reference system (or datum) - that is, one that has not been projected and provides estimates around the globe. But which one do we use??</p>
+<p>As we discussed, NAD83 is a local datum, one designed such that the spheroids (lines of latitude and longitude) fit the earth’s surface well in <em>a particular location</em>. Alternatively, WGS84 and ITRF2014 are geodetic datums meaning that they offer a more uniform and extensive coverage for the entirety of the globe (even if less accurate for a particular location).</p>
+<p>One of the primary differences in geodetic and local datums is how they account for earth’s movement. For the NAD83 datum, the reference point is fixed to the North American tectonic plate and only moves in association with the movement of that plate. WGS84 and ITRF2014 account for the fact that all of the earth’s tectonic plates are moving and moving at different rates, hence differences arise (slowly) between the different datums as the earth moves.</p>
+<p><img src="img/08/itrf.png" class="img-fluid"></p>
+<p>Assigning anyone of of these datums is relatively trivial computationally so we’ll try all 3. We’ll use <code>read_csv</code> to get the tabular data, convert it using <code>st_as_sf</code>, provide the columns with the location information for the <code>coords</code> argument, and provide the epsg code for each datum to the <code>crs</code> argument.</p>
+<div class="cell">
+<details open="">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb133"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb133-1"><a href="#cb133-1" aria-hidden="true" tabindex="-1"></a>pa_locations_wgs <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"data/original/inclass08/pa.csv"</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb133-2"><a href="#cb133-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">st_as_sf</span>(.,</span>
+<span id="cb133-3"><a href="#cb133-3" aria-hidden="true" tabindex="-1"></a>           <span class="at">coords =</span> <span class="fu">c</span>(<span class="st">"longitude"</span>, <span class="st">"latitude"</span>),</span>
+<span id="cb133-4"><a href="#cb133-4" aria-hidden="true" tabindex="-1"></a>           <span class="at">crs =</span> <span class="dv">4326</span>) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stderr">
+<pre><code>Rows: 3318 Columns: 7
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: ","
+chr (1): name
+dbl (6): sensor_index, date_created, location_type, uptime, latitude, longitude
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
+</div>
+<details open="">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb135"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb135-1"><a href="#cb135-1" aria-hidden="true" tabindex="-1"></a>pa_locations_nad <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"data/original/inclass08/pa.csv"</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb135-2"><a href="#cb135-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">st_as_sf</span>(.,</span>
+<span id="cb135-3"><a href="#cb135-3" aria-hidden="true" tabindex="-1"></a>           <span class="at">coords =</span> <span class="fu">c</span>(<span class="st">"longitude"</span>, <span class="st">"latitude"</span>),</span>
+<span id="cb135-4"><a href="#cb135-4" aria-hidden="true" tabindex="-1"></a>           <span class="at">crs =</span> <span class="dv">4269</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stderr">
+<pre><code>Rows: 3318 Columns: 7
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: ","
+chr (1): name
+dbl (6): sensor_index, date_created, location_type, uptime, latitude, longitude
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
+</div>
+<details open="">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb137"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb137-1"><a href="#cb137-1" aria-hidden="true" tabindex="-1"></a>pa_locations_itrf <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"data/original/inclass08/pa.csv"</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb137-2"><a href="#cb137-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">st_as_sf</span>(.,</span>
+<span id="cb137-3"><a href="#cb137-3" aria-hidden="true" tabindex="-1"></a>           <span class="at">coords =</span> <span class="fu">c</span>(<span class="st">"longitude"</span>, <span class="st">"latitude"</span>),</span>
+<span id="cb137-4"><a href="#cb137-4" aria-hidden="true" tabindex="-1"></a>           <span class="at">crs =</span> <span class="dv">7789</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stderr">
+<pre><code>Rows: 3318 Columns: 7
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: ","
+chr (1): name
+dbl (6): sensor_index, date_created, location_type, uptime, latitude, longitude
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
+</div>
+</div>
+<p>It’s difficult to inspect these with plots because <code>ggplot</code> expects the data to be in a single CRS (because that’s how we should make maps). Instead, we can take a look at things like the <code>bbox</code> to see how big of a difference this makes.</p>
+<div class="cell">
+<details open="">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb139"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb139-1"><a href="#cb139-1" aria-hidden="true" tabindex="-1"></a><span class="fu">st_bbox</span>(pa_locations_wgs)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>      xmin       ymin       xmax       ymax 
+-124.66788   42.01015 -104.22602   48.99379 </code></pre>
+</div>
+<details open="">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb141"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb141-1"><a href="#cb141-1" aria-hidden="true" tabindex="-1"></a><span class="fu">st_bbox</span>(pa_locations_nad)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>      xmin       ymin       xmax       ymax 
+-124.66788   42.01015 -104.22602   48.99379 </code></pre>
+</div>
+<details open="">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb143"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb143-1"><a href="#cb143-1" aria-hidden="true" tabindex="-1"></a><span class="fu">st_bbox</span>(pa_locations_itrf)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>      xmin       ymin       xmax       ymax 
+-124.66788   42.01015 -104.22602   48.99379 </code></pre>
+</div>
+</div>
+<p>As you can see, given the level of precision that we are reporting and the relatively small amount of movement a tectonic plate undergoes in year, the differences are not particularly obvious in the small window that we are looking at. We’ll play with these things more in the coming weeks. For now, it should be enough that you’ve learned to convert the tabular dataset to a set of <code>POINTS</code></p>
+
+
+<!-- -->
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  const viewSource = window.document.getElementById('quarto-view-source') ||
+                     window.document.getElementById('quarto-code-tools-source');
+  if (viewSource) {
+    const sourceUrl = viewSource.getAttribute("data-quarto-source-url");
+    viewSource.addEventListener("click", function(e) {
+      if (sourceUrl) {
+        // rstudio viewer pane
+        if (/\bcapabilities=\b/.test(window.location)) {
+          window.open(sourceUrl);
+        } else {
+          window.location.href = sourceUrl;
+        }
+      } else {
+        const modal = new bootstrap.Modal(document.getElementById('quarto-embedded-source-code-modal'));
+        modal.show();
+      }
+      return false;
+    });
+  }
+  function toggleCodeHandler(show) {
+    return function(e) {
+      const detailsSrc = window.document.querySelectorAll(".cell > details > .sourceCode");
+      for (let i=0; i<detailsSrc.length; i++) {
+        const details = detailsSrc[i].parentElement;
+        if (show) {
+          details.open = true;
+        } else {
+          details.removeAttribute("open");
+        }
+      }
+      const cellCodeDivs = window.document.querySelectorAll(".cell > .sourceCode");
+      const fromCls = show ? "hidden" : "unhidden";
+      const toCls = show ? "unhidden" : "hidden";
+      for (let i=0; i<cellCodeDivs.length; i++) {
+        const codeDiv = cellCodeDivs[i];
+        if (codeDiv.classList.contains(fromCls)) {
+          codeDiv.classList.remove(fromCls);
+          codeDiv.classList.add(toCls);
+        } 
+      }
+      return false;
+    }
+  }
+  const hideAllCode = window.document.getElementById("quarto-hide-all-code");
+  if (hideAllCode) {
+    hideAllCode.addEventListener("click", toggleCodeHandler(false));
+  }
+  const showAllCode = window.document.getElementById("quarto-show-all-code");
+  if (showAllCode) {
+    showAllCode.addEventListener("click", toggleCodeHandler(true));
+  }
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Source Code</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">
+<div class="sourceCode" id="cb145" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb145-1"><a href="#cb145-1" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb145-2"><a href="#cb145-2" aria-hidden="true" tabindex="-1"></a><span class="an">title:</span><span class="co"> "Projections, Extent, and Resolution"</span></span>
+<span id="cb145-3"><a href="#cb145-3" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb145-4"><a href="#cb145-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb145-5"><a href="#cb145-5" aria-hidden="true" tabindex="-1"></a><span class="fu">## Objectives</span></span>
+<span id="cb145-6"><a href="#cb145-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb145-7"><a href="#cb145-7" aria-hidden="true" tabindex="-1"></a>Now that you know how to read in some spatial data, we'll spend a bit of time learning the <span class="in">`sf`</span> and <span class="in">`terra`</span> syntax for accessing and changing the projection, extent, and resolution. By the end of this lesson, you should be able to:</span>
+<span id="cb145-8"><a href="#cb145-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb145-9"><a href="#cb145-9" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>Access the current CRS, extent, and resolution of a spatial data object</span>
+<span id="cb145-10"><a href="#cb145-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb145-11"><a href="#cb145-11" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>Use <span class="in">`sf`</span> and <span class="in">`terra`</span> to modify 1 spatial attribute or all 3 at once</span>
+<span id="cb145-12"><a href="#cb145-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb145-13"><a href="#cb145-13" aria-hidden="true" tabindex="-1"></a><span class="ss">3. </span>Align vector and raster data for analysis and combination</span>
+<span id="cb145-14"><a href="#cb145-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb145-15"><a href="#cb145-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb145-16"><a href="#cb145-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb145-17"><a href="#cb145-17" aria-hidden="true" tabindex="-1"></a><span class="fu">## Getting Started</span></span>
+<span id="cb145-18"><a href="#cb145-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb145-19"><a href="#cb145-19" aria-hidden="true" tabindex="-1"></a>First, <span class="co">[</span><span class="ot">join the repository</span><span class="co">](https://classroom.github.com/a/XWzfBM16)</span>. Then, we'll have to <span class="co">[</span><span class="ot">get our credentials</span><span class="co">](https://rstudio.aws.boisestate.edu/)</span> and login to a <span class="co">[</span><span class="ot">new RStudio session</span><span class="co">](https://rstudio.apps.aws.boisestate.edu/)</span>. Finally, create a new, version control, git-based project (using the link to the repo you just created). </span>
+<span id="cb145-20"><a href="#cb145-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb145-21"><a href="#cb145-21" aria-hidden="true" tabindex="-1"></a>Once you've done that, you'll need to load your packages. We're going to use the same packages as last time and source our custom download function.</span>
+<span id="cb145-22"><a href="#cb145-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb145-23"><a href="#cb145-23" aria-hidden="true" tabindex="-1"></a><span class="in">```{r ldpkg}</span></span>
+<span id="cb145-24"><a href="#cb145-24" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(googledrive)</span>
+<span id="cb145-25"><a href="#cb145-25" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(sf)</span>
+<span id="cb145-26"><a href="#cb145-26" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(terra)</span>
+<span id="cb145-27"><a href="#cb145-27" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyterra)</span>
+<span id="cb145-28"><a href="#cb145-28" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb145-29"><a href="#cb145-29" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">"scripts/utilities/download_utils.R"</span>)</span>
+<span id="cb145-30"><a href="#cb145-30" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb145-31"><a href="#cb145-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb145-32"><a href="#cb145-32" aria-hidden="true" tabindex="-1"></a><span class="fu">## Some Context</span></span>
+<span id="cb145-33"><a href="#cb145-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb145-34"><a href="#cb145-34" aria-hidden="true" tabindex="-1"></a>You likely noticed in your quick maps that the two datasets look different. Sure, one is a vector with lots of <span class="in">`POLYGON`</span> elements and the other is a raster (stored as a <span class="in">`SpatRaster`</span>). If you looked a little, you probably noticed that the orienation (angle) of the areas was a bit different. If you looked a little harder, you probably saw that the general shapes of the states is a bit different, too. And, maybe if you squint, you can see that the boundaries of the maps looks a little different. We'll work through some ways of looking at and fixing those things today! Let's load our datasets and get started!</span>
+<span id="cb145-35"><a href="#cb145-35" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb145-36"><a href="#cb145-36" aria-hidden="true" tabindex="-1"></a><span class="in">```{r dlld}</span></span>
+<span id="cb145-37"><a href="#cb145-37" aria-hidden="true" tabindex="-1"></a>file_list <span class="ot">&lt;-</span> <span class="fu">drive_ls</span>(<span class="fu">drive_get</span>(<span class="fu">as_id</span>(<span class="st">"https://drive.google.com/drive/u/1/folders/1PwfUX2hnJlbnqBe3qvl33tFBImtNFTuR"</span>)))[<span class="sc">-</span><span class="dv">1</span>,]</span>
+<span id="cb145-38"><a href="#cb145-38" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb145-39"><a href="#cb145-39" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb145-40"><a href="#cb145-40" aria-hidden="true" tabindex="-1"></a>file_list <span class="sc">%&gt;%</span> </span>
+<span id="cb145-41"><a href="#cb145-41" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(id, name) <span class="sc">%&gt;%</span></span>
+<span id="cb145-42"><a href="#cb145-42" aria-hidden="true" tabindex="-1"></a>  purrr<span class="sc">::</span><span class="fu">pmap</span>(<span class="cf">function</span>(id, name) {</span>
+<span id="cb145-43"><a href="#cb145-43" aria-hidden="true" tabindex="-1"></a>    <span class="fu">gdrive_folder_download</span>(<span class="fu">list</span>(<span class="at">id =</span> id, <span class="at">name =</span> name),</span>
+<span id="cb145-44"><a href="#cb145-44" aria-hidden="true" tabindex="-1"></a>                           <span class="at">dstfldr =</span> <span class="st">"inclass08"</span>)</span>
+<span id="cb145-45"><a href="#cb145-45" aria-hidden="true" tabindex="-1"></a>  })</span>
+<span id="cb145-46"><a href="#cb145-46" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb145-47"><a href="#cb145-47" aria-hidden="true" tabindex="-1"></a>cejst_shp <span class="ot">&lt;-</span> <span class="fu">read_sf</span>(<span class="st">"data/original/inclass08/cejst.shp"</span>)</span>
+<span id="cb145-48"><a href="#cb145-48" aria-hidden="true" tabindex="-1"></a>fire_prob <span class="ot">&lt;-</span> <span class="fu">rast</span>(<span class="st">"data/original/inclass08/wildfire.tif"</span>)</span>
+<span id="cb145-49"><a href="#cb145-49" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb145-50"><a href="#cb145-50" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb145-51"><a href="#cb145-51" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb145-52"><a href="#cb145-52" aria-hidden="true" tabindex="-1"></a><span class="fu">## What is the Current Extent?</span></span>
+<span id="cb145-53"><a href="#cb145-53" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb145-54"><a href="#cb145-54" aria-hidden="true" tabindex="-1"></a>Because extent is part of our internal definition of scale and because getting our extents aligned is a big part of making sure our data sandwich doesn't fall apart, we'll start by checking to see what the extent is for each dataset.</span>
+<span id="cb145-55"><a href="#cb145-55" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb145-56"><a href="#cb145-56" aria-hidden="true" tabindex="-1"></a><span class="fu">### Vector Data</span></span>
+<span id="cb145-57"><a href="#cb145-57" aria-hidden="true" tabindex="-1"></a>By convention, the <span class="in">`sf`</span> package uses a standard syntax for spatial operations that starts with <span class="in">`st_`</span>. In addition, the extent of a vector dataset is known as the **bounding box**. We can access that using <span class="in">`st_bbox`</span></span>
+<span id="cb145-58"><a href="#cb145-58" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb145-59"><a href="#cb145-59" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb145-60"><a href="#cb145-60" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb145-61"><a href="#cb145-61" aria-hidden="true" tabindex="-1"></a><span class="in">```{r sfbbox}</span></span>
+<span id="cb145-62"><a href="#cb145-62" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb145-63"><a href="#cb145-63" aria-hidden="true" tabindex="-1"></a><span class="fu">st_bbox</span>(cejst_shp)</span>
+<span id="cb145-64"><a href="#cb145-64" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb145-65"><a href="#cb145-65" aria-hidden="true" tabindex="-1"></a>cejst_shp <span class="sc">%&gt;%</span> </span>
+<span id="cb145-66"><a href="#cb145-66" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(., SF <span class="sc">==</span> <span class="st">"Idaho"</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb145-67"><a href="#cb145-67" aria-hidden="true" tabindex="-1"></a>  <span class="fu">st_bbox</span>()</span>
+<span id="cb145-68"><a href="#cb145-68" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb145-69"><a href="#cb145-69" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb145-70"><a href="#cb145-70" aria-hidden="true" tabindex="-1"></a>There are three things to know about the bounding box. First, it is, by definition, a rectangle that encompases the vertices of your vector object. So, even if you've got an irregularly shaped <span class="in">`POLYGON`</span> or a series of <span class="in">`POINTS`</span>, the bounding box  necessarily returns the rectangle that encompasses all of the vertices in the object.  Second, using <span class="in">`st_bbox`</span> returns an object of class <span class="in">`bbox`</span> (you can check this by running <span class="in">`st_bbox(your_data) %&gt;% class()`</span> which is a special kind of object. Finally, if you use <span class="in">`dplyr`</span> verbs to alter your the composition of your vector dataset, the bounding box will update to reflect those changes. You can see that in the values returned in the example above, but you can also plot it.</span>
+<span id="cb145-71"><a href="#cb145-71" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb145-72"><a href="#cb145-72" aria-hidden="true" tabindex="-1"></a>To do that, we have to convert the <span class="in">`bbox`</span>to a simple feature collection (<span class="in">`sfc`</span>) we can do that using the <span class="in">`st_as_sfc`</span> command and then use base <span class="in">`plot`</span> to give us a sense for how different the two bounding boxes are.</span>
+<span id="cb145-73"><a href="#cb145-73" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb145-74"><a href="#cb145-74" aria-hidden="true" tabindex="-1"></a><span class="in">```{r pltbbox}</span></span>
+<span id="cb145-75"><a href="#cb145-75" aria-hidden="true" tabindex="-1"></a>all_bbox <span class="ot">&lt;-</span> <span class="fu">st_bbox</span>(cejst_shp) <span class="sc">%&gt;%</span> </span>
+<span id="cb145-76"><a href="#cb145-76" aria-hidden="true" tabindex="-1"></a>  <span class="fu">st_as_sfc</span>()</span>
+<span id="cb145-77"><a href="#cb145-77" aria-hidden="true" tabindex="-1"></a>id_bbox <span class="ot">&lt;-</span> cejst_shp <span class="sc">%&gt;%</span> </span>
+<span id="cb145-78"><a href="#cb145-78" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(., SF <span class="sc">==</span> <span class="st">"Idaho"</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb145-79"><a href="#cb145-79" aria-hidden="true" tabindex="-1"></a>  <span class="fu">st_bbox</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb145-80"><a href="#cb145-80" aria-hidden="true" tabindex="-1"></a>  <span class="fu">st_as_sfc</span>()</span>
+<span id="cb145-81"><a href="#cb145-81" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb145-82"><a href="#cb145-82" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(all_bbox)</span>
+<span id="cb145-83"><a href="#cb145-83" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(id_bbox, <span class="at">add=</span><span class="cn">TRUE</span>, <span class="at">border =</span><span class="st">"red"</span>)</span>
+<span id="cb145-84"><a href="#cb145-84" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb145-85"><a href="#cb145-85" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb145-86"><a href="#cb145-86" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb145-87"><a href="#cb145-87" aria-hidden="true" tabindex="-1"></a>One nice thing about <span class="in">`sf`</span> objects is that there is a built-in <span class="in">`geom_`</span> in <span class="in">`ggplot2`</span> that will allow us to make maps with all of the flexibility of <span class="in">`ggplot`</span>. </span>
+<span id="cb145-88"><a href="#cb145-88" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb145-89"><a href="#cb145-89" aria-hidden="true" tabindex="-1"></a><span class="in">```{r ggbbox}</span></span>
+<span id="cb145-90"><a href="#cb145-90" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb145-91"><a href="#cb145-91" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>() <span class="sc">+</span></span>
+<span id="cb145-92"><a href="#cb145-92" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_sf</span>(<span class="at">data =</span> all_bbox, <span class="at">color =</span> <span class="st">"yellow"</span>, <span class="at">fill =</span> <span class="st">"darkorchid4"</span>) <span class="sc">+</span></span>
+<span id="cb145-93"><a href="#cb145-93" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_sf</span>(<span class="at">data=</span> id_bbox, <span class="at">fill =</span> <span class="st">"orangered"</span>) <span class="sc">+</span></span>
+<span id="cb145-94"><a href="#cb145-94" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>()</span>
+<span id="cb145-95"><a href="#cb145-95" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb145-96"><a href="#cb145-96" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb145-97"><a href="#cb145-97" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb145-98"><a href="#cb145-98" aria-hidden="true" tabindex="-1"></a>In the <span class="in">`ggplot`</span> call, I've done several things. First, I used <span class="in">`geom_sf`</span> to add each vector dataset. Then instead of using the <span class="in">`mapping = aes()`</span> to tell <span class="in">`ggplot`</span> which column I want to use for the colors, I set the <span class="in">`color`</span> and <span class="in">`fill`</span> manually by specifying them outside of the <span class="in">`aes()`</span> call and setting them manually.  Finally, I called <span class="in">`theme_bw()`</span> to set the plotting options <span class="co">[</span><span class="ot">using one of the preset `ggplot` themes</span><span class="co">](https://r-charts.com/ggplot2/themes/)</span>. Using <span class="in">`ggplot`</span> gives a lot more flexibility and allows us to layer data on top of each other to create maps!</span>
+<span id="cb145-99"><a href="#cb145-99" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb145-100"><a href="#cb145-100" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb145-101"><a href="#cb145-101" aria-hidden="true" tabindex="-1"></a><span class="fu">### Raster Data</span></span>
+<span id="cb145-102"><a href="#cb145-102" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb145-103"><a href="#cb145-103" aria-hidden="true" tabindex="-1"></a>Unfortunately, the <span class="in">`terra`</span> package uses some different conventions and <span class="in">`tidyterra`</span> only provides functionality for some operations that are more complex. That said, many of the functions in <span class="in">`terra`</span> match our intuition for the operations we'd like to use so it doesn't take too much to figure out how to get what we need. In this case, we are interested in the **extent** of our raster.  If you look at the <span class="in">`terra`</span> helpfile (<span class="in">`?terra`</span>), you'll see the entire list of functions available within the package. If you look for the "Getting and setting dimensions" section, you'll see that there are a number of functions for getting information about <span class="in">`SpatRaster`</span> objects. A quick scan reveals that the function for getting the extent is <span class="in">`ext`</span>.</span>
+<span id="cb145-104"><a href="#cb145-104" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb145-105"><a href="#cb145-105" aria-hidden="true" tabindex="-1"></a><span class="in">```{r terext}</span></span>
+<span id="cb145-106"><a href="#cb145-106" aria-hidden="true" tabindex="-1"></a><span class="fu">ext</span>(fire_prob)</span>
+<span id="cb145-107"><a href="#cb145-107" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb145-108"><a href="#cb145-108" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb145-109"><a href="#cb145-109" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb145-110"><a href="#cb145-110" aria-hidden="true" tabindex="-1"></a>You'll notice a few things about this object. First, it has a new <span class="in">`class`</span>, a <span class="in">`SpatExtent`</span>. Next, you'll notice that the ordering and structure of the data is different from that of <span class="in">`sf`</span>'s <span class="in">`bbox`</span>. </span>
+<span id="cb145-111"><a href="#cb145-111" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb145-112"><a href="#cb145-112" aria-hidden="true" tabindex="-1"></a>We can use <span class="in">`plot`</span> directly on a <span class="in">`SpatExtent`</span> object to be able to look at the extent.</span>
+<span id="cb145-113"><a href="#cb145-113" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb145-114"><a href="#cb145-114" aria-hidden="true" tabindex="-1"></a><span class="in">```{r plotext}</span></span>
+<span id="cb145-115"><a href="#cb145-115" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(<span class="fu">ext</span>(fire_prob), <span class="at">border =</span> <span class="st">"red"</span>)</span>
+<span id="cb145-116"><a href="#cb145-116" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(fire_prob, <span class="at">add=</span><span class="cn">TRUE</span>)</span>
+<span id="cb145-117"><a href="#cb145-117" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb145-118"><a href="#cb145-118" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb145-119"><a href="#cb145-119" aria-hidden="true" tabindex="-1"></a>Similar to the <span class="in">`bbox`</span> from <span class="in">`sf`</span>, <span class="in">`ext`</span> returns a rectangle encompassing the entire <span class="in">`SpatRaster`</span> object. The <span class="in">`tidyterra`</span> package allows us to use <span class="in">`filter`</span> as a way to subset rasters without using indexing. We can use that here to find all of the cells whose wildfire hazard potential is greater than 30000. While the behavior of <span class="in">`filter`</span> is the same for both <span class="in">`sf`</span> and <span class="in">`terra`</span> (meaning it keeps only the values that meet your <span class="in">`filter`</span> criteria), you'll notice that, unlike the <span class="in">`bbox`</span> of <span class="in">`sf`</span>, the extent of a <span class="in">`SpatRaster`</span> does not change to match the subset data. </span>
+<span id="cb145-120"><a href="#cb145-120" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb145-121"><a href="#cb145-121" aria-hidden="true" tabindex="-1"></a><span class="in">```{r subrst}</span></span>
+<span id="cb145-122"><a href="#cb145-122" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb145-123"><a href="#cb145-123" aria-hidden="true" tabindex="-1"></a>fire_subset <span class="ot">&lt;-</span> fire_prob <span class="sc">%&gt;%</span> </span>
+<span id="cb145-124"><a href="#cb145-124" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(WHP_ID <span class="sc">&gt;</span> <span class="dv">30000</span>)</span>
+<span id="cb145-125"><a href="#cb145-125" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb145-126"><a href="#cb145-126" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(<span class="fu">ext</span>(fire_subset), <span class="at">border =</span> <span class="st">"red"</span>)</span>
+<span id="cb145-127"><a href="#cb145-127" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(fire_subset, <span class="at">add=</span><span class="cn">TRUE</span>)</span>
+<span id="cb145-128"><a href="#cb145-128" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb145-129"><a href="#cb145-129" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb145-130"><a href="#cb145-130" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb145-131"><a href="#cb145-131" aria-hidden="true" tabindex="-1"></a><span class="fu">## How Can I Change the Extent?</span></span>
+<span id="cb145-132"><a href="#cb145-132" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb145-133"><a href="#cb145-133" aria-hidden="true" tabindex="-1"></a>There may be occasions where you want to manually change the extent of your spatial objects. Both <span class="in">`sf`</span> and <span class="in">`terra`</span> provide multiple functions for changing the <span class="in">`extent`</span> as part of additional spatial operations (we'll talk more about this in the coming weeks), but sometimes you might want to adjust the extent of an object without modifying anything else about it. Sometimes we might do this to create inset maps. Sometimes we might want to create asymmetric buffers around an existing extent. This is a somewhat rare, but it's worth knowing how to do it just to get a feel for how extents work.</span>
+<span id="cb145-134"><a href="#cb145-134" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb145-135"><a href="#cb145-135" aria-hidden="true" tabindex="-1"></a><span class="fu">### Vector Data</span></span>
+<span id="cb145-136"><a href="#cb145-136" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb145-137"><a href="#cb145-137" aria-hidden="true" tabindex="-1"></a>If you look at <span class="in">`?st_bbox`</span> you'll see an example of the manual creation of a <span class="in">`bbox`</span> object. We can exploit the fact that <span class="in">`st_bbox`</span> returns a <span class="in">`named.vector`</span> to access the values in the original bounding box and "shrink" it by adding (or subtracting) values from the existing bounding box. Two things are tricky here. First, the original data is in a **geodetic** projection so the units are in degrees (which I have no real intuition for). Second, the goal of "shrinking" the bounding box means we have to think about how we might move "up" or "in" along the graticules. I exploited the plot above to figure out some reasonable numbers and add them here. </span>
+<span id="cb145-138"><a href="#cb145-138" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb145-139"><a href="#cb145-139" aria-hidden="true" tabindex="-1"></a><span class="in">```{r chgbbox}</span></span>
+<span id="cb145-140"><a href="#cb145-140" aria-hidden="true" tabindex="-1"></a>orig_bbox <span class="ot">&lt;-</span> <span class="fu">st_bbox</span>(cejst_shp)</span>
+<span id="cb145-141"><a href="#cb145-141" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb145-142"><a href="#cb145-142" aria-hidden="true" tabindex="-1"></a>new_bbox <span class="ot">&lt;-</span> <span class="fu">st_bbox</span>(<span class="fu">c</span>(orig_bbox[<span class="st">"xmin"</span>] <span class="sc">+</span> <span class="dv">1</span>, orig_bbox[<span class="st">"xmax"</span>] <span class="sc">-</span> <span class="dv">1</span>,  orig_bbox[<span class="st">"ymax"</span>] <span class="sc">-</span> <span class="dv">1</span>, orig_bbox[<span class="st">"ymin"</span>] <span class="sc">+</span> <span class="dv">1</span>), <span class="at">crs =</span> <span class="fu">st_crs</span>(orig_bbox)) <span class="sc">%&gt;%</span> <span class="fu">st_as_sfc</span>()</span>
+<span id="cb145-143"><a href="#cb145-143" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb145-144"><a href="#cb145-144" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb145-145"><a href="#cb145-145" aria-hidden="true" tabindex="-1"></a>You can verify this again with a plot.</span>
+<span id="cb145-146"><a href="#cb145-146" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb145-147"><a href="#cb145-147" aria-hidden="true" tabindex="-1"></a><span class="in">```{r bboxchg}</span></span>
+<span id="cb145-148"><a href="#cb145-148" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb145-149"><a href="#cb145-149" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>() <span class="sc">+</span></span>
+<span id="cb145-150"><a href="#cb145-150" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_sf</span>(<span class="at">data =</span> <span class="fu">st_as_sfc</span>(orig_bbox), <span class="at">color =</span> <span class="st">"yellow"</span>, <span class="at">fill =</span> <span class="st">"darkorchid4"</span>) <span class="sc">+</span></span>
+<span id="cb145-151"><a href="#cb145-151" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_sf</span>(<span class="at">data=</span> new_bbox, <span class="at">fill =</span> <span class="st">"orangered"</span>) <span class="sc">+</span></span>
+<span id="cb145-152"><a href="#cb145-152" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>()</span>
+<span id="cb145-153"><a href="#cb145-153" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb145-154"><a href="#cb145-154" aria-hidden="true" tabindex="-1"></a><span class="in">```</span>  </span>
+<span id="cb145-155"><a href="#cb145-155" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb145-156"><a href="#cb145-156" aria-hidden="true" tabindex="-1"></a><span class="fu">### Raster Data</span></span>
+<span id="cb145-157"><a href="#cb145-157" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb145-158"><a href="#cb145-158" aria-hidden="true" tabindex="-1"></a>The process is similar for rasters with <span class="in">`terra`</span>, but we need to get the <span class="in">`SpatExtent`</span> object into a more useable format. The other thing to notice is that our raster is in a projection that uses meters as its measurement unit (you can tell by the differene in the orders of magnitude in the values). This means we need to think a bit differently about how to shift the box.</span>
+<span id="cb145-159"><a href="#cb145-159" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb145-160"><a href="#cb145-160" aria-hidden="true" tabindex="-1"></a><span class="in">```{r chgext}</span></span>
+<span id="cb145-161"><a href="#cb145-161" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb145-162"><a href="#cb145-162" aria-hidden="true" tabindex="-1"></a>orig_ext <span class="ot">&lt;-</span> <span class="fu">as.vector</span>(<span class="fu">ext</span>(fire_prob))</span>
+<span id="cb145-163"><a href="#cb145-163" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb145-164"><a href="#cb145-164" aria-hidden="true" tabindex="-1"></a>new_ext <span class="ot">&lt;-</span> <span class="fu">ext</span>(<span class="fu">as.numeric</span>(<span class="fu">c</span>(</span>
+<span id="cb145-165"><a href="#cb145-165" aria-hidden="true" tabindex="-1"></a>  orig_ext[<span class="st">"xmin"</span>] <span class="sc">+</span> <span class="dv">100000</span>,</span>
+<span id="cb145-166"><a href="#cb145-166" aria-hidden="true" tabindex="-1"></a>  orig_ext[<span class="st">"xmax"</span>] <span class="sc">-</span> <span class="dv">100000</span>,</span>
+<span id="cb145-167"><a href="#cb145-167" aria-hidden="true" tabindex="-1"></a>  orig_ext[<span class="st">"ymin"</span>] <span class="sc">+</span> <span class="dv">100000</span>,</span>
+<span id="cb145-168"><a href="#cb145-168" aria-hidden="true" tabindex="-1"></a>  orig_ext[<span class="st">"ymax"</span>] <span class="sc">-</span> <span class="dv">100000</span></span>
+<span id="cb145-169"><a href="#cb145-169" aria-hidden="true" tabindex="-1"></a>)))</span>
+<span id="cb145-170"><a href="#cb145-170" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb145-171"><a href="#cb145-171" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(orig_ext)</span>
+<span id="cb145-172"><a href="#cb145-172" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(new_ext, <span class="at">add=</span><span class="cn">TRUE</span>, <span class="at">border =</span> <span class="st">"red"</span>)</span>
+<span id="cb145-173"><a href="#cb145-173" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb145-174"><a href="#cb145-174" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb145-175"><a href="#cb145-175" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb145-176"><a href="#cb145-176" aria-hidden="true" tabindex="-1"></a><span class="fu">## What is the Current Resolution?</span></span>
+<span id="cb145-177"><a href="#cb145-177" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb145-178"><a href="#cb145-178" aria-hidden="true" tabindex="-1"></a>For vector datsets, we don't tend to think about resolution because vectors can be stretched or subset. Instead, we need to think about the **support** underlying the data. This isn't readily apparent in the data itself. Instead, you'll need to look into the metadata or the sources of the data to understand what the "true" resolution of the data is.</span>
+<span id="cb145-179"><a href="#cb145-179" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb145-180"><a href="#cb145-180" aria-hidden="true" tabindex="-1"></a>For raster data, this is easy enough using the <span class="in">`res`</span> function in <span class="in">`terra`</span></span>
+<span id="cb145-181"><a href="#cb145-181" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb145-182"><a href="#cb145-182" aria-hidden="true" tabindex="-1"></a><span class="in">```{r terres}</span></span>
+<span id="cb145-183"><a href="#cb145-183" aria-hidden="true" tabindex="-1"></a><span class="fu">res</span>(fire_prob)</span>
+<span id="cb145-184"><a href="#cb145-184" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb145-185"><a href="#cb145-185" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb145-186"><a href="#cb145-186" aria-hidden="true" tabindex="-1"></a><span class="fu">## How Can I Change the Current Resolution?</span></span>
+<span id="cb145-187"><a href="#cb145-187" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb145-188"><a href="#cb145-188" aria-hidden="true" tabindex="-1"></a>In some cases you may want to sharpen or coarsen the resolution. You can use <span class="in">`aggregate`</span> or <span class="in">`disagg`</span> in <span class="in">`terra`</span> to do this. The key bit is the <span class="in">`fact`</span> argument. Which tells you the factor by which we create that surface.</span>
+<span id="cb145-189"><a href="#cb145-189" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb145-190"><a href="#cb145-190" aria-hidden="true" tabindex="-1"></a><span class="in">```{r reschg}</span></span>
+<span id="cb145-191"><a href="#cb145-191" aria-hidden="true" tabindex="-1"></a>coarser_fire <span class="ot">&lt;-</span> <span class="fu">aggregate</span>(fire_prob, <span class="at">fact =</span> <span class="dv">5</span>)</span>
+<span id="cb145-192"><a href="#cb145-192" aria-hidden="true" tabindex="-1"></a>finer_fire <span class="ot">&lt;-</span> <span class="fu">disagg</span>(fire_prob, <span class="at">fact =</span> <span class="dv">5</span>)</span>
+<span id="cb145-193"><a href="#cb145-193" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb145-194"><a href="#cb145-194" aria-hidden="true" tabindex="-1"></a><span class="fu">res</span>(coarser_fire)</span>
+<span id="cb145-195"><a href="#cb145-195" aria-hidden="true" tabindex="-1"></a><span class="fu">ext</span>(coarser_fire)</span>
+<span id="cb145-196"><a href="#cb145-196" aria-hidden="true" tabindex="-1"></a><span class="fu">res</span>(finer_fire)</span>
+<span id="cb145-197"><a href="#cb145-197" aria-hidden="true" tabindex="-1"></a><span class="fu">ext</span>(finer_fire)</span>
+<span id="cb145-198"><a href="#cb145-198" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(coarser_fire)</span>
+<span id="cb145-199"><a href="#cb145-199" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(finer_fire)</span>
+<span id="cb145-200"><a href="#cb145-200" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb145-201"><a href="#cb145-201" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb145-202"><a href="#cb145-202" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb145-203"><a href="#cb145-203" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb145-204"><a href="#cb145-204" aria-hidden="true" tabindex="-1"></a><span class="fu">## What is the Current Projection?</span></span>
+<span id="cb145-205"><a href="#cb145-205" aria-hidden="true" tabindex="-1"></a>You probably noticed from your initial plots that the "shapes" of the data are different. This is a pretty good clue that the data is in different projections. We can verify that relatively easily in both <span class="in">`sf`</span> and <span class="in">`terra`</span>.</span>
+<span id="cb145-206"><a href="#cb145-206" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb145-207"><a href="#cb145-207" aria-hidden="true" tabindex="-1"></a><span class="fu">### Vector Data</span></span>
+<span id="cb145-208"><a href="#cb145-208" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb145-209"><a href="#cb145-209" aria-hidden="true" tabindex="-1"></a>When we are considering projections, our true interest is in the Coordinate Reference System (CRS). For <span class="in">`sf`</span> we can use <span class="in">`st_crs`</span> to access the CRS for a vector object.</span>
+<span id="cb145-210"><a href="#cb145-210" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb145-211"><a href="#cb145-211" aria-hidden="true" tabindex="-1"></a><span class="in">```{r sfcrs}</span></span>
+<span id="cb145-212"><a href="#cb145-212" aria-hidden="true" tabindex="-1"></a><span class="fu">st_crs</span>(cejst_shp)</span>
+<span id="cb145-213"><a href="#cb145-213" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb145-214"><a href="#cb145-214" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb145-215"><a href="#cb145-215" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb145-216"><a href="#cb145-216" aria-hidden="true" tabindex="-1"></a>You'll notice a fairly verbose output from this. This is a <span class="in">`.wkt`</span>(well-known text) output that describes all of the parameters underlying the projection (here it's WGS84). You'll notice in the last line that there is "EPSG" code. EPSG stands for European Petroleum Survey Group, an entity that standardizes codes and parameters for projections. These codes can be used as shorthand in <span class="in">`R`</span> to alter projections so that you don't have to know all of the .wkt parameters.</span>
+<span id="cb145-217"><a href="#cb145-217" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb145-218"><a href="#cb145-218" aria-hidden="true" tabindex="-1"></a><span class="fu">### Raster Data</span></span>
+<span id="cb145-219"><a href="#cb145-219" aria-hidden="true" tabindex="-1"></a>The process is largely the same for <span class="in">`terra`</span>, but without the <span class="in">`st_`</span> prefix.</span>
+<span id="cb145-220"><a href="#cb145-220" aria-hidden="true" tabindex="-1"></a><span class="in">```{r crsrst}</span></span>
+<span id="cb145-221"><a href="#cb145-221" aria-hidden="true" tabindex="-1"></a><span class="fu">crs</span>(fire_prob)</span>
+<span id="cb145-222"><a href="#cb145-222" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb145-223"><a href="#cb145-223" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb145-224"><a href="#cb145-224" aria-hidden="true" tabindex="-1"></a>Here again, you get the .wkt output, but it's in a slightly different format. This makes difficult to compare projections programmatically. Instead you've got to look to see if things match. One thing you'll notice is that the wkt says "unnamed" suggesting that <span class="in">`R`</span> isn't entirely sure what this is. However, all of the necessary parameters are there, so we'll move on for now.</span>
+<span id="cb145-225"><a href="#cb145-225" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb145-226"><a href="#cb145-226" aria-hidden="true" tabindex="-1"></a><span class="fu">## How Can I Change the Projection?</span></span>
+<span id="cb145-227"><a href="#cb145-227" aria-hidden="true" tabindex="-1"></a>In order to make sure that our "data sandwich" is lined up that any combinations of data we create truly correspond to the same location. We can **reproject** the data to ensure alignment. In <span class="in">`sf`</span>, we can use <span class="in">`st_transform`</span> to _transform_ the CRS of a spatial layer.</span>
+<span id="cb145-228"><a href="#cb145-228" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb145-229"><a href="#cb145-229" aria-hidden="true" tabindex="-1"></a>::: {.callout-warning}</span>
+<span id="cb145-230"><a href="#cb145-230" aria-hidden="true" tabindex="-1"></a>In general, it is better to re-project vector data to match raster data, as the vector form is more flexible (because vectors can stretch, but raster cells can't).</span>
+<span id="cb145-231"><a href="#cb145-231" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb145-232"><a href="#cb145-232" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb145-233"><a href="#cb145-233" aria-hidden="true" tabindex="-1"></a><span class="fu">### Vector Data</span></span>
+<span id="cb145-234"><a href="#cb145-234" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb145-235"><a href="#cb145-235" aria-hidden="true" tabindex="-1"></a>Let's start by reprojecting the vector dataset. </span>
+<span id="cb145-236"><a href="#cb145-236" aria-hidden="true" tabindex="-1"></a><span class="in">```{r rprjvect}</span></span>
+<span id="cb145-237"><a href="#cb145-237" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb145-238"><a href="#cb145-238" aria-hidden="true" tabindex="-1"></a>cejst_reproject <span class="ot">&lt;-</span> cejst_shp <span class="sc">%&gt;%</span> </span>
+<span id="cb145-239"><a href="#cb145-239" aria-hidden="true" tabindex="-1"></a>  <span class="fu">st_transform</span>(., <span class="at">crs =</span> <span class="fu">st_crs</span>(fire_prob))</span>
+<span id="cb145-240"><a href="#cb145-240" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb145-241"><a href="#cb145-241" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb145-242"><a href="#cb145-242" aria-hidden="true" tabindex="-1"></a>The <span class="in">`st_transform`</span> function is the reprojection function. The <span class="in">`.`</span> tells <span class="in">`st_transform`</span> to project the object that is piped (<span class="in">` %&gt;% `</span>) in and the <span class="in">`crs`</span> argument tells the function what the new Coordinate Reference System should be. You'll notice here that we used <span class="in">`st_crs`</span> to extract the CRS from our raster dataset. For several common functions (like accessing CRS), <span class="in">`sf`</span> will accept <span class="in">`terra`</span> objects and vice versa. This is not generally the case, though, and if we need to use <span class="in">`terra`</span> to work on vector data we'll need to convert our <span class="in">`sf`</span> object to a <span class="in">`vect`</span> object using <span class="in">`terra`</span>'s <span class="in">`vect()`</span> function.</span>
+<span id="cb145-243"><a href="#cb145-243" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb145-244"><a href="#cb145-244" aria-hidden="true" tabindex="-1"></a>Now let's look at what's changed about the vector data.</span>
+<span id="cb145-245"><a href="#cb145-245" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb145-246"><a href="#cb145-246" aria-hidden="true" tabindex="-1"></a><span class="in">```{r vectchg}</span></span>
+<span id="cb145-247"><a href="#cb145-247" aria-hidden="true" tabindex="-1"></a><span class="fu">st_crs</span>(cejst_reproject)</span>
+<span id="cb145-248"><a href="#cb145-248" aria-hidden="true" tabindex="-1"></a><span class="fu">st_crs</span>(cejst_shp)</span>
+<span id="cb145-249"><a href="#cb145-249" aria-hidden="true" tabindex="-1"></a><span class="fu">st_bbox</span>(cejst_reproject)</span>
+<span id="cb145-250"><a href="#cb145-250" aria-hidden="true" tabindex="-1"></a><span class="fu">st_bbox</span>(cejst_shp)</span>
+<span id="cb145-251"><a href="#cb145-251" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb145-252"><a href="#cb145-252" aria-hidden="true" tabindex="-1"></a><span class="fu">### Raster Data</span></span>
+<span id="cb145-253"><a href="#cb145-253" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb145-254"><a href="#cb145-254" aria-hidden="true" tabindex="-1"></a>Even though it's not a particularly great idea, we can reproject the raster to match our existing shapefile too. You can learn more about this from <span class="in">`?project`</span>. You'll also notice that there are a number of recommendations to help you do this safely and without breaking something.</span>
+<span id="cb145-255"><a href="#cb145-255" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb145-256"><a href="#cb145-256" aria-hidden="true" tabindex="-1"></a>For this to work, we need to get the crs from our data in a format the <span class="in">`terra`</span> can understand. Unlike <span class="in">`sf`</span>, <span class="in">`terra`</span> relies primarily on the wkt form (instead of epsg), so we get that first. Then we can use <span class="in">`terra`</span>s <span class="in">`project`</span> function. We'll do more projecting and resampling of rasters in the coming weeks, but for now it's worth understanding the mechanics and reading the helpfile to understand the limitations of approaching it this way.</span>
+<span id="cb145-257"><a href="#cb145-257" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb145-258"><a href="#cb145-258" aria-hidden="true" tabindex="-1"></a><span class="in">```{r rstprj}</span></span>
+<span id="cb145-259"><a href="#cb145-259" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb145-260"><a href="#cb145-260" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb145-261"><a href="#cb145-261" aria-hidden="true" tabindex="-1"></a>target_crs <span class="ot">&lt;-</span> <span class="fu">st_crs</span>(cejst_shp)<span class="sc">$</span>wkt  <span class="co"># WKT string</span></span>
+<span id="cb145-262"><a href="#cb145-262" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb145-263"><a href="#cb145-263" aria-hidden="true" tabindex="-1"></a>fire_reproj <span class="ot">&lt;-</span> <span class="fu">project</span>(fire_prob, target_crs)</span>
+<span id="cb145-264"><a href="#cb145-264" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb145-265"><a href="#cb145-265" aria-hidden="true" tabindex="-1"></a><span class="fu">crs</span>(fire_reproj)</span>
+<span id="cb145-266"><a href="#cb145-266" aria-hidden="true" tabindex="-1"></a><span class="fu">crs</span>(fire_prob)</span>
+<span id="cb145-267"><a href="#cb145-267" aria-hidden="true" tabindex="-1"></a><span class="fu">ext</span>(fire_reproj)</span>
+<span id="cb145-268"><a href="#cb145-268" aria-hidden="true" tabindex="-1"></a><span class="fu">ext</span>(fire_prob)</span>
+<span id="cb145-269"><a href="#cb145-269" aria-hidden="true" tabindex="-1"></a><span class="fu">res</span>(fire_reproj)</span>
+<span id="cb145-270"><a href="#cb145-270" aria-hidden="true" tabindex="-1"></a><span class="fu">res</span>(fire_prob)</span>
+<span id="cb145-271"><a href="#cb145-271" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb145-272"><a href="#cb145-272" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb145-273"><a href="#cb145-273" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb145-274"><a href="#cb145-274" aria-hidden="true" tabindex="-1"></a>This is a pretty good indication of the impacts of moving from a degree-based CRS to one that relies on meters. On the one hand, we can express location with smaller values (we learn more from less) with the degree-based CRS. On the other hand, it's almost impossible to reason about how big a 0.002 degree square pixel is....</span>
+<span id="cb145-275"><a href="#cb145-275" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb145-276"><a href="#cb145-276" aria-hidden="true" tabindex="-1"></a><span class="fu">## A Final Note on Making Tabular Data Spatial</span></span>
+<span id="cb145-277"><a href="#cb145-277" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb145-278"><a href="#cb145-278" aria-hidden="true" tabindex="-1"></a>One thing that happens fairly regularly is that we get a spreadsheet with coordinates that isn't otherwise spatial. The PurpleAir data that we used in the last unit is a great example of this. The sensor information data comes with info about the sensors along with the latitude and longitude for each sensor.</span>
+<span id="cb145-279"><a href="#cb145-279" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb145-280"><a href="#cb145-280" aria-hidden="true" tabindex="-1"></a>We can make this spatial (and maybe even start to think about smoke in the context of both fire probability and social vulnerability). But how do we do that?? The first clue is that the coordinates are in latitude and longitude. This tells us that we are dealing with a geocentric reference system (or datum) - that is, one that has not been projected and provides estimates around the globe. But which one do we use??</span>
+<span id="cb145-281"><a href="#cb145-281" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb145-282"><a href="#cb145-282" aria-hidden="true" tabindex="-1"></a>As we discussed, NAD83 is a local datum, one designed such that the spheroids (lines of latitude and longitude) fit the earth's surface well in _a particular location_. Alternatively, WGS84 and ITRF2014 are geodetic datums meaning that they offer a more uniform and extensive coverage for the entirety of the globe (even if less accurate for a particular location). </span>
+<span id="cb145-283"><a href="#cb145-283" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb145-284"><a href="#cb145-284" aria-hidden="true" tabindex="-1"></a>One of the primary differences in geodetic and local datums is how they account for earth's movement. For the NAD83 datum, the reference point is fixed to the North American tectonic plate and only moves in association with the movement of that plate. WGS84 and ITRF2014 account for the fact that all of the earth's tectonic plates are moving and moving at different rates, hence differences arise (slowly) between the different datums as the earth moves.</span>
+<span id="cb145-285"><a href="#cb145-285" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb145-286"><a href="#cb145-286" aria-hidden="true" tabindex="-1"></a><span class="al">![](img/08/itrf.png)</span></span>
+<span id="cb145-287"><a href="#cb145-287" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb145-288"><a href="#cb145-288" aria-hidden="true" tabindex="-1"></a>Assigning anyone of of these datums is relatively trivial computationally so we'll try all 3. We'll use <span class="in">`read_csv`</span> to get the tabular data, convert it using <span class="in">`st_as_sf`</span>, provide the columns with the location information for the <span class="in">`coords`</span> argument, and provide the epsg code for each datum to the <span class="in">`crs`</span> argument.</span>
+<span id="cb145-289"><a href="#cb145-289" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb145-290"><a href="#cb145-290" aria-hidden="true" tabindex="-1"></a><span class="in">```{r tabdata}</span></span>
+<span id="cb145-291"><a href="#cb145-291" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb145-292"><a href="#cb145-292" aria-hidden="true" tabindex="-1"></a>pa_locations_wgs <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"data/original/inclass08/pa.csv"</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb145-293"><a href="#cb145-293" aria-hidden="true" tabindex="-1"></a>  <span class="fu">st_as_sf</span>(.,</span>
+<span id="cb145-294"><a href="#cb145-294" aria-hidden="true" tabindex="-1"></a>           <span class="at">coords =</span> <span class="fu">c</span>(<span class="st">"longitude"</span>, <span class="st">"latitude"</span>),</span>
+<span id="cb145-295"><a href="#cb145-295" aria-hidden="true" tabindex="-1"></a>           <span class="at">crs =</span> <span class="dv">4326</span>) </span>
+<span id="cb145-296"><a href="#cb145-296" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb145-297"><a href="#cb145-297" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb145-298"><a href="#cb145-298" aria-hidden="true" tabindex="-1"></a>pa_locations_nad <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"data/original/inclass08/pa.csv"</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb145-299"><a href="#cb145-299" aria-hidden="true" tabindex="-1"></a>  <span class="fu">st_as_sf</span>(.,</span>
+<span id="cb145-300"><a href="#cb145-300" aria-hidden="true" tabindex="-1"></a>           <span class="at">coords =</span> <span class="fu">c</span>(<span class="st">"longitude"</span>, <span class="st">"latitude"</span>),</span>
+<span id="cb145-301"><a href="#cb145-301" aria-hidden="true" tabindex="-1"></a>           <span class="at">crs =</span> <span class="dv">4269</span>)</span>
+<span id="cb145-302"><a href="#cb145-302" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb145-303"><a href="#cb145-303" aria-hidden="true" tabindex="-1"></a>pa_locations_itrf <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"data/original/inclass08/pa.csv"</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb145-304"><a href="#cb145-304" aria-hidden="true" tabindex="-1"></a>  <span class="fu">st_as_sf</span>(.,</span>
+<span id="cb145-305"><a href="#cb145-305" aria-hidden="true" tabindex="-1"></a>           <span class="at">coords =</span> <span class="fu">c</span>(<span class="st">"longitude"</span>, <span class="st">"latitude"</span>),</span>
+<span id="cb145-306"><a href="#cb145-306" aria-hidden="true" tabindex="-1"></a>           <span class="at">crs =</span> <span class="dv">7789</span>)</span>
+<span id="cb145-307"><a href="#cb145-307" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb145-308"><a href="#cb145-308" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb145-309"><a href="#cb145-309" aria-hidden="true" tabindex="-1"></a>It's difficult to inspect these with plots because <span class="in">`ggplot`</span> expects the data to be in a single CRS (because that's how we should make maps). Instead, we can take a look at things like the <span class="in">`bbox`</span> to see how big of a difference this makes.</span>
+<span id="cb145-310"><a href="#cb145-310" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb145-311"><a href="#cb145-311" aria-hidden="true" tabindex="-1"></a><span class="in">```{r bboxpts}</span></span>
+<span id="cb145-312"><a href="#cb145-312" aria-hidden="true" tabindex="-1"></a><span class="fu">st_bbox</span>(pa_locations_wgs)</span>
+<span id="cb145-313"><a href="#cb145-313" aria-hidden="true" tabindex="-1"></a><span class="fu">st_bbox</span>(pa_locations_nad)</span>
+<span id="cb145-314"><a href="#cb145-314" aria-hidden="true" tabindex="-1"></a><span class="fu">st_bbox</span>(pa_locations_itrf)</span>
+<span id="cb145-315"><a href="#cb145-315" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb145-316"><a href="#cb145-316" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb145-317"><a href="#cb145-317" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb145-318"><a href="#cb145-318" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb145-319"><a href="#cb145-319" aria-hidden="true" tabindex="-1"></a>As you can see, given the level of precision that we are reporting and the relatively small amount of movement a tectonic plate undergoes in year, the differences are not particularly obvious in the small window that we are looking at. We'll play with these things more in the coming weeks. For now, it should be enough that you've learned to convert the tabular dataset to a set of <span class="in">`POINTS`</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div></div></div></div></div>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">Content <i class="fa-brands fa-creative-commons" aria-hidden="true"></i> 2025 by <a href="https://www.spaseslab.com">Matt Williamson</a> <br> All content licensed under a <i class="fa-brands fa-creative-commons" aria-hidden="true"></i> <i class="fa-brands fa-creative-commons-by" aria-hidden="true"></i> <i class="fa-brands fa-creative-commons-nc" aria-hidden="true"></i> <a href="https://creativecommons.org/licenses/by-nc/4.0/">Creative Commons Attribution-NonCommercial 4.0 International license (CC BY-NC 4.0)</a></div>   
+    <div class="nav-footer-center">
+      &nbsp;
+    </div>
+    <div class="nav-footer-right">Made with <i class="fa-brands fa-r-project" aria-hidden="true"></i> and <a href="https://quarto.org/">Quarto</a><br> <a href="https://www.github.com/mattwilliamson/isdrfall25">View the source at <i class="fa-brands fa-github" aria-hidden="true"></i> GitHub</a> Based on websites designed by <a href="https://github.com/andrewheiss/evalf22.classes.andrewheiss.com">Andrew Heiss</a></div>
+  </div>
+</footer>
+
+
+
+</body></html>

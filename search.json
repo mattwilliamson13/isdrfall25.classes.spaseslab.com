@@ -896,6 +896,55 @@
     "text": "This section has some worked examples demonstrating the use of different packages and giving some ‘roadmaps’ for completing different spatial operations. These are mostly my opinions, your mileage may vary, but I’ll try to justify why I do things the way that I do so that you can make an informed choice when you decide to deviate from that path."
   },
   {
+    "objectID": "lesson/16-lesson.html",
+    "href": "lesson/16-lesson.html",
+    "title": "Point Patterns II",
+    "section": "",
+    "text": "We’re going to focus on using spatstat to simulate and analyze point patterns so the only things you’ll need are packages for this lesson. You’ll still have to get our credentials and login to a new RStudio session.\n\n\nCode\nlibrary(tidyverse)\n\n\n── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──\n✔ dplyr     1.1.4     ✔ readr     2.1.5\n✔ forcats   1.0.1     ✔ stringr   1.5.2\n✔ ggplot2   4.0.0     ✔ tibble    3.3.0\n✔ lubridate 1.9.4     ✔ tidyr     1.3.1\n✔ purrr     1.1.0     \n── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──\n✖ dplyr::filter() masks stats::filter()\n✖ dplyr::lag()    masks stats::lag()\nℹ Use the conflicted package (&lt;http://conflicted.r-lib.org/&gt;) to force all conflicts to become errors\n\n\nCode\nlibrary(spatstat)\n\n\nLoading required package: spatstat.data\nLoading required package: spatstat.univar\nspatstat.univar 3.1-4\nLoading required package: spatstat.geom\nspatstat.geom 3.6-0\nLoading required package: spatstat.random\nspatstat.random 3.4-2\nLoading required package: spatstat.explore\nLoading required package: nlme\n\nAttaching package: 'nlme'\n\nThe following object is masked from 'package:dplyr':\n\n    collapse\n\nspatstat.explore 3.5-3\nLoading required package: spatstat.model\nLoading required package: rpart\nspatstat.model 3.4-2\nLoading required package: spatstat.linnet\nspatstat.linnet 3.3-2\n\nspatstat 3.4-1 \nFor an introduction to spatstat, type 'beginner' \n\n\nCode\nlibrary(terra)\n\n\nterra 1.8.70\n\nAttaching package: 'terra'\n\nThe following objects are masked from 'package:spatstat.geom':\n\n    area, delaunay, is.empty, rescale, rotate, shift, where.max,\n    where.min\n\nThe following object is masked from 'package:tidyr':\n\n    extract"
+  },
+  {
+    "objectID": "lesson/16-lesson.html#getting-started",
+    "href": "lesson/16-lesson.html#getting-started",
+    "title": "Point Patterns II",
+    "section": "",
+    "text": "We’re going to focus on using spatstat to simulate and analyze point patterns so the only things you’ll need are packages for this lesson. You’ll still have to get our credentials and login to a new RStudio session.\n\n\nCode\nlibrary(tidyverse)\n\n\n── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──\n✔ dplyr     1.1.4     ✔ readr     2.1.5\n✔ forcats   1.0.1     ✔ stringr   1.5.2\n✔ ggplot2   4.0.0     ✔ tibble    3.3.0\n✔ lubridate 1.9.4     ✔ tidyr     1.3.1\n✔ purrr     1.1.0     \n── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──\n✖ dplyr::filter() masks stats::filter()\n✖ dplyr::lag()    masks stats::lag()\nℹ Use the conflicted package (&lt;http://conflicted.r-lib.org/&gt;) to force all conflicts to become errors\n\n\nCode\nlibrary(spatstat)\n\n\nLoading required package: spatstat.data\nLoading required package: spatstat.univar\nspatstat.univar 3.1-4\nLoading required package: spatstat.geom\nspatstat.geom 3.6-0\nLoading required package: spatstat.random\nspatstat.random 3.4-2\nLoading required package: spatstat.explore\nLoading required package: nlme\n\nAttaching package: 'nlme'\n\nThe following object is masked from 'package:dplyr':\n\n    collapse\n\nspatstat.explore 3.5-3\nLoading required package: spatstat.model\nLoading required package: rpart\nspatstat.model 3.4-2\nLoading required package: spatstat.linnet\nspatstat.linnet 3.3-2\n\nspatstat 3.4-1 \nFor an introduction to spatstat, type 'beginner' \n\n\nCode\nlibrary(terra)\n\n\nterra 1.8.70\n\nAttaching package: 'terra'\n\nThe following objects are masked from 'package:spatstat.geom':\n\n    area, delaunay, is.empty, rescale, rotate, shift, where.max,\n    where.min\n\nThe following object is masked from 'package:tidyr':\n\n    extract"
+  },
+  {
+    "objectID": "lesson/16-lesson.html#getting-intuition-for-the-poisson-distribution",
+    "href": "lesson/16-lesson.html#getting-intuition-for-the-poisson-distribution",
+    "title": "Point Patterns II",
+    "section": "Getting intuition for the Poisson Distribution",
+    "text": "Getting intuition for the Poisson Distribution\nAn important starting point for these point processes is an understanding of the Poisson distribution. The easiest way to do this is with the rpois function which generates random draws from a Poisson distribution defined by the value passed to lambda.\n\n\nCode\nhist(rpois(n = 1000, lambda = 100))\n\n\n\n\n\nYou can play around with lambda to see how this shifts the number of points you might expect under a fixed spatial domain."
+  },
+  {
+    "objectID": "lesson/16-lesson.html#homogenous-point-processes",
+    "href": "lesson/16-lesson.html#homogenous-point-processes",
+    "title": "Point Patterns II",
+    "section": "Homogenous Point Processes",
+    "text": "Homogenous Point Processes\nAs we’ve discussed, homogeneous point processes are those with a fixed lambda - meaning everywhere on the landscape has the same probability of having an event (determined by lambda). We can demonstrate this with spatstat\n\n\nCode\nset.seed(2025)\n\nW &lt;- owin(c(0,1), c(0,1))\n\nhpp &lt;- rpoispp(lambda = 100, win = W, nsim = 1000)\nplot(hpp[1:5], main = \"Homogeneous Poisson Process (CSR)\")\n\n\n\n\n\nCode\nhist(map_vec(hpp, npoints))\n\n\n\n\n\nAs before, you set the window for the analysis using owin and then use rpoispp to generate the homogeneous Poisson point process with lambda=100. I use map_vec to pass the list of 1000 point processes (generated because I set nsim=1000) to the spatstat function npoints which simply counts the number of points in each ppp object. I used map_vec because I want this collapsed into a vector that I can pass to hist so that you can see that the mean value of the simulations is around 100 and equal to our rate."
+  },
+  {
+    "objectID": "lesson/16-lesson.html#inhomogeneous-poisson-point-processes",
+    "href": "lesson/16-lesson.html#inhomogeneous-poisson-point-processes",
+    "title": "Point Patterns II",
+    "section": "Inhomogeneous Poisson Point Processes",
+    "text": "Inhomogeneous Poisson Point Processes\nAn IPPP arises in situations where the rate is higher in some parts of the landscape than others. That is, lambda varies spatially. This might simply be a function of location (for example moving from north to south on the globe produces predictable changes in temperature). We can simulate this directly by writing a function for lambda that depends upon coordinates rather than leaving it a single fixed, number.\n\n\nCode\nlambda_fun &lt;- function(x, y){ 300 * (x^2 + y^2) }\nipp &lt;- rpoispp(lambda = lambda_fun, win = W, nsim = 1000)\nplot(ipp[1:5], main = \"Inhomogeneous Poisson Process\")\n\n\n\n\n\nCode\nhist(map_vec(ipp, npoints))\n\n\n\n\n\nYou’ll notice two things. First, the number of points tends to be higher in the upper right corner of the window. This is because we’ve made lambda a quadratic function of the x,y coordinates (meaning that for every unit you move right or up, the intensity doubles from the previous location). You’ll also notice that the actual, realized rate is less predictable (as the mean ends up being 200 despite our expectation that it should be 300).\n\nIPPP with a raster\nYou don’t have to be restricted to (admittedly abstract) functions for generating IPPP. You can also use a raster to depict spatial variation in intensity. You might imagine a situation where you have data on a covariate (like elevation or vegetation type) that you think influences the rate of event occurrenc. I’ll demonstrate that here with a simulated raster:\n\n\nCode\nlibrary(spatstat.geom)\n\nr &lt;- rast(nrows=50, ncols=50, xmin=0, xmax=1, ymin=0, ymax=1)\nvalues(r) &lt;- exp(-3 * ((xFromCell(r, 1:ncell(r)) - 0.5)^2 +\n                       (yFromCell(r, 1:ncell(r)) - 0.5)^2))\n\n\nr_im &lt;- as.im(as.matrix(r),\n              xrange = c(0,1),\n              yrange = c(0,1))\n\npp_inhom_rast &lt;- rpoispp(lambda = r_im)\n\n\npar(mfrow=c(1,2))\nplot(r_im, main=\"Simulated Intensity (raster)\")\nplot(pp_inhom_rast, add=TRUE, pch=19, cex=0.5)\nplot(pp_inhom_rast, main=\"Inhomogeneous Poisson Process\")\n\n\n\n\n\nThe only thing that’s new here is the conversion of the simulated raster into an im object. spatstat requires rasters to be in this im class for many of the calculations, but it’s easy enough to convert a SpatRaster into an im by using the matrix of values from the raster and providing a few addtional arguments (see ?im for more details)."
+  },
+  {
+    "objectID": "lesson/16-lesson.html#clustered-patterns",
+    "href": "lesson/16-lesson.html#clustered-patterns",
+    "title": "Point Patterns II",
+    "section": "Clustered patterns",
+    "text": "Clustered patterns\nThe last version of point processes we’ve discussed are those that display second-order inhomogeneity. These are situations where lambada may or may not vary across the landscape AND events are not independent of each other (there is attraction or repurepulsion). We can simulate this situation by again providing a function for lambda - to reflect heterogeneity in the rate - and then providing it to one of the clustered pattern generators in spatstat (check out ?rThomas or ?rMatClust for examples of clustering simulators).\n\n\nCode\nlambda_parent &lt;- function(x, y){ 30 * (x + y + 0.2) }\nclustered &lt;- rThomas(kappa = lambda_parent, sigma = 0.05, mu = 10, win = W)\nplot(clustered, main = \"Inhomogeneous Cluster Process\")"
+  },
+  {
+    "objectID": "lesson/16-lesson.html#characterizing-distance",
+    "href": "lesson/16-lesson.html#characterizing-distance",
+    "title": "Point Patterns II",
+    "section": "Characterizing Distance",
+    "text": "Characterizing Distance\n\nNearest neighbor distance\nEstimating nearest neighbor distances is a little different in spatstat because we aren’t using the tidyverse. Don’t sweat that too much - apply behaves in a similar way to the map family of functions. The key bit here is the use of the nndist function.\n\n\nCode\nANN &lt;- apply(nndist(clustered, k=1:50),2,FUN=mean)\nplot(ANN ~ eval(1:50), type=\"b\", las=1, main = \"ANN for Homogeneous PP\")\n\n\n\n\n\n\n\nEstimating $K\nFinally, you can use the spatstat::Kest function to generate the Ripley’s K estimates we discussed in class. Try swapping Kest with Kinhom and check out the differences!\n\n\nCode\nplot(Kest(hpp[[1]]), main=\"K: Homogeneous Poisson\")\n\n\n\n\n\nCode\nplot(Kest(ipp[[1]]), main=\"Kinhom: Inhomogeneous Poisson\")\n\n\n\n\n\nCode\nplot(Kest(clustered), main=\"Kinhom: Clustered\")"
+  },
+  {
     "objectID": "lesson/12-lesson.html",
     "href": "lesson/12-lesson.html",
     "title": "Building Spatial Databases",
@@ -3638,5 +3687,152 @@
     "title": "Building Spatial Databases",
     "section": "Boise Demographics",
     "text": "Boise Demographics\n\n\nSummary: Selected demographics from the American Community Survey for Block Groups in Boise. The data were downloaded with the tidycensus package. The segregation index (ls) was calculated using the segregation package.\n\n\n\n\nFormat: Vector POLYGON (.shp)\nKey Fields:\n\nhhincome - Median household income\ntotal pop - Total number of people in the block group\nwhite - Total number of White residents in the block group\nblack - Total number of Black residents in the block group\nasian - Total number of Asian residents in the block group\nhispanic - Total number of Hispanic residents in the block group\nls - Local segregation index\n\nCRS: EPSG:3857"
+  },
+  {
+    "objectID": "slides/16-slides.html#point-processes-and-why-you-should-care",
+    "href": "slides/16-slides.html#point-processes-and-why-you-should-care",
+    "title": "Point Patterns II",
+    "section": "Point Processes and Why You Should Care",
+    "text": "Point Processes and Why You Should Care\n\nThey’re ubiquitous\nWell-specified to many social and ecological theories\nHelps build intuition for interpolation"
+  },
+  {
+    "objectID": "slides/16-slides.html#the-poisson-distribution",
+    "href": "slides/16-slides.html#the-poisson-distribution",
+    "title": "Point Patterns II",
+    "section": "The Poisson Distribution",
+    "text": "The Poisson Distribution\n\n\n\nDiscrete probability distribution\nProbability of events in a fixed interval of time or space\nMean (expectation) = variance = \\(\\lambda\\)"
+  },
+  {
+    "objectID": "slides/16-slides.html#re-visiting-csr",
+    "href": "slides/16-slides.html#re-visiting-csr",
+    "title": "Point Patterns II",
+    "section": "Re-visiting CSR",
+    "text": "Re-visiting CSR\n\n\n\n\n\n\n\n\n\nConstant intensity\nPoints are independent\nDensity is a crude estimate of intensity"
+  },
+  {
+    "objectID": "slides/16-slides.html#revisting-csr",
+    "href": "slides/16-slides.html#revisting-csr",
+    "title": "Point Patterns II",
+    "section": "Revisting CSR",
+    "text": "Revisting CSR"
+  },
+  {
+    "objectID": "slides/16-slides.html#first-order-effects",
+    "href": "slides/16-slides.html#first-order-effects",
+    "title": "Point Patterns II",
+    "section": "First-Order Effects",
+    "text": "First-Order Effects\n\n\n\n\n\n\n\n\n\nIntensity varies spatially\nPoints are independent"
+  },
+  {
+    "objectID": "slides/16-slides.html#first-order-effects-1",
+    "href": "slides/16-slides.html#first-order-effects-1",
+    "title": "Point Patterns II",
+    "section": "First-Order Effects",
+    "text": "First-Order Effects"
+  },
+  {
+    "objectID": "slides/16-slides.html#second-order-effects",
+    "href": "slides/16-slides.html#second-order-effects",
+    "title": "Point Patterns II",
+    "section": "Second-Order Effects",
+    "text": "Second-Order Effects\n\n\n\n\n\n\n\n\n\nIntensity of “parents” is first-order\nIntensity of “children” is second-order"
+  },
+  {
+    "objectID": "slides/16-slides.html#second-order-effects-1",
+    "href": "slides/16-slides.html#second-order-effects-1",
+    "title": "Point Patterns II",
+    "section": "Second-Order Effects",
+    "text": "Second-Order Effects"
+  },
+  {
+    "objectID": "slides/16-slides.html#key-points",
+    "href": "slides/16-slides.html#key-points",
+    "title": "Point Patterns II",
+    "section": "Key Points",
+    "text": "Key Points\n\nPoisson distribution: mean = variance = \\(\\lambda\\) -&gt; First Order\nHomogeneous refers to the rate, not it’s outcome\nStatistical tests ask “Could this outcome be generated by a constant rate?”"
+  },
+  {
+    "objectID": "slides/16-slides.html#distance-based-metrics",
+    "href": "slides/16-slides.html#distance-based-metrics",
+    "title": "Point Patterns II",
+    "section": "Distance based metrics",
+    "text": "Distance based metrics\n\nProvide an estimate of the second order effects\nMean nearest-neighbor distance: \\[\\hat{d}_{min} = \\frac{\\sum_{i = 1}^{m} d_{min}(\\mathbf{s_i})}{n}\\]"
+  },
+  {
+    "objectID": "slides/16-slides.html#mean-nearest-neighbor-distance",
+    "href": "slides/16-slides.html#mean-nearest-neighbor-distance",
+    "title": "Point Patterns II",
+    "section": "Mean Nearest Neighbor Distance",
+    "text": "Mean Nearest Neighbor Distance"
+  },
+  {
+    "objectID": "slides/16-slides.html#ripleys-k-function",
+    "href": "slides/16-slides.html#ripleys-k-function",
+    "title": "Point Patterns II",
+    "section": "Ripley’s \\(K\\) Function",
+    "text": "Ripley’s \\(K\\) Function\n\n\nNearest neighbor methods throw away a lot of information\nThe K function is an alternative, based on a series of circles with increasing radius\n\n\\[\n\\begin{equation}\nK(d) = \\lambda^{-1}E(N_d)\n\\end{equation}\n\\]\n\nWe can test for clustering by comparing to the expectation:\n\n\\[\n\\begin{equation}\nK_{CSR}(d) = \\pi d^2\n\\end{equation}\n\\]\n\nif \\(k(d) &gt; K_{CSR}(d)\\) then there is clustering at the scale defined by \\(d\\)"
+  },
+  {
+    "objectID": "slides/16-slides.html#ripleys-k-function-1",
+    "href": "slides/16-slides.html#ripleys-k-function-1",
+    "title": "Point Patterns II",
+    "section": "Ripley’s \\(K\\) Function",
+    "text": "Ripley’s \\(K\\) Function\n\nWhen working with a sample the distribution of \\(K\\) is unknown\nEstimate with\n\n\\[\n\\begin{equation}\n\\hat{K}(d) = \\hat{\\lambda}^{-1}\\sum_{i=1}^n\\sum_{j=1}^n\\frac{I(d_{ij} &lt;d)}{n(n-1)}\n\\end{equation}\n\\]\nwhere:\n\\[\n\\begin{equation}\n\\hat{\\lambda} = \\frac{n}{|A|}\n\\end{equation}\n\\]"
+  },
+  {
+    "objectID": "slides/16-slides.html#k-for-hpp",
+    "href": "slides/16-slides.html#k-for-hpp",
+    "title": "Point Patterns II",
+    "section": "\\(K\\) for HPP",
+    "text": "\\(K\\) for HPP"
+  },
+  {
+    "objectID": "slides/16-slides.html#k-for-ipp",
+    "href": "slides/16-slides.html#k-for-ipp",
+    "title": "Point Patterns II",
+    "section": "\\(K\\) for IPP",
+    "text": "\\(K\\) for IPP"
+  },
+  {
+    "objectID": "slides/16-slides.html#k-for-clustered-processes",
+    "href": "slides/16-slides.html#k-for-clustered-processes",
+    "title": "Point Patterns II",
+    "section": "\\(K\\) for Clustered Processes",
+    "text": "\\(K\\) for Clustered Processes"
+  },
+  {
+    "objectID": "slides/16-slides.html#adjustments-for-k",
+    "href": "slides/16-slides.html#adjustments-for-k",
+    "title": "Point Patterns II",
+    "section": "Adjustments for \\(K\\)",
+    "text": "Adjustments for \\(K\\)\n\n\\(K\\) is sensitive to edge effects (window size) (correction argument to Kest)\n\\(K\\) assumes HPP (Kinhom function instead of Kest)"
+  },
+  {
+    "objectID": "slides/16-slides.html#k-vs-kinhom-for-ipp",
+    "href": "slides/16-slides.html#k-vs-kinhom-for-ipp",
+    "title": "Point Patterns II",
+    "section": "\\(K\\) vs \\(Kinhom\\) for IPP",
+    "text": "\\(K\\) vs \\(Kinhom\\) for IPP"
+  },
+  {
+    "objectID": "slides/16-slides.html#k-vs-kinhom-for-clustered-pp",
+    "href": "slides/16-slides.html#k-vs-kinhom-for-clustered-pp",
+    "title": "Point Patterns II",
+    "section": "\\(K\\) vs \\(Kinhom\\) for Clustered PP",
+    "text": "\\(K\\) vs \\(Kinhom\\) for Clustered PP"
+  },
+  {
+    "objectID": "slides/16-slides.html#ripleys-k-function-2",
+    "href": "slides/16-slides.html#ripleys-k-function-2",
+    "title": "Point Patterns II",
+    "section": "Ripley’s \\(K\\) Function",
+    "text": "Ripley’s \\(K\\) Function\n\naccounting for variation in \\(d\\)"
+  },
+  {
+    "objectID": "slides/16-slides.html#take-aways",
+    "href": "slides/16-slides.html#take-aways",
+    "title": "Point Patterns II",
+    "section": "Take-Aways",
+    "text": "Take-Aways\n\nDensity and Intensity for first-order effects\nDistance for second-order effects\nLinkages for kriging and interpolation"
   }
 ]

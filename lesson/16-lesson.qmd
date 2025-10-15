@@ -61,6 +61,9 @@ You'll notice two things. First, the number of points tends to be higher in the 
 
 ### IPPP with a `raster`
 
+You don't have to be restricted to (admittedly abstract) functions for generating IPPP. You can also use a raster to depict spatial variation in intensity. You might imagine a situation where you have data on a covariate (like elevation or vegetation type) that you think influences the rate of event occurrenc. I'll demonstrate that here with a simulated raster:
+
+
 ```{r}
 library(spatstat.geom)
 
@@ -73,35 +76,49 @@ r_im <- as.im(as.matrix(r),
               xrange = c(0,1),
               yrange = c(0,1))
 
-# 3️⃣ Generate an inhomogeneous Poisson process
-set.seed(123)
-pp_inhom <- rpoispp(lambda = r_im)
+pp_inhom_rast <- rpoispp(lambda = r_im)
 
 
 par(mfrow=c(1,2))
 plot(r_im, main="Simulated Intensity (raster)")
-plot(pp_inhom, add=TRUE, pch=19, cex=0.5)
-plot(pp_inhom, main="Inhomogeneous Poisson Process")
+plot(pp_inhom_rast, add=TRUE, pch=19, cex=0.5)
+plot(pp_inhom_rast, main="Inhomogeneous Poisson Process")
 
 
 ```
 
+The only thing that's new here is the conversion of the simulated raster into an `im` object. `spatstat` requires rasters to be in this `im` class for many of the calculations, but it's easy enough to convert a `SpatRaster` into an `im` by using the matrix of values from the raster and providing a few addtional arguments (see `?im` for more details).
+
+## Clustered patterns
+
+The last version of point processes we've discussed are those that display second-order inhomogeneity. These are situations where lambada may or may not vary across the landscape **AND** events are not independent of each other (there is attraction or repurepulsion).
+We can simulate this situation by again providing a function for lambda - to reflect heterogeneity in the rate - and then providing it to one of the clustered pattern generators in `spatstat` (check out `?rThomas` or `?rMatClust` for examples of clustering simulators).
+
+```{r}
 lambda_parent <- function(x, y){ 30 * (x + y + 0.2) }
 clustered <- rThomas(kappa = lambda_parent, sigma = 0.05, mu = 10, win = W)
 plot(clustered, main = "Inhomogeneous Cluster Process")
+```
 
 
-plot(hpp, main="Homogeneous Poisson")
-plot(density(hpp), main="Estimated Intensity (HPP)")
+## Characterizing Distance
 
-plot(ipp, main="Inhomogeneous Poisson")
-plot(density(ipp), main="Estimated Intensity (IPP)")
+### Nearest neighbor distance
 
-plot(clustered, main="Clustered Process")
-plot(density(clustered), main="Estimated Intensity (Clustered)")
+Estimating nearest neighbor distances is a little different in `spatstat` because we aren't using the `tidyverse`. Don't sweat that too much - `apply` behaves in a similar way to the `map` family of functions. The key bit here is the use of the `nndist` function. 
+```{r}
 
+ANN <- apply(nndist(clustered, k=1:50),2,FUN=mean)
+plot(ANN ~ eval(1:50), type="b", las=1, main = "ANN for Homogeneous PP")
 
-plot(Kest(hpp), main="K: Homogeneous Poisson")
-plot(Kest(ipp), main="Kinhom: Inhomogeneous Poisson")
+```
+
+### Estimating $K#
+
+Finally, you can use the `spatstat::Kest` function to generate the Ripley's K estimates we discussed in class. Try swapping `Kest` with `Kinhom` and check out the differences!
+
+```{r}
+plot(Kest(hpp[[1]]), main="K: Homogeneous Poisson")
+plot(Kest(ipp[[1]]), main="Kinhom: Inhomogeneous Poisson")
 plot(Kest(clustered), main="Kinhom: Clustered")
 ```
