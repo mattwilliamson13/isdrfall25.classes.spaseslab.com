@@ -1,0 +1,12 @@
+---
+title: "Generic"
+subtitle: "HES 505 Fall 2025: Session 20"
+author: "Matt Williamson"
+format: 
+  revealjs:
+    theme: mytheme.scss
+    highlight-style: pygments
+    slide-number: true
+    show-slide-number: print
+    embed-resources: true  
+---

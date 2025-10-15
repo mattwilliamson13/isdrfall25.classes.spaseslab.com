@@ -1,0 +1,145 @@
+---
+title: "Building Spatial Databases"
+subtitle: "HES 505 Fall 2025: Session 12"
+author: "Matt Williamson"
+format: 
+  revealjs:
+    theme: mytheme.scss
+    highlight-style: printing
+    slide-number: true
+    show-slide-number: print
+    embed-resources: true  
+---
+
+## Goals for Today
+
+* Practice pseudocode to plan an analysis
+
+* Link geoprocessing steps to research questions
+
+* Explore how geoprocessing choices affect results
+
+## "Research" Question
+
+> How do the characteristics of Boise correlate with arrests?
+
+# Introducing the Data
+
+## Boise Arrests
+
+::: {style="font-size: 0.8em"} 
+* Summary: Crimes committed within the City of Boise or responded to by a Boise Police Department (BPD) officer. This a redacted version of the Record Management System (RMS) Charge dataset, created for public consumption in the Boise Police Data Portal Hub Site. and is updated daily.
+
+:::
+
+::: {style="font-size: 0.6em"} 
+* Format: Tabular (.csv)
+
+* Key Fields: 
+  * `ChargeID` - Unique identifier for charges in a case. Populated by New World Law Enforcement Records Management System (LERMS).
+  * `CrimeCodeDescription` - Offense
+  * `CrimeType` - Impact of crime, options include Person, Property, or Society Crimes.
+  * `Severity` - Severity of crime committed such as Felony or Misdemeanor.
+  * `OccurredDateTime` - Datetime when the incident of the case occurred.
+  * `x` - Easting (projected longitude)
+  * `y` - Northing (projected lattitude)
+* CRS: `ESRI:102459`
+
+:::
+
+
+## Boise Police Patrol Areas
+
+::: {style="font-size: 0.8em"} 
+* Summary: Current jurisdictional boundaries of the Boise Police Department, including officer contact information.
+
+:::
+
+::: {style="font-size: 0.6em"} 
+* Format: Vector, `POLYGON` (.shp)
+
+* Key Fields: 
+  * `PoliceArea` - Unique identifier for each jurisdiction.
+  
+* CRS: `EPSG:3857`
+
+:::
+
+## Boise Street Lights
+
+::: {style="font-size: 0.8em"} 
+* Summary: This is a point data set representing all streetlight locations within Boise Area of Impact, including lights owned by the city and by Idaho Power.
+
+:::
+
+::: {style="font-size: 0.6em"} 
+* Format: Vector `POINT` (.shp)
+
+* Key Fields: 
+  * `Location` - Street location of light.
+  * `Lamp_Type` - Type of bulb in light - affects brightness
+  * `Height` - Height in ft - affect illumination area
+  * `Wattage` - Power draw of lamp (interacts with `Lamp_Type` to affect brightness)
+* CRS: `ESRI:102459`
+
+:::
+
+
+## Ada County Places
+
+::: {style="font-size: 0.8em"} 
+* Summary: This is a point data set point representations of real-world entities: schools, businesses, hospitals, religious organizations, landmarks, mountain peaks, and much more. The theme is derived from a conflation of Meta, Microsoft, and PinMeTo data and is available under a CDLA Permissive 2.0 license. You can learn more by checking out the [Overture Datasets](https://docs.overturemaps.org/guides/places/)
+
+:::
+
+::: {style="font-size: 0.6em"} 
+* Format: Vector `POINT` (.shp)
+
+* Key Fields: 
+  * `primary` - Primary place/business name.
+  * `category` - The type of place
+* CRS: `EPSG:4326`
+
+:::
+
+## Boise Parks and Reserves
+
+::: {style="font-size: 0.8em"} 
+* Summary: This is a polygon dataset representing City of Boise Parks and Recreation data, based on the National Parks and Recreation Association (NRPA) GIS Data Model. A park is generally an area of land in a largely natural state, sometimes with grass, trees, paths, sports fields, playgrounds, picnic areas and other facilities, that is set aside and managed specifically for recreation use and enjoyment by the public
+
+:::
+
+::: {style="font-size: 0.6em"} 
+* Format: Vector `POLYGON` (.shp)
+
+* Key Fields: 
+  * `Site_Name` - The location name
+  * `Landowner` - The primary landowner of the park
+  * `Park_Type` - The type of park
+* CRS: `EPSG:3857`
+
+:::
+
+## Boise Demographics
+
+::: {style="font-size: 0.8em"} 
+* Summary: Selected demographics from the American Community Survey for Block Groups in Boise. The data were downloaded with the `tidycensus` package. The segregation index (`ls`) was calculated using the `segregation` package.
+
+:::
+
+::: {style="font-size: 0.6em"} 
+* Format: Vector `POLYGON` (.shp)
+
+* Key Fields: 
+  * `hhincome` - Median household income
+  * `total pop` - Total number of people in the block group
+  * `white` - Total number of White residents in the block group
+  * `black` - Total number of Black residents in the block group
+  * `asian` - Total number of Asian residents in the block group
+  * `hispanic` - Total number of Hispanic residents in the block group
+  * `ls` - Local segregation index
+* CRS: `EPSG:3857`
+
+:::
+
+

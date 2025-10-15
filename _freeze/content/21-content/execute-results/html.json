@@ -1,0 +1,14 @@
+{
+  "hash": "6d791f4c17e0e8915178142bd6b74fc3",
+  "result": {
+    "markdown": "---\ntitle: \"Spatial Autocorrelation\"\ndate: \"2023-10-30\"\n---\n\n\n\n\nNow that we've learned about the power of spatial autocorrelation for interpolation from point data, it's time to explore methods for spatial autocorrelation with areal data. We'll have to define neighbors because distance is a little more ambiguous here and then look at some global and local measures of autocorrelation.\n\n\n## Resources\n\n- <i class=\"fas fa-external-link-square-alt\"></i> [Ch. 7: Spatial Neighborhood Matrices](https://www.paulamoraga.com/book-spatial/spatial-neighborhood-matrices.html) in\nfrom Paula Moraga's new book Spatial Statistics for Data Science: Theory and Practice with `R` gives a little gentler introduction to spatial neighbors specifically in the context of statistical models.\n\n- <i class=\"fas fa-book\"></i> [Chapter 14 Proximity and Areal Data](https://r-spatial.org/book/14-Areal.html) in Spatial Data Science by Edzer Pebesma and Roger Bivand provides explanations of how the `spdep` package can be used to construct neighborhood weights.\n\n{{< fa arrow-up-right-from-square >}} [Spatial Autocorrelation in R](https://mgimond.github.io/Spatial/spatial-autocorrelation-in-r.html) provides some easy code for working through neighbors with areal data and calculating spatial autocorrelation measures.\n\n## Objectives\n\nBy the end of today you should be able to:\n\n- Use the `spdep` package to identify the neighbors of a given polygon based on proximity, distance, and minimum number\n\n- Understand the underlying mechanics of Moran's I and calculate it for various neighbors\n\n- Distinguish between global and local measures of spatial autocorrelation\n\n- Visualize neighbors and clusters\n\n\n\n<p class=\"text-center buttons\"><a class=\"btn btn-danger\" target=\"_blank\" href=\"/slides/21-slides.html\"><i class=\"fa-solid fa-arrow-up-right-from-square\"></i> View all slides in new window</a> <a class=\"btn btn-danger\" target=\"_blank\" href=\"/slides/21-slides.pdf\" role=\"button\"><i class=\"fa-solid fa-file-pdf\"></i> Download PDF of all slides</a></p>\n\n\n<div>\n\n\n```{=html}\n<iframe class=\"slide-deck\" src=\"/slides/21-slides.html\"></iframe>\n```\n\n\n</div>\n\n[Link to Panopto Video](https://boisestate.hosted.panopto.com/Panopto/Pages/Viewer.aspx?id=4e8ef8ee-2dd0-4681-91b5-b0ab01431905)\n",
+    "supporting": [],
+    "filters": [
+      "rmarkdown/pagebreak.lua"
+    ],
+    "includes": {},
+    "engineDependencies": {},
+    "preserve": {},
+    "postProcess": true
+  }
+}

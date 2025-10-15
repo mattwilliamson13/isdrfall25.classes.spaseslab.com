@@ -1,0 +1,14 @@
+{
+  "hash": "eed84b0cfef9d67e53b6ce87425a7384",
+  "result": {
+    "markdown": "---\ntitle: \"Movement and Networks II\"\ndate: \"2023-11-15\"\n---\n\n\n\n\nNow that we've chatted briefly about what a network is and how we represent it for analysis, it's time to take some first steps toward building spatial networks in `R`. The backbone of most network analysis is `igraph`, a package that is available for a number of programming languages. There are also a growing number of spatial network packages being developed for `R`. We'll introduce a few of those today.\n\n\n## Resources\n\n- <i class=\"fas fa-external-link-square-alt\"></i> [Network Data in R](https://book.archnetworks.net/networkdata) and [Spatial Networks](https://book.archnetworks.net/spatialnetworks) from the Online Companion to *Network Science in Archaelogy* introduces a variety of approaches for handling and visualizing network data with `R` using examples from archaeology.\n\n- <i class=\"fas fa-external-link-square-alt\"></i>  [CMRnet: An R package to derive networks of social interactions and movement from mark-recapture data](https://besjournals.onlinelibrary.wiley.com/doi/full/10.1111/2041-210X.13502) by [@Silk] describes a package for developing networks from common wildlife sampling techniques.\n\n- <i class=\"fas fa-external-link-square-alt\"></i> [The `sfnetworks` package github page](https://luukvdmeer.github.io/sfnetworks/index.html) provides a variety of vignettes for manipulating spatial network data within the `sf` framework for spatial objects.\n\n\n## Objectives\n\nBy the end of today you should be able to:\n\n* Generate an adjacency matrix for network analysis\n\n* Calculate network density, centrality, and other common measures\n\n* Generate landscape connectivity models using `terra` and `gDistance`\n\n\n\n<p class=\"text-center buttons\"><a class=\"btn btn-danger\" target=\"_blank\" href=\"/slides/26-slides.html\"><i class=\"fa-solid fa-arrow-up-right-from-square\"></i> View all slides in new window</a> <a class=\"btn btn-danger\" target=\"_blank\" href=\"/slides/26-slides.pdf\" role=\"button\"><i class=\"fa-solid fa-file-pdf\"></i> Download PDF of all slides</a></p>\n\n\n<div>\n\n\n```{=html}\n<iframe class=\"slide-deck\" src=\"/slides/26-slides.html\"></iframe>\n```\n\n\n</div>\n\n[Panopto Video](https://boisestate.hosted.panopto.com/Panopto/Pages/Viewer.aspx?id=d01a8b31-5d5c-446f-a18a-b0bb0152b345)",
+    "supporting": [],
+    "filters": [
+      "rmarkdown/pagebreak.lua"
+    ],
+    "includes": {},
+    "engineDependencies": {},
+    "preserve": {},
+    "postProcess": true
+  }
+}

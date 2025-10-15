@@ -1,0 +1,14 @@
+{
+  "hash": "4075c6d3466ce72f6a45687a9c5ab956",
+  "result": {
+    "markdown": "---\ntitle: \"Operations with Raster Data I\"\ndate: \"2023-10-2\"\n---\n\n\n\n\nNow that we've learned about predicates and measures with raster data, it's time to learn more about some of the transformations that we can conduct with `terra`. We'll start with some of the basic transformations that operate on the entire dataset then move to some of the important cell-wise operations.\n\n## Readings\n\n- <i class=\"fas fa-external-link-square-alt\"></i> The [`terra` package vignette](https://rspatial.org/terra/pkg/1-introduction.html#) describes the new raster functions available in `terra`, their relationship to those in the `raster` package, and the changes in syntax between the two.\n\n- <i class=\"fas fa-book\"></i> The [Raster GIS Operations in R with terra](https://www.ecologi.st/spatial-r/raster-gis-operations-in-r-with-terra.html) chapter from Jasper Slingsby's \"A Minimal Introduction to GIS (in R)\" bookdown project has worked examples of many of the operations we'll learn today.\n\n## Objectives\n\nBy the end of today, you should be able to: \n\n- Align rasters for spatial processing\n\n- Adjust the resolution of raster data\n\n- Combine (or reduce) rasters to match the extent of your analysis\n\n## Slides\nThe slides for today's lesson are available online as an HTML file. Use the buttons below to open the slides either as an interactive website or as a static PDF (for printing or storing for later). You can also click in the slides below and navigate through them with your left and right arrow keys.\n\n\n<p class=\"text-center buttons\"><a class=\"btn btn-danger\" target=\"_blank\" href=\"/slides/13-slides.html\"><i class=\"fa-solid fa-arrow-up-right-from-square\"></i> View all slides in new window</a> <a class=\"btn btn-danger\" target=\"_blank\" href=\"/slides/13-slides.pdf\" role=\"button\"><i class=\"fa-solid fa-file-pdf\"></i> Download PDF of all slides</a></p>\n\n\n<div>\n\n\n```{=html}\n<iframe class=\"slide-deck\" src=\"/slides/13-slides.html\"></iframe>\n```\n\n\n</div>\n\n[Link to today's Panopto Slides](https://boisestate.hosted.panopto.com/Panopto/Pages/Viewer.aspx?id=849a3f56-763c-4953-a3dc-b08f0141a292)",
+    "supporting": [],
+    "filters": [
+      "rmarkdown/pagebreak.lua"
+    ],
+    "includes": {},
+    "engineDependencies": {},
+    "preserve": {},
+    "postProcess": true
+  }
+}

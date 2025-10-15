@@ -1,0 +1,14 @@
+{
+  "hash": "50212ca6a3810404c87eb1fdf4ea5a01",
+  "result": {
+    "markdown": "---\ntitle: \"Operations with Raster Data II\"\ndate: \"2023-10-4\"\n---\n\n\n\n\nNow that we've done some \"global\" transformations of raster data using `terra`, we'll look at some of the options for cell-wise transformations. Rather than manipulating the extent, resolution, or CRS of the raster data; we'll actually be using functions to change the values of the cells themselves.\n\n## Readings\n- <i class=\"fas fa-external-link-square-alt\"></i> The [`terra` package vignette](https://rspatial.org/terra/pkg/1-introduction.html#) describes the new raster functions available in `terra`, their relationship to those in the `raster` package, and the changes in syntax between the two.\n\n- <i class=\"fas fa-book\"></i> The [Raster GIS Operations in R with terra](https://www.ecologi.st/spatial-r/raster-gis-operations-in-r-with-terra.html) chapter from Jasper Slingsby's \"A Minimal Introduction to GIS (in R)\" bookdown project has worked examples of many of the operations we'll learn today.\n\n## Objectives\n\nBy the end of today, you should be able to: \n\n* Use moving windows as a means of smoothing raster data\n\n* Reclassify data using conditional statements and reclassification tables\n\n* Use raster math as a means of creating new data based on an existing dataset.\n\n## Slides\nThe slides for today's lesson are available online as an HTML file. Use the buttons below to open the slides either as an interactive website or as a static PDF (for printing or storing for later). You can also click in the slides below and navigate through them with your left and right arrow keys.\n\n\n<p class=\"text-center buttons\"><a class=\"btn btn-danger\" target=\"_blank\" href=\"/slides/14-slides.html\"><i class=\"fa-solid fa-arrow-up-right-from-square\"></i> View all slides in new window</a> <a class=\"btn btn-danger\" target=\"_blank\" href=\"/slides/14-slides.pdf\" role=\"button\"><i class=\"fa-solid fa-file-pdf\"></i> Download PDF of all slides</a></p>\n\n\n<div>\n\n\n```{=html}\n<iframe class=\"slide-deck\" src=\"/slides/14-slides.html\"></iframe>\n```\n\n\n</div>\n\n[Link to today's Panopto Slides](https://boisestate.hosted.panopto.com/Panopto/Pages/Viewer.aspx?id=d67a2be8-3df8-40a7-a205-b0910143dee4)",
+    "supporting": [],
+    "filters": [
+      "rmarkdown/pagebreak.lua"
+    ],
+    "includes": {},
+    "engineDependencies": {},
+    "preserve": {},
+    "postProcess": true
+  }
+}

@@ -42,5 +42,7 @@ Submit a single Quarto document (.qmd) with integrated code, outputs, and writte
 
 PurpleAir makes the data from these sensors available via an API that we can access in `R`. I've already done that for you and gathered the monthly average pm2.5 values for 34 sensors in ID, MT, OR, and WA beginning in 2020. We'll use this data as the foundation for demonstrating some of the data wrangling skills you've learned so far.   
 
-
+:::{.callout-note}
+Solutions are [here](01-assignmentrev.qmd)
+:::
 

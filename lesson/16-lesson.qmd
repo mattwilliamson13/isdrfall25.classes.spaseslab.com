@@ -2,4 +2,106 @@
 title: "Point Patterns II"
 ---
 
+## Getting Started
 
+We're going to focus on using `spatstat` to simulate and analyze point patterns so the only things you'll need are packages for this lesson. You'll still have to [get our credentials](https://rstudio.aws.boisestate.edu/) and login to a [new RStudio session](https://rstudio.apps.aws.boisestate.edu/).
+
+```{r ldlb}
+library(tidyverse)
+library(spatstat)
+library(terra)
+
+```
+
+## Getting intuition for the Poisson Distribution
+
+An important starting point for these point processes is an understanding of the Poisson distribution. The easiest way to do this is with the `rpois` function which generates random draws from a Poisson distribution defined by the value passed to `lambda`.
+
+```{r}
+
+hist(rpois(n = 1000, lambda = 100))
+
+```
+
+You can play around with `lambda` to see how this shifts the number of points you might expect under a fixed spatial domain.
+
+## Homogenous Point Processes
+
+As we've discussed, homogeneous point processes are those with a fixed lambda - meaning everywhere on the landscape has the same probability of having an event (determined by `lambda`). We can demonstrate this with `spatstat`
+
+```{r}
+
+set.seed(2025)
+
+W <- owin(c(0,1), c(0,1))
+
+hpp <- rpoispp(lambda = 100, win = W, nsim = 1000)
+plot(hpp[1:5], main = "Homogeneous Poisson Process (CSR)")
+
+hist(map_vec(hpp, npoints))
+
+```
+As before, you set the window for the analysis using `owin` and then use `rpoispp` to generate the homogeneous Poisson point process with `lambda=100`. I use `map_vec` to pass the list of 1000 point processes (generated because I set `nsim=1000`) to the `spatstat` function `npoints` which simply counts the number of points in each `ppp` object. I used `map_vec` because I want this collapsed into a vector that I can pass to `hist` so that you can see that the mean value of the simulations is around 100 and equal to our rate. 
+
+## Inhomogeneous Poisson Point Processes
+
+An IPPP arises in situations where the rate is higher in some parts of the landscape than others. That is, `lambda` varies spatially. This might simply be a function of location (for example moving from north to south on the globe produces predictable changes in temperature). We can simulate this directly by writing a function for `lambda` that depends upon coordinates rather than leaving it a single fixed, number.
+
+```{r}
+
+lambda_fun <- function(x, y){ 300 * (x^2 + y^2) }
+ipp <- rpoispp(lambda = lambda_fun, win = W, nsim = 1000)
+plot(ipp[1:5], main = "Inhomogeneous Poisson Process")
+
+hist(map_vec(ipp, npoints))
+
+
+```
+You'll notice two things. First, the number of points tends to be higher in the upper right corner of the window. This is because we've made lambda a quadratic function of the x,y coordinates (meaning that for every unit you move right or up, the intensity doubles from the previous location). You'll also notice that the actual, realized rate is less predictable (as the mean ends up being 200 despite our expectation that it should be 300).
+
+### IPPP with a `raster`
+
+```{r}
+library(spatstat.geom)
+
+r <- rast(nrows=50, ncols=50, xmin=0, xmax=1, ymin=0, ymax=1)
+values(r) <- exp(-3 * ((xFromCell(r, 1:ncell(r)) - 0.5)^2 +
+                       (yFromCell(r, 1:ncell(r)) - 0.5)^2))
+
+
+r_im <- as.im(as.matrix(r),
+              xrange = c(0,1),
+              yrange = c(0,1))
+
+# 3️⃣ Generate an inhomogeneous Poisson process
+set.seed(123)
+pp_inhom <- rpoispp(lambda = r_im)
+
+
+par(mfrow=c(1,2))
+plot(r_im, main="Simulated Intensity (raster)")
+plot(pp_inhom, add=TRUE, pch=19, cex=0.5)
+plot(pp_inhom, main="Inhomogeneous Poisson Process")
+
+
+```
+
+lambda_parent <- function(x, y){ 30 * (x + y + 0.2) }
+clustered <- rThomas(kappa = lambda_parent, sigma = 0.05, mu = 10, win = W)
+plot(clustered, main = "Inhomogeneous Cluster Process")
+
+
+plot(hpp, main="Homogeneous Poisson")
+plot(density(hpp), main="Estimated Intensity (HPP)")
+
+plot(ipp, main="Inhomogeneous Poisson")
+plot(density(ipp), main="Estimated Intensity (IPP)")
+
+plot(clustered, main="Clustered Process")
+plot(density(clustered), main="Estimated Intensity (Clustered)")
+
+
+plot(Kest(hpp), main="K: Homogeneous Poisson")
+plot(Kest(ipp), main="Kinhom: Inhomogeneous Poisson")
+plot(Kest(clustered), main="Kinhom: Clustered")
+```
