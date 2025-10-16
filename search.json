@@ -1124,7 +1124,7 @@
     "href": "lesson/08-lesson.html#how-can-i-change-the-current-resolution",
     "title": "Projections, Extent, and Resolution",
     "section": "How Can I Change the Current Resolution?",
-    "text": "How Can I Change the Current Resolution?\nIn some cases you may want to sharpen or coarsen the resolution. You can use aggregate or disagg in terra to do this. The key bit is the fact argument. Which tells you the factor by which we create that surface.\n\n\nCode\ncoarser_fire &lt;- aggregate(fire_prob, fact = 5)\nfiner_fire &lt;- disagg(fire_prob, fact = 5)\n\n\n\n|---------|---------|---------|---------|\n======\n                                          \n\n\nCode\nres(coarser_fire)\n\n\n[1] 1200 1200\n\n\nCode\next(coarser_fire)\n\n\nSpatExtent : -2294745, -1188345, 2207775, 3172575 (xmin, xmax, ymin, ymax)\n\n\nCode\nres(finer_fire)\n\n\n[1] 48 48\n\n\nCode\next(finer_fire)\n\n\nSpatExtent : -2294745, -1189065, 2208735, 3172575 (xmin, xmax, ymin, ymax)\n\n\nCode\nplot(coarser_fire)\n\n\n\n\n\nCode\nplot(finer_fire)"
+    "text": "How Can I Change the Current Resolution?\nIn some cases you may want to sharpen or coarsen the resolution. You can use aggregate or disagg in terra to do this. The key bit is the fact argument. Which tells you the factor by which we create that surface.\n\n\nCode\ncoarser_fire &lt;- aggregate(fire_prob, fact = 5)\nfiner_fire &lt;- disagg(fire_prob, fact = 5)\n\n\n\n|---------|---------|---------|---------|\n=====\n                                          \n\n\nCode\nres(coarser_fire)\n\n\n[1] 1200 1200\n\n\nCode\next(coarser_fire)\n\n\nSpatExtent : -2294745, -1188345, 2207775, 3172575 (xmin, xmax, ymin, ymax)\n\n\nCode\nres(finer_fire)\n\n\n[1] 48 48\n\n\nCode\next(finer_fire)\n\n\nSpatExtent : -2294745, -1189065, 2208735, 3172575 (xmin, xmax, ymin, ymax)\n\n\nCode\nplot(coarser_fire)\n\n\n\n\n\nCode\nplot(finer_fire)"
   },
   {
     "objectID": "lesson/08-lesson.html#what-is-the-current-projection",
@@ -1425,7 +1425,7 @@
     "href": "content/16-content.html#objectives",
     "title": "Point Patterns II",
     "section": "Objectives",
-    "text": "Objectives\nBy the end of today you should be able to:\n\nUse dplyr with predicates and measures to subset and manipulate data\nUse extract to access raster data\nUse zonal to summarize access data\nJoin data into a single analyzable dataframe"
+    "text": "Objectives\nBy the end of today you should be able to:\n\nRecognize the linkage between point process models and the Poisson Distribution\nDifferentiate between first- and second-order effects in point processes\nSimulate point patterns and use density and distance functions to assess first- and second-order effects"
   },
   {
     "objectID": "content/16-content.html#slides",
