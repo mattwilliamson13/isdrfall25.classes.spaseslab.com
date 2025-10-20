@@ -1,4 +1,9 @@
 ---
-title: "Generic"
+title: "Surface Metrics"
 ---
 
+1. Calculate 3 different patch metrics from those in the example. Paste a map of one of them in the Slack Channel.
+
+2. Calculate 3 different class metrics from those in the example. Paste a histogram for one of the metrics in the Slack Channel.
+
+3. Combine your 3 patchmetrics into a single matrix and estimate the correlation between them (use `show_correlation`) and paste them in the slack channel.

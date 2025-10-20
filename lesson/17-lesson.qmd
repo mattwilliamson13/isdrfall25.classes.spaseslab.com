@@ -1,4 +1,73 @@
 ---
-title: "Generic Lesson"
+title: "Surface Metrics"
 ---
 
+## Getting Started
+
+First, we'll have to [get our credentials](https://rstudio.aws.boisestate.edu/) and login to a [new RStudio session](https://rstudio.apps.aws.boisestate.edu/). Today, we're going to explore the `landscape` metrics package using the National Land Cover Dataset. You don't need any additional data as we'll download it in our session, but you need to load some packages.
+
+```{r ldpkg}
+library(tidyverse)
+library(tigris)
+library(terra)
+library(sf)
+library(landscapemetrics)
+
+```
+
+
+## Setting Some Boundaries
+
+We need some data! The [NLCD is a 30m resolution raster](https://www.usgs.gov/centers/eros/science/national-land-cover-database) describing land-use across the US. It's pretty big and unwieldy, so for the purposes of this exercise, we'll focus just on Ada county. 
+
+```{r getdata}
+
+ada_county <- counties(state = "ID") %>% 
+  filter(., NAME == "Ada") %>% 
+  st_transform(crs = "EPSG:5070")
+
+ada_NLCD <- terra::rast("https://dmsdata.cr.usgs.gov/geoserver/mrlc_Land-Cover-Native_conus_year_data/wcs?service=WCS&version=1.0.0&coverage=mrlc_Land-Cover-Native_conus_year_data:Land-Cover-Native_conus_year_data&BBOX=-1643474,2404759,-1594149,2489538&CRS=EPSG:5070&time=2020-01-01T00:00:00.000Z&format=image/geotiff&resx=30&resy=30&request=GetCoverage", vsi = FALSE)
+
+plot(ada_NLCD)
+plot(st_geometry(ada_county), add= TRUE)
+```
+
+The first part of this should look familiar - we're just downloading the Ada County Boundary using the `tigris` package. The next part is using `terra::rast` to read in a file directly from the online web-service. The key part comes after the `BBOX` part of the link where you can plug in the correct coordinates (give an CRS) to restrict the download to something manageable. Once you've got it, you should be able to plot and see the different categories.
+
+
+## Calclulating patch metrics
+
+The syntax for `landscapemetrics` is fairly straightforward with most functions starting with `lsm_` followed by a letter, followed by the name of the metric. You can see the [full set of patch metrics here](https://r-spatialecology.github.io/landscapemetrics/reference/index.html#patch-level-metrics).
+
+```{r calcpatch}
+head(lsm_p_area(ada_NLCD))
+head(lsm_p_shape(ada_NLCD))
+show_lsm(ada_NLCD, what = "lsm_p_area")
+
+```
+
+We calculate some basic patch metrics using `lsm_p_METRIC`, but restrict the output to the first 5 entries to make the printing easier. We also use the `show_lsm` function to create a map based on these patch-level metrics (this only works for patch metrics, not the class or landscape metrics). In this case, we're interested in the patch area and shape (check out the help files for the equations). In `landscapemetrics` patches are defined as neighboring rasters (defined as queen or rooks case using the `directions` argument) that share the same category. Each of these functions estimates a measure for all of the patches in a landscape (which may be as small as 1 pixel and as large as the entire landscape).
+
+## Calculating class metrics
+
+The [full list of class metrics is here](https://r-spatialecology.github.io/landscapemetrics/reference/index.html#class-level-metrics) and the syntax follows the format above (but replaces the `p` with a `c`). Class metrics take all of the patches within a category and summarize them - here we calculate the percent covered, the number of patches/class, and the edge density (which is the sum of edge lengths for each patch in the class divided by the total area of the category in the landscape). These metrics can give you a sense of size and dominance of the different categories.
+
+```{calc clss}
+lsm_c_pland(ada_NLCD)   # % of landscape occupied
+lsm_c_np(ada_NLCD)      # number of patches per class
+lsm_c_ed(ada_NLCD)
+```
+
+## Calculating landscape metrics
+Finally, full list of landscape metrics is here](https://r-spatialecology.github.io/landscapemetrics/reference/index.html#landscape-level-metrics). We follow the same formatting strategy to access a handful of the landscape metrics. Landscape metrics look at the juxtaposition of the different classes in your landscape. We calculate the Shannon's Diversity Index (a measure of class evenness in the landscape) and cohesion (an estimate of contiguity between like patches).
+
+```{r calclnd}
+lsm_l_shdi(ada_NLCD)    # Shannon’s Diversity Index
+lsm_l_cohesion(ada_NLCD)
+```
+
+
+
+
+
+```

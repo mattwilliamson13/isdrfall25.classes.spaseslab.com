@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Intro to Spatial Data in R - Combining Vectors and Categorical Rasters</title>
+<title>Intro to Spatial Data in R - Surface Metrics</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -20,7 +20,26 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
-</style>
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
 
 
 <script src="../site_libs/quarto-nav/quarto-nav.js"></script>
@@ -62,7 +81,7 @@ ul.task-list li input[type="checkbox"] {
 }</script>
 
 
-<meta property="og:title" content="Intro to Spatial Data in R - Combining Vectors and Categorical Rasters">
+<meta property="og:title" content="Intro to Spatial Data in R - Surface Metrics">
 <meta property="og:description" content="">
 <meta property="og:image" content="https://isdrfall25.classes.spaseslab.com/files/social-image-f22.png">
 <meta property="og:site-name" content="Intro to Spatial Data in R">
@@ -364,7 +383,11 @@ ul.task-list li input[type="checkbox"] {
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#resources" id="toc-resources" class="nav-link active" data-scroll-target="#resources">Resources</a></li>
+  <li><a href="#resources" id="toc-resources" class="nav-link active" data-scroll-target="#resources">Resources</a>
+  <ul class="collapse">
+  <li><a href="#setting-the-stage" id="toc-setting-the-stage" class="nav-link" data-scroll-target="#setting-the-stage">Setting the Stage</a></li>
+  <li><a href="#technical-details" id="toc-technical-details" class="nav-link" data-scroll-target="#technical-details">Technical Details</a></li>
+  </ul></li>
   <li><a href="#objectives" id="toc-objectives" class="nav-link" data-scroll-target="#objectives">Objectives</a></li>
   <li><a href="#slides" id="toc-slides" class="nav-link" data-scroll-target="#slides">Slides</a></li>
   </ul>
@@ -374,20 +397,40 @@ ul.task-list li input[type="checkbox"] {
 <main class="content" id="quarto-document-content">
 
 <header id="title-block-header">
-<h1 class="title display-7">Combining Vectors and Categorical Rasters</h1>
+<h1 class="title display-7">Surface Metrics</h1>
 
 <div class="date-block bg-content text-white p-2">
-  <p class="date">Content for Monday, October 16, 2023</p>
+  <p class="date">Content for Sunday, October 20, 2024</p>
 </div>
 </header>
 
-<p>Note that the last 3 sections needed a bit of reorganization. I’ve moved to session 18 to keep the webpage aligned with the schedule.</p>
+<p>Now that you have a sense for describing point patterns using density and distance, we’ll move to descriptions of “patches”. Patches generally refer to areal data with categorical characteristics. Understanding the relationship between patterns in the arrangement and composition of these patches forms the backbone of landscape ecology and has much to offer other social and ecological questions.</p>
 <section id="resources" class="level2">
 <h2 class="anchored" data-anchor-id="resources">Resources</h2>
+<section id="setting-the-stage" class="level3">
+<h3 class="anchored" data-anchor-id="setting-the-stage">Setting the Stage</h3>
+<ul>
+<li><p><i class="fas fa-external-link-square-alt"></i> <a href="https://www.jstor.org/stable/2097089?seq=1">Landscape Ecology: the effect of pattern on process</a> by <span class="citation" data-cites="turner1989">(<a href="#ref-turner1989" role="doc-biblioref">Turner 1989</a>)</span> is one of the foundational references for understanding the key questions driving the field of landscape ecology.</p></li>
+<li><p><i class="fas fa-external-link-square-alt"></i> <a href="https://link.springer.com/article/10.1007/s10980-020-00989-8">Landscape sustainability and the landscape ecology of institutions</a> by <span class="citation" data-cites="cumming2020">(<a href="#ref-cumming2020" role="doc-biblioref">Cumming and Epstein 2020</a>)</span> has some cool extensions of landscape ecology into key areas of environmental governance and managment institutions.</p></li>
+<li><p><i class="fas fa-external-link-square-alt"></i> <a href="https://www.sciencedirect.com/science/article/pii/S1470160X07001306">Parsimony in landscape metrics: Strength, universality, consistency</a> by <span class="citation" data-cites="cushman2008">(<a href="#ref-cushman2008" role="doc-biblioref">Cushman et al. 2008</a>)</span> provides a critical review of the myriad of different patch metrics that have been developed and provides guidance for selecting which metrics to use in analyses.</p></li>
+</ul>
+</section>
+<section id="technical-details" class="level3">
+<h3 class="anchored" data-anchor-id="technical-details">Technical Details</h3>
+<ul>
+<li><p><i class="fas fa-external-link-square-alt"></i> <a href="https://r-spatialecology.github.io/landscapemetrics/articles/general_background.html">The General Background</a> overview of the <code>landscapemetrics</code> package introduces the foundation for analyzing landscape metrics in <code>R</code>.</p></li>
+<li><p><i class="fas fa-external-link-square-alt"></i> <a href="https://r-spatialecology.github.io/landscapemetrics/articles/get_started.html">Getting Started</a> from the webpage for the <code>landscapemetrics</code> package provides examples of a typical workflow.</p></li>
+</ul>
+</section>
 </section>
 <section id="objectives" class="level2">
 <h2 class="anchored" data-anchor-id="objectives">Objectives</h2>
 <p>By the end of today you should be able to:</p>
+<ul>
+<li><p><strong>Describe</strong> the importance of measuring recurrent landscape patterns</p></li>
+<li><p><strong>Distinguish</strong> between patch, class, and landscape-level metrics</p></li>
+<li><p><strong>Implement</strong> patch metric calculations using the <code>landscapemetrics</code> package for <code>R</code></p></li>
+</ul>
 </section>
 <section id="slides" class="level2">
 <h2 class="anchored" data-anchor-id="slides">Slides</h2>
@@ -395,12 +438,22 @@ ul.task-list li input[type="checkbox"] {
 <p class="text-center buttons">
 <a class="btn btn-danger" target="_blank" href="../slides/17-slides.html"><i class="fa-solid fa-arrow-up-right-from-square"></i> View all slides in new window</a> <a class="btn btn-danger" target="_blank" href="../slides/17-slides.pdf" role="button"><i class="fa-solid fa-file-pdf"></i> Download PDF of all slides</a>
 </p>
-<p>Slides Forthcoming</p>
+
 
 
 </section>
 
-</main> <!-- /main -->
+<div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" role="doc-bibliography"><h2 class="anchored quarto-appendix-heading">References</h2><div id="refs" class="references csl-bib-body hanging-indent" data-line-spacing="2" role="list">
+<div id="ref-cumming2020" class="csl-entry" role="listitem">
+Cumming, G. S., and G. Epstein. 2020. Landscape sustainability and the landscape ecology of institutions. Landscape Ecology 35:2613–2628.
+</div>
+<div id="ref-cushman2008" class="csl-entry" role="listitem">
+Cushman, S. A., K. McGarigal, and M. C. Neel. 2008. Parsimony in landscape metrics: Strength, universality, and consistency. Ecological indicators 8:691–703.
+</div>
+<div id="ref-turner1989" class="csl-entry" role="listitem">
+Turner, M. G. 1989. Landscape ecology: The effect of pattern on process. Annual review of ecology and systematics:171–197.
+</div>
+</div></section></div></main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
 window.document.addEventListener("DOMContentLoaded", function (event) {
   const toggleBodyColorMode = (bsSheetEl) => {
