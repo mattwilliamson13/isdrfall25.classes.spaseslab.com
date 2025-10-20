@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Intro to Spatial Data in R - Assignment 2: Fundamentals of Spatial Data</title>
+<title>Intro to Spatial Data in R - Assignment 2: Fundamentals of Spatial Data (Key)</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -19,6 +19,40 @@ ul.task-list li input[type="checkbox"] {
   width: 0.8em;
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
 </style>
 
@@ -62,7 +96,8 @@ ul.task-list li input[type="checkbox"] {
 }</script>
 
 
-<meta property="og:title" content="Intro to Spatial Data in R - Assignment 2: Fundamentals of Spatial Data">
+<meta property="og:title" content="Intro to Spatial Data in R - Assignment 2: Fundamentals of Spatial Data (Key)">
+<meta property="og:description" content="">
 <meta property="og:image" content="https://isdrfall25.classes.spaseslab.com/files/social-image-f22.png">
 <meta property="og:site-name" content="Intro to Spatial Data in R">
 <meta property="og:locale" content="en_US">
@@ -300,9 +335,9 @@ ul.task-list li input[type="checkbox"] {
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#objectives" id="toc-objectives" class="nav-link active" data-scroll-target="#objectives">Objectives</a></li>
-  <li><a href="#instructions" id="toc-instructions" class="nav-link" data-scroll-target="#instructions">Instructions</a></li>
-  <li><a href="#questions-to-answer" id="toc-questions-to-answer" class="nav-link" data-scroll-target="#questions-to-answer">Questions to Answer</a></li>
+  <li><a href="#for-your-revision" id="toc-for-your-revision" class="nav-link active" data-scroll-target="#for-your-revision">For Your Revision</a></li>
+  <li><a href="#task-1-getting-your-geometries-sorted" id="toc-task-1-getting-your-geometries-sorted" class="nav-link" data-scroll-target="#task-1-getting-your-geometries-sorted">Task 1: Getting Your Geometries Sorted</a></li>
+  <li><a href="#task-2-creating-new-data-with-spatial-operations" id="toc-task-2-creating-new-data-with-spatial-operations" class="nav-link" data-scroll-target="#task-2-creating-new-data-with-spatial-operations">Task 2: Creating New Data With Spatial Operations</a></li>
   </ul>
 </nav>
     </div>
@@ -311,7 +346,7 @@ ul.task-list li input[type="checkbox"] {
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Assignment 2: Fundamentals of Spatial Data</h1>
+<h1 class="title">Assignment 2: Fundamentals of Spatial Data (Key)</h1>
 </div>
 
 
@@ -326,14 +361,532 @@ ul.task-list li input[type="checkbox"] {
 
 </header>
 
-<section id="objectives" class="level3">
-<h3 class="anchored" data-anchor-id="objectives">Objectives</h3>
+<section id="for-your-revision" class="level2">
+<h2 class="anchored" data-anchor-id="for-your-revision">For Your Revision</h2>
+<p>In order to facilitate you thinking about your assignment, I’m providing how I would approach each of the tasks listed in the assignment. This should allow you to go in and identify places where a) your code runs but produces a different outcome, b) your code is different but produces the same outcome, and c) your code doesn’t run because you were missing something. There is something to learn from each of these outcomes. When you revise your code, I don’t want you to just copy what I’ve done, think about your underlying logic and compare it to what I’ve written. You don’t have to agree with me (or even use the syntax I used), you just have to understand what you did!! If there are places where you are feeling fuzzy or want more explanation, note them on your revised assignment and I’ll try to address it in class or in my response to your assignment.</p>
 </section>
-<section id="instructions" class="level3">
-<h3 class="anchored" data-anchor-id="instructions">Instructions</h3>
+<section id="task-1-getting-your-geometries-sorted" class="level2">
+<h2 class="anchored" data-anchor-id="task-1-getting-your-geometries-sorted">Task 1: Getting Your Geometries Sorted</h2>
+<ol type="1">
+<li>Read your data into <code>R</code> (loading the appropriate data, packages, and functions) and check the geometries.</li>
+</ol>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──
+✔ dplyr     1.1.4     ✔ readr     2.1.5
+✔ forcats   1.0.1     ✔ stringr   1.5.2
+✔ ggplot2   4.0.0     ✔ tibble    3.3.0
+✔ lubridate 1.9.4     ✔ tidyr     1.3.1
+✔ purrr     1.1.0     
+── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
+✖ dplyr::filter() masks stats::filter()
+✖ dplyr::lag()    masks stats::lag()
+ℹ Use the conflicted package (&lt;http://conflicted.r-lib.org/&gt;) to force all conflicts to become errors</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(sf)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Linking to GEOS 3.13.0, GDAL 3.8.5, PROJ 9.5.1; sf_use_s2() is TRUE</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(terra)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>terra 1.8.70
+
+Attaching package: 'terra'
+
+The following object is masked from 'package:tidyr':
+
+    extract</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(googledrive)</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(patchwork)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>
+Attaching package: 'patchwork'
+
+The following object is masked from 'package:terra':
+
+    area</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">"/Users/mattwilliamson/Websites/isdr_assignments/assignment02/scripts/utilities/download_utils.R"</span>)</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>read_project_valid <span class="ot">&lt;-</span> <span class="cf">function</span>(filepath, target_crs) {</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>  shp <span class="ot">&lt;-</span> <span class="fu">st_read</span>(filepath, <span class="at">quiet =</span> <span class="cn">TRUE</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">st_transform</span>(., target_crs) <span class="sc">%&gt;%</span> </span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>    <span class="fu">st_make_valid</span>(.)</span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(shp)</span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>file_list <span class="ot">&lt;-</span> <span class="fu">drive_ls</span>(<span class="fu">drive_get</span>(<span class="fu">as_id</span>(<span class="st">"https://drive.google.com/drive/folders/1tCbftdEbYZrr8beht-vTOUQdTx9u4sCJ"</span>)))[<span class="sc">-</span><span class="dv">1</span>,]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>! Using an auto-discovered, cached token.
+  To suppress this message, modify your code or options to clearly consent to
+  the use of a cached token.
+  See gargle's "Non-interactive auth" vignette for more details:
+  &lt;https://gargle.r-lib.org/articles/non-interactive-auth.html&gt;
+ℹ The googledrive package is using a cached token for
+  'mattwilliamson@boisestate.edu'.</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>file_list <span class="sc">%&gt;%</span> </span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(id, name) <span class="sc">%&gt;%</span></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>  purrr<span class="sc">::</span><span class="fu">pmap</span>(<span class="cf">function</span>(id, name) {</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">gdrive_folder_download</span>(<span class="fu">list</span>(<span class="at">id =</span> id, <span class="at">name =</span> name),</span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>                           <span class="at">dstfldr =</span> <span class="st">"assignment02"</span>)</span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>  })</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>File downloaded:
+• 'idHospitals.shx' &lt;id: 1P6LS5lFoy7B-zQyLcMFyG9ziMHMfdRGL&gt;
+Saved locally as:
+• 'data/original/assignment02/idHospitals.shx'
+File downloaded:
+• 'idHospitals.shp' &lt;id: 1qqLamgoTwZFn3b2Vboia1PBXPGNu5xYn&gt;
+Saved locally as:
+• 'data/original/assignment02/idHospitals.shp'
+File downloaded:
+• 'idHospitals.prj' &lt;id: 1X55aH_iaDhpJLxRhUdVmwF_YmB1RaC6O&gt;
+Saved locally as:
+• 'data/original/assignment02/idHospitals.prj'
+File downloaded:
+• 'idahoDemog.csv' &lt;id: 1XLWbUnQh3Slr1CFwrq9hwv97_P7X-BE-&gt;
+Saved locally as:
+• 'data/original/assignment02/idahoDemog.csv'
+File downloaded:
+• 'cdcPlaces.shp' &lt;id: 1zyTurQVfC3GyZx5OVwe4_Siw52qCkYnb&gt;
+Saved locally as:
+• 'data/original/assignment02/cdcPlaces.shp'
+File downloaded:
+• 'cdcPlaces.shx' &lt;id: 1krflXsApoEs8E1AI4TZqQz5F45r2sVM-&gt;
+Saved locally as:
+• 'data/original/assignment02/cdcPlaces.shx'
+File downloaded:
+• 'cdcPlaces.dbf' &lt;id: 1LiK9faDIWYs9HS8ky9n42xb-dMSKVlqe&gt;
+Saved locally as:
+• 'data/original/assignment02/cdcPlaces.dbf'
+File downloaded:
+• 'cdcPlaces.prj' &lt;id: 1MGmE-sWzlaedsR2KQ6f8XTjbv0-njLxv&gt;
+Saved locally as:
+• 'data/original/assignment02/cdcPlaces.prj'</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[[1]]
+[1] "data/original/assignment02/idHospitals.shx"
+
+[[2]]
+[1] "data/original/assignment02/idHospitals.shp"
+
+[[3]]
+[1] "data/original/assignment02/idHospitals.prj"
+
+[[4]]
+[1] "data/original/assignment02/idahoDemog.csv"
+
+[[5]]
+[1] "data/original/assignment02/cdcPlaces.shp"
+
+[[6]]
+[1] "data/original/assignment02/cdcPlaces.shx"
+
+[[7]]
+[1] "data/original/assignment02/cdcPlaces.dbf"
+
+[[8]]
+[1] "data/original/assignment02/cdcPlaces.prj"</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>shapefile_paths <span class="ot">&lt;-</span> <span class="fu">list.files</span>(<span class="st">"data/original/assignment02"</span>, </span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>                              <span class="at">pattern =</span> <span class="st">"</span><span class="sc">\\</span><span class="st">.shp$"</span>, </span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>                              <span class="at">full.names =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>shapefile_paths</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "data/original/assignment02/cdcPlaces.shp"  
+[2] "data/original/assignment02/idHospitals.shp"</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>shp_list <span class="ot">&lt;-</span> shapefile_paths <span class="sc">%&gt;%</span> </span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">map</span>(., </span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>      <span class="cf">function</span>(x) <span class="fu">read_project_valid</span>(<span class="at">filepath =</span> x , </span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>                                      <span class="at">target_crs =</span> <span class="st">"EPSG:8826"</span>)</span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>      )</span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(shp_list) <span class="ot">&lt;-</span> shapefile_paths  <span class="sc">%&gt;%</span>  </span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">basename</span>() <span class="sc">%&gt;%</span>  </span>
+<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">str_remove</span>(<span class="st">"</span><span class="sc">\\</span><span class="st">.shp$"</span>)</span>
+<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-12"><a href="#cb16-12" aria-hidden="true" tabindex="-1"></a>validity_summary <span class="ot">&lt;-</span> <span class="fu">map_dfr</span>(</span>
+<span id="cb16-13"><a href="#cb16-13" aria-hidden="true" tabindex="-1"></a>  shp_list,</span>
+<span id="cb16-14"><a href="#cb16-14" aria-hidden="true" tabindex="-1"></a>  <span class="sc">~</span> {</span>
+<span id="cb16-15"><a href="#cb16-15" aria-hidden="true" tabindex="-1"></a>    v <span class="ot">&lt;-</span> <span class="fu">st_is_valid</span>(.x)</span>
+<span id="cb16-16"><a href="#cb16-16" aria-hidden="true" tabindex="-1"></a>    <span class="fu">tibble</span>(</span>
+<span id="cb16-17"><a href="#cb16-17" aria-hidden="true" tabindex="-1"></a>      <span class="at">n_total =</span> <span class="fu">length</span>(v),</span>
+<span id="cb16-18"><a href="#cb16-18" aria-hidden="true" tabindex="-1"></a>      <span class="at">n_valid =</span> <span class="fu">sum</span>(v),</span>
+<span id="cb16-19"><a href="#cb16-19" aria-hidden="true" tabindex="-1"></a>      <span class="at">n_invalid =</span> <span class="fu">sum</span>(<span class="sc">!</span>v),</span>
+<span id="cb16-20"><a href="#cb16-20" aria-hidden="true" tabindex="-1"></a>      <span class="at">pct_valid =</span> <span class="fu">mean</span>(v)</span>
+<span id="cb16-21"><a href="#cb16-21" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb16-22"><a href="#cb16-22" aria-hidden="true" tabindex="-1"></a>  },</span>
+<span id="cb16-23"><a href="#cb16-23" aria-hidden="true" tabindex="-1"></a>  <span class="at">.id =</span> <span class="st">"layer"</span></span>
+<span id="cb16-24"><a href="#cb16-24" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb16-25"><a href="#cb16-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-26"><a href="#cb16-26" aria-hidden="true" tabindex="-1"></a>validity_summary</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 2 × 5
+  layer       n_total n_valid n_invalid pct_valid
+  &lt;chr&gt;         &lt;int&gt;   &lt;int&gt;     &lt;int&gt;     &lt;dbl&gt;
+1 cdcPlaces       297     297         0         1
+2 idHospitals      60      60         0         1</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">walk2</span>(<span class="fu">names</span>(shp_list), shp_list, <span class="sc">~</span> <span class="fu">assign</span>(.x, .y, <span class="at">envir =</span> .GlobalEnv))</span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>idaho_demo <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"data/original/assignment02/idahoDemog.csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Rows: 1284 Columns: 10
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: ","
+chr (1): NAME
+dbl (9): GEOID, totalpop, white, black, asian, hispanic, hhincome, ls, p
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(idaho_demo)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Rows: 1,284
+Columns: 10
+$ GEOID    &lt;dbl&gt; 1.6001e+11, 1.6001e+11, 1.6001e+11, 1.6001e+11, 1.6001e+11, 1…
+$ NAME     &lt;chr&gt; "Block Group 1; Census Tract 1.01; Ada County; Idaho", "Block…
+$ totalpop &lt;dbl&gt; 260, 1178, 1257, 649, 390, 871, 2258, 1155, 2177, 1530, 2670,…
+$ white    &lt;dbl&gt; 211, 1042, 925, 386, 218, 701, 1833, 1045, 1784, 1468, 2506, …
+$ black    &lt;dbl&gt; 0, 61, 13, 0, 0, 0, 11, 51, 8, 0, 18, 0, 0, 12, 0, 0, 73, 0, …
+$ asian    &lt;dbl&gt; 0, 0, 69, 8, 0, 42, 63, 0, 138, 62, 65, 27, 10, 17, 42, 41, 3…
+$ hispanic &lt;dbl&gt; 0, 10, 70, 255, 77, 112, 123, 28, 92, 0, 0, 16, 6, 20, 46, 6,…
+$ hhincome &lt;dbl&gt; 72454, 17851, 38408, 23200, 83068, 40322, 123281, 95089, 1414…
+$ ls       &lt;dbl&gt; 0.17632760, 0.18948269, 0.07637385, 0.19766105, 0.06770401, 0…
+$ p        &lt;dbl&gt; 0.0001177568, 0.0006211534, 0.0006010622, 0.0003621999, 0.000…</code></pre>
+</div>
+</div>
+<p><span style="color: #800020;">This should look familiar to you. I start by loading packages, sourcing functions, and adding any custom functions. In this case, I’ve used our <code>read_project_valid</code> function from lesson 12 because I know I’ve got a lot of <code>sf</code> objects to align and deal with.</span></p>
+<p><span style="color: #800020;">After downloading the data, I use <code>list.files</code> to create a vector of the appropriate shapefiles (<code>pattern=".shp"</code>) and then use <code>map</code> to apply <code>read_project_valid</code> to that vector. I then supply <code>names</code> to each element in the list returned by <code>map</code> so that I can track the validity of each object. I create the <code>validity_summary</code> object by using <code>map_dfr</code> to return a dataframe that tracks the number of valid and invalid geometries in each file. Taking a look at that data frame indicates that all of the objects have valid geometries so we should be good to move on there. I prefer not to have all of my sf objects in a list so I bring each one into my Global Environment by using the <code>walk2</code> function to assign each list element to an object in my Global Environment. You don’t have to do this, but I prefer it for the later steps in the workflow.</span></p>
+<p><span style="color: #800020;">The last thing I do is read in the demographic csv (<code>idahoDemog.csv</code>) using <code>read_csv</code> and take a <code>glimpse</code> of the resulting data.</span></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>idaho_demo <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"data/original/assignment02/idahoDemog.csv"</span>,</span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>                       <span class="at">col_types =</span> <span class="fu">cols</span>(</span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>                         <span class="at">GEOID =</span> <span class="fu">col_character</span>(),</span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>                         <span class="at">.default =</span> <span class="fu">col_guess</span>()</span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a>  ))</span>
+<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(idaho_demo)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Rows: 1,284
+Columns: 10
+$ GEOID    &lt;chr&gt; "160010001011", "160010001012", "160010001021", "160010001022…
+$ NAME     &lt;chr&gt; "Block Group 1; Census Tract 1.01; Ada County; Idaho", "Block…
+$ totalpop &lt;dbl&gt; 260, 1178, 1257, 649, 390, 871, 2258, 1155, 2177, 1530, 2670,…
+$ white    &lt;dbl&gt; 211, 1042, 925, 386, 218, 701, 1833, 1045, 1784, 1468, 2506, …
+$ black    &lt;dbl&gt; 0, 61, 13, 0, 0, 0, 11, 51, 8, 0, 18, 0, 0, 12, 0, 0, 73, 0, …
+$ asian    &lt;dbl&gt; 0, 0, 69, 8, 0, 42, 63, 0, 138, 62, 65, 27, 10, 17, 42, 41, 3…
+$ hispanic &lt;dbl&gt; 0, 10, 70, 255, 77, 112, 123, 28, 92, 0, 0, 16, 6, 20, 46, 6,…
+$ hhincome &lt;dbl&gt; 72454, 17851, 38408, 23200, 83068, 40322, 123281, 95089, 1414…
+$ ls       &lt;dbl&gt; 0.17632760, 0.18948269, 0.07637385, 0.19766105, 0.06770401, 0…
+$ p        &lt;dbl&gt; 0.0001177568, 0.0006211534, 0.0006010622, 0.0003621999, 0.000…</code></pre>
+</div>
+</div>
+<p><span style="color: #800020;">As you might have noticed, <code>read_csv</code> is trying to convert the <code>GEOID</code> column into a <code>numeric</code> data type. This is not ideal as <code>GEOID</code> is the unique identifier that links Census geographies across the various Census spatial hierarchies. As such, I want to force <code>read_csv</code> to read that column as a <code>character</code>. We can do this by providing parameters to the <code>col_types</code> argument. If you look at the helpfile, you’ll see that <code>col_types</code> expects a list or vector of all the columns and their types. This is tedious, so we use the <code>cols</code> function to provide the specific columns we are interested in and then add the <code>.default</code> argument to have <code>read_csv</code> guess any columns we don’t specify. If you <code>glimpse</code> the result, you’ll see we’ve fixed the problem.</span></p>
+<ol start="2" type="1">
+<li>Use the <a href="https://github.com/walkerke/tigris"><code>tigris</code> package</a> to download the shapefiles for Idaho’s boundaries (state, county, tract, and block groups).</li>
+</ol>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>id_state <span class="ot">&lt;-</span> tigris<span class="sc">::</span><span class="fu">states</span>(<span class="at">progress_bar =</span> <span class="cn">FALSE</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(STUSPS <span class="sc">==</span> <span class="st">"ID"</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">st_transform</span>(<span class="st">"EPSG:8826"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Retrieving data for the year 2024</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>id_counties <span class="ot">&lt;-</span> tigris<span class="sc">::</span><span class="fu">counties</span>(<span class="at">st =</span> <span class="st">"ID"</span>, </span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>                                <span class="at">progress_bar =</span> <span class="cn">FALSE</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">st_transform</span>(<span class="st">"EPSG:8826"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Retrieving data for the year 2024</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>id_tracts <span class="ot">&lt;-</span> tigris<span class="sc">::</span><span class="fu">tracts</span>(<span class="at">st =</span> <span class="st">"ID"</span>,</span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>                            <span class="at">progress_bar =</span> <span class="cn">FALSE</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">st_transform</span>(<span class="st">"EPSG:8826"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Retrieving data for the year 2024</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>id_blockgroup <span class="ot">&lt;-</span> tigris<span class="sc">::</span><span class="fu">block_groups</span>(<span class="at">st =</span> <span class="st">"ID"</span>,</span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>                                      <span class="at">progress_bar =</span> <span class="cn">FALSE</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">st_transform</span>(<span class="st">"EPSG:8826"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Retrieving data for the year 2024</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>() <span class="sc">+</span></span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_sf</span>(<span class="at">data =</span> id_state, <span class="at">fill =</span> <span class="st">"steelblue"</span>) <span class="sc">+</span></span>
+<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_sf</span>(<span class="at">data =</span> id_counties, <span class="at">fill =</span> <span class="st">"transparent"</span>, <span class="at">color =</span> <span class="st">"white"</span>, <span class="at">lwd =</span> <span class="fl">1.5</span>) <span class="sc">+</span></span>
+<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_sf</span>(<span class="at">data =</span> id_tracts, <span class="at">fill =</span> <span class="st">"transparent"</span>, <span class="at">color =</span> <span class="st">"yellow"</span>, <span class="at">lwd =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
+<span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_sf</span>(<span class="at">data =</span> id_blockgroup, <span class="at">fill =</span> <span class="st">"transparent"</span>, <span class="at">color =</span> <span class="st">"red"</span>, <span class="at">lwd =</span> <span class="fl">0.5</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="02-assignmentrev_files/figure-html/dlbdry-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p><span style="color: #800020;">The <code>tigris</code> package provides shapefiles for a variety of the TIGER (Topologically Integrated Geographic Encoding and Referencing) dataset which serves as the spatial backbone for the US Census (and many other applications). <code>tigris</code> initiates a series of pre-determined calls to the US Census API and returns the data in <code>sf</code> format. If you check the helpfiles, you’ll see that there are options for which year you download and the scale of cartographic accuracy along with instructions for downloading specific geographies.</span></p>
+<p><span style="color: #800020;">I download each of the necessary geographies and project them. I then use <code>ggplot</code> to visualize all of the data. The key things to notice in this plot are that each call to <code>geom_sf</code> layers on top of the previous one and that I’m not using an <code>aes</code> argument to assign colors to variables. Instead, I just want different colors for each dataset along with different line-widths (<code>lwd</code>) to help you see each dataset plotted on top of the previous one.</span></p>
+<ol start="3" type="1">
+<li>Use a spatial join to combine connect your cdc data to the tract shapefile and a tabular join to connect your demographic data to the blockgroups</li>
+</ol>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a>cdc_sf <span class="ot">&lt;-</span> <span class="fu">st_join</span>(id_tracts, cdcPlaces)</span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a>demo_sf <span class="ot">&lt;-</span> id_blockgroup <span class="sc">%&gt;%</span> </span>
+<span id="cb33-4"><a href="#cb33-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(., idaho_demo, <span class="at">by =</span> <span class="st">"GEOID"</span>)</span>
+<span id="cb33-5"><a href="#cb33-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-6"><a href="#cb33-6" aria-hidden="true" tabindex="-1"></a>cdc_map <span class="ot">&lt;-</span> <span class="fu">ggplot</span>() <span class="sc">+</span></span>
+<span id="cb33-7"><a href="#cb33-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_sf</span>(<span class="at">data =</span> cdc_sf, </span>
+<span id="cb33-8"><a href="#cb33-8" aria-hidden="true" tabindex="-1"></a>          <span class="at">mapping =</span> <span class="fu">aes</span>(<span class="at">fill =</span> chd_crudep)) <span class="sc">+</span></span>
+<span id="cb33-9"><a href="#cb33-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_viridis_c</span>(<span class="at">name =</span> <span class="st">"CHD"</span>) <span class="sc">+</span></span>
+<span id="cb33-10"><a href="#cb33-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>()</span>
+<span id="cb33-11"><a href="#cb33-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-12"><a href="#cb33-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-13"><a href="#cb33-13" aria-hidden="true" tabindex="-1"></a>demo_map <span class="ot">&lt;-</span> <span class="fu">ggplot</span>() <span class="sc">+</span></span>
+<span id="cb33-14"><a href="#cb33-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_sf</span>(<span class="at">data =</span> demo_sf, </span>
+<span id="cb33-15"><a href="#cb33-15" aria-hidden="true" tabindex="-1"></a>          <span class="at">mapping =</span> <span class="fu">aes</span>(<span class="at">fill =</span> hhincome)) <span class="sc">+</span></span>
+<span id="cb33-16"><a href="#cb33-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_viridis_c</span>(<span class="at">name =</span> <span class="st">"Income"</span>) <span class="sc">+</span></span>
+<span id="cb33-17"><a href="#cb33-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>()</span>
+<span id="cb33-18"><a href="#cb33-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-19"><a href="#cb33-19" aria-hidden="true" tabindex="-1"></a>cdc_map <span class="sc">+</span> demo_map</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="02-assignmentrev_files/figure-html/unnamed-chunk-1-1.png" class="img-fluid" width="960"></p>
+</div>
+</div>
+<p><span style="color: #800020;">The joins are pretty typical usage of <code>st_join</code> (the spatial join) and <code>left_join</code> (the tabular join). Once the joins are complete, I want to visualize both datasets. I again use <code>geom_sf</code>, but this time I supply a <code>fill</code> argument to the <code>mapping</code> function. This tells <code>ggplot</code> that I want the values for the <code>fill</code> variable to detemine the colormapping that is displayed. Now that I’ve assigned a <code>fill</code> variable, I can provide <code>ggplot</code> with additional info to determine how I want that <code>fill</code> to be <code>scaled</code>. I use <code>scale_fill_viridis</code> because it’s a nice, colorblind-friendly palette that works well for continuous values. By providing a <code>name</code> argument to the <code>scale_fill_viridis</code> call, I am telling <code>ggplot</code> what I want to see printed as the legend label. Lastly, I use <code>theme_bw()</code>, one of <code>ggplot</code>’s built-in theming systems to deal with most of the plot details. The last piece here, and the piece that might be new, is the use of the <code>patchwork</code> package to plot the two maps side-by-side. Patchwork provides a simple interface for making multi-panel plots using mathematical operators (in this case, I’m using <code>+</code> to add the two plots together). The package webpage and helpfile have lots of useful intro for combining plots in a relatively simple way.</span></p>
+<ol start="4" type="1">
+<li><p>Use <a href="https://epsg.io/">this webpage</a> to find an appropriate projected CRS for Idaho and make sure all of your data are in that projection. <span style="color: #800020;">I stuck with the same CRS we used before because we’re focused on distance for most of this assignment.</span></p></li>
+<li><p><strong>Reflection:</strong> Why do we want the data to have a common CRS? What characteristics did you look for when you were choosing your CRS? How might your choice affect the interpretation of the map?</p></li>
+<li><p><strong>Bonus:</strong> Make 3 maps depicting hospital location, a variable of your choosing, and the Idaho boundary using different projections.</p></li>
+</ol>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a>pop_map <span class="ot">&lt;-</span> <span class="fu">ggplot</span>() <span class="sc">+</span></span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_sf</span>(<span class="at">data =</span> demo_sf, </span>
+<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a>          <span class="at">mapping =</span> <span class="fu">aes</span>(<span class="at">fill =</span> totalpop)) <span class="sc">+</span></span>
+<span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_sf</span>(<span class="at">data =</span> idHospitals, <span class="at">col =</span> <span class="st">"red"</span>) <span class="sc">+</span></span>
+<span id="cb34-5"><a href="#cb34-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_viridis_c</span>(<span class="at">name =</span> <span class="st">"Population"</span>) <span class="sc">+</span></span>
+<span id="cb34-6"><a href="#cb34-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>() <span class="sc">+</span> </span>
+<span id="cb34-7"><a href="#cb34-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"bottom"</span>, <span class="at">legend.direction =</span> <span class="st">"horizontal"</span>)</span>
+<span id="cb34-8"><a href="#cb34-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-9"><a href="#cb34-9" aria-hidden="true" tabindex="-1"></a>pop_map_ea <span class="ot">&lt;-</span> <span class="fu">ggplot</span>() <span class="sc">+</span></span>
+<span id="cb34-10"><a href="#cb34-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_sf</span>(<span class="at">data =</span> demo_sf, </span>
+<span id="cb34-11"><a href="#cb34-11" aria-hidden="true" tabindex="-1"></a>          <span class="at">mapping =</span> <span class="fu">aes</span>(<span class="at">fill =</span> totalpop)) <span class="sc">+</span></span>
+<span id="cb34-12"><a href="#cb34-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_sf</span>(<span class="at">data =</span> idHospitals, <span class="at">col =</span> <span class="st">"red"</span>) <span class="sc">+</span></span>
+<span id="cb34-13"><a href="#cb34-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_sf</span>(<span class="at">crs =</span> <span class="st">"EPSG:3083"</span>) <span class="sc">+</span></span>
+<span id="cb34-14"><a href="#cb34-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_viridis_c</span>(<span class="at">name =</span> <span class="st">"Population"</span>) <span class="sc">+</span></span>
+<span id="cb34-15"><a href="#cb34-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>() <span class="sc">+</span></span>
+<span id="cb34-16"><a href="#cb34-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"bottom"</span>, <span class="at">legend.direction =</span> <span class="st">"horizontal"</span>)</span>
+<span id="cb34-17"><a href="#cb34-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-18"><a href="#cb34-18" aria-hidden="true" tabindex="-1"></a>pop_map_arctic <span class="ot">&lt;-</span> <span class="fu">ggplot</span>() <span class="sc">+</span></span>
+<span id="cb34-19"><a href="#cb34-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_sf</span>(<span class="at">data =</span> demo_sf, </span>
+<span id="cb34-20"><a href="#cb34-20" aria-hidden="true" tabindex="-1"></a>          <span class="at">mapping =</span> <span class="fu">aes</span>(<span class="at">fill =</span> totalpop)) <span class="sc">+</span></span>
+<span id="cb34-21"><a href="#cb34-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_sf</span>(<span class="at">data =</span> idHospitals, <span class="at">col =</span> <span class="st">"red"</span>) <span class="sc">+</span></span>
+<span id="cb34-22"><a href="#cb34-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_sf</span>(<span class="at">crs =</span> <span class="st">"EPSG:6354"</span>) <span class="sc">+</span></span>
+<span id="cb34-23"><a href="#cb34-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_viridis_c</span>(<span class="at">name =</span> <span class="st">"Population"</span>) <span class="sc">+</span></span>
+<span id="cb34-24"><a href="#cb34-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>() <span class="sc">+</span> </span>
+<span id="cb34-25"><a href="#cb34-25" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"bottom"</span>, <span class="at">legend.direction =</span> <span class="st">"horizontal"</span>)</span>
+<span id="cb34-26"><a href="#cb34-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-27"><a href="#cb34-27" aria-hidden="true" tabindex="-1"></a>(pop_map <span class="sc">+</span> pop_map_ea <span class="sc">+</span> pop_map_arctic) <span class="sc">+</span></span>
+<span id="cb34-28"><a href="#cb34-28" aria-hidden="true" tabindex="-1"></a>     <span class="fu">plot_layout</span>(<span class="at">guides =</span> <span class="st">"collect"</span>) <span class="sc">&amp;</span></span>
+<span id="cb34-29"><a href="#cb34-29" aria-hidden="true" tabindex="-1"></a>     <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"bottom"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="02-assignmentrev_files/figure-html/unnamed-chunk-2-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p><span style="color: #800020;">You didn’t have to do this, but I wanted to show you a simple way for changing the CRS without modifying the data. Rather than creating a bunch of objects that I wouldn’t use, I simply used the <code>coord_sf</code> call in <code>ggplot</code> to transform the data to different projections. I wanted to use a few different types so you can see the difference between projection that preserve distance, area, and angle. After creating each of these plots by modifying the <code>coord_sf</code> call, I use patchwork to combine them all. The two <code>patchwork</code> additions are the use of <code>plot_layout</code> to collect the various legends (because they’re all the same so there’s no reason to print them everytime) and the use of the <code>&amp; theme()</code> call. The <code>&amp;</code> in <code>patchwork</code> behaves like the <code>+</code> in <code>ggplot</code> but allows you to assign theme elements across all of the plots in the patchwork.</span></p>
 </section>
-<section id="questions-to-answer" class="level3">
-<h3 class="anchored" data-anchor-id="questions-to-answer">Questions to Answer</h3>
+<section id="task-2-creating-new-data-with-spatial-operations" class="level2">
+<h2 class="anchored" data-anchor-id="task-2-creating-new-data-with-spatial-operations">Task 2: Creating New Data With Spatial Operations</h2>
+<p>For this section, you’ll need to use spatial measures and predicates to calculate new variables.</p>
+<ol type="1">
+<li>Calculate the average distance between each block group and the nearest hospital. Use <code>ggplot</code> to explore the correlation between census demographics and distance to hospitals.</li>
+</ol>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a>template_rast <span class="ot">&lt;-</span> <span class="fu">rast</span>(<span class="at">res =</span> <span class="dv">1000</span>, </span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a>                      <span class="at">extent =</span> id_state, </span>
+<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a>                      <span class="at">crs =</span> <span class="fu">crs</span>(id_state))</span>
+<span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a>dist_hospital <span class="ot">&lt;-</span> <span class="fu">distance</span>(template_rast, </span>
+<span id="cb35-5"><a href="#cb35-5" aria-hidden="true" tabindex="-1"></a>                          <span class="fu">vect</span>(idHospitals),</span>
+<span id="cb35-6"><a href="#cb35-6" aria-hidden="true" tabindex="-1"></a>                          <span class="at">rasterize =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb35-7"><a href="#cb35-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-8"><a href="#cb35-8" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(dist_hospital)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="02-assignmentrev_files/figure-html/calcdist-1.png" class="img-fluid" width="672"></p>
+</div>
+<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a>demo_sf_dist <span class="ot">&lt;-</span> terra<span class="sc">::</span><span class="fu">extract</span>(<span class="at">x =</span> dist_hospital,</span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a>                               <span class="at">y =</span> <span class="fu">vect</span>(demo_sf),</span>
+<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a>                               <span class="at">fun =</span> mean, <span class="at">na.rm=</span><span class="cn">TRUE</span>,</span>
+<span id="cb36-4"><a href="#cb36-4" aria-hidden="true" tabindex="-1"></a>                               <span class="at">bind =</span> <span class="cn">TRUE</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb36-5"><a href="#cb36-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">st_as_sf</span>(.) <span class="sc">%&gt;%</span> </span>
+<span id="cb36-6"><a href="#cb36-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">avg_dist =</span> layer) </span>
+<span id="cb36-7"><a href="#cb36-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-8"><a href="#cb36-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-9"><a href="#cb36-9" aria-hidden="true" tabindex="-1"></a>plot_df <span class="ot">&lt;-</span> demo_sf_dist <span class="sc">%&gt;%</span> </span>
+<span id="cb36-10"><a href="#cb36-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(<span class="at">cols =</span> totalpop<span class="sc">:</span>p, </span>
+<span id="cb36-11"><a href="#cb36-11" aria-hidden="true" tabindex="-1"></a>               <span class="at">names_to =</span> <span class="st">"variable"</span>,</span>
+<span id="cb36-12"><a href="#cb36-12" aria-hidden="true" tabindex="-1"></a>               <span class="at">values_to =</span> <span class="st">"value"</span>)</span>
+<span id="cb36-13"><a href="#cb36-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-14"><a href="#cb36-14" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> plot_df, </span>
+<span id="cb36-15"><a href="#cb36-15" aria-hidden="true" tabindex="-1"></a>       <span class="at">mapping =</span> <span class="fu">aes</span>(<span class="at">x =</span> avg_dist, <span class="at">y =</span> value)) <span class="sc">+</span></span>
+<span id="cb36-16"><a href="#cb36-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>() <span class="sc">+</span></span>
+<span id="cb36-17"><a href="#cb36-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span>variable, <span class="at">scales =</span> <span class="st">"free_y"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="02-assignmentrev_files/figure-html/calcdist-2.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p><span style="color: #800020;">I used the <code>distance</code> function in the <code>terra</code> package because we wanted the <em>average</em> distance in each of the polygon geometries. You might have tried <code>st_distance</code>, but <code>st_distance</code> wouldn’t give us this directly and we wouldn’t be able to deal with the fact that some counties are large enough to have portions that are close to a hospital and portions that are fast. It’s not quite as precise as <code>st_distance</code>, but the difference is negligible here (because we have 1km cells).</span></p>
+<p><span style="color: #800020;">Once we’ve calculated the distance raster, we can extract the average values to our block-group geometries. We do this by using <code>terra::extract</code>, converting our sf object to a SpatVector (using <code>vect</code>), providing the <code>mean</code> to the <code>fun</code> argument (along with <code>na.rm=TRUE</code>). Finally, I set the <code>bind</code> argument to <code>TRUE</code> so that the values are attached to the original spatial data.</span></p>
+<p><span style="color: #800020;">Once the <code>extract</code> is done, I pipe the result to <code>st_as_sf</code> to convert the <code>SpatVector</code> back to an <code>sf</code> object and then use <code>dplyr::rename</code> to give the extracted variable a more useful name. Once I have that set, I can create my plotting dataframe by pivoting to long format so that I can facet each of my plots by the variables I want to examine the relationship with.</span></p>
+<ol start="2" type="1">
+<li>Do the same thing but comparing tract-level distances and 3 health indicators from the CDC data.</li>
+</ol>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a>cdc_sf_dist <span class="ot">&lt;-</span> terra<span class="sc">::</span><span class="fu">extract</span>(<span class="at">x =</span> dist_hospital,</span>
+<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a>                               <span class="at">y =</span> <span class="fu">vect</span>(cdc_sf),</span>
+<span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a>                               <span class="at">fun =</span> mean, <span class="at">na.rm=</span><span class="cn">TRUE</span>,</span>
+<span id="cb37-4"><a href="#cb37-4" aria-hidden="true" tabindex="-1"></a>                               <span class="at">bind =</span> <span class="cn">TRUE</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb37-5"><a href="#cb37-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">st_as_sf</span>(.) <span class="sc">%&gt;%</span> </span>
+<span id="cb37-6"><a href="#cb37-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">avg_dist =</span> layer) </span>
+<span id="cb37-7"><a href="#cb37-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-8"><a href="#cb37-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-9"><a href="#cb37-9" aria-hidden="true" tabindex="-1"></a>plot_df <span class="ot">&lt;-</span> cdc_sf_dist <span class="sc">%&gt;%</span> </span>
+<span id="cb37-10"><a href="#cb37-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="fu">where</span>(is.numeric))</span>
+<span id="cb37-11"><a href="#cb37-11" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb37-12"><a href="#cb37-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-13"><a href="#cb37-13" aria-hidden="true" tabindex="-1"></a>health_vars <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"chd"</span>, <span class="st">"casthma"</span>, <span class="st">"copd"</span>, <span class="st">"highcol"</span>, <span class="st">"cancer"</span>)  </span>
+<span id="cb37-14"><a href="#cb37-14" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb37-15"><a href="#cb37-15" aria-hidden="true" tabindex="-1"></a>plot_df <span class="ot">&lt;-</span> plot_df <span class="sc">%&gt;%</span> </span>
+<span id="cb37-16"><a href="#cb37-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(avg_dist,</span>
+<span id="cb37-17"><a href="#cb37-17" aria-hidden="true" tabindex="-1"></a>    <span class="fu">any_of</span>(<span class="fu">grep</span>(</span>
+<span id="cb37-18"><a href="#cb37-18" aria-hidden="true" tabindex="-1"></a>      <span class="fu">paste</span>(health_vars, <span class="at">collapse =</span> <span class="st">"|"</span>), </span>
+<span id="cb37-19"><a href="#cb37-19" aria-hidden="true" tabindex="-1"></a>      <span class="fu">names</span>(.), </span>
+<span id="cb37-20"><a href="#cb37-20" aria-hidden="true" tabindex="-1"></a>      <span class="at">value =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb37-21"><a href="#cb37-21" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb37-22"><a href="#cb37-22" aria-hidden="true" tabindex="-1"></a>    ) <span class="sc">%&gt;%</span> </span>
+<span id="cb37-23"><a href="#cb37-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(<span class="at">cols =</span> cancer_cru<span class="sc">:</span>copd_crude, </span>
+<span id="cb37-24"><a href="#cb37-24" aria-hidden="true" tabindex="-1"></a>               <span class="at">names_to =</span> <span class="st">"variable"</span>,</span>
+<span id="cb37-25"><a href="#cb37-25" aria-hidden="true" tabindex="-1"></a>               <span class="at">values_to =</span> <span class="st">"value"</span>)</span>
+<span id="cb37-26"><a href="#cb37-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-27"><a href="#cb37-27" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> plot_df, </span>
+<span id="cb37-28"><a href="#cb37-28" aria-hidden="true" tabindex="-1"></a>       <span class="at">mapping =</span> <span class="fu">aes</span>(<span class="at">x =</span> avg_dist, <span class="at">y =</span> value)) <span class="sc">+</span></span>
+<span id="cb37-29"><a href="#cb37-29" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>() <span class="sc">+</span></span>
+<span id="cb37-30"><a href="#cb37-30" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span>variable, <span class="at">scales =</span> <span class="st">"free_y"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="02-assignmentrev_files/figure-html/tractdist-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p><span style="color: #800020;">This is largely the same as the previous question except I do some more fancy things setting up my plotting dataframe. This CDC dataset has so many variables along with columns including the confidence intervals (which show up as character columns) that I wanted to simplify things a bit. The <code>select(where(is.numeric))</code> piece tells <code>R</code> to keep only the columns where <code>is.numeric</code> returns <code>TRUE</code>. Then I provide a subset of the variables that I want to plot (<code>health_vars</code>). Then I can use <code>select(any_of</code> to choose columns in that vector. The strange <code>paste(health_vars, collapse = "|")</code> part creates a single text string with “|” breaking up the variable names (because “|” is the operator for “OR”). Then the plot of long-form data is the same as before.</span></p>
+<ol start="3" type="1">
+<li>Write a function that is generic enough to take 2 vector datasets and calculate an average distance for each polygon in the first dataset.</li>
+</ol>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="fl">1.</span> Identify source and desitnation datasets</span>
+<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a><span class="fl">2.</span> Build template raster at desired resolution and extent</span>
+<span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a><span class="fl">3.</span> extract values and calc average</span>
+<span id="cb38-4"><a href="#cb38-4" aria-hidden="true" tabindex="-1"></a><span class="fl">4.</span> return dataframe</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p><span style="color: #800020;">Just noting some pseudocode that might help you articulate the function</span></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a>pairwise_avg_dist <span class="ot">&lt;-</span> <span class="cf">function</span>(source_sf, dest_sf, des_res){</span>
+<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a>  template_rast <span class="ot">&lt;-</span> <span class="fu">rast</span>(<span class="at">extent =</span> <span class="fu">ext</span>(source_sf), </span>
+<span id="cb39-3"><a href="#cb39-3" aria-hidden="true" tabindex="-1"></a>                        <span class="at">crs =</span> <span class="fu">crs</span>(source_sf), </span>
+<span id="cb39-4"><a href="#cb39-4" aria-hidden="true" tabindex="-1"></a>                        <span class="at">res =</span> des_res)</span>
+<span id="cb39-5"><a href="#cb39-5" aria-hidden="true" tabindex="-1"></a>  dist_rast <span class="ot">&lt;-</span> <span class="fu">distance</span>(<span class="at">x =</span> template_rast, </span>
+<span id="cb39-6"><a href="#cb39-6" aria-hidden="true" tabindex="-1"></a>                        <span class="at">y =</span> <span class="fu">vect</span>(dest_sf),</span>
+<span id="cb39-7"><a href="#cb39-7" aria-hidden="true" tabindex="-1"></a>                        <span class="at">rasterize =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb39-8"><a href="#cb39-8" aria-hidden="true" tabindex="-1"></a>  ext_df <span class="ot">&lt;-</span> terra<span class="sc">::</span><span class="fu">extract</span>(<span class="at">x =</span> dist_rast,</span>
+<span id="cb39-9"><a href="#cb39-9" aria-hidden="true" tabindex="-1"></a>                               <span class="at">y =</span> <span class="fu">vect</span>(source_sf),</span>
+<span id="cb39-10"><a href="#cb39-10" aria-hidden="true" tabindex="-1"></a>                               <span class="at">fun =</span> mean, <span class="at">na.rm=</span><span class="cn">TRUE</span>,</span>
+<span id="cb39-11"><a href="#cb39-11" aria-hidden="true" tabindex="-1"></a>                               <span class="at">bind =</span> <span class="cn">TRUE</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb39-12"><a href="#cb39-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">st_as_sf</span>(.) <span class="sc">%&gt;%</span> </span>
+<span id="cb39-13"><a href="#cb39-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">avg_dist =</span> layer) </span>
+<span id="cb39-14"><a href="#cb39-14" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb39-15"><a href="#cb39-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(ext_df)</span>
+<span id="cb39-16"><a href="#cb39-16" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb39-17"><a href="#cb39-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-18"><a href="#cb39-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-19"><a href="#cb39-19" aria-hidden="true" tabindex="-1"></a>test <span class="ot">&lt;-</span> <span class="fu">pairwise_avg_dist</span>(<span class="at">source_sf =</span> id_counties,</span>
+<span id="cb39-20"><a href="#cb39-20" aria-hidden="true" tabindex="-1"></a>                          <span class="at">dest_sf =</span> idHospitals,</span>
+<span id="cb39-21"><a href="#cb39-21" aria-hidden="true" tabindex="-1"></a>                          <span class="at">des_res =</span> <span class="dv">1000</span>)</span>
+<span id="cb39-22"><a href="#cb39-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-23"><a href="#cb39-23" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>() <span class="sc">+</span></span>
+<span id="cb39-24"><a href="#cb39-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_sf</span>(<span class="at">data =</span> test,</span>
+<span id="cb39-25"><a href="#cb39-25" aria-hidden="true" tabindex="-1"></a>          <span class="at">mapping =</span> <span class="fu">aes</span>(<span class="at">fill =</span> avg_dist)) <span class="sc">+</span></span>
+<span id="cb39-26"><a href="#cb39-26" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_sf</span>(<span class="at">data =</span> idHospitals,</span>
+<span id="cb39-27"><a href="#cb39-27" aria-hidden="true" tabindex="-1"></a>          <span class="at">col =</span> <span class="st">"red"</span>) <span class="sc">+</span></span>
+<span id="cb39-28"><a href="#cb39-28" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_viridis_c</span>(<span class="at">option =</span> <span class="st">"mako"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="02-assignmentrev_files/figure-html/unnamed-chunk-3-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p><span style="color: #800020;">Based on the previous tasks, you should be able to guess what this looks like. The only thing I’ve changed here is to a) provide more generic object names so that this is a bit more interchangeable and b) to provide an argument that allows you specify the desired resolution of the template raster. You should note, however, that this is a pretty rough function. One could build out a lot of different checks and subroutines that would allow you to specify something other than an <code>sf</code> object or to generate more informative error messages. That seemed overkill to me here, but I’ll keep building those things out in the future so that you can see them.</span></p>
+<ol start="4" type="1">
+<li>Aggregate the demographic and health data to the county level. Then, create a new variable that contains the count of the number of hospitals in each county. Plot the correlation between your variables and the count of hospitals.</li>
+</ol>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a>county_agg_cdc <span class="ot">&lt;-</span> cdc_sf <span class="sc">%&gt;%</span> </span>
+<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(COUNTYFP) <span class="sc">%&gt;%</span> </span>
+<span id="cb40-3"><a href="#cb40-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="fu">across</span>(</span>
+<span id="cb40-4"><a href="#cb40-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">where</span>(is.numeric), <span class="sc">~</span> <span class="fu">mean</span>(.x, <span class="at">na.rm=</span><span class="cn">TRUE</span>))</span>
+<span id="cb40-5"><a href="#cb40-5" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span> </span>
+<span id="cb40-6"><a href="#cb40-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">num_hospitals =</span> <span class="fu">lengths</span>(<span class="fu">st_intersects</span>(., idHospitals))) </span>
+<span id="cb40-7"><a href="#cb40-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-8"><a href="#cb40-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-9"><a href="#cb40-9" aria-hidden="true" tabindex="-1"></a>health_vars <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"chd"</span>, <span class="st">"casthma"</span>, <span class="st">"copd"</span>, <span class="st">"highcol"</span>, <span class="st">"cancer"</span>)  </span>
+<span id="cb40-10"><a href="#cb40-10" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb40-11"><a href="#cb40-11" aria-hidden="true" tabindex="-1"></a>plot_df <span class="ot">&lt;-</span> county_agg_cdc <span class="sc">%&gt;%</span> </span>
+<span id="cb40-12"><a href="#cb40-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">st_drop_geometry</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb40-13"><a href="#cb40-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(num_hospitals,</span>
+<span id="cb40-14"><a href="#cb40-14" aria-hidden="true" tabindex="-1"></a>    <span class="fu">any_of</span>(<span class="fu">grep</span>(</span>
+<span id="cb40-15"><a href="#cb40-15" aria-hidden="true" tabindex="-1"></a>      <span class="fu">paste</span>(health_vars, <span class="at">collapse =</span> <span class="st">"|"</span>), </span>
+<span id="cb40-16"><a href="#cb40-16" aria-hidden="true" tabindex="-1"></a>      <span class="fu">names</span>(.), </span>
+<span id="cb40-17"><a href="#cb40-17" aria-hidden="true" tabindex="-1"></a>      <span class="at">value =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb40-18"><a href="#cb40-18" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb40-19"><a href="#cb40-19" aria-hidden="true" tabindex="-1"></a>    ) <span class="sc">%&gt;%</span> </span>
+<span id="cb40-20"><a href="#cb40-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(<span class="at">cols =</span> cancer_cru<span class="sc">:</span>copd_crude, </span>
+<span id="cb40-21"><a href="#cb40-21" aria-hidden="true" tabindex="-1"></a>               <span class="at">names_to =</span> <span class="st">"variable"</span>,</span>
+<span id="cb40-22"><a href="#cb40-22" aria-hidden="true" tabindex="-1"></a>               <span class="at">values_to =</span> <span class="st">"value"</span>)</span>
+<span id="cb40-23"><a href="#cb40-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-24"><a href="#cb40-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-25"><a href="#cb40-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-26"><a href="#cb40-26" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(plot_df, </span>
+<span id="cb40-27"><a href="#cb40-27" aria-hidden="true" tabindex="-1"></a>       <span class="at">mapping =</span> <span class="fu">aes</span>(<span class="at">x =</span> num_hospitals, <span class="at">y =</span> value)) <span class="sc">+</span></span>
+<span id="cb40-28"><a href="#cb40-28" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>() <span class="sc">+</span></span>
+<span id="cb40-29"><a href="#cb40-29" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_reverse</span>() <span class="sc">+</span></span>
+<span id="cb40-30"><a href="#cb40-30" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span>variable)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="02-assignmentrev_files/figure-html/aggcty-1.png" class="img-fluid" width="672"></p>
+</div>
+<div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a>county_agg_demo <span class="ot">&lt;-</span> demo_sf <span class="sc">%&gt;%</span> </span>
+<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(COUNTYFP) <span class="sc">%&gt;%</span> </span>
+<span id="cb41-3"><a href="#cb41-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="fu">across</span>(</span>
+<span id="cb41-4"><a href="#cb41-4" aria-hidden="true" tabindex="-1"></a>    totalpop<span class="sc">:</span>p, <span class="sc">~</span> <span class="fu">mean</span>(.x, <span class="at">na.rm=</span><span class="cn">TRUE</span>))</span>
+<span id="cb41-5"><a href="#cb41-5" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span> </span>
+<span id="cb41-6"><a href="#cb41-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">num_hospitals =</span> <span class="fu">lengths</span>(<span class="fu">st_intersects</span>(., idHospitals))) </span>
+<span id="cb41-7"><a href="#cb41-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb41-8"><a href="#cb41-8" aria-hidden="true" tabindex="-1"></a>plot_df <span class="ot">&lt;-</span> county_agg_demo <span class="sc">%&gt;%</span> </span>
+<span id="cb41-9"><a href="#cb41-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(<span class="at">cols =</span> totalpop<span class="sc">:</span>p, </span>
+<span id="cb41-10"><a href="#cb41-10" aria-hidden="true" tabindex="-1"></a>               <span class="at">names_to =</span> <span class="st">"variable"</span>,</span>
+<span id="cb41-11"><a href="#cb41-11" aria-hidden="true" tabindex="-1"></a>               <span class="at">values_to =</span> <span class="st">"value"</span>)</span>
+<span id="cb41-12"><a href="#cb41-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb41-13"><a href="#cb41-13" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> plot_df, </span>
+<span id="cb41-14"><a href="#cb41-14" aria-hidden="true" tabindex="-1"></a>       <span class="at">mapping =</span> <span class="fu">aes</span>(<span class="at">x =</span> num_hospitals, <span class="at">y =</span> value)) <span class="sc">+</span></span>
+<span id="cb41-15"><a href="#cb41-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>() <span class="sc">+</span></span>
+<span id="cb41-16"><a href="#cb41-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_reverse</span>()<span class="sc">+</span></span>
+<span id="cb41-17"><a href="#cb41-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span>variable, <span class="at">scales =</span> <span class="st">"free_y"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="02-assignmentrev_files/figure-html/aggcty-2.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p><span style="color: #800020;">Because both datasets have unique identifiers for county we can use the <code>group_by</code>, <code>summarise</code> routine to calculate the means. We then add a <code>mutate</code> to count the number of hospitals which we get by combining <code>st_intersects</code> (a predicate the returns T/F for each element) with <code>lengths</code> to count the number of <code>TRUE</code> in each call to <code>st_intersects</code>. We plot as before, but use <code>scale_x_reverse</code> (one of many <code>ggplot</code> calls to order, sort, and format the axes) to make these plots reflect something similar to the distance plots above (ie., lower distances to the left should correspond to more hospitals also on the left)</span></p>
+<ol start="5" type="1">
+<li><strong>Reflection</strong>: How might the different spatial resolutions of your data affect the correlations you plotted? If there were differences in the correlations you plotted, what do you think is driving those differences?</li>
+</ol>
 
 
 </section>

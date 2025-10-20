@@ -41,3 +41,8 @@ Submit a single Quarto document (.qmd) with integrated code, outputs, and writte
 Hospitals provide important services to a wide range of community members. That said, they aren't placed in the world at random. Your task in this assignment is to combine geoprocessing with visualization to see if you can identify key elements that correlate with the location of hospitals and think about what that might mean for the folks with and without access to those hospitals.
 
 In our Google Drive folder, you will find three datasets. The first is a shapefile of Idaho hospital locations taken from the Open Street Maps database (accessed via the `osmdata` package). The second is a shapefile from the [CDC Places dataset](https://www.cdc.gov/places/measure-definitions/index.html) depicting the modeled score for a variety of health indicators. You can access these by running our download function (you'll need to use `source` to do this when you load your packages) for [this link](https://drive.google.com/drive/folders/1tCbftdEbYZrr8beht-vTOUQdTx9u4sCJ). The last is a tabular dataset for a set of Idaho demographics downloaded from the `tidycensus`package. The data includes household income, total population, population breakdown by race, and a demographic dissimilarity score based on the `mutual_local` function in the [segregation package](https://cran.r-project.org/web/packages/segregation/vignettes/segregation.html).
+
+
+:::{.callout-note}
+Solutions are [here](02-assignmentrev.qmd)
+:::
