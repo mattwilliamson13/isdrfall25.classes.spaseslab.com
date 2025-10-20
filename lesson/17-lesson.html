@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Intro to Spatial Data in R – Surface Metrics</title>
+<title>Intro to Spatial Data in R - Surface Metrics</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -97,7 +97,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 
 <meta property="og:title" content="Intro to Spatial Data in R - Surface Metrics">
-<meta property="og:description" content="First, we’ll have to get our credentials and login to a new RStudio session. Today, we’re going to explore the landscape metrics package using the National Land Cover Dataset.">
+<meta property="og:description" content="">
 <meta property="og:image" content="https://isdrfall25.classes.spaseslab.com/files/social-image-f22.png">
 <meta property="og:site-name" content="Intro to Spatial Data in R">
 <meta property="og:locale" content="en_US">
@@ -184,10 +184,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <li><a href="#calclulating-patch-metrics" id="toc-calclulating-patch-metrics" class="nav-link" data-scroll-target="#calclulating-patch-metrics">Calclulating patch metrics</a></li>
   <li><a href="#calculating-class-metrics" id="toc-calculating-class-metrics" class="nav-link" data-scroll-target="#calculating-class-metrics">Calculating class metrics</a></li>
   <li><a href="#calculating-landscape-metrics" id="toc-calculating-landscape-metrics" class="nav-link" data-scroll-target="#calculating-landscape-metrics">Calculating landscape metrics</a></li>
-  <li><a href="#setting-some-boundaries-1" id="toc-setting-some-boundaries-1" class="nav-link" data-scroll-target="#setting-some-boundaries-1">Setting Some Boundaries</a></li>
-  <li><a href="#calclulating-patch-metrics-1" id="toc-calclulating-patch-metrics-1" class="nav-link" data-scroll-target="#calclulating-patch-metrics-1">Calclulating patch metrics</a></li>
-  <li><a href="#calculating-class-metrics-1" id="toc-calculating-class-metrics-1" class="nav-link" data-scroll-target="#calculating-class-metrics-1">Calculating class metrics</a></li>
-  <li><a href="#calculating-landscape-metrics-1" id="toc-calculating-landscape-metrics-1" class="nav-link" data-scroll-target="#calculating-landscape-metrics-1">Calculating landscape metrics</a></li>
   </ul>
 </nav>
     </div>
@@ -275,364 +271,19 @@ The following object is masked from 'package:tidyr':
 <div class="cell">
 <details open="">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>ada_county <span class="ot">&lt;-</span> <span class="fu">counties</span>(<span class="at">state =</span> <span class="st">"ID"</span>) <span class="sc">%&gt;%</span> </span>
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>ada_county <span class="ot">&lt;-</span> <span class="fu">counties</span>(<span class="at">state =</span> <span class="st">"ID"</span>, <span class="at">progress_bar =</span><span class="cn">FALSE</span>) <span class="sc">%&gt;%</span> </span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(., NAME <span class="sc">==</span> <span class="st">"Ada"</span>) <span class="sc">%&gt;%</span> </span>
 <span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">st_transform</span>(<span class="at">crs =</span> <span class="st">"EPSG:5070"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stderr">
 <pre><code>Retrieving data for the year 2024</code></pre>
 </div>
-<div class="cell-output cell-output-stdout">
-<pre><code>
-  |                                                                            
-  |                                                                      |   0%
-  |                                                                            
-  |                                                                      |   1%
-  |                                                                            
-  |=                                                                     |   1%
-  |                                                                            
-  |=                                                                     |   2%
-  |                                                                            
-  |==                                                                    |   2%
-  |                                                                            
-  |==                                                                    |   3%
-  |                                                                            
-  |==                                                                    |   4%
-  |                                                                            
-  |===                                                                   |   4%
-  |                                                                            
-  |===                                                                   |   5%
-  |                                                                            
-  |====                                                                  |   5%
-  |                                                                            
-  |====                                                                  |   6%
-  |                                                                            
-  |=====                                                                 |   6%
-  |                                                                            
-  |=====                                                                 |   7%
-  |                                                                            
-  |=====                                                                 |   8%
-  |                                                                            
-  |======                                                                |   8%
-  |                                                                            
-  |======                                                                |   9%
-  |                                                                            
-  |=======                                                               |   9%
-  |                                                                            
-  |=======                                                               |  10%
-  |                                                                            
-  |=======                                                               |  11%
-  |                                                                            
-  |========                                                              |  11%
-  |                                                                            
-  |========                                                              |  12%
-  |                                                                            
-  |=========                                                             |  12%
-  |                                                                            
-  |=========                                                             |  13%
-  |                                                                            
-  |=========                                                             |  14%
-  |                                                                            
-  |==========                                                            |  14%
-  |                                                                            
-  |==========                                                            |  15%
-  |                                                                            
-  |===========                                                           |  15%
-  |                                                                            
-  |===========                                                           |  16%
-  |                                                                            
-  |============                                                          |  16%
-  |                                                                            
-  |============                                                          |  17%
-  |                                                                            
-  |============                                                          |  18%
-  |                                                                            
-  |=============                                                         |  18%
-  |                                                                            
-  |=============                                                         |  19%
-  |                                                                            
-  |==============                                                        |  19%
-  |                                                                            
-  |==============                                                        |  20%
-  |                                                                            
-  |==============                                                        |  21%
-  |                                                                            
-  |===============                                                       |  21%
-  |                                                                            
-  |===============                                                       |  22%
-  |                                                                            
-  |================                                                      |  22%
-  |                                                                            
-  |================                                                      |  23%
-  |                                                                            
-  |================                                                      |  24%
-  |                                                                            
-  |=================                                                     |  24%
-  |                                                                            
-  |=================                                                     |  25%
-  |                                                                            
-  |==================                                                    |  25%
-  |                                                                            
-  |==================                                                    |  26%
-  |                                                                            
-  |===================                                                   |  26%
-  |                                                                            
-  |===================                                                   |  27%
-  |                                                                            
-  |===================                                                   |  28%
-  |                                                                            
-  |====================                                                  |  28%
-  |                                                                            
-  |====================                                                  |  29%
-  |                                                                            
-  |=====================                                                 |  29%
-  |                                                                            
-  |=====================                                                 |  30%
-  |                                                                            
-  |=====================                                                 |  31%
-  |                                                                            
-  |======================                                                |  31%
-  |                                                                            
-  |======================                                                |  32%
-  |                                                                            
-  |=======================                                               |  32%
-  |                                                                            
-  |=======================                                               |  33%
-  |                                                                            
-  |=======================                                               |  34%
-  |                                                                            
-  |========================                                              |  34%
-  |                                                                            
-  |========================                                              |  35%
-  |                                                                            
-  |=========================                                             |  35%
-  |                                                                            
-  |=========================                                             |  36%
-  |                                                                            
-  |==========================                                            |  36%
-  |                                                                            
-  |==========================                                            |  37%
-  |                                                                            
-  |==========================                                            |  38%
-  |                                                                            
-  |===========================                                           |  38%
-  |                                                                            
-  |===========================                                           |  39%
-  |                                                                            
-  |============================                                          |  39%
-  |                                                                            
-  |============================                                          |  40%
-  |                                                                            
-  |============================                                          |  41%
-  |                                                                            
-  |=============================                                         |  41%
-  |                                                                            
-  |=============================                                         |  42%
-  |                                                                            
-  |==============================                                        |  42%
-  |                                                                            
-  |==============================                                        |  43%
-  |                                                                            
-  |==============================                                        |  44%
-  |                                                                            
-  |===============================                                       |  44%
-  |                                                                            
-  |===============================                                       |  45%
-  |                                                                            
-  |================================                                      |  45%
-  |                                                                            
-  |================================                                      |  46%
-  |                                                                            
-  |=================================                                     |  46%
-  |                                                                            
-  |=================================                                     |  47%
-  |                                                                            
-  |=================================                                     |  48%
-  |                                                                            
-  |==================================                                    |  48%
-  |                                                                            
-  |==================================                                    |  49%
-  |                                                                            
-  |===================================                                   |  49%
-  |                                                                            
-  |===================================                                   |  50%
-  |                                                                            
-  |===================================                                   |  51%
-  |                                                                            
-  |====================================                                  |  51%
-  |                                                                            
-  |====================================                                  |  52%
-  |                                                                            
-  |=====================================                                 |  52%
-  |                                                                            
-  |=====================================                                 |  53%
-  |                                                                            
-  |=====================================                                 |  54%
-  |                                                                            
-  |======================================                                |  54%
-  |                                                                            
-  |======================================                                |  55%
-  |                                                                            
-  |=======================================                               |  55%
-  |                                                                            
-  |=======================================                               |  56%
-  |                                                                            
-  |========================================                              |  56%
-  |                                                                            
-  |========================================                              |  57%
-  |                                                                            
-  |========================================                              |  58%
-  |                                                                            
-  |=========================================                             |  58%
-  |                                                                            
-  |=========================================                             |  59%
-  |                                                                            
-  |==========================================                            |  59%
-  |                                                                            
-  |==========================================                            |  60%
-  |                                                                            
-  |==========================================                            |  61%
-  |                                                                            
-  |===========================================                           |  61%
-  |                                                                            
-  |===========================================                           |  62%
-  |                                                                            
-  |============================================                          |  62%
-  |                                                                            
-  |============================================                          |  63%
-  |                                                                            
-  |============================================                          |  64%
-  |                                                                            
-  |=============================================                         |  64%
-  |                                                                            
-  |=============================================                         |  65%
-  |                                                                            
-  |==============================================                        |  65%
-  |                                                                            
-  |==============================================                        |  66%
-  |                                                                            
-  |===============================================                       |  66%
-  |                                                                            
-  |===============================================                       |  67%
-  |                                                                            
-  |===============================================                       |  68%
-  |                                                                            
-  |================================================                      |  68%
-  |                                                                            
-  |================================================                      |  69%
-  |                                                                            
-  |=================================================                     |  69%
-  |                                                                            
-  |=================================================                     |  70%
-  |                                                                            
-  |=================================================                     |  71%
-  |                                                                            
-  |==================================================                    |  71%
-  |                                                                            
-  |==================================================                    |  72%
-  |                                                                            
-  |===================================================                   |  72%
-  |                                                                            
-  |===================================================                   |  73%
-  |                                                                            
-  |===================================================                   |  74%
-  |                                                                            
-  |====================================================                  |  74%
-  |                                                                            
-  |====================================================                  |  75%
-  |                                                                            
-  |=====================================================                 |  75%
-  |                                                                            
-  |=====================================================                 |  76%
-  |                                                                            
-  |======================================================                |  76%
-  |                                                                            
-  |======================================================                |  77%
-  |                                                                            
-  |======================================================                |  78%
-  |                                                                            
-  |=======================================================               |  78%
-  |                                                                            
-  |=======================================================               |  79%
-  |                                                                            
-  |========================================================              |  79%
-  |                                                                            
-  |========================================================              |  80%
-  |                                                                            
-  |========================================================              |  81%
-  |                                                                            
-  |=========================================================             |  81%
-  |                                                                            
-  |=========================================================             |  82%
-  |                                                                            
-  |==========================================================            |  82%
-  |                                                                            
-  |==========================================================            |  83%
-  |                                                                            
-  |==========================================================            |  84%
-  |                                                                            
-  |===========================================================           |  84%
-  |                                                                            
-  |===========================================================           |  85%
-  |                                                                            
-  |============================================================          |  85%
-  |                                                                            
-  |============================================================          |  86%
-  |                                                                            
-  |=============================================================         |  86%
-  |                                                                            
-  |=============================================================         |  87%
-  |                                                                            
-  |=============================================================         |  88%
-  |                                                                            
-  |==============================================================        |  88%
-  |                                                                            
-  |==============================================================        |  89%
-  |                                                                            
-  |===============================================================       |  89%
-  |                                                                            
-  |===============================================================       |  90%
-  |                                                                            
-  |===============================================================       |  91%
-  |                                                                            
-  |================================================================      |  91%
-  |                                                                            
-  |================================================================      |  92%
-  |                                                                            
-  |=================================================================     |  92%
-  |                                                                            
-  |=================================================================     |  93%
-  |                                                                            
-  |=================================================================     |  94%
-  |                                                                            
-  |==================================================================    |  94%
-  |                                                                            
-  |==================================================================    |  95%
-  |                                                                            
-  |===================================================================   |  95%
-  |                                                                            
-  |===================================================================   |  96%
-  |                                                                            
-  |====================================================================  |  96%
-  |                                                                            
-  |====================================================================  |  97%
-  |                                                                            
-  |====================================================================  |  98%
-  |                                                                            
-  |===================================================================== |  98%
-  |                                                                            
-  |===================================================================== |  99%
-  |                                                                            
-  |======================================================================|  99%
-  |                                                                            
-  |======================================================================| 100%</code></pre>
-</div>
 <details open="">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>ada_NLCD <span class="ot">&lt;-</span> terra<span class="sc">::</span><span class="fu">rast</span>(<span class="st">"https://dmsdata.cr.usgs.gov/geoserver/mrlc_Land-Cover-Native_conus_year_data/wcs?service=WCS&amp;version=1.0.0&amp;coverage=mrlc_Land-Cover-Native_conus_year_data:Land-Cover-Native_conus_year_data&amp;BBOX=-1643474,2404759,-1594149,2489538&amp;CRS=EPSG:5070&amp;time=2020-01-01T00:00:00.000Z&amp;format=image/geotiff&amp;resx=30&amp;resy=30&amp;request=GetCoverage"</span>, <span class="at">vsi =</span> <span class="cn">FALSE</span>)</span>
-<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(ada_NLCD)</span>
-<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(<span class="fu">st_geometry</span>(ada_county), <span class="at">add=</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>ada_NLCD <span class="ot">&lt;-</span> terra<span class="sc">::</span><span class="fu">rast</span>(<span class="st">"https://dmsdata.cr.usgs.gov/geoserver/mrlc_Land-Cover-Native_conus_year_data/wcs?service=WCS&amp;version=1.0.0&amp;coverage=mrlc_Land-Cover-Native_conus_year_data:Land-Cover-Native_conus_year_data&amp;BBOX=-1643474,2404759,-1594149,2489538&amp;CRS=EPSG:5070&amp;time=2020-01-01T00:00:00.000Z&amp;format=image/geotiff&amp;resx=30&amp;resy=30&amp;request=GetCoverage"</span>, <span class="at">vsi =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(ada_NLCD)</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(<span class="fu">st_geometry</span>(ada_county), <span class="at">add=</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
 <p><img src="17-lesson_files/figure-html/getdata-1.png" class="img-fluid" width="672"></p>
@@ -646,7 +297,7 @@ The following object is masked from 'package:tidyr':
 <div class="cell">
 <details open="">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(<span class="fu">lsm_p_area</span>(ada_NLCD))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(<span class="fu">lsm_p_area</span>(ada_NLCD))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 6 × 6
@@ -661,7 +312,7 @@ The following object is masked from 'package:tidyr':
 </div>
 <details open="">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(<span class="fu">lsm_p_shape</span>(ada_NLCD))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(<span class="fu">lsm_p_shape</span>(ada_NLCD))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 6 × 6
@@ -676,13 +327,13 @@ The following object is masked from 'package:tidyr':
 </div>
 <details open="">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">show_lsm</span>(ada_NLCD, <span class="at">what =</span> <span class="st">"lsm_p_area"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">show_lsm</span>(ada_NLCD, <span class="at">what =</span> <span class="st">"lsm_p_area"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>$layer_1</code></pre>
 </div>
 <div class="cell-output-display">
-<p><img src="17-lesson_files/figure-html/calcpatch-1.png" class="img-fluid" width="672"></p>
+<p><img src="17-lesson_files/figure-html/patch-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
 <p>We calculate some basic patch metrics using <code>lsm_p_METRIC</code>, but restrict the output to the first 5 entries to make the printing easier. We also use the <code>show_lsm</code> function to create a map based on these patch-level metrics (this only works for patch metrics, not the class or landscape metrics). In this case, we’re interested in the patch area and shape (check out the help files for the equations). In <code>landscapemetrics</code> patches are defined as neighboring rasters (defined as queen or rooks case using the <code>directions</code> argument) that share the same category. Each of these functions estimates a measure for all of the patches in a landscape (which may be as small as 1 pixel and as large as the entire landscape).</p>
@@ -693,10 +344,76 @@ The following object is masked from 'package:tidyr':
 <div class="cell">
 <details open="">
 <summary>Code</summary>
-<pre class="calc cell-code"><code>lsm_c_pland(ada_NLCD)   # % of landscape occupied
-lsm_c_np(ada_NLCD)      # number of patches per class
-lsm_c_ed(ada_NLCD)</code></pre>
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="fu">lsm_c_pland</span>(ada_NLCD)   <span class="co"># % of landscape occupied</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 15 × 6
+   layer level class    id metric     value
+   &lt;int&gt; &lt;chr&gt; &lt;int&gt; &lt;int&gt; &lt;chr&gt;      &lt;dbl&gt;
+ 1     1 class    11    NA pland   0.527   
+ 2     1 class    21    NA pland   3.33    
+ 3     1 class    22    NA pland   7.05    
+ 4     1 class    23    NA pland   4.41    
+ 5     1 class    24    NA pland   0.677   
+ 6     1 class    31    NA pland   0.0639  
+ 7     1 class    41    NA pland   0.0828  
+ 8     1 class    42    NA pland   4.40    
+ 9     1 class    43    NA pland   0.000409
+10     1 class    52    NA pland  20.8     
+11     1 class    71    NA pland  44.0     
+12     1 class    81    NA pland   1.28    
+13     1 class    82    NA pland  13.3     
+14     1 class    90    NA pland   0.0746  
+15     1 class    95    NA pland   0.0706  </code></pre>
+</div>
+<details open="">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="fu">lsm_c_np</span>(ada_NLCD)      <span class="co"># number of patches per class</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 15 × 6
+   layer level class    id metric value
+   &lt;int&gt; &lt;chr&gt; &lt;int&gt; &lt;int&gt; &lt;chr&gt;  &lt;dbl&gt;
+ 1     1 class    11    NA np       382
+ 2     1 class    21    NA np     20237
+ 3     1 class    22    NA np     14793
+ 4     1 class    23    NA np      7012
+ 5     1 class    24    NA np      2720
+ 6     1 class    31    NA np       231
+ 7     1 class    41    NA np       616
+ 8     1 class    42    NA np       765
+ 9     1 class    43    NA np        15
+10     1 class    52    NA np     15848
+11     1 class    71    NA np      9802
+12     1 class    81    NA np      2810
+13     1 class    82    NA np      3886
+14     1 class    90    NA np       523
+15     1 class    95    NA np       429</code></pre>
+</div>
+<details open="">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="fu">lsm_c_ed</span>(ada_NLCD)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 15 × 6
+   layer level class    id metric    value
+   &lt;int&gt; &lt;chr&gt; &lt;int&gt; &lt;int&gt; &lt;chr&gt;     &lt;dbl&gt;
+ 1     1 class    11    NA ed      1.02   
+ 2     1 class    21    NA ed     21.9    
+ 3     1 class    22    NA ed     34.5    
+ 4     1 class    23    NA ed     18.7    
+ 5     1 class    24    NA ed      3.00   
+ 6     1 class    31    NA ed      0.265  
+ 7     1 class    41    NA ed      0.515  
+ 8     1 class    42    NA ed      3.84   
+ 9     1 class    43    NA ed      0.00517
+10     1 class    52    NA ed     36.0    
+11     1 class    71    NA ed     37.3    
+12     1 class    81    NA ed      4.40   
+13     1 class    82    NA ed     11.9    
+14     1 class    90    NA ed      0.527  
+15     1 class    95    NA ed      0.394  </code></pre>
+</div>
 </div>
 </section>
 <section id="calculating-landscape-metrics" class="level2">
@@ -705,7 +422,7 @@ lsm_c_ed(ada_NLCD)</code></pre>
 <div class="cell">
 <details open="">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="fu">lsm_l_shdi</span>(ada_NLCD)    <span class="co"># Shannon’s Diversity Index</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="fu">lsm_l_shdi</span>(ada_NLCD)    <span class="co"># Shannon’s Diversity Index</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 1 × 6
@@ -715,7 +432,7 @@ lsm_c_ed(ada_NLCD)</code></pre>
 </div>
 <details open="">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="fu">lsm_l_cohesion</span>(ada_NLCD)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="fu">lsm_l_cohesion</span>(ada_NLCD)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 1 × 6
@@ -724,112 +441,10 @@ lsm_c_ed(ada_NLCD)</code></pre>
 1     1 landscape    NA    NA cohesion  99.1</code></pre>
 </div>
 </div>
-<pre><code>
 
 
+<!-- -->
 
-:::{#quarto-navigation-envelope .hidden}
-[Intro to Spatial Data in R]{.hidden render-id="quarto-int-sidebar-title"}
-[Intro to Spatial Data in R]{.hidden render-id="quarto-int-navbar-title"}
-[Syllabus]{.hidden render-id="quarto-int-navbar:Syllabus"}
-[/syllabus.html]{.hidden render-id="quarto-int-navbar:/syllabus.html"}
-[Schedule]{.hidden render-id="quarto-int-navbar:Schedule"}
-[/schedule.html]{.hidden render-id="quarto-int-navbar:/schedule.html"}
-[Content]{.hidden render-id="quarto-int-navbar:Content"}
-[/content/index.html]{.hidden render-id="quarto-int-navbar:/content/index.html"}
-[Assignments]{.hidden render-id="quarto-int-navbar:Assignments"}
-[/assignment/index.html]{.hidden render-id="quarto-int-navbar:/assignment/index.html"}
-[Examples]{.hidden render-id="quarto-int-navbar:Examples"}
-[/example/index.html]{.hidden render-id="quarto-int-navbar:/example/index.html"}
-[Lessons]{.hidden render-id="quarto-int-navbar:Lessons"}
-[/lesson/index.html]{.hidden render-id="quarto-int-navbar:/lesson/index.html"}
-[Resources]{.hidden render-id="quarto-int-navbar:Resources"}
-[/resource/index.html]{.hidden render-id="quarto-int-navbar:/resource/index.html"}
-[https://ecostatsbsu.slack.com/archives/CV4DEJ8M7]{.hidden render-id="quarto-int-navbar:https://ecostatsbsu.slack.com/archives/CV4DEJ8M7"}
-[https://github.com/BSU-Spatial-Data-in-R-Fall2025]{.hidden render-id="quarto-int-navbar:https://github.com/BSU-Spatial-Data-in-R-Fall2025"}
-[https://rstudio.apps.aws.boisestate.edu/]{.hidden render-id="quarto-int-navbar:https://rstudio.apps.aws.boisestate.edu/"}
-[Content  2025 by [Matt Williamson](https://www.spaseslab.com) &lt;br&gt;
-All content licensed under a 
- 
-[Creative Commons Attribution-NonCommercial 4.0 International license (CC BY-NC 4.0)](https://creativecommons.org/licenses/by-nc/4.0/)
-]{.hidden render-id="footer-left"}
-[Made with  and [Quarto](https://quarto.org/)&lt;br&gt;
-[View the source at  GitHub](https://www.github.com/mattwilliamson/isdrfall25)
-Based on websites designed by [Andrew Heiss](https://github.com/andrewheiss/evalf22.classes.andrewheiss.com)
-]{.hidden render-id="footer-right"}
-:::
-
-
-
-:::{#quarto-meta-markdown .hidden}
-[Intro to Spatial Data in R - Surface Metrics]{.hidden render-id="quarto-metatitle"}
-[Intro to Spatial Data in R - Surface Metrics]{.hidden render-id="quarto-twittercardtitle"}
-[Intro to Spatial Data in R - Surface Metrics]{.hidden render-id="quarto-ogcardtitle"}
-[Intro to Spatial Data in R]{.hidden render-id="quarto-metasitename"}
-[]{.hidden render-id="quarto-twittercarddesc"}
-[]{.hidden render-id="quarto-ogcardddesc"}
-:::
-
-
-
-
-&lt;!-- --&gt;
-
-::: {.quarto-embedded-source-code}
-```````````````````{.markdown shortcodes="false"}
----
-title: "Surface Metrics"
----
-
-## Getting Started
-
-First, we'll have to [get our credentials](https://rstudio.aws.boisestate.edu/) and login to a [new RStudio session](https://rstudio.apps.aws.boisestate.edu/). Today, we're going to explore the `landscape` metrics package using the National Land Cover Dataset. You don't need any additional data as we'll download it in our session, but you need to load some packages.
-
-```{r ldpkg}
-library(tidyverse)
-library(tigris)
-library(terra)
-library(sf)
-library(landscapemetrics)
-</code></pre>
-</section>
-<section id="setting-some-boundaries-1" class="level2">
-<h2 class="anchored" data-anchor-id="setting-some-boundaries-1">Setting Some Boundaries</h2>
-<p>We need some data! The <a href="https://www.usgs.gov/centers/eros/science/national-land-cover-database">NLCD is a 30m resolution raster</a> describing land-use across the US. It’s pretty big and unwieldy, so for the purposes of this exercise, we’ll focus just on Ada county.</p>
-<pre class="{r getdata}"><code>
-ada_county &lt;- counties(state = "ID") %&gt;% 
-  filter(., NAME == "Ada") %&gt;% 
-  st_transform(crs = "EPSG:5070")
-
-ada_NLCD &lt;- terra::rast("https://dmsdata.cr.usgs.gov/geoserver/mrlc_Land-Cover-Native_conus_year_data/wcs?service=WCS&amp;version=1.0.0&amp;coverage=mrlc_Land-Cover-Native_conus_year_data:Land-Cover-Native_conus_year_data&amp;BBOX=-1643474,2404759,-1594149,2489538&amp;CRS=EPSG:5070&amp;time=2020-01-01T00:00:00.000Z&amp;format=image/geotiff&amp;resx=30&amp;resy=30&amp;request=GetCoverage", vsi = FALSE)
-
-plot(ada_NLCD)
-plot(st_geometry(ada_county), add= TRUE)</code></pre>
-<p>The first part of this should look familiar - we’re just downloading the Ada County Boundary using the <code>tigris</code> package. The next part is using <code>terra::rast</code> to read in a file directly from the online web-service. The key part comes after the <code>BBOX</code> part of the link where you can plug in the correct coordinates (give an CRS) to restrict the download to something manageable. Once you’ve got it, you should be able to plot and see the different categories.</p>
-</section>
-<section id="calclulating-patch-metrics-1" class="level2">
-<h2 class="anchored" data-anchor-id="calclulating-patch-metrics-1">Calclulating patch metrics</h2>
-<p>The syntax for <code>landscapemetrics</code> is fairly straightforward with most functions starting with <code>lsm_</code> followed by a letter, followed by the name of the metric. You can see the <a href="https://r-spatialecology.github.io/landscapemetrics/reference/index.html#patch-level-metrics">full set of patch metrics here</a>.</p>
-<pre class="{r calcpatch}"><code>head(lsm_p_area(ada_NLCD))
-head(lsm_p_shape(ada_NLCD))
-show_lsm(ada_NLCD, what = "lsm_p_area")
-</code></pre>
-<p>We calculate some basic patch metrics using <code>lsm_p_METRIC</code>, but restrict the output to the first 5 entries to make the printing easier. We also use the <code>show_lsm</code> function to create a map based on these patch-level metrics (this only works for patch metrics, not the class or landscape metrics). In this case, we’re interested in the patch area and shape (check out the help files for the equations). In <code>landscapemetrics</code> patches are defined as neighboring rasters (defined as queen or rooks case using the <code>directions</code> argument) that share the same category. Each of these functions estimates a measure for all of the patches in a landscape (which may be as small as 1 pixel and as large as the entire landscape).</p>
-</section>
-<section id="calculating-class-metrics-1" class="level2">
-<h2 class="anchored" data-anchor-id="calculating-class-metrics-1">Calculating class metrics</h2>
-<p>The <a href="https://r-spatialecology.github.io/landscapemetrics/reference/index.html#class-level-metrics">full list of class metrics is here</a> and the syntax follows the format above (but replaces the <code>p</code> with a <code>c</code>). Class metrics take all of the patches within a category and summarize them - here we calculate the percent covered, the number of patches/class, and the edge density (which is the sum of edge lengths for each patch in the class divided by the total area of the category in the landscape). These metrics can give you a sense of size and dominance of the different categories.</p>
-<pre class="{calc clss}"><code>lsm_c_pland(ada_NLCD)   # % of landscape occupied
-lsm_c_np(ada_NLCD)      # number of patches per class
-lsm_c_ed(ada_NLCD)</code></pre>
-</section>
-<section id="calculating-landscape-metrics-1" class="level2">
-<h2 class="anchored" data-anchor-id="calculating-landscape-metrics-1">Calculating landscape metrics</h2>
-<p>Finally, full list of landscape metrics is here](https://r-spatialecology.github.io/landscapemetrics/reference/index.html#landscape-level-metrics). We follow the same formatting strategy to access a handful of the landscape metrics. Landscape metrics look at the juxtaposition of the different classes in your landscape. We calculate the Shannon’s Diversity Index (a measure of class evenness in the landscape) and cohesion (an estimate of contiguity between like patches).</p>
-<pre class="{r calclnd}"><code>lsm_l_shdi(ada_NLCD)    # Shannon’s Diversity Index
-lsm_l_cohesion(ada_NLCD)</code></pre>
-<pre><code></code></pre>
-<p>:::</p>
 </section>
 
 </main> <!-- /main -->
@@ -1116,26 +731,90 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     }
   }
 });
-</script>
+</script><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Source Code</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">
+<div class="sourceCode" id="cb29" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a><span class="an">title:</span><span class="co"> "Surface Metrics"</span></span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a><span class="fu">## Getting Started</span></span>
+<span id="cb29-6"><a href="#cb29-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-7"><a href="#cb29-7" aria-hidden="true" tabindex="-1"></a>First, we'll have to <span class="co">[</span><span class="ot">get our credentials</span><span class="co">](https://rstudio.aws.boisestate.edu/)</span> and login to a <span class="co">[</span><span class="ot">new RStudio session</span><span class="co">](https://rstudio.apps.aws.boisestate.edu/)</span>. Today, we're going to explore the <span class="in">`landscape`</span> metrics package using the National Land Cover Dataset. You don't need any additional data as we'll download it in our session, but you need to load some packages.</span>
+<span id="cb29-8"><a href="#cb29-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-9"><a href="#cb29-9" aria-hidden="true" tabindex="-1"></a><span class="in">```{r ldpkg}</span></span>
+<span id="cb29-10"><a href="#cb29-10" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb29-11"><a href="#cb29-11" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tigris)</span>
+<span id="cb29-12"><a href="#cb29-12" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(terra)</span>
+<span id="cb29-13"><a href="#cb29-13" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(sf)</span>
+<span id="cb29-14"><a href="#cb29-14" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(landscapemetrics)</span>
+<span id="cb29-15"><a href="#cb29-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-16"><a href="#cb29-16" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb29-17"><a href="#cb29-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-18"><a href="#cb29-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-19"><a href="#cb29-19" aria-hidden="true" tabindex="-1"></a><span class="fu">## Setting Some Boundaries</span></span>
+<span id="cb29-20"><a href="#cb29-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-21"><a href="#cb29-21" aria-hidden="true" tabindex="-1"></a>We need some data! The <span class="co">[</span><span class="ot">NLCD is a 30m resolution raster</span><span class="co">](https://www.usgs.gov/centers/eros/science/national-land-cover-database)</span> describing land-use across the US. It's pretty big and unwieldy, so for the purposes of this exercise, we'll focus just on Ada county. </span>
+<span id="cb29-22"><a href="#cb29-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-23"><a href="#cb29-23" aria-hidden="true" tabindex="-1"></a><span class="in">```{r getdata}</span></span>
+<span id="cb29-24"><a href="#cb29-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-25"><a href="#cb29-25" aria-hidden="true" tabindex="-1"></a>ada_county <span class="ot">&lt;-</span> <span class="fu">counties</span>(<span class="at">state =</span> <span class="st">"ID"</span>, <span class="at">progress_bar =</span><span class="cn">FALSE</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb29-26"><a href="#cb29-26" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(., NAME <span class="sc">==</span> <span class="st">"Ada"</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb29-27"><a href="#cb29-27" aria-hidden="true" tabindex="-1"></a>  <span class="fu">st_transform</span>(<span class="at">crs =</span> <span class="st">"EPSG:5070"</span>)</span>
+<span id="cb29-28"><a href="#cb29-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-29"><a href="#cb29-29" aria-hidden="true" tabindex="-1"></a>ada_NLCD <span class="ot">&lt;-</span> terra<span class="sc">::</span><span class="fu">rast</span>(<span class="st">"https://dmsdata.cr.usgs.gov/geoserver/mrlc_Land-Cover-Native_conus_year_data/wcs?service=WCS&amp;version=1.0.0&amp;coverage=mrlc_Land-Cover-Native_conus_year_data:Land-Cover-Native_conus_year_data&amp;BBOX=-1643474,2404759,-1594149,2489538&amp;CRS=EPSG:5070&amp;time=2020-01-01T00:00:00.000Z&amp;format=image/geotiff&amp;resx=30&amp;resy=30&amp;request=GetCoverage"</span>, <span class="at">vsi =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb29-30"><a href="#cb29-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-31"><a href="#cb29-31" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(ada_NLCD)</span>
+<span id="cb29-32"><a href="#cb29-32" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(<span class="fu">st_geometry</span>(ada_county), <span class="at">add=</span> <span class="cn">TRUE</span>)</span>
+<span id="cb29-33"><a href="#cb29-33" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb29-34"><a href="#cb29-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-35"><a href="#cb29-35" aria-hidden="true" tabindex="-1"></a>The first part of this should look familiar - we're just downloading the Ada County Boundary using the <span class="in">`tigris`</span> package. The next part is using <span class="in">`terra::rast`</span> to read in a file directly from the online web-service. The key part comes after the <span class="in">`BBOX`</span> part of the link where you can plug in the correct coordinates (give an CRS) to restrict the download to something manageable. Once you've got it, you should be able to plot and see the different categories.</span>
+<span id="cb29-36"><a href="#cb29-36" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-37"><a href="#cb29-37" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-38"><a href="#cb29-38" aria-hidden="true" tabindex="-1"></a><span class="fu">## Calclulating patch metrics</span></span>
+<span id="cb29-39"><a href="#cb29-39" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-40"><a href="#cb29-40" aria-hidden="true" tabindex="-1"></a>The syntax for <span class="in">`landscapemetrics`</span> is fairly straightforward with most functions starting with <span class="in">`lsm_`</span> followed by a letter, followed by the name of the metric. You can see the <span class="co">[</span><span class="ot">full set of patch metrics here</span><span class="co">](https://r-spatialecology.github.io/landscapemetrics/reference/index.html#patch-level-metrics)</span>.</span>
+<span id="cb29-41"><a href="#cb29-41" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-42"><a href="#cb29-42" aria-hidden="true" tabindex="-1"></a><span class="in">```{r patch}</span></span>
+<span id="cb29-43"><a href="#cb29-43" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-44"><a href="#cb29-44" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(<span class="fu">lsm_p_area</span>(ada_NLCD))</span>
+<span id="cb29-45"><a href="#cb29-45" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(<span class="fu">lsm_p_shape</span>(ada_NLCD))</span>
+<span id="cb29-46"><a href="#cb29-46" aria-hidden="true" tabindex="-1"></a><span class="fu">show_lsm</span>(ada_NLCD, <span class="at">what =</span> <span class="st">"lsm_p_area"</span>)</span>
+<span id="cb29-47"><a href="#cb29-47" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-48"><a href="#cb29-48" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb29-49"><a href="#cb29-49" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-50"><a href="#cb29-50" aria-hidden="true" tabindex="-1"></a>We calculate some basic patch metrics using <span class="in">`lsm_p_METRIC`</span>, but restrict the output to the first 5 entries to make the printing easier. We also use the <span class="in">`show_lsm`</span> function to create a map based on these patch-level metrics (this only works for patch metrics, not the class or landscape metrics). In this case, we're interested in the patch area and shape (check out the help files for the equations). In <span class="in">`landscapemetrics`</span> patches are defined as neighboring rasters (defined as queen or rooks case using the <span class="in">`directions`</span> argument) that share the same category. Each of these functions estimates a measure for all of the patches in a landscape (which may be as small as 1 pixel and as large as the entire landscape).</span>
+<span id="cb29-51"><a href="#cb29-51" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-52"><a href="#cb29-52" aria-hidden="true" tabindex="-1"></a><span class="fu">## Calculating class metrics</span></span>
+<span id="cb29-53"><a href="#cb29-53" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-54"><a href="#cb29-54" aria-hidden="true" tabindex="-1"></a>The <span class="co">[</span><span class="ot">full list of class metrics is here</span><span class="co">](https://r-spatialecology.github.io/landscapemetrics/reference/index.html#class-level-metrics)</span> and the syntax follows the format above (but replaces the <span class="in">`p`</span> with a <span class="in">`c`</span>). Class metrics take all of the patches within a category and summarize them - here we calculate the percent covered, the number of patches/class, and the edge density (which is the sum of edge lengths for each patch in the class divided by the total area of the category in the landscape). These metrics can give you a sense of size and dominance of the different categories.</span>
+<span id="cb29-55"><a href="#cb29-55" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-56"><a href="#cb29-56" aria-hidden="true" tabindex="-1"></a><span class="in">```{r lscls}</span></span>
+<span id="cb29-57"><a href="#cb29-57" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-58"><a href="#cb29-58" aria-hidden="true" tabindex="-1"></a><span class="fu">lsm_c_pland</span>(ada_NLCD)   <span class="co"># % of landscape occupied</span></span>
+<span id="cb29-59"><a href="#cb29-59" aria-hidden="true" tabindex="-1"></a><span class="fu">lsm_c_np</span>(ada_NLCD)      <span class="co"># number of patches per class</span></span>
+<span id="cb29-60"><a href="#cb29-60" aria-hidden="true" tabindex="-1"></a><span class="fu">lsm_c_ed</span>(ada_NLCD)</span>
+<span id="cb29-61"><a href="#cb29-61" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-62"><a href="#cb29-62" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb29-63"><a href="#cb29-63" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-64"><a href="#cb29-64" aria-hidden="true" tabindex="-1"></a><span class="fu">## Calculating landscape metrics</span></span>
+<span id="cb29-65"><a href="#cb29-65" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-66"><a href="#cb29-66" aria-hidden="true" tabindex="-1"></a>Finally, full list of landscape metrics is here](https://r-spatialecology.github.io/landscapemetrics/reference/index.html#landscape-level-metrics). We follow the same formatting strategy to access a handful of the landscape metrics. Landscape metrics look at the juxtaposition of the different classes in your landscape. We calculate the Shannon's Diversity Index (a measure of class evenness in the landscape) and cohesion (an estimate of contiguity between like patches).</span>
+<span id="cb29-67"><a href="#cb29-67" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-68"><a href="#cb29-68" aria-hidden="true" tabindex="-1"></a><span class="in">```{r lnd}</span></span>
+<span id="cb29-69"><a href="#cb29-69" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-70"><a href="#cb29-70" aria-hidden="true" tabindex="-1"></a><span class="fu">lsm_l_shdi</span>(ada_NLCD)    <span class="co"># Shannon’s Diversity Index</span></span>
+<span id="cb29-71"><a href="#cb29-71" aria-hidden="true" tabindex="-1"></a><span class="fu">lsm_l_cohesion</span>(ada_NLCD)</span>
+<span id="cb29-72"><a href="#cb29-72" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-73"><a href="#cb29-73" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb29-74"><a href="#cb29-74" aria-hidden="true" tabindex="-1"></a></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div></div></div></div></div>
 </div> <!-- /content -->
 <footer class="footer">
   <div class="nav-footer">
-    <div class="nav-footer-left">
-      <div class="footer-contents">Content  2025 by [Matt Williamson](https://www.spaseslab.com) <br>
-All content licensed under a 
- 
-[Creative Commons Attribution-NonCommercial 4.0 International license (CC BY-NC 4.0)](https://creativecommons.org/licenses/by-nc/4.0/)
-</div>  
-    </div>   
+    <div class="nav-footer-left">Content <i class="fa-brands fa-creative-commons" aria-hidden="true"></i> 2025 by <a href="https://www.spaseslab.com">Matt Williamson</a> <br> All content licensed under a <i class="fa-brands fa-creative-commons" aria-hidden="true"></i> <i class="fa-brands fa-creative-commons-by" aria-hidden="true"></i> <i class="fa-brands fa-creative-commons-nc" aria-hidden="true"></i> <a href="https://creativecommons.org/licenses/by-nc/4.0/">Creative Commons Attribution-NonCommercial 4.0 International license (CC BY-NC 4.0)</a></div>   
     <div class="nav-footer-center">
       &nbsp;
     </div>
-    <div class="nav-footer-right">
-      <div class="footer-contents">Made with  and [Quarto](https://quarto.org/)<br>
-[View the source at  GitHub](https://www.github.com/mattwilliamson/isdrfall25)
-Based on websites designed by [Andrew Heiss](https://github.com/andrewheiss/evalf22.classes.andrewheiss.com)
-</div>  
-    </div>
+    <div class="nav-footer-right">Made with <i class="fa-brands fa-r-project" aria-hidden="true"></i> and <a href="https://quarto.org/">Quarto</a><br> <a href="https://www.github.com/mattwilliamson/isdrfall25">View the source at <i class="fa-brands fa-github" aria-hidden="true"></i> GitHub</a> Based on websites designed by <a href="https://github.com/andrewheiss/evalf22.classes.andrewheiss.com">Andrew Heiss</a></div>
   </div>
 </footer>
 

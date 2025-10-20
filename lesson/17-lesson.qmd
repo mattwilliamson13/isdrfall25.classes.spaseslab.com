@@ -22,7 +22,7 @@ We need some data! The [NLCD is a 30m resolution raster](https://www.usgs.gov/ce
 
 ```{r getdata}
 
-ada_county <- counties(state = "ID") %>% 
+ada_county <- counties(state = "ID", progress_bar =FALSE) %>% 
   filter(., NAME == "Ada") %>% 
   st_transform(crs = "EPSG:5070")
 
@@ -39,7 +39,8 @@ The first part of this should look familiar - we're just downloading the Ada Cou
 
 The syntax for `landscapemetrics` is fairly straightforward with most functions starting with `lsm_` followed by a letter, followed by the name of the metric. You can see the [full set of patch metrics here](https://r-spatialecology.github.io/landscapemetrics/reference/index.html#patch-level-metrics).
 
-```{r calcpatch}
+```{r patch}
+
 head(lsm_p_area(ada_NLCD))
 head(lsm_p_shape(ada_NLCD))
 show_lsm(ada_NLCD, what = "lsm_p_area")
@@ -52,22 +53,23 @@ We calculate some basic patch metrics using `lsm_p_METRIC`, but restrict the out
 
 The [full list of class metrics is here](https://r-spatialecology.github.io/landscapemetrics/reference/index.html#class-level-metrics) and the syntax follows the format above (but replaces the `p` with a `c`). Class metrics take all of the patches within a category and summarize them - here we calculate the percent covered, the number of patches/class, and the edge density (which is the sum of edge lengths for each patch in the class divided by the total area of the category in the landscape). These metrics can give you a sense of size and dominance of the different categories.
 
-```{calc clss}
+```{r lscls}
+
 lsm_c_pland(ada_NLCD)   # % of landscape occupied
 lsm_c_np(ada_NLCD)      # number of patches per class
 lsm_c_ed(ada_NLCD)
+
 ```
 
 ## Calculating landscape metrics
+
 Finally, full list of landscape metrics is here](https://r-spatialecology.github.io/landscapemetrics/reference/index.html#landscape-level-metrics). We follow the same formatting strategy to access a handful of the landscape metrics. Landscape metrics look at the juxtaposition of the different classes in your landscape. We calculate the Shannon's Diversity Index (a measure of class evenness in the landscape) and cohesion (an estimate of contiguity between like patches).
 
-```{r calclnd}
+```{r lnd}
+
 lsm_l_shdi(ada_NLCD)    # Shannon’s Diversity Index
 lsm_l_cohesion(ada_NLCD)
-```
-
-
-
-
 
 ```
+
+
