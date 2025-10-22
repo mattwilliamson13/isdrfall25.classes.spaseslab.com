@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Intro to Spatial Data in R - Combining Data and Point Patterns</title>
+<title>Intro to Spatial Data in R - Multivariate Description</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -81,7 +81,7 @@ div.csl-indent {
 }</script>
 
 
-<meta property="og:title" content="Intro to Spatial Data in R - Combining Data and Point Patterns">
+<meta property="og:title" content="Intro to Spatial Data in R - Multivariate Description">
 <meta property="og:description" content="">
 <meta property="og:image" content="https://isdrfall25.classes.spaseslab.com/files/social-image-f22.png">
 <meta property="og:site-name" content="Intro to Spatial Data in R">
@@ -383,7 +383,11 @@ div.csl-indent {
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#resources" id="toc-resources" class="nav-link active" data-scroll-target="#resources">Resources</a></li>
+  <li><a href="#resources" id="toc-resources" class="nav-link active" data-scroll-target="#resources">Resources</a>
+  <ul class="collapse">
+  <li><a href="#bigger-picture" id="toc-bigger-picture" class="nav-link" data-scroll-target="#bigger-picture">Bigger Picture</a></li>
+  <li><a href="#technical-details" id="toc-technical-details" class="nav-link" data-scroll-target="#technical-details">Technical Details</a></li>
+  </ul></li>
   <li><a href="#objectives" id="toc-objectives" class="nav-link" data-scroll-target="#objectives">Objectives</a></li>
   <li><a href="#slides" id="toc-slides" class="nav-link" data-scroll-target="#slides">Slides</a></li>
   </ul>
@@ -393,31 +397,41 @@ div.csl-indent {
 <main class="content" id="quarto-document-content">
 
 <header id="title-block-header">
-<h1 class="title display-7">Combining Data and Point Patterns</h1>
+<h1 class="title display-7">Multivariate Description</h1>
 
 <div class="date-block bg-content text-white p-2">
-  <p class="date">Content for Wednesday, October 18, 2023</p>
+  <p class="date">Content for Wednesday, October 22, 2025</p>
 </div>
 </header>
 
-<p>Today we’ll finish up our example of combining data for analysis and introduce point process models as a first version of spatial analysis. We’ll need a few new packages here, but many of the key data management processes will remain the same.</p>
+<p>Now that we’ve looked at describing spatial patterns using point processes and patch metrics, we’ll finish by taking a look at multivariate methods for making sense of spatial patterns. We’ll focus on two, relatively simple approaches. Principal components analysis for identifying and mapping latent gradients in quantitative data and clustering for identifying qualitative ‘groups’ in data based on quantitative data. These are just two approaches in a broader class of “dimension reduction” methods, but they are illustrative of the basic tasks of multivariate description.</p>
 <section id="resources" class="level2">
 <h2 class="anchored" data-anchor-id="resources">Resources</h2>
+<section id="bigger-picture" class="level3">
+<h3 class="anchored" data-anchor-id="bigger-picture">Bigger Picture</h3>
 <ul>
-<li><p><i class="fas fa-book"></i> The <a href="https://www.paulamoraga.com/book-spatial/spatial-point-patterns.html">Chapters 17 and 18</a> on Spatial Point Processes and the <code>spatstat</code> package in Paula Moraga’s book <em>Spatial Statistics for Data Science: Theory and Practice with R</em>.</p></li>
-<li><p><i class="fas fa-external-link-square-alt"></i> <a href="https://onlinelibrary.wiley.com/doi/full/10.1111/j.0030-1299.2004.12497.x?casa_token=D8RfesZ_AjUAAAAA%3AkLmb_B8BubHk4swR3flI9QS4sQnO87wZSImZXsQFD41Q9iEExMEO_bDTPvnvOHtERcit-3YmShhyU0g">Rings, circles, and null-models for point pattern analysis in ecology</a> by <span class="citation" data-cites="wiegand">(<a href="#ref-wiegand" role="doc-biblioref">Wiegand and A. Moloney 2004</a>)</span> provides an introduction to metrics for spatial clustering with applications in ecology.</p></li>
-<li><p><i class="fas fa-external-link-square-alt"></i> <a href="https://link.springer.com/article/10.1007/s10182-017-0301-8">Improving the usability of spatial point process methodology: an interdisciplinary dialogue between statistics and ecology</a> by Janine Illian (a major contributor to modern point pattern analyses) and David Burslem (a Scottish plant ecologist) <span class="citation" data-cites="illian2017">(<a href="#ref-illian2017" role="doc-biblioref">Illian and Burslem 2017</a>)</span> is a fairly modern take on the challenges associated with point process modeling in ecology.</p></li>
-<li><p><i class="fas fa-external-link-square-alt"></i> <a href="https://mgimond.github.io/Spatial/chp11_0.html">Chapter 11: Point Pattern Analysis</a> in Manuel Gimond’s Introduction to GIS and Spatial Analysis <code>bookdown</code> project provides a nice (and free) introduction to some of these introductory point process methods.</p></li>
+<li><p><i class="fas fa-external-link-square-alt"></i> <a href="https://www.tandfonline.com/doi/full/10.1080/00045608.2012.689236#d1e979">Principal Component Analysis on Spatial Data: An Overview</a> by <span class="citation" data-cites="demvsar2013">(<a href="#ref-demvsar2013" role="doc-biblioref">Demšar et al. 2013</a>)</span> provides a semi-technical introduction to why we might use Principle Components Analysis to identify spatial gradients and things we should consider when applying PCA to spatial data.</p></li>
+<li><p><i class="fas fa-external-link-square-alt"></i> <a href="https://nsojournals.onlinelibrary.wiley.com/doi/epdf/10.1111/ecog.03654">A latitudinal gradient in dimensionality of biodiversity</a> by <span class="citation" data-cites="stevens2018">(<a href="#ref-stevens2018" role="doc-biblioref">Stevens and Tello 2018</a>)</span> is a nice, contemporary demonstration of PCA for ecological questions and spatial data.</p></li>
+<li><p><i class="fas fa-external-link-square-alt"></i> <a href="https://link.springer.com/article/10.1007/s10113-015-0907-x">Archetypical patterns and trajectories of land systems in Europe</a> by <span class="citation" data-cites="levers2018">(<a href="#ref-levers2018" role="doc-biblioref">Levers et al. 2018</a>)</span> is a great reference for using cluster analysis to identify social-ecological archetypes for sustainability problems.</p></li>
+<li><p><i class="fas fa-external-link-square-alt"></i> <a href="https://iopscience.iop.org/article/10.1088/1748-9326/ab4562">The American West as a social-ecological region: drivers, dynamics and implications for nested social-ecological systems</a> by <span class="citation" data-cites="jones2019american">(<a href="#ref-jones2019american" role="doc-biblioref">Jones et al. 2019</a>)</span> is an example of a fairly simple cluster analysis that resulted from a workshop hosted here at Boise State!</p></li>
 </ul>
+</section>
+<section id="technical-details" class="level3">
+<h3 class="anchored" data-anchor-id="technical-details">Technical Details</h3>
+<ul>
+<li><p><i class="fas fa-external-link-square-alt"></i> <a href="https://www.erikkusch.com/courses/bftp-biome-detection/cluster-analysis/">Cluster Analysis</a> provides a nice vignette introducing the workflow for cluster analysis. It’s done using the <code>raster</code> package (a precursor to <code>terra</code>), but the translation into <code>terra</code> is straightforward.</p></li>
+<li><p><i class="fas fa-external-link-square-alt"></i> <a href="https://rspatial.org/rs/3-basicmath.html#principal-component-analysis">Principal Components Analysis</a> from the online <code>terra</code> workbook provides an intro to the workflow for a simple PCA using rasters.</p></li>
+</ul>
+</section>
 </section>
 <section id="objectives" class="level2">
 <h2 class="anchored" data-anchor-id="objectives">Objectives</h2>
 <p>By the end of today you should be able to:</p>
 <ul>
-<li><p>Complete the creation of a dataset for analysis using vector and raster data</p></li>
-<li><p>Define a point process and their utility for ecological applications</p></li>
-<li><p>Define first and second-order Complete Spatial Randomness</p></li>
-<li><p>Use several common functions to explore point patterns</p></li>
+<li><p><strong>Describe</strong> the motivations for dimension reduction with spatial data</p></li>
+<li><p><strong>Distinguish</strong> the differences between PCA and cluster analysis</p></li>
+<li><p><strong>Understand</strong> common metrics for assessing the quality of dimension reduction results</p></li>
+<li><p><strong>Implement</strong> simple PCA and cluster analysis using <code>R</code></p></li>
 </ul>
 </section>
 <section id="slides" class="level2">
@@ -429,18 +443,23 @@ div.csl-indent {
 <div>
 <iframe class="slide-deck" src="../slides/18-slides.html"></iframe>
 </div>
-<p><a href="https://boisestate.hosted.panopto.com/Panopto/Pages/Viewer.aspx?id=82b8f511-330a-474d-9393-b09f014188de">Link to Panopto Video</a></p>
 
 
 
 </section>
 
 <div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" role="doc-bibliography"><h2 class="anchored quarto-appendix-heading">References</h2><div id="refs" class="references csl-bib-body hanging-indent" data-line-spacing="2" role="list">
-<div id="ref-illian2017" class="csl-entry" role="listitem">
-Illian, J. B., and D. F. Burslem. 2017. Improving the usability of spatial point process methodology: An interdisciplinary dialogue between statistics and ecology. AStA Advances in Statistical Analysis 101:495–520.
+<div id="ref-demvsar2013" class="csl-entry" role="listitem">
+Demšar, U., P. Harris, C. Brunsdon, A. S. Fotheringham, and S. McLoone. 2013. Principal component analysis on spatial data: An overview. Annals of the Association of American Geographers 103:106–128.
 </div>
-<div id="ref-wiegand" class="csl-entry" role="listitem">
-Wiegand, T., and K. A. Moloney. 2004. <a href="https://doi.org/10.1111/j.0030-1299.2004.12497.x">Rings, circles, and null-models for point pattern analysis in ecology</a>. Oikos 104:209–229.
+<div id="ref-jones2019american" class="csl-entry" role="listitem">
+Jones, K., J. Abrams, R. T. Belote, B. J. Beltrán, J. Brandt, N. Carter, A. J. Castro, B. C. Chaffin, A. L. Metcalf, G. Roesch-McNally, and others. 2019. The american west as a social-ecological region: Drivers, dynamics and implications for nested social-ecological systems. Environmental Research Letters 14:115008.
+</div>
+<div id="ref-levers2018" class="csl-entry" role="listitem">
+Levers, C., D. Müller, K. Erb, H. Haberl, M. R. Jepsen, M. J. Metzger, P. Meyfroidt, T. Plieninger, C. Plutzar, J. Stürck, and others. 2018. Archetypical patterns and trajectories of land systems in europe. Regional Environmental Change 18:715–732.
+</div>
+<div id="ref-stevens2018" class="csl-entry" role="listitem">
+Stevens, R. D., and J. S. Tello. 2018. A latitudinal gradient in dimensionality of biodiversity. Ecography 41:2016–2026.
 </div>
 </div></section></div></main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
