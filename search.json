@@ -95,7 +95,7 @@
     "href": "slides/19-slides.html#as-a-continuous-field",
     "title": "Deterministic Interpolation",
     "section": "…As a Continuous Field",
-    "text": "…As a Continuous Field\n\n\n\n\nThe earth is a single entity with properties that vary continuously through space\nSpatial continuity: Every cell has a value (including “no data” or “not here”)\nSelf-definition: the values define the field{.semi-transparent}\nSpace is tessellated: cells are mutually exclusive"
+    "text": "…As a Continuous Field\n\n::: columns ::: {.column width=“50%”} :::{style=“font-size: 0.8em;”} - The earth is a single entity with properties that vary continuously through space\n\nSpatial continuity: Every cell has a value (including “no data” or “not here”)\nSelf-definition: the values define the field{.semi-transparent}\nSpace is tessellated: cells are mutually exclusive :::\n\n\n\n\n:::"
   },
   {
     "objectID": "slides/19-slides.html#spatial-data-as-a-stochastic-process",
