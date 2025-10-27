@@ -4,8 +4,61 @@ title: "Assignment 3: Describing Spatial Patterns"
 
 ### Objectives
 
+This assignment provides you a chance to practice your skills and build understanding around the various methods of describing spatial patterns using point processes, patch metrics, and multivariate skills. By the end of this assignment you should be able to:
+
+1. Generate a `ppp` object using `spatstat` and interogate its first- and second-order properties
+
+2. Convert a categorical raster into a series of patch metrics
+
+3. Use principal components analaysis and kmmeans clustering to identify gradients and classes in multivariate raster data.
+
+4. Build introductory maps using `ggplot` to visualize your data
+
+
 ### Instructions
 
+1. Join [the assignment repository](https://classroom.github.com/a/qssN65Cq). In the `docs` folder, you'll find the instructions and questions for the assignment (assignment03.qmd). 
 
-### Questions to Answer
+2. Change the `yaml` header of the document to include your name and the course number as your affiliation
+
+3. Complete the tasks in the assignment making at least 3 commits
+
+4. Render the document and push your final html and quarto documents to your repository.
+
+### Submission:
+
+Submit a single Quarto document (.qmd) with integrated code, outputs, and written responses. Your document should be written as if it were a lab notebook entry: clear enough that another researcher could reproduce your work without asking you questions. Your assignment will be considered complete if the following are true:
+
+1. You have _at least 3 commits_ in your version history (which I can access in GitHub classroom)
+
+2. You have pushed your final Quarto document
+
+3. You have pushed a rendered `.html` version of your document.
+
+### About the Data
+
+### In the Google Drive Folder:
+
+* Point Data: These are fire ignition locations from the [Fire Progarm Analysis fire occurrence database](https://www.fs.usda.gov/rds/archive/catalog/RDS-2013-0009.6) (FPA-FOD) filtered to southwestern Idaho and to ignitions that occurred between 2015 and 2020. You can [read more about this data here](https://essd.copernicus.org/articles/6/1/2014/). (this is in the folder as SwIdFires.shp)
+
+* Raster Data: This is the NLCD dataset, but aggregated by 8x (240m resolution) to make things go a bit faster. (this is in the folder as SwIDnlcd.tif)
+
+### Downloaded in `R`
+
+You'll use the `geodata` package to download the [bioclim dataset](worldclim.org/data/bioclim.html), a set of biologically relevant climatic data based on the [WorldClim](worldclim.org/data/worldclim21.html) dataset.
+```{r}
+library(geodata)
+library(terra)
+worldclim_tile(var = "bio", lon = -114.1433, lat = 43.8696)
+
+```
+
+In addition, you'll need to use geodata to get the 30s elevation dataset
+
+```{r}
+
+elevation_30s("USA")
+```
+
+**Important: these data are in a geodetic reference system and have a different resolution than your nlcd data. You'll need to reproject your NLCD data and then resample your climate and elevation data to get them all lined up.**
 

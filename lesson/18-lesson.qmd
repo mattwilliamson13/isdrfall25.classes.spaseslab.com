@@ -1,4 +1,255 @@
 ---
-title: "Generic Lesson"
+title: "Multivariate Spatial Patterns"
 ---
 
+
+```{r ldpkg}
+library(tidyverse)
+library(geodata)
+library(terra)
+library(sf)
+library(tigris)
+library(cluster)
+
+```
+
+## Getting Some Data
+
+We'lll start by downloading some date. I'm using a new package (the `geodata` package) here to download elevation and climatic data from the [Shuttle Radar Topgraphy Mission (STRM)](https://www.usgs.gov/centers/eros/science/usgs-eros-archive-digital-elevation-shuttle-radar-topography-mission-srtm-1) and the [WorldClim](https://worldclim.org/data/index.html) projects, respectively. The `geodata` package was originally part of a species distribution modeling package called `dismo`, but became a standalone package when `terra` was released. If you're interested in large extent, fairly high resolution climatic data (and metrics derived especially for biology and ecology), it's a particularly useful package and dataset.
+
+```{r dldata}
+
+elev <- elevation_30s("USA")
+
+pnw <- tigris::states(progress_bar=FALSE) %>% 
+  filter(STUSPS %in% c("ID", "WA", "OR")) %>% 
+  st_transform(., crs(elev))
+
+elev_crop <- crop(elev, pnw)
+
+tile_loc <- st_coordinates(
+  st_centroid(
+    st_as_sfc(
+      st_bbox(pnw)
+      )
+    )
+  )
+
+print(tile_loc)
+
+bioclim <- crop(
+  worldclim_tile(var = "bio", lon = tile_loc[1], lat = tile_loc[2]), 
+  elev_crop)
+plot(bioclim[[1:4]])
+
+vars <- c(
+  resample(elev_crop, bioclim), 
+  bioclim)
+
+plot(vars[[1:4]])
+
+```
+
+The order is important here as the CRS for the `geodata` datasets is fixed and not changeable until after download. Further, the datasets are global making it undesirable to do a lot of raster projections (as the cells are likely to warp). As such, I start by downloading the elevation dataset for the US. I then use `tigris` to download my states of interest and reproject them to match elevation. After that, I need the center of the tile I'd like to download from WorldClim (because this downloads 12-20 rasters at a time, it's more efficient to download a subset using `worldclim_tile`). I supply my `tile_loc` coordinates to `worldclim_tile` and specify the `bioclim` variables via the `var` argument. I also `crop` the result to the same extent as the elevation data. Finally, I resample the elevation data to the resolution of the climate data so that I can combine all the data into a single stack. 
+
+## Introducing PCA with small data
+
+In order for you to get the hang of things before waiting for a large spatial analysis to complete, we'll use the `USArrests` dataset that comes pre-installed with `R` (as part of the `datasets` package). These pre-installed datasets are great for creating reproducible examples and for getting the hang of syntax on relatively simple data. In this case, the data describes the rate of arrests (per 100,000 people) for several violent crimes at the state level from 1975. We'll use `glimpse` and `rownames` to get a sense for the data.   
+
+```{r intodata}
+glimpse(USArrests)
+rownames(USArrests)
+
+```
+
+Next, we'll run a simplem principal components analysis using the `prcomp` function. There are a variety of packages with PCA capabilities that allow for various additions (including spatial autocorrelation), but `prcomp` is part of the `stats` package (another package that installs with base `R`) and has methods that are available (via `terra`) to be used directly on raster data. 
+
+```{r demopca}
+
+(demo_pca <- prcomp(USArrests, scale. = TRUE))
+
+```
+
+There are two things to notice here. First, I set the `scale` argument to true. This tells `R` to normalize (i.e., transform the data in each column from it's original values such that the new data has a mean 0 and sd of 1). This transforms the data from the raw measurement to a new measurement that is the "distance from the mean" (in standard deviations). The other thing I've done is wrapped the entire call in parentheses. This is a simple way to both assign the result of our function to the object (in this case `demo_pca`) AND print it directly to the Quarto document. It's not necessary, but you might find it helps clean up your documents.
+
+::: {.callout-important}
+Scaling your data for PCA, cluster, and other unsupervised methods as they are attempting to reconcile variation in your data. If your data were measured on dramatically different scales (number of people vs temperature) then the variable measured on the larger scale will dominate the classifications simply because the numbers are bigger. Scaling (in this case, normalizing) the data puts all of your measurements on "equal footing".
+:::
+
+You'll notice that the output of `prcomp` has a variety of useful information (amount of variance explained; rotations/loadings for each component), but it's not expressed as intuitively as we might like. The `summary` function is our friend here as it helps us get the info we need (how much variance does each component explain and how does that accumulate as we add components) in a much clearer manner.
+
+```{r demopcacln}
+
+summary(demo_pca)
+
+```
+
+You might notice from the `summary` output that we are able to explain a large amount of variance with just the first 2 components. However, we might prefer to look at an "elbowplot" (or scree plot) to get a better sense for how many of these components we should keep. We can do that with the `screeplot` function.
+
+```{r demopcaplot}
+screeplot(demo_pca, type = "line")
+```
+
+Based on this, we might choose 2 or 3 components as they explain the bulk of the data (and 4 components would be essentially the same as using the raw data themselves). We'll go with 3 so you can see more info in the subsequent plots, but in a real analysis you might be inclined to go with 2 components as you only gain ~10% more variation with a 3 component while only reducing the number of features from 4 to 3.
+
+There are a variety of other diagnostic plots (e.g., `biplot`) and packages, but I don't find many of them to be particularly intuitive or well-suited to the amount of data we usually have with spatial data. So I've rolled my own version of a loadings plot to be able to see which parts of the data are being mapped to each component. I start by using `[]` to select the first 3 components and move the `rownames` into a `variable` column. Then I `pivot_longer` so that I can use `facet_wrap` to create a plot for each component. I still have a hard time trying to think through single variable interpretations of principal components so I won't belabor the point here. Instead, I just waned you to be able to see how to explore both the result and the role that variables and roataions interact.
+
+
+
+```{r}
+demo_loadings <- as.data.frame(demo_pca$rotation[, 1:3])
+demo_loadings$variable <- rownames(demo_loadings)
+demo_loadings_long <- demo_loadings %>% 
+  pivot_longer(., cols = PC1:PC3, 
+               names_to = "component", 
+               values_to = "loadings")
+
+ggplot(demo_loadings_long,
+       mapping = aes(x = variable, 
+                     y = loadings, 
+                     fill = loadings)) +
+  geom_col() +
+  scale_fill_gradient2(low = "blue", mid = "white", high = "green") +
+  theme_bw() + 
+  facet_wrap(vars(component))
+```
+Based on these plots, we can see that the PCA has characterized 3 underlying "conditions". The first separates the across-the-baord "low" conditions form the rest (the higher value for any of these metrics, the closer to the "end" of the component). The second and third seem to be trying to separate high population areas based on variation in the types of crimes. 
+
+## PCA with raster data
+
+Now we'll use the same workflow for our raster data. Because `terra` includes methods for `prcomp` there's no real difference for the syntax we use to run a PCA for the bioclim variables.
+
+```{r}
+
+pca <- prcomp(vars, scale = TRUE)
+summary(pca)
+screeplot(pca, type = "line")
+```
+
+Based on the screeplot, we could chose 4 (as the place where things start to level off) or 6 (because there is one more decline in the variance before we get to ~0) components. I'll choose 4 for simplicity, but there isn't really a rule of thumb for this choice. We'll then create our same loadings plot by pivoting the loadings from the pca object and plotting them with `ggplot`.
+
+```{r pcarast}
+
+loadings <- as.data.frame(pca$rotation[, 1:4])
+loadings$variable <- rownames(loadings)
+
+loadings_long <- loadings %>% 
+  pivot_longer(., cols = PC1:PC4, 
+               names_to = "component", 
+               values_to = "loadings")
+
+```
+
+```{r}
+#| fig-width: 14
+
+ggplot(loadings_long,
+       mapping = aes(x = variable, 
+                     y = loadings, 
+                     fill = loadings)) +
+  geom_col() +
+  scale_fill_gradient2(low = "blue", mid = "white", high = "green") +
+  theme_bw() + 
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+  facet_wrap(vars(component))
+
+```
+This is all lovely, but what we really want is the ability to map the principle components in space. Again, because `terra` has methods for `prcomp` we can use the built-in `predict` function to generate spatial predictions based on the values in each raster and the loadings from our PCA. The only thing we need to do is tell `predict` which components we want. We can do this by supplying the `index` argument. Here, I say `index = 1:4` to tell `predict` that I want it to use the first 4 components.
+
+```{r}
+
+pca_rast <- predict(vars, pca, index = 1:4)
+plot(pca_rast, col = topo.colors(12))
+
+```
+That's it! Now we have our reduced dataset in a spatial form that we could use for subsequent analysis.
+
+## Clustering with Small Data
+
+We'll use our same small dataset to explore the `kmeans` function from the `stats` package. There are a variety of other unsupervised classifiers (e.g., `hclust` from the `stats` package, random forests from the `caret` or `tree` package, and many others), but `kmeans` works reasonably well and is fast enough to deal with the size of our data. We start by calling the `kmeans` function on our `USArrests` data. We have to supply three important arguments. First, the `centers` argument tells `kmeans` how many clusters we want. I chose six as it's double the size of the number of principal components we used, but a more robust approach would be to iterate over a variety of options and choose the one that maximizes the explained inertia and the silhouette index. You could do this with `map`!! The second argument is `nstart` which tells `kmeans` how many random starting locations I want for the cluster centers. In order to identify clusters, `kmeans` assigns each point to the nearest (randomly located) center point and then calculates the mean value of the points that were assigned to the center. We then iterate again (based on the `iter.max` argument) to see whether the assignments would change in the subsequent step. Once the assignments stop changing, the algorithm converges and we get our final result. We call `kmeans` a greedy algorithm, because it assigns points to whichever point is in a step, even if that isn't ultimately the best global solution. There's no going back and reassigning points even if a better solution could be found later. This makes `kmeans` **very sensitive to the starting location of the centers and why we make it try lots of different centers**.
+
+```{r}
+
+demo_clust <- kmeans(scale(USArrests), 
+                     centers = 6, 
+                     nstart = 50,
+                     iter.max = )
+
+demo_clust
+
+str(demo_clust)
+```
+We can see that `kmeans` returns a considerably more verbose set of outputs including the cluster averages for each variable, a listing (possibly truncated) of the cluster assignments, and the explained inertia (which is just the ratio of the within cluster variance to the total variance in the data). If you call `str` on this object you'll see that there are a variety of other pieces of information including the number of points in each cluster (`size`) and the number of times `kmeans` had to try to find the clusters (`iter`). 
+
+### Evaluating Clustering Solutions
+
+As I mentioned in class, there are a variety of ways we might evaluate cluster performance. Here I calculate the explained inertia (which is already reported in the output) and the silhoutte index. The silhouette index requires that we estimate the Euclidean distance between each point in multivariate space (which is what the `dist` function is doing here). This helps us determine how "far apart" the clusters are and gives us information about the risk of a point be misclassified. The `silhouette` function returns a number of measurements, but here we're just interested in the `sil_width` measure as average of this distance between points in different clusters. 
+
+::: {.callout-important}
+Calculating these distance matrices is very computationally intense so be careful with large datasets!
+:::
+
+```{r}
+(explained_inertia <- demo_clust$betweenss / demo_clust$totss)
+
+
+sil <- silhouette(demo_clust$cluster, dist(USArrests))
+mean(sil[, "sil_width"])
+
+```
+
+## Clustering with raster data
+
+In order to use our raster data, we need to first `scale` it and convert it to a dataframe. You'll notice that by supplying the `cell=TRUE` argument we add a column with the cell ID along with all of the values of the actual data. We supply this dataframe (dropping the ID column `[,-1]`) to `kmeans` and let it run. Because this is a large dataset, I'm asking for more random starts and allowing the algorithm to run longer to try and converge. I've also made sure to use `set.seed` to ensure that the random starts are replicable.
+
+```{r}
+#| cache: true
+
+set.seed(99)
+vars_scl <- scale(vars)
+vars_df <- as.data.frame(vars_scl, cell=TRUE)
+kmncluster5 <- kmeans(vars_df[,-1], centers=5, iter.max = 500, nstart = 200, algorithm="Lloyd")
+kmncluster5
+```
+
+Let's see how we did. As I mentioned, calculating distance matrices is computationally expensive so here, I sample (the `sub_idx`) a series of ID's from the data and calculate the distance matrix on that subset.
+
+```{r}
+(explained_inertia5 <- kmncluster5$betweenss / kmncluster5$totss)
+
+sub_idx <- sample(seq_len(nrow(vars_df)), 60000)
+sil5 <- silhouette(kmncluster5$cluster[sub_idx], dist(vars_df[sub_idx, ]))
+mean(sil5[, "sil_width"])
+
+```
+
+You'll notice that we have considerably less explained inertia and our silhouette index suggests that there may not be much difference between the clusters. Let's see if adding more clusters improves things.
+
+```{r}
+#| cache: true
+
+
+kmncluster10 <- kmeans(vars_df[,-1], centers=10, iter.max = 500, nstart = 200, algorithm="Lloyd")
+kmncluster10
+
+(explained_inertia10 <- kmncluster10$betweenss / kmncluster10$totss)
+
+
+sil10 <- silhouette(kmncluster10$cluster[sub_idx], dist(vars_df[sub_idx, ]))
+mean(sil10[, "sil_width"])
+
+```
+
+Well, we get a bit better at explaining the variation in the data, but our silhouette index suggests that many of these clusters might not be particularly far from each other. This is, perhaps, not entirely unexpected as we are looking at climate variables in a relatively small region. We'll use the five cluster solution as it carries less risk of misclassification, though neither of these are particularly great.
+
+
+### Plotting cluster results
+
+The last step is to spatialize our cluster results. This is where the cell ID comes in handy. We create a template raster from the first of our scaled data. We then assign the cell values based on the `cluster` object in our kmeans result. Passing the cell column in our assignment ensures that the raster and our cluster results are lined up. After that, we plot!
+
+```{r}
+
+kmeans_rast <- rast(vars_scl, nlyr=1)
+kmeans_rast[vars_df$cell] <- kmncluster5$cluster
+plot(kmeans_rast)
+```

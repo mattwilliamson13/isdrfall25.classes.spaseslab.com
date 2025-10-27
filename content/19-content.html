@@ -383,7 +383,11 @@ div.csl-indent {
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#resources" id="toc-resources" class="nav-link active" data-scroll-target="#resources">Resources</a></li>
+  <li><a href="#resources" id="toc-resources" class="nav-link active" data-scroll-target="#resources">Resources</a>
+  <ul class="collapse">
+  <li><a href="#bigger-picture" id="toc-bigger-picture" class="nav-link" data-scroll-target="#bigger-picture">Bigger Picture</a></li>
+  <li><a href="#technical-details" id="toc-technical-details" class="nav-link" data-scroll-target="#technical-details">Technical Details</a></li>
+  </ul></li>
   <li><a href="#objectives" id="toc-objectives" class="nav-link" data-scroll-target="#objectives">Objectives</a></li>
   </ul>
 </nav>
@@ -395,28 +399,36 @@ div.csl-indent {
 <h1 class="title display-7">Interpolation</h1>
 
 <div class="date-block bg-content text-white p-2">
-  <p class="date">Content for Monday, October 23, 2023</p>
+  <p class="date">Content for Monday, October 27, 2025</p>
 </div>
 </header>
 
-<p>Point patterns give us the foundation for beginning geostatistical analyses. In geostatistical analyses, we have observations or a spatial process from a limited sample of locations, but would like to be able to infer the values of that process across the entire study region (or at least an area larger than we initially sampled). Interpolation provides one simple way of doing this that relies on the notion that we can learn something about the process simply from our measurements and the location those measurements were taken. We can extend these approaches by adding additional covariates and model structures, but we’ll start simple for now.</p>
+<p>There are many cases in the analysis of social and ecological data where we might be missing data from a population or region where we hope to make inference or conduct further analysis. When the data is not spatial, we use <em>imputation</em> as a statistically principled approach for filling in these gaps. When the data is spatial, we use <strong>interpolation</strong> as a way of assigning values to locations where the data is missing such that we leverage the fact that most data is spatially autocorrelated. There are two general approaches for assigning these values: <em>deterministic</em> and <em>probabilistic</em>. Today we’ll take a look at deterministic approaches for interpolating missing data.</p>
 <section id="resources" class="level2">
 <h2 class="anchored" data-anchor-id="resources">Resources</h2>
+<section id="bigger-picture" class="level3">
+<h3 class="anchored" data-anchor-id="bigger-picture">Bigger Picture</h3>
 <ul>
-<li><p><i class="fas fa-book"></i> <a href="https://boisestatecanvas.instructure.com/files/4856927/download?download_frd=1">Chapter 2: Scale</a> in <span class="citation" data-cites="fletcher2018spatial">(<a href="#ref-fletcher2018spatial" role="doc-biblioref">Fletcher and Fortin 2018</a>)</span> provides a thorough introduction to the ecologist’s conceptualization of scale with <code>R</code> examples.</p></li>
-<li><p><i class="fas fa-external-link-square-alt"></i> This <a href="https://www.sciencedirect.com/science/article/pii/S0016718506001564#:~:text=The%20epistemological%20scale%20continuum%20runs,readily%20accessible%20to%20objective%20observers">article</a> by Steven Manson <span class="citation" data-cites="manson2008does">(<a href="#ref-manson2008does" role="doc-biblioref">Manson 2008</a>)</span> provides a more comprehensive view of conceptualizations of scale.</p></li>
-<li><p><i class="fas fa-external-link-square-alt"></i> The <a href="https://mgimond.github.io/Spatial/hypothesis-testing.html">Hypothesis Testing and Autocorrelation</a> chapters of Manuel Gimond’s Introduction to GIS and Spatial Analysis <code>bookdown</code> project provide concrete examples of attempts to find process from spatial patterns.</p></li>
-<li><p><i class="fas fa-book"></i> <a href="https://r-spatial.org/book/12-Interpolation.html">Chapter 12: Spatial Interpolation</a> in Spatial Data Science by Edzer Pebesma and Roger Bivand provides examples of different types of kriging and interpolation using <code>sf</code> and <code>stars</code>.</p></li>
+<li><p><i class="fas fa-external-link-square-alt"></i> <a href="https://onlinelibrary.wiley.com/doi/full/10.1111/j.1466-8238.2007.00331.x">Can niche-based distribution models outperform spatial interpolation?</a> by <span class="citation" data-cites="bahn2007">(<a href="#ref-bahn2007" role="doc-biblioref">Bahn and McGill 2007</a>)</span> illustrates the power of spatial interpolation for species distribution modeling and the potential for spurious inferences when failing to account for spatial structure in species data.</p></li>
+<li><p><i class="fas fa-external-link-square-alt"></i> <a href="https://www.sciencedirect.com/science/article/pii/S0169204607002216">Social–ecological hotspots mapping: A spatial approach for identifying coupled social–ecological space</a> by <span class="citation" data-cites="alessa2008">(<a href="#ref-alessa2008" role="doc-biblioref">Alessa et al. 2008</a>)</span> uses interpolation to map human values across a landscape and provides an interesting justificaiton for why we might prefer this approach over something more statistically sophisticated.</p></li>
 </ul>
+</section>
+<section id="technical-details" class="level3">
+<h3 class="anchored" data-anchor-id="technical-details">Technical Details</h3>
+<ul>
+<li><p><i class="fas fa-external-link-square-alt"></i> The <a href="https://r-spatial.org/book/12-Interpolation.html">Spatial Interpolation</a> chapter of <span class="citation" data-cites="sds">(<a href="#ref-sds" role="doc-biblioref">Pebesma and Bivand 2023</a>)</span> provides some code for using <code>sf</code> and <code>stars</code> to create spatial interpolation. We’ll be replacing the raster operations with <code>terra</code> functions, but the workflow is the same.</p></li>
+<li><p><i class="fas fa-external-link-square-alt"></i> <a href="https://mgimond.github.io/Spatial/interpolation-in-r.html">Spatial interpolation in R</a> from Manuel Gimond provides a less statistical overview of the same workflow and uses <code>terra</code> instead of <code>stars</code>.</p></li>
+</ul>
+</section>
 </section>
 <section id="objectives" class="level2">
 <h2 class="anchored" data-anchor-id="objectives">Objectives</h2>
 <p>By the end of today you should be able to:</p>
 <ul>
-<li><p>Distinguish deterministic and stochastic processes</p></li>
-<li><p>Define autocorrelation and describe its estimation</p></li>
-<li><p>Articulate the benefits and drawbacks of autocorrelation</p></li>
-<li><p>Leverage point patterns and autocorrelation to interpolate missing data</p></li>
+<li><p><strong>Describe</strong> reasons for interpolating data</p></li>
+<li><p><strong>Distinguish</strong> between deterministic and probabilistic methods for interpolation</p></li>
+<li><p><strong>Characterize</strong> the difference between distance- and spline-based interpolation</p></li>
+<li><p><strong>Implement</strong> two common interpolation methods in <code>R</code></p></li>
 </ul>
 <p class="text-center buttons">
 <a class="btn btn-danger" target="_blank" href="../slides/19-slides.html"><i class="fa-solid fa-arrow-up-right-from-square"></i> View all slides in new window</a> <a class="btn btn-danger" target="_blank" href="../slides/19-slides.pdf" role="button"><i class="fa-solid fa-file-pdf"></i> Download PDF of all slides</a>
@@ -424,18 +436,20 @@ div.csl-indent {
 <div>
 <iframe class="slide-deck" src="../slides/19-slides.html"></iframe>
 </div>
-<p><a href="https://boisestate.hosted.panopto.com/Panopto/Pages/Viewer.aspx?id=9b0b208a-44fc-4c86-bab5-b0a4014222c9">Link to Panopto Recording</a></p>
 
 
 
 </section>
 
 <div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" role="doc-bibliography"><h2 class="anchored quarto-appendix-heading">References</h2><div id="refs" class="references csl-bib-body hanging-indent" data-line-spacing="2" role="list">
-<div id="ref-fletcher2018spatial" class="csl-entry" role="listitem">
-Fletcher, R., and M. Fortin. 2018. Spatial ecology and conservation modeling. Springer.
+<div id="ref-alessa2008" class="csl-entry" role="listitem">
+Alessa, L. N., A. A. Kliskey, and G. Brown. 2008. Social–ecological hotspots mapping: A spatial approach for identifying coupled social–ecological space. Landscape and Urban Planning 85:27–39.
 </div>
-<div id="ref-manson2008does" class="csl-entry" role="listitem">
-Manson, S. M. 2008. Does scale exist? An epistemological scale continuum for complex human–environment systems. Geoforum 39:776–788.
+<div id="ref-bahn2007" class="csl-entry" role="listitem">
+Bahn, V., and B. J. McGill. 2007. Can niche-based distribution models outperform spatial interpolation? Global Ecology and Biogeography 16:733–742.
+</div>
+<div id="ref-sds" class="csl-entry" role="listitem">
+Pebesma, E., and R. Bivand. 2023. <a href="https://doi.org/10.1201/9780429459016">Spatial data science: With applications in <span>R</span></a>. Chapman; Hall/CRC, Boca Raton.
 </div>
 </div></section></div></main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
