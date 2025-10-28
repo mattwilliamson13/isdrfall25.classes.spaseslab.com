@@ -167,7 +167,7 @@ cdc_map + demo_map
 
 6. **Bonus:** Make 3 maps depicting hospital location, a variable of your choosing, and the Idaho boundary using different projections.
 
-```{r}
+```{r mltimp}
 
 pop_map <- ggplot() +
   geom_sf(data = demo_sf, 
@@ -198,6 +198,7 @@ pop_map_arctic <- ggplot() +
 (pop_map + pop_map_ea + pop_map_arctic) +
      plot_layout(guides = "collect") &
      theme(legend.position = "bottom")
+
 ```
 [You didn't have to do this, but I wanted to show you a simple way for changing the CRS without modifying the data. Rather than creating a bunch of objects that I wouldn't use, I simply used the `coord_sf` call in `ggplot` to transform the data to different projections. I wanted to use a few different types so you can see the difference between projection that preserve distance, area, and angle. After creating each of these plots by modifying the `coord_sf` call, I use patchwork to combine them all. The two `patchwork` additions are the use of `plot_layout` to collect the various legends (because they're all the same so there's no reason to print them everytime) and the use of the `& theme()` call. The `&` in `patchwork` behaves like the `+` in `ggplot` but allows you to assign theme elements across all of the plots in the patchwork.]{style="color: #800020;"}
 
@@ -236,6 +237,7 @@ ggplot(data = plot_df,
        mapping = aes(x = avg_dist, y = value)) +
   geom_smooth() +
   facet_wrap(~variable, scales = "free_y")
+
 ```
 [I used the `distance` function in the `terra` package because we wanted the _average_ distance in each of the polygon geometries. You might have tried `st_distance`, but `st_distance` wouldn't give us this directly and we wouldn't be able to deal with the fact that some counties are large enough to have portions that are close to a hospital and portions that are fast. It's not quite as precise as `st_distance`, but the difference is negligible here (because we have 1km cells). ]{style="color: #800020;"}
 
@@ -299,7 +301,7 @@ ggplot(data = plot_df,
 ```
 [Just noting some pseudocode that might help you articulate the function]{style="color: #800020;"}
 
-```{r}
+```{r pwdst}
 #| warning: false
 #| message: false
 pairwise_avg_dist <- function(source_sf, dest_sf, des_res){
@@ -388,7 +390,136 @@ ggplot(data = plot_df,
   geom_smooth() +
   scale_x_reverse()+
   facet_wrap(~variable, scales = "free_y")
+
 ```
 [Because both datasets have unique identifiers for county we can use the `group_by`, `summarise` routine to calculate the means. We then add a `mutate` to count the number of hospitals which we get by combining `st_intersects` (a predicate the returns T/F for each element) with `lengths` to count the number of `TRUE` in each call to `st_intersects`.  We plot as before, but use `scale_x_reverse` (one of many `ggplot` calls to order, sort, and format the axes) to make these plots reflect something similar to the distance plots above (ie., lower distances to the left should correspond to more hospitals also on the left)]{style="color: #800020;"}
 
 5. **Reflection**: How might the different spatial resolutions of your data affect the correlations you plotted? If there were differences in the correlations you plotted, what do you think is driving those differences?
+
+## Task 3: Creating Rasters And Exploring the MAUP
+
+Hospitals tend to serve communities outside of their specific location which means that the boundaries imposed by our data aren't as meaningful as we might like. We can overcome some of that by creating continuous fields (i.e., rasters) depicting the data throughout space. We can also explore how much things change if we make different assumptions about the "service area" of the hospital.
+
+1. Generate rasters of total population density, median income, prevalence of individuals with CHD, and prevalence of Asthma (4 rasters total). Choose a resolution that makes sense to you given the question and your data.
+
+```{r mkrst}
+#estimate density
+demo_density <- demo_sf %>% 
+  mutate(area = (as.numeric(st_area(.))/1000000),
+         dens = totalpop/area,
+         logdens = log10(dens)
+  )
+
+#make rasters
+
+popdens_rast <- rasterize(vect(demo_density), 
+                          template_rast, 
+                          field = "logdens")
+income_rast <- rasterize(vect(demo_density),
+                         template_rast, 
+                         field="hhincome")
+chd_rast <- rasterize(vect(cdc_sf),
+                      template_rast,
+                      field = "chd_crudep")
+asthma_rast <- rasterize(vect(cdc_sf),
+                         template_rast,
+                         field = "casthma_cr")
+all_vars <- c(popdens_rast, income_rast, chd_rast, asthma_rast)
+
+plot(all_vars)
+
+```
+[The first thing we need to do is convert our total population (which has `aggregate` support; meaning it's a value that results from the aggregation of smaller geometries) into a density (which should have a `constant` support within the boundaries). This is necessary before we convert to a raster or we would end up with extremely high populations (because we'd replicate the total population into every single cell). To do this we create a new variable, `area` (using `mutate`) and  use the unitary `measure`, `st_area` to calculate it. We convert this area (which is in m2) to km2 to make the numbers a bit more manageable. We then calculate the density and take the log (base 10) because the density values range from decimals to ~1000. Once we've done that, we just use `rasterize` each of the layers and combine them into a single object.]{style="color: #800020;"}
+
+2. Imagine that you have 3 hypotheses about the service area of a hospital. Use `map` and a `unary transformer` to generate these service are polygons and extract the raster data. Use ggplot to plot the correlations between your variables at each of your different service area sizes.
+
+```{r aggcor}
+#| warning: false
+#| message: false
+
+buffer_extraction_plot <- function(bufdist, ptdata, rastdata){
+  bufpolys <- ptdata %>% 
+    st_buffer(., dist = bufdist)
+  extract_df <- terra::extract(x = rastdata, 
+                               y = vect(bufpolys),
+                               fun = mean,
+                               na.rm = TRUE)
+  extract_df$bufdist <- paste0("buffdist", bufdist)
+  vars <- names(rastdata)
+  
+  pairs_df <- expand_grid(var1 = vars, var2 = vars) %>%
+    filter(match(var1, vars) < match(var2, vars))
+  plots <- pmap(
+  pairs_df,
+  function(var1, var2) {
+    ggplot(extract_df, aes(x = !!sym(var1), y = !!sym(var2))) +
+      geom_point(alpha = 0.5) +
+      geom_smooth() +
+      theme_bw() +
+      labs(
+        x = var1,
+        y = var2
+      )
+  }
+)
+  
+  (plots[[1]] + plots[[2]] + plots[[3]])/(plots[[4]] + plots[[5]] + plots[[6]]) + 
+    plot_annotation(title = paste("Correlation at", bufdist, "meters"))
+
+  }
+
+
+
+buf_plots <- map(c(100, 1000, 10000), \(x) buffer_extraction_plot(bufdist = x,
+                                                                  ptdata = idHospitals,
+                                                                  rastdata = all_vars))
+
+buf_plots[[1]]
+buf_plots[[2]]
+buf_plots[[3]]
+
+```
+[I imagined that "service zones" can be conceptualized as buffers around a hospital. Certainly, one could think about travel time on available roads, but that's more complicated than necessary. Because I knew I'm going to have to do this for 3 different buffer sizes, I wrote my own function (`buffer_extraction_plot`) that takes a buffer distance (`bufdist`), a point dataset (`ptdata`), and a raster dataset (`rastdata`) argument. Inside the function, I use the unary transformer `st_buffer` to create a circular buffer with a radius equal to `bufdist`. I then use `extract` to get all of the raster values within each buffer and add a column to keep track of the buffer distance. Once I've extracted the data, it's time to build the plots. I start by getting a list of the variable names (using `names`) and find all possible pairwise combinations of those names (using `expand_grid`). I `filter` those names to find the unique `match` pairs so that I'm only plotting unique, pairwise combinations. I then use `pmap` (because I need to pass 2 arguments) to iterate through a `ggplot` call. The only tricky thing in the `ggplot` call is the need to convert our character string variable names into the actual objects (via enquosure) that work within ggplot. That's what `!!sym` is doing. Once we've got the basics of the plot in place we can use `patchwork` to create a multipanel plot that gets returned when the function runs (because it's the last thing the function executes). Once we've got the function working, I use `map` to pass three different buffer distances to it and generate the plots. A quick look highlights the fact that as we draw on a larger buffer distance (i.e., aggregate more data), many of the correlations lose their nonlinearity and the variables look much more highly correlated than they are at the local level.]{style="color: #800020;"}
+
+
+
+
+3. Use `aggregate` and `focal` to modify your rasters and coarsen them by a factor of 3. Recreate the plots from step 2 using the aggregated data.
+
+```{r smthcor}
+#| warning: false
+#| message: false
+
+all_vars_coarse <- terra::aggregate(all_vars, 
+                                    fact = 3) |>
+  focal(x = _, w = 9, 
+             fun = mean,
+             na.policy = "only", na.rm = TRUE) |>
+  crop(x = _, y = vect(id_state), mask=TRUE)
+
+buf_plots_coarse <- map(c(100, 1000, 10000), \(x) buffer_extraction_plot(bufdist = x,
+                                                                  ptdata = idHospitals,
+                                                                  rastdata = all_vars_coarse))
+buf_plots_coarse[[1]]
+buf_plots_coarse[[2]]
+buf_plots_coarse[[3]]
+
+```
+[I use the same function I created above, so I won't talk more about that here. Instead, I'll focus on the raster preparation. I start by using `aggregate` to coarsen the raster. Then, I use the `focal` function to try to fill in as many of the NAs as I can. I do this by choosing a reasonably large value for `w` and set the `na.policy` to `only` to have the smoother focus on the holes. The issue with doing this is that it also applies to the NAs on the border of our data and so the smoother actually extends the data beyond the geography where it was collected. To deal with this I `crop` the resulting aggregated, smoothed raster using our Idaho shapefile and set `mask` equalt to `TRUE` which sets values in the raster outside of the boundary to `NA`. Then, I use my function to generate the plots. Compared to the previous set of plots, we see that the correlations largely match those of the coarsest buffer distance with the finer resolutions rasters. We might also notice that the shapes of some of these corrlations are changing as the buffer size increases and changing in ways that don't mirror the relationships in the first plot. I'm not sure what scale is the correct one here, but it definitely appears that the choices one makes about aggregation have a pretty big impact on the result.]{style="color: #800020;"}
+
+4. Create a distance from hospital raster and estimate the correlation between the values in the distance raster and the values in your other 4 rasters.
+
+```{r rstcor}
+
+dist_hospital <- distance(template_rast, idHospitals)|>
+  crop(x = _, y = vect(id_state), mask=TRUE)
+names(dist_hospital) <- "Distance"
+
+all_vars_dist <- c(all_vars, dist_hospital)
+cor(as.matrix(all_vars_dist), use = "complete")
+
+```
+
+[We've calculated distance rasters before so the creation of the distance to hospitals raster should seem familiar. I've `crop`ped it like we did in the last question and added a `names` to the resulting surface. The I simply combine the distance raster with the other raster stack and calculate the correlation between them. There aren't a ton of large correlations (not particularly surprising given the wobbliness of our plots), but we do see that hospitals tend to be closer to high population or high income areas and further from areas with lots of chronic health problems]{style="color: #800020;"}
+
+5. **Reflection**: What did you imagine the biggest drivers of hospital location would be? Did your plots confirm this? How did changing the resolution of the data or the area over which you aggregated alter your conclusions?

@@ -209,7 +209,6 @@ set.seed(99)
 vars_scl <- scale(vars)
 vars_df <- as.data.frame(vars_scl, cell=TRUE)
 kmncluster5 <- kmeans(vars_df[,-1], centers=5, iter.max = 500, nstart = 200, algorithm="Lloyd")
-kmncluster5
 ```
 
 Let's see how we did. As I mentioned, calculating distance matrices is computationally expensive so here, I sample (the `sub_idx`) a series of ID's from the data and calculate the distance matrix on that subset.
