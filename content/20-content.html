@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Intro to Spatial Data in R - Proximity and Areal Data</title>
+<title>Intro to Spatial Data in R - Probabilistic Interpolation</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -62,7 +62,7 @@ ul.task-list li input[type="checkbox"] {
 }</script>
 
 
-<meta property="og:title" content="Intro to Spatial Data in R - Proximity and Areal Data">
+<meta property="og:title" content="Intro to Spatial Data in R - Probabilistic Interpolation">
 <meta property="og:description" content="">
 <meta property="og:image" content="https://isdrfall25.classes.spaseslab.com/files/social-image-f22.png">
 <meta property="og:site-name" content="Intro to Spatial Data in R">
@@ -364,7 +364,10 @@ ul.task-list li input[type="checkbox"] {
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#resources" id="toc-resources" class="nav-link active" data-scroll-target="#resources">Resources</a></li>
+  <li><a href="#resources" id="toc-resources" class="nav-link active" data-scroll-target="#resources">Resources</a>
+  <ul class="collapse">
+  <li><a href="#technical-details" id="toc-technical-details" class="nav-link" data-scroll-target="#technical-details">Technical Details</a></li>
+  </ul></li>
   <li><a href="#objectives" id="toc-objectives" class="nav-link" data-scroll-target="#objectives">Objectives</a></li>
   </ul>
 </nav>
@@ -373,29 +376,32 @@ ul.task-list li input[type="checkbox"] {
 <main class="content" id="quarto-document-content">
 
 <header id="title-block-header">
-<h1 class="title display-7">Proximity and Areal Data</h1>
+<h1 class="title display-7">Probabilistic Interpolation</h1>
 
 <div class="date-block bg-content text-white p-2">
-  <p class="date">Content for Wednesday, October 25, 2023</p>
+  <p class="date">Content for Wednesday, October 29, 2025</p>
 </div>
 </header>
 
-<p>Last class we started to explore ways to leverage spatial autocorrelation as a means of using interpolation to generate values at unobserved locations. We’ll continue that discussion using variograms and kriging. We then move to a discussion of areal data and the need to identify “neighbors” as a means of understanding how to weight observations when the actual point location of the observation may be unknown or impossible to assign.</p>
+<p>Last class we talked about deterministic interpolation to fill in gaps in our data by leveraging the first law of geography (closer things should be similar). These approaches use the distance between observed data point and the observations themselves to calculate the values that occur between the obseved points. These approaches are deterministic - there is no uncertainty or stochasticity in the values they produce. Today, we’ll look at probabilistic approaches to interpolate missing values based on statistical models built on asssumptions about first- and second-order stationarity and estimates of covariance in our observed data.</p>
 <section id="resources" class="level2">
 <h2 class="anchored" data-anchor-id="resources">Resources</h2>
+<section id="technical-details" class="level3">
+<h3 class="anchored" data-anchor-id="technical-details">Technical Details</h3>
 <ul>
-<li><p><i class="fas fa-external-link-square-alt"></i> <a href="https://www.paulamoraga.com/book-spatial/spatial-neighborhood-matrices.html">Ch. 7: Spatial Neighborhood Matrices</a> in from Paula Moraga’s new book Spatial Statistics for Data Science: Theory and Practice with <code>R</code> gives a little gentler introduction to spatial neighbors specifically in the context of statistical models.</p></li>
-<li><p><i class="fas fa-book"></i> <a href="https://r-spatial.org/book/14-Areal.html">Chapter 14 Proximity and Areal Data</a> in Spatial Data Science by Edzer Pebesma and Roger Bivand provides explanations of how the <code>spdep</code> package can be used to construct neighborhood weights.</p></li>
+<li><p><i class="fas fa-external-link-square-alt"></i> <a href="https://www.paulamoraga.com/book-spatial/kriging.html">Ch. 14: Kriging</a> in from Paula Moraga’s new book Spatial Statistics for Data Science: Theory and Practice with <code>R</code> gives a little gentler introduction to spatial neighbors specifically in the context of statistical models.</p></li>
+<li><p><i class="fas fa-book"></i> <a href="https://r-spatial.org/book/12-Interpolation.html">Chapter 12: Spatial Interpolation</a> in Spatial Data Science by Edzer Pebesma and Roger Bivand provides some additional details for managing <code>gstat</code> and <code>sf</code>, but relies on <code>stars</code> a package we don’t use in this course.</p></li>
 </ul>
+</section>
 </section>
 <section id="objectives" class="level2">
 <h2 class="anchored" data-anchor-id="objectives">Objectives</h2>
 <p>By the end of today you should be able to:</p>
 <ul>
-<li><p>Describe and implement statistical approaches to interpolation</p></li>
-<li><p>Describe the case for identifying neighbors with areal data</p></li>
-<li><p>Implement contiguity-based neighborhood detection approaches</p></li>
-<li><p>Implement graph-based neighborhood detection approaches</p></li>
+<li><p><strong>Differentiate</strong> deterministic from probabilistic interpolation</p></li>
+<li><p><strong>Recognize</strong> how first- and second-order properties relate to geostatistical interpolation</p></li>
+<li><p><strong>Define</strong> key components of a semi-variogram</p></li>
+<li><p><strong>Implement</strong> ordinary and universal krigging using <code>gstat</code>, <code>sf</code>, and <code>terra</code></p></li>
 </ul>
 <p class="text-center buttons">
 <a class="btn btn-danger" target="_blank" href="../slides/20-slides.html"><i class="fa-solid fa-arrow-up-right-from-square"></i> View all slides in new window</a> <a class="btn btn-danger" target="_blank" href="../slides/20-slides.pdf" role="button"><i class="fa-solid fa-file-pdf"></i> Download PDF of all slides</a>
@@ -403,7 +409,6 @@ ul.task-list li input[type="checkbox"] {
 <div>
 <iframe class="slide-deck" src="../slides/20-slides.html"></iframe>
 </div>
-<p><a href="https://boisestate.hosted.panopto.com/Panopto/Pages/Viewer.aspx?id=976ea29f-b083-4c97-a25d-b0a601435034">Panopto Recording</a></p>
 
 
 </section>

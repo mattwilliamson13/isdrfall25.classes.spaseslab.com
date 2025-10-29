@@ -1556,23 +1556,23 @@
   {
     "objectID": "content/20-content.html",
     "href": "content/20-content.html",
-    "title": "Proximity and Areal Data",
+    "title": "Probabilistic Interpolation",
     "section": "",
-    "text": "Last class we started to explore ways to leverage spatial autocorrelation as a means of using interpolation to generate values at unobserved locations. We’ll continue that discussion using variograms and kriging. We then move to a discussion of areal data and the need to identify “neighbors” as a means of understanding how to weight observations when the actual point location of the observation may be unknown or impossible to assign."
+    "text": "Last class we talked about deterministic interpolation to fill in gaps in our data by leveraging the first law of geography (closer things should be similar). These approaches use the distance between observed data point and the observations themselves to calculate the values that occur between the obseved points. These approaches are deterministic - there is no uncertainty or stochasticity in the values they produce. Today, we’ll look at probabilistic approaches to interpolate missing values based on statistical models built on asssumptions about first- and second-order stationarity and estimates of covariance in our observed data."
   },
   {
     "objectID": "content/20-content.html#resources",
     "href": "content/20-content.html#resources",
-    "title": "Proximity and Areal Data",
+    "title": "Probabilistic Interpolation",
     "section": "Resources",
-    "text": "Resources\n\n Ch. 7: Spatial Neighborhood Matrices in from Paula Moraga’s new book Spatial Statistics for Data Science: Theory and Practice with R gives a little gentler introduction to spatial neighbors specifically in the context of statistical models.\n Chapter 14 Proximity and Areal Data in Spatial Data Science by Edzer Pebesma and Roger Bivand provides explanations of how the spdep package can be used to construct neighborhood weights."
+    "text": "Resources\n\nTechnical Details\n\n Ch. 14: Kriging in from Paula Moraga’s new book Spatial Statistics for Data Science: Theory and Practice with R gives a little gentler introduction to spatial neighbors specifically in the context of statistical models.\n Chapter 12: Spatial Interpolation in Spatial Data Science by Edzer Pebesma and Roger Bivand provides some additional details for managing gstat and sf, but relies on stars a package we don’t use in this course."
   },
   {
     "objectID": "content/20-content.html#objectives",
     "href": "content/20-content.html#objectives",
-    "title": "Proximity and Areal Data",
+    "title": "Probabilistic Interpolation",
     "section": "Objectives",
-    "text": "Objectives\nBy the end of today you should be able to:\n\nDescribe and implement statistical approaches to interpolation\nDescribe the case for identifying neighbors with areal data\nImplement contiguity-based neighborhood detection approaches\nImplement graph-based neighborhood detection approaches\n\n\n View all slides in new window  Download PDF of all slides\n\n\n\n\nPanopto Recording"
+    "text": "Objectives\nBy the end of today you should be able to:\n\nDifferentiate deterministic from probabilistic interpolation\nRecognize how first- and second-order properties relate to geostatistical interpolation\nDefine key components of a semi-variogram\nImplement ordinary and universal krigging using gstat, sf, and terra\n\n\n View all slides in new window  Download PDF of all slides"
   },
   {
     "objectID": "content/18-content.html",
@@ -3115,6 +3115,41 @@
     "text": "Calculating landscape metrics\nFinally, full list of landscape metrics is here](https://r-spatialecology.github.io/landscapemetrics/reference/index.html#landscape-level-metrics). We follow the same formatting strategy to access a handful of the landscape metrics. Landscape metrics look at the juxtaposition of the different classes in your landscape. We calculate the Shannon’s Diversity Index (a measure of class evenness in the landscape) and cohesion (an estimate of contiguity between like patches).\n\n\nCode\nlsm_l_shdi(ada_NLCD)    # Shannon’s Diversity Index\n\n\n# A tibble: 1 × 6\n  layer level     class    id metric value\n  &lt;int&gt; &lt;chr&gt;     &lt;int&gt; &lt;int&gt; &lt;chr&gt;  &lt;dbl&gt;\n1     1 landscape    NA    NA shdi    1.67\n\n\nCode\nlsm_l_cohesion(ada_NLCD)\n\n\n# A tibble: 1 × 6\n  layer level     class    id metric   value\n  &lt;int&gt; &lt;chr&gt;     &lt;int&gt; &lt;int&gt; &lt;chr&gt;    &lt;dbl&gt;\n1     1 landscape    NA    NA cohesion  99.1"
   },
   {
+    "objectID": "lesson/19-lesson.html",
+    "href": "lesson/19-lesson.html",
+    "title": "Interpolation and Kriging",
+    "section": "",
+    "text": "Code\nlibrary(gstat)\nlibrary(sf)\n\n\nLinking to GEOS 3.13.0, GDAL 3.8.5, PROJ 9.5.1; sf_use_s2() is TRUE\n\n\nCode\nlibrary(terra)\n\n\nterra 1.8.70\n\n\nCode\nlibrary(fields)\n\n\nLoading required package: spam\n\n\nSpam version 2.11-1 (2025-01-20) is loaded.\nType 'help( Spam)' or 'demo( spam)' for a short introduction \nand overview of this package.\nHelp for individual functions is also obtained by adding the\nsuffix '.spam' to the function name, e.g. 'help( chol.spam)'.\n\n\n\nAttaching package: 'spam'\n\n\nThe following objects are masked from 'package:base':\n\n    backsolve, forwardsolve\n\n\nLoading required package: viridisLite\n\n\nLoading required package: RColorBrewer\n\n\n\nTry help(fields) to get started.\n\n\n\nAttaching package: 'fields'\n\n\nThe following object is masked from 'package:terra':\n\n    describe\n\n\nCode\nlibrary(ggplot2)\nlibrary(patchwork)\n\n\n\nAttaching package: 'patchwork'\n\n\nThe following object is masked from 'package:terra':\n\n    area\n\n\nCode\nlibrary(tidyterra)\n\n\n\nAttaching package: 'tidyterra'\n\n\nThe following object is masked from 'package:stats':\n\n    filter"
+  },
+  {
+    "objectID": "lesson/19-lesson.html#getting-started",
+    "href": "lesson/19-lesson.html#getting-started",
+    "title": "Interpolation and Kriging",
+    "section": "",
+    "text": "Code\nlibrary(gstat)\nlibrary(sf)\n\n\nLinking to GEOS 3.13.0, GDAL 3.8.5, PROJ 9.5.1; sf_use_s2() is TRUE\n\n\nCode\nlibrary(terra)\n\n\nterra 1.8.70\n\n\nCode\nlibrary(fields)\n\n\nLoading required package: spam\n\n\nSpam version 2.11-1 (2025-01-20) is loaded.\nType 'help( Spam)' or 'demo( spam)' for a short introduction \nand overview of this package.\nHelp for individual functions is also obtained by adding the\nsuffix '.spam' to the function name, e.g. 'help( chol.spam)'.\n\n\n\nAttaching package: 'spam'\n\n\nThe following objects are masked from 'package:base':\n\n    backsolve, forwardsolve\n\n\nLoading required package: viridisLite\n\n\nLoading required package: RColorBrewer\n\n\n\nTry help(fields) to get started.\n\n\n\nAttaching package: 'fields'\n\n\nThe following object is masked from 'package:terra':\n\n    describe\n\n\nCode\nlibrary(ggplot2)\nlibrary(patchwork)\n\n\n\nAttaching package: 'patchwork'\n\n\nThe following object is masked from 'package:terra':\n\n    area\n\n\nCode\nlibrary(tidyterra)\n\n\n\nAttaching package: 'tidyterra'\n\n\nThe following object is masked from 'package:stats':\n\n    filter"
+  },
+  {
+    "objectID": "lesson/19-lesson.html#loading-the-data",
+    "href": "lesson/19-lesson.html#loading-the-data",
+    "title": "Interpolation and Kriging",
+    "section": "Loading the Data",
+    "text": "Loading the Data\n\n\nCode\ndata(meuse.all)\nmeuse_sf &lt;- st_as_sf(meuse.all, \n                     coords = c(\"x\", \"y\"), \n                     crs = 28992, \n                     agr = \"constant\")\n\nst_crs(meuse_sf)\n\n\nCoordinate Reference System:\n  User input: EPSG:28992 \n  wkt:\nPROJCRS[\"Amersfoort / RD New\",\n    BASEGEOGCRS[\"Amersfoort\",\n        DATUM[\"Amersfoort\",\n            ELLIPSOID[\"Bessel 1841\",6377397.155,299.1528128,\n                LENGTHUNIT[\"metre\",1]]],\n        PRIMEM[\"Greenwich\",0,\n            ANGLEUNIT[\"degree\",0.0174532925199433]],\n        ID[\"EPSG\",4289]],\n    CONVERSION[\"RD New\",\n        METHOD[\"Oblique Stereographic\",\n            ID[\"EPSG\",9809]],\n        PARAMETER[\"Latitude of natural origin\",52.1561605555556,\n            ANGLEUNIT[\"degree\",0.0174532925199433],\n            ID[\"EPSG\",8801]],\n        PARAMETER[\"Longitude of natural origin\",5.38763888888889,\n            ANGLEUNIT[\"degree\",0.0174532925199433],\n            ID[\"EPSG\",8802]],\n        PARAMETER[\"Scale factor at natural origin\",0.9999079,\n            SCALEUNIT[\"unity\",1],\n            ID[\"EPSG\",8805]],\n        PARAMETER[\"False easting\",155000,\n            LENGTHUNIT[\"metre\",1],\n            ID[\"EPSG\",8806]],\n        PARAMETER[\"False northing\",463000,\n            LENGTHUNIT[\"metre\",1],\n            ID[\"EPSG\",8807]]],\n    CS[Cartesian,2],\n        AXIS[\"easting (X)\",east,\n            ORDER[1],\n            LENGTHUNIT[\"metre\",1]],\n        AXIS[\"northing (Y)\",north,\n            ORDER[2],\n            LENGTHUNIT[\"metre\",1]],\n    USAGE[\n        SCOPE[\"Engineering survey, topographic mapping.\"],\n        AREA[\"Netherlands - onshore, including Waddenzee, Dutch Wadden Islands and 12-mile offshore coastal zone.\"],\n        BBOX[50.75,3.2,53.7,7.22]],\n    ID[\"EPSG\",28992]]\n\n\nCode\nbox &lt;- st_as_sfc(st_bbox(meuse_sf))\ngrd &lt;- rast(vect(box), ncol= 1000, nrow=1000)\ngrid_pts &lt;- as.data.frame(crds(grd, df = TRUE)) %&gt;% rename(x = x, y = y)\ngrid_sf &lt;- st_as_sf(grid_pts, coords = c(\"x\", \"y\"), crs = st_crs(meuse_sf))\n\nr &lt;-rast(system.file(\"ex/meuse.tif\", package=\"terra\")) |&gt; \n  project(x=_, y = crs(\"EPSG:28992\")) |&gt;\n  resample(x=_, y = grd)"
+  },
+  {
+    "objectID": "lesson/19-lesson.html#deterministic-approaches",
+    "href": "lesson/19-lesson.html#deterministic-approaches",
+    "title": "Interpolation and Kriging",
+    "section": "Deterministic Approaches",
+    "text": "Deterministic Approaches\n\nInverse Distance Weighting\n\n\nCode\nidw_formula_lin &lt;- gstat(id = \"zinc\", formula = zinc~1, locations = meuse_sf, \n            nmax=10, set=list(idp = 1))\n\nidw_interp &lt;- predict(idw_formula_lin, grid_sf)\n\n\n[inverse distance weighted interpolation]\n\n\nCode\nidw_interp$x &lt;- st_coordinates(idw_interp)[,1]\nidw_interp$y &lt;- st_coordinates(idw_interp)[,2]\nidw_interp$pred &lt;- idw_interp$var1.pred\n\npred &lt;- terra::rasterize(idw_interp, grd, field = \"zinc.pred\", fun = \"mean\")\nidw_lin_mask &lt;- crop(pred, r, mask=TRUE)\n\nidw_formula_quad &lt;- gstat(id = \"zinc\", formula = zinc~1, locations = meuse_sf, \n            nmax=10, set=list(idp = 2))\n\nidw_interp &lt;- predict(idw_formula_quad, grid_sf)\n\n\n[inverse distance weighted interpolation]\n\n\nCode\nidw_interp$x &lt;- st_coordinates(idw_interp)[,1]\nidw_interp$y &lt;- st_coordinates(idw_interp)[,2]\nidw_interp$pred &lt;- idw_interp$var1.pred\n\npred &lt;- terra::rasterize(idw_interp, grd, field = \"zinc.pred\", fun = \"mean\")\nidw_quad_mask &lt;- crop(pred, r, mask=TRUE)\n\n\n\n\nCode\nmeas_val &lt;- ggplot() +\n  geom_sf(data = meuse_sf,\n          mapping = aes(col = zinc)) +\n  scale_color_viridis_c() +\n  ggtitle(\"Measured Zinc Concentration\") +\n  theme_bw()\n\nidw_lin &lt;- ggplot() +\n  geom_spatraster(data = idw_lin_mask, \n                  mapping = aes(fill = mean)) +\n  scale_fill_viridis_c(na.value = \"transparent\") +\n  ggtitle(\"Interp Zinc Concentration (IDW, power = 1)\") +\n  theme_bw()\n\n\n&lt;SpatRaster&gt; resampled to 501264 cells.\n\n\nCode\nidw_quad &lt;- ggplot() +\n  geom_spatraster(data = idw_quad_mask, \n                  mapping = aes(fill = mean)) +\n  scale_fill_viridis_c(na.value = \"transparent\") +\n  ggtitle(\"Interp Zinc Concentration (IDW, power = 2)\") +\n  theme_bw()\n\n\n&lt;SpatRaster&gt; resampled to 501264 cells.\n\n\nCode\nmeas_val + idw_lin + idw_quad\n\n\n\n\n\n\n\nThin-Plate Splines\n\n\nCode\ncoords &lt;- st_coordinates(meuse_sf)\nz &lt;- meuse_sf$zinc\n\n\ntps_model_cv &lt;- fields::Tps(coords, z)\ntps_model_cv\n\n\nCall:\nfields::Tps(x = coords, Y = z)\n                                                 \n Number of Observations:                164      \n Number of parameters in the null space 3        \n Parameters for fixed spatial drift     3        \n Model degrees of freedom:              68.8     \n Residual degrees of freedom:           95.2     \n GCV estimate for tau:                  186.8    \n MLE for tau:                           178.5    \n MLE for sigma:                         174700000\n lambda                                 0.00018  \n User supplied sigma                    NA       \n User supplied tau^2                    NA       \nSummary of estimates: \n                 lambda      trA      GCV   tauHat -lnLike Prof converge\nGCV        0.0001825072 68.84128 60141.03 186.8047     1137.245       10\nGCV.model            NA       NA       NA       NA           NA       NA\nGCV.one    0.0001825072 68.84128 60141.03 186.8047           NA       10\nRMSE                 NA       NA       NA       NA           NA       NA\npure error           NA       NA       NA       NA           NA       NA\nREML       0.0003770842 52.49955 60875.86 203.4412     1135.935        4\n\n\n\n\nCode\ntps_cv_rast &lt;- interpolate(grd, tps_model_cv)\ntps_cv_crop &lt;- crop(tps_cv_rast, r, mask=TRUE)\n\n\n\n\nCode\ntps_model_03 &lt;- fields::Tps(coords, z, lambda = tps_model_cv$lambda*2)\ntps_03_rast &lt;- interpolate(grd, tps_model_03)\ntps_03_crop &lt;- crop(tps_03_rast, r, mask=TRUE)\n\n\ntps_model_00001 &lt;- fields::Tps(coords, z, lambda = tps_model_cv$lambda/2)\ntps_00001_rast &lt;- interpolate(grd, tps_model_00001)\ntps_00001_crop &lt;- crop(tps_00001_rast, r, mask=TRUE)\n\ntps_model_cv_reml &lt;- fields::Tps(coords, z, method = \"REML\")\ntps_cvreml_rast &lt;- interpolate(grd, tps_model_cv_reml)\ntps_cvreml_crop &lt;- crop(tps_cvreml_rast, r, mask=TRUE)\n\n\n\n\nCode\ntps_def &lt;- ggplot() +\n  geom_spatraster(data = tps_cv_crop, \n                  mapping = aes(fill = lyr.1)) +\n  scale_fill_viridis_c(na.value = \"transparent\") +\n  ggtitle(\"Interp Zinc Concentration (TPS, lambda = default)\") +\n  theme_bw()\n\n\n&lt;SpatRaster&gt; resampled to 501264 cells.\n\n\nCode\ntps_double &lt;- ggplot() +\n  geom_spatraster(data = tps_03_crop, \n                  mapping = aes(fill = lyr.1)) +\n  scale_fill_viridis_c(na.value = \"transparent\") +\n  ggtitle(\"Interp Zinc Concentration (TPS, lambda = 0.0004)\") +\n  theme_bw()\n\n\n&lt;SpatRaster&gt; resampled to 501264 cells.\n\n\nCode\ntps_half &lt;- ggplot() +\n  geom_spatraster(data = tps_00001_crop, \n                  mapping = aes(fill = lyr.1)) +\n  scale_fill_viridis_c(na.value = \"transparent\") +\n  ggtitle(\"Interp Zinc Concentration (TPS, lambda = 0.000009)\") +\n  theme_bw()\n\n\n&lt;SpatRaster&gt; resampled to 501264 cells.\n\n\nCode\ntps_reml &lt;- ggplot() +\n  geom_spatraster(data = tps_cvreml_crop, \n                  mapping = aes(fill = lyr.1)) +\n  scale_fill_viridis_c(na.value = \"transparent\") +\n  ggtitle(\"Interp Zinc Concentration (TPS, lambda = REML)\") +\n  theme_bw()\n\n\n&lt;SpatRaster&gt; resampled to 501264 cells.\n\n\nCode\n(tps_def + tps_double)/(tps_half + tps_reml)"
+  },
+  {
+    "objectID": "lesson/19-lesson.html#kriging",
+    "href": "lesson/19-lesson.html#kriging",
+    "title": "Interpolation and Kriging",
+    "section": "Kriging",
+    "text": "Kriging\n\nVariograms\n\n\nCode\nzinc_vc &lt;- variogram(log(zinc) ~ 1, meuse_sf, cloud = TRUE)\nplot(zinc_vc)\n\n\n\n\n\n\n\nCode\nsample_vgm &lt;- variogram(log(zinc) ~ 1, data = meuse_sf)\nplot(sample_vgm)\n\n\n\n\n\n\n\nCode\nshow.vgms(par.strip.text = list(cex = 0.75))\n\n\n\n\n\n\n\nCode\nsph_vgm_r900 &lt;- vgm(psill = 0.5, model = \"Sph\",\n                range = 900, nugget = 0.1)\nplot(sample_vgm, sph_vgm_r900, cutoff = 1000, cex = 1.5)\n\n\n\n\n\n\n\nCode\nsph_vgm_Mat &lt;- vgm(psill = 0.6, model = \"Mat\",\n                range = 1100, nugget = 0.1)\nplot(sample_vgm, sph_vgm_Mat, cutoff = 1000, cex = 1.5)\n\n\n\n\n\n\n\nCode\nfit_vgm &lt;- fit.variogram(object = sample_vgm,\n                    model = vgm(psill = 0.5, model = \"Sph\",\n                                range = 900, nugget = 0.1))\nfit_vgm\n\n\n  model     psill    range\n1   Nug 0.1229519   0.0000\n2   Sph 0.5232435 880.9165\n\n\nCode\nplot(sample_vgm, fit_vgm, cex = 1.5)\n\n\n\n\n\n\n\nKriging\n\n\nCode\nok_krig_formula &lt;- gstat(id = \"log.zinc\",\n                      formula = log(zinc) ~ 1,\n                      data = meuse_sf,\n                      model = fit_vgm)\n\nkrig_pred &lt;- predict(ok_krig_formula, grid_sf)\n\n\n[using ordinary kriging]\n\n\nCode\npred_rast &lt;- c(rasterize(vect(krig_pred), grd, field=\"log.zinc.pred\"), rasterize(vect(krig_pred), grd, field=\"log.zinc.var\"))\nnames(pred_rast) &lt;- c(\"pred\", \"var\")\npred_rast_mask &lt;- crop(pred_rast, r, mask=TRUE)\nplot(pred_rast_mask)\n\n\n\n\n\n\n\nCode\ndata(meuse.grid, package = \"sp\")\nmeuse_grid_sf &lt;- st_as_sf(meuse.grid, coords = c(\"x\", \"y\"), crs = 28992)\n\n\nuniv_krig &lt;- gstat(id = \"log.zinc\",\n  formula = log(zinc) ~ soil,      \n  locations = meuse_sf,              \n  model = fit_vgm\n)\n\nuk_pred &lt;- predict(univ_krig, meuse_grid_sf)\n\n\n[using universal kriging]\n\n\nCode\nggplot(uk_pred) +\n  geom_sf(aes(color = log.zinc.pred)) +\n  scale_color_viridis_c() +\n  theme_minimal() +\n  labs(title = \"Universal Kriging Prediction of Zinc\",\n       color = \"Predicted Zn\")"
+  },
+  {
     "objectID": "lesson/getting-setup.html",
     "href": "lesson/getting-setup.html",
     "title": "Get(git)ting Setup",
@@ -4177,5 +4212,89 @@
     "title": "Multivariate Description",
     "section": "Things to Consider",
     "text": "Things to Consider\n\nSpatial autocorrelation\nNewer Algorithms\nWhat is your Goal?"
+  },
+  {
+    "objectID": "slides/20-slides.html#interpolation",
+    "href": "slides/20-slides.html#interpolation",
+    "title": "Probabilistic Interpolation",
+    "section": "Interpolation",
+    "text": "Interpolation\n\nSpatial interpolation is the process of predicting values of a target variable or attribute at an unobserved location, from a set of values at known (observed) locations"
+  },
+  {
+    "objectID": "slides/20-slides.html#deterministic-vs.-probabalistic-interpolation",
+    "href": "slides/20-slides.html#deterministic-vs.-probabalistic-interpolation",
+    "title": "Probabilistic Interpolation",
+    "section": "Deterministic vs. Probabalistic Interpolation",
+    "text": "Deterministic vs. Probabalistic Interpolation\n\n\nDeterministic- interpolated values calculated as a function of distance\nProbabilistic- interpolated values are predicted based on statistical models"
+  },
+  {
+    "objectID": "slides/20-slides.html#kriging",
+    "href": "slides/20-slides.html#kriging",
+    "title": "Probabilistic Interpolation",
+    "section": "Kriging",
+    "text": "Kriging\n\n\nPrevious methods predict \\(z\\) as a (weighted) function of distance\nTreat the observations as perfect (no error)\nIf we imagine that \\(z\\) is the outcome of some spatial process such that:\n\n\\[\n\\begin{equation}\nz(\\mathbf{x}) = \\mu(\\mathbf{x}) + \\epsilon(\\mathbf{x})\n\\end{equation}\n\\]\nthen any observed value of \\(z\\) is some function of the process (\\(\\mu(\\mathbf{x})\\)) and some error (\\(\\epsilon(\\mathbf{x})\\))\n\nKriging exploits autocorrelation in \\(\\epsilon(\\mathbf{x})\\) to identify the trend and interpolate accordingly"
+  },
+  {
+    "objectID": "slides/20-slides.html#autocorrelation",
+    "href": "slides/20-slides.html#autocorrelation",
+    "title": "Probabilistic Interpolation",
+    "section": "Autocorrelation",
+    "text": "Autocorrelation\n\nCorrelation the tendency for two variables to be related\nAutocorrelation the tendency for observations that are closer (in space or time) to be correlated\nPositive autocorrelation neighboring observations have \\(\\epsilon\\) with the same sign\nNegative autocorrelation neighboring observations have \\(\\epsilon\\) with a different sign (rare in geography)"
+  },
+  {
+    "objectID": "slides/20-slides.html#ordinary-kriging",
+    "href": "slides/20-slides.html#ordinary-kriging",
+    "title": "Probabilistic Interpolation",
+    "section": "Ordinary Kriging",
+    "text": "Ordinary Kriging\n\nAssumes that the deterministic part of the process (\\(\\mu(\\mathbf{x})\\)) is an unknown constant (\\(\\mu\\))\n\n\\[\n\\begin{equation}\nz(\\mathbf{x}) = \\mu + \\epsilon(\\mathbf{x})\n\\end{equation}\n\\]"
+  },
+  {
+    "objectID": "slides/20-slides.html#steps-for-ordinary-kriging",
+    "href": "slides/20-slides.html#steps-for-ordinary-kriging",
+    "title": "Probabilistic Interpolation",
+    "section": "Steps for Ordinary Kriging",
+    "text": "Steps for Ordinary Kriging\n\nRemoving any spatial trend in the data (if present). ** Computing the experimental variogram, \\(\\gamma\\), which is a measure of spatial autocorrelation.\nDefining an experimental variogram model that best characterizes the spatial autocorrelation in the data.\nInterpolating the surface using the experimental variogram."
+  },
+  {
+    "objectID": "slides/20-slides.html#semivariograms",
+    "href": "slides/20-slides.html#semivariograms",
+    "title": "Probabilistic Interpolation",
+    "section": "(semi)Variograms",
+    "text": "(semi)Variograms\n\nRelationship between observation variance and distance\nnugget - the proportion of semivariance that occurs at small distances\nsill - the maximum semivariance between pairs of observations\nrange - the distance at which the sill occurs"
+  },
+  {
+    "objectID": "slides/20-slides.html#variograms",
+    "href": "slides/20-slides.html#variograms",
+    "title": "Probabilistic Interpolation",
+    "section": "Variograms",
+    "text": "Variograms\n\nEmpirical vs. fitted."
+  },
+  {
+    "objectID": "slides/20-slides.html#universal-kriging",
+    "href": "slides/20-slides.html#universal-kriging",
+    "title": "Probabilistic Interpolation",
+    "section": "Universal Kriging",
+    "text": "Universal Kriging\n\nAssumes that the deterministic part of the process (\\(\\mu(\\mathbf{x})\\)) is now a function of the location \\(\\mathbf{x}\\)\nCould be the location or some other attribute\nNow y is a function of some aspect of x"
+  },
+  {
+    "objectID": "slides/20-slides.html#co-kriging",
+    "href": "slides/20-slides.html#co-kriging",
+    "title": "Probabilistic Interpolation",
+    "section": "Co-Kriging",
+    "text": "Co-Kriging\n\nrelies on autocorrelation in \\(\\epsilon_1(\\mathbf{x})\\) for \\(z_1\\) AND cross correlation with other variables (\\(z_{2...j}\\))\nExtending the ordinary kriging model gives:\n\n\\[\n\\begin{equation}\nz_1(\\mathbf{x}) = \\mu_1 + \\epsilon_1(\\mathbf{x})\\\\\nz_2(\\mathbf{x}) = \\mu_2 + \\epsilon_2(\\mathbf{x})\n\\end{equation}\n\\]\n\nNote that there is autocorrelation within both \\(z_1\\) and \\(z_2\\) (because of the \\(\\epsilon\\)) and cross-correlation (because of the location, \\(\\mathbf{x}\\))\nNot required that all variables are measured at exactly the same points"
+  },
+  {
+    "objectID": "slides/20-slides.html#why-krig",
+    "href": "slides/20-slides.html#why-krig",
+    "title": "Probabilistic Interpolation",
+    "section": "Why Krig?",
+    "text": "Why Krig?\n\nAllows empirical estimate of autocorrelation\nIncorporate actual spatial structure\nIncreased accuracy\nUncertainty estimates"
+  },
+  {
+    "objectID": "slides/20-slides.html#why-not-krig",
+    "href": "slides/20-slides.html#why-not-krig",
+    "title": "Probabilistic Interpolation",
+    "section": "Why Not Krig?",
+    "text": "Why Not Krig?\n\nComputationally intensive\nSmoothing not guarenteed\nVariograms (somewhat) subjective"
   }
 ]

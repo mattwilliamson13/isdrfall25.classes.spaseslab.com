@@ -1,4 +1,256 @@
 ---
-title: "Generic Lesson"
+title: "Interpolation and Kriging"
 ---
+
+## Getting Started
+
+```{r}
+library(gstat)
+library(sf)
+library(terra)
+library(fields)
+library(ggplot2)
+library(patchwork)
+library(tidyterra)
+```
+
+## Loading the Data
+
+```{r lddata}
+data(meuse.all)
+meuse_sf <- st_as_sf(meuse.all, 
+                     coords = c("x", "y"), 
+                     crs = 28992, 
+                     agr = "constant")
+
+st_crs(meuse_sf)
+
+box <- st_as_sfc(st_bbox(meuse_sf))
+grd <- rast(vect(box), ncol= 1000, nrow=1000)
+grid_pts <- as.data.frame(crds(grd, df = TRUE)) %>% rename(x = x, y = y)
+grid_sf <- st_as_sf(grid_pts, coords = c("x", "y"), crs = st_crs(meuse_sf))
+
+r <-rast(system.file("ex/meuse.tif", package="terra")) |> 
+  project(x=_, y = crs("EPSG:28992")) |>
+  resample(x=_, y = grd)
+```
+
+
+## Deterministic Approaches
+
+### Inverse Distance Weighting
+
+
+```{r}
+idw_formula_lin <- gstat(id = "zinc", formula = zinc~1, locations = meuse_sf, 
+            nmax=10, set=list(idp = 1))
+
+idw_interp <- predict(idw_formula_lin, grid_sf)
+
+idw_interp$x <- st_coordinates(idw_interp)[,1]
+idw_interp$y <- st_coordinates(idw_interp)[,2]
+idw_interp$pred <- idw_interp$var1.pred
+
+pred <- terra::rasterize(idw_interp, grd, field = "zinc.pred", fun = "mean")
+idw_lin_mask <- crop(pred, r, mask=TRUE)
+
+idw_formula_quad <- gstat(id = "zinc", formula = zinc~1, locations = meuse_sf, 
+            nmax=10, set=list(idp = 2))
+
+idw_interp <- predict(idw_formula_quad, grid_sf)
+
+idw_interp$x <- st_coordinates(idw_interp)[,1]
+idw_interp$y <- st_coordinates(idw_interp)[,2]
+idw_interp$pred <- idw_interp$var1.pred
+
+pred <- terra::rasterize(idw_interp, grd, field = "zinc.pred", fun = "mean")
+idw_quad_mask <- crop(pred, r, mask=TRUE)
+```
+
+
+```{r pltcmpidw}
+#| fig-width: 13
+
+meas_val <- ggplot() +
+  geom_sf(data = meuse_sf,
+          mapping = aes(col = zinc)) +
+  scale_color_viridis_c() +
+  ggtitle("Measured Zinc Concentration") +
+  theme_bw()
+
+idw_lin <- ggplot() +
+  geom_spatraster(data = idw_lin_mask, 
+                  mapping = aes(fill = mean)) +
+  scale_fill_viridis_c(na.value = "transparent") +
+  ggtitle("Interp Zinc Concentration (IDW, power = 1)") +
+  theme_bw()
+
+idw_quad <- ggplot() +
+  geom_spatraster(data = idw_quad_mask, 
+                  mapping = aes(fill = mean)) +
+  scale_fill_viridis_c(na.value = "transparent") +
+  ggtitle("Interp Zinc Concentration (IDW, power = 2)") +
+  theme_bw()
+
+
+
+meas_val + idw_lin + idw_quad
+
+```
+
+### Thin-Plate Splines
+
+```{r tpsex}
+
+coords <- st_coordinates(meuse_sf)
+z <- meuse_sf$zinc
+
+
+tps_model_cv <- fields::Tps(coords, z)
+tps_model_cv
+```
+
+```{r rsttps}
+tps_cv_rast <- interpolate(grd, tps_model_cv)
+tps_cv_crop <- crop(tps_cv_rast, r, mask=TRUE)
+```
+
+```{r tpsvary}
+tps_model_03 <- fields::Tps(coords, z, lambda = tps_model_cv$lambda*2)
+tps_03_rast <- interpolate(grd, tps_model_03)
+tps_03_crop <- crop(tps_03_rast, r, mask=TRUE)
+
+
+tps_model_00001 <- fields::Tps(coords, z, lambda = tps_model_cv$lambda/2)
+tps_00001_rast <- interpolate(grd, tps_model_00001)
+tps_00001_crop <- crop(tps_00001_rast, r, mask=TRUE)
+
+tps_model_cv_reml <- fields::Tps(coords, z, method = "REML")
+tps_cvreml_rast <- interpolate(grd, tps_model_cv_reml)
+tps_cvreml_crop <- crop(tps_cvreml_rast, r, mask=TRUE)
+```
+
+
+
+```{r plttps}
+#| fig-width: 13
+
+tps_def <- ggplot() +
+  geom_spatraster(data = tps_cv_crop, 
+                  mapping = aes(fill = lyr.1)) +
+  scale_fill_viridis_c(na.value = "transparent") +
+  ggtitle("Interp Zinc Concentration (TPS, lambda = default)") +
+  theme_bw()
+
+tps_double <- ggplot() +
+  geom_spatraster(data = tps_03_crop, 
+                  mapping = aes(fill = lyr.1)) +
+  scale_fill_viridis_c(na.value = "transparent") +
+  ggtitle("Interp Zinc Concentration (TPS, lambda = 0.0004)") +
+  theme_bw()
+
+tps_half <- ggplot() +
+  geom_spatraster(data = tps_00001_crop, 
+                  mapping = aes(fill = lyr.1)) +
+  scale_fill_viridis_c(na.value = "transparent") +
+  ggtitle("Interp Zinc Concentration (TPS, lambda = 0.000009)") +
+  theme_bw()
+
+tps_reml <- ggplot() +
+  geom_spatraster(data = tps_cvreml_crop, 
+                  mapping = aes(fill = lyr.1)) +
+  scale_fill_viridis_c(na.value = "transparent") +
+  ggtitle("Interp Zinc Concentration (TPS, lambda = REML)") +
+  theme_bw()
+
+
+(tps_def + tps_double)/(tps_half + tps_reml)
+
+```
+
+
+## Kriging
+
+### Variograms
+
+```{r}
+
+zinc_vc <- variogram(log(zinc) ~ 1, meuse_sf, cloud = TRUE)
+plot(zinc_vc)
+```
+```{r}
+sample_vgm <- variogram(log(zinc) ~ 1, data = meuse_sf)
+plot(sample_vgm)
+
+```
+
+```{r}
+
+
+
+show.vgms(par.strip.text = list(cex = 0.75))
+
+```
+
+```{r}
+sph_vgm_r900 <- vgm(psill = 0.5, model = "Sph",
+                range = 900, nugget = 0.1)
+plot(sample_vgm, sph_vgm_r900, cutoff = 1000, cex = 1.5)
+
+```
+```{r}
+sph_vgm_Mat <- vgm(psill = 0.6, model = "Mat",
+                range = 1100, nugget = 0.1)
+plot(sample_vgm, sph_vgm_Mat, cutoff = 1000, cex = 1.5)
+
+```
+
+```{r}
+
+fit_vgm <- fit.variogram(object = sample_vgm,
+                    model = vgm(psill = 0.5, model = "Sph",
+                                range = 900, nugget = 0.1))
+fit_vgm
+plot(sample_vgm, fit_vgm, cex = 1.5)
+
+```
+
+### Kriging
+
+```{r}
+ok_krig_formula <- gstat(id = "log.zinc",
+                      formula = log(zinc) ~ 1,
+                      data = meuse_sf,
+                      model = fit_vgm)
+
+krig_pred <- predict(ok_krig_formula, grid_sf)
+
+pred_rast <- c(rasterize(vect(krig_pred), grd, field="log.zinc.pred"), rasterize(vect(krig_pred), grd, field="log.zinc.var"))
+names(pred_rast) <- c("pred", "var")
+pred_rast_mask <- crop(pred_rast, r, mask=TRUE)
+plot(pred_rast_mask)
+```
+
+
+```{r}
+data(meuse.grid, package = "sp")
+meuse_grid_sf <- st_as_sf(meuse.grid, coords = c("x", "y"), crs = 28992)
+
+
+univ_krig <- gstat(id = "log.zinc",
+  formula = log(zinc) ~ soil,      
+  locations = meuse_sf,              
+  model = fit_vgm
+)
+
+uk_pred <- predict(univ_krig, meuse_grid_sf)
+
+
+ggplot(uk_pred) +
+  geom_sf(aes(color = log.zinc.pred)) +
+  scale_color_viridis_c() +
+  theme_minimal() +
+  labs(title = "Universal Kriging Prediction of Zinc",
+       color = "Predicted Zn")
+```
 
