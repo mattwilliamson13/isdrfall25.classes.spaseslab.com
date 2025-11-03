@@ -95,8 +95,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   }
 }</script>
 
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
 
 <meta property="og:title" content="Intro to Spatial Data in R - Interpolation and Kriging">
+<meta property="og:description" content="">
 <meta property="og:image" content="https://isdrfall25.classes.spaseslab.com/files/social-image-f22.png">
 <meta property="og:site-name" content="Intro to Spatial Data in R">
 <meta property="og:locale" content="en_US">
@@ -183,12 +186,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <li><a href="#deterministic-approaches" id="toc-deterministic-approaches" class="nav-link" data-scroll-target="#deterministic-approaches">Deterministic Approaches</a>
   <ul class="collapse">
   <li><a href="#inverse-distance-weighting" id="toc-inverse-distance-weighting" class="nav-link" data-scroll-target="#inverse-distance-weighting">Inverse Distance Weighting</a></li>
-  <li><a href="#thin-plate-splines" id="toc-thin-plate-splines" class="nav-link" data-scroll-target="#thin-plate-splines">Thin-Plate Splines</a></li>
-  </ul></li>
-  <li><a href="#kriging" id="toc-kriging" class="nav-link" data-scroll-target="#kriging">Kriging</a>
-  <ul class="collapse">
+  <li><a href="#thin-plate-splines" id="toc-thin-plate-splines" class="nav-link" data-scroll-target="#thin-plate-splines">Thin Plate Splines</a></li>
+  <li><a href="#probabalistic-approaches-kriging" id="toc-probabalistic-approaches-kriging" class="nav-link" data-scroll-target="#probabalistic-approaches-kriging">Probabalistic approaches: Kriging</a></li>
   <li><a href="#variograms" id="toc-variograms" class="nav-link" data-scroll-target="#variograms">Variograms</a></li>
-  <li><a href="#kriging-1" id="toc-kriging-1" class="nav-link" data-scroll-target="#kriging-1">Kriging</a></li>
+  <li><a href="#kriging" id="toc-kriging" class="nav-link" data-scroll-target="#kriging">Kriging</a></li>
   </ul></li>
   </ul>
 </nav>
@@ -215,6 +216,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <section id="getting-started" class="level2">
 <h2 class="anchored" data-anchor-id="getting-started">Getting Started</h2>
+<p>We’ll be using the <code>meuse.all</code> data that ships with the <code>gstat</code> package as it is one that shows up in many explanations of geostatistical interpolation. It has the added bonus of being a reasonably small dataset to allow us to practice a few things without having to wait an extremly long time for the models to run. In addition to the <code>gstat</code> package, we’re adding the <code>fields</code> package which allows us to fit a variety of functional forms to spatial data. Beyond that, the rest of the packages should look familiar.</p>
 <div class="cell">
 <details open="">
 <summary>Code</summary>
@@ -300,20 +302,39 @@ Attaching package: 'tidyterra'</code></pre>
 
     filter</code></pre>
 </div>
+<details open="">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stderr">
+<pre><code>── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──
+✔ dplyr     1.1.4     ✔ readr     2.1.5
+✔ forcats   1.0.1     ✔ stringr   1.5.2
+✔ lubridate 1.9.4     ✔ tibble    3.3.0
+✔ purrr     1.1.0     ✔ tidyr     1.3.1</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
+✖ tidyr::extract() masks terra::extract()
+✖ dplyr::filter()  masks tidyterra::filter(), stats::filter()
+✖ dplyr::lag()     masks stats::lag()
+ℹ Use the conflicted package (&lt;http://conflicted.r-lib.org/&gt;) to force all conflicts to become errors</code></pre>
+</div>
 </div>
 </section>
 <section id="loading-the-data" class="level2">
 <h2 class="anchored" data-anchor-id="loading-the-data">Loading the Data</h2>
+<p>Because the data ships with a package, we can use the <code>data</code> function to load it directly into our environment. Then we need to get it into an <code>sf</code> object. We’ll take a quick look at the CRS (with <code>st_crs</code>) just to get a sense for what the units look like.</p>
 <div class="cell">
 <details open="">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(meuse.all)</span>
-<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>meuse_sf <span class="ot">&lt;-</span> <span class="fu">st_as_sf</span>(meuse.all, </span>
-<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>                     <span class="at">coords =</span> <span class="fu">c</span>(<span class="st">"x"</span>, <span class="st">"y"</span>), </span>
-<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>                     <span class="at">crs =</span> <span class="dv">28992</span>, </span>
-<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>                     <span class="at">agr =</span> <span class="st">"constant"</span>)</span>
-<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a><span class="fu">st_crs</span>(meuse_sf)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(meuse.all)</span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>meuse_sf <span class="ot">&lt;-</span> <span class="fu">st_as_sf</span>(meuse.all, </span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>                     <span class="at">coords =</span> <span class="fu">c</span>(<span class="st">"x"</span>, <span class="st">"y"</span>), </span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>                     <span class="at">crs =</span> <span class="dv">28992</span>, </span>
+<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a>                     <span class="at">agr =</span> <span class="st">"constant"</span>)</span>
+<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a><span class="fu">st_crs</span>(meuse_sf)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>Coordinate Reference System:
@@ -360,14 +381,41 @@ PROJCRS["Amersfoort / RD New",
 </div>
 <details open="">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>box <span class="ot">&lt;-</span> <span class="fu">st_as_sfc</span>(<span class="fu">st_bbox</span>(meuse_sf))</span>
-<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>grd <span class="ot">&lt;-</span> <span class="fu">rast</span>(<span class="fu">vect</span>(box), <span class="at">ncol=</span> <span class="dv">1000</span>, <span class="at">nrow=</span><span class="dv">1000</span>)</span>
-<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>grid_pts <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(<span class="fu">crds</span>(grd, <span class="at">df =</span> <span class="cn">TRUE</span>)) <span class="sc">%&gt;%</span> <span class="fu">rename</span>(<span class="at">x =</span> x, <span class="at">y =</span> y)</span>
-<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>grid_sf <span class="ot">&lt;-</span> <span class="fu">st_as_sf</span>(grid_pts, <span class="at">coords =</span> <span class="fu">c</span>(<span class="st">"x"</span>, <span class="st">"y"</span>), <span class="at">crs =</span> <span class="fu">st_crs</span>(meuse_sf))</span>
-<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a>r <span class="ot">&lt;-</span><span class="fu">rast</span>(<span class="fu">system.file</span>(<span class="st">"ex/meuse.tif"</span>, <span class="at">package=</span><span class="st">"terra"</span>)) <span class="sc">|&gt;</span> </span>
-<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">project</span>(<span class="at">x=</span>_, <span class="at">y =</span> <span class="fu">crs</span>(<span class="st">"EPSG:28992"</span>)) <span class="sc">|&gt;</span></span>
-<span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">resample</span>(<span class="at">x=</span>_, <span class="at">y =</span> grd)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(meuse_sf)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Rows: 164
+Columns: 16
+$ sample      &lt;dbl&gt; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17,…
+$ cadmium     &lt;dbl&gt; 11.7, 8.6, 6.5, 2.6, 2.8, 3.0, 3.2, 2.8, 2.4, 1.6, 1.4, 1.…
+$ copper      &lt;dbl&gt; 85, 81, 68, 81, 48, 61, 31, 29, 37, 24, 25, 25, 93, 31, 27…
+$ lead        &lt;dbl&gt; 299, 277, 199, 116, 117, 137, 132, 150, 133, 80, 86, 97, 2…
+$ zinc        &lt;dbl&gt; 1022, 1141, 640, 257, 269, 281, 346, 406, 347, 183, 189, 2…
+$ elev        &lt;dbl&gt; 7.909, 6.983, 7.800, 7.655, 7.480, 7.791, 8.217, 8.490, 8.…
+$ dist.m      &lt;dbl&gt; 50, 30, 150, 270, 380, 470, 240, 120, 240, 420, 400, 300, …
+$ om          &lt;dbl&gt; 13.6, 14.0, 13.0, 8.0, 8.7, 7.8, 9.2, 9.5, 10.6, 6.3, 6.4,…
+$ ffreq       &lt;dbl&gt; 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1…
+$ soil        &lt;dbl&gt; 1, 1, 1, 2, 2, 2, 2, 1, 1, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1…
+$ lime        &lt;dbl&gt; 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 1, 1, 1, 1…
+$ landuse     &lt;fct&gt; Ah, Ah, Ah, Ga, Ah, Ga, Ah, Ab, Ab, W, Fh, Ag, W, Ah, Ah, …
+$ in.pit      &lt;lgl&gt; FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FA…
+$ in.meuse155 &lt;lgl&gt; TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE…
+$ in.BMcD     &lt;lgl&gt; FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FA…
+$ geometry    &lt;POINT [m]&gt; POINT (181072 333611), POINT (181025 333558), POINT …</code></pre>
+</div>
+</div>
+<p>Now that you’ve gotten a chance to look at the data a bit, we’ll set up our interpolation grid. Unfortunately, the various interpolation functions available have different expectations for what data types your using to generate the interpolation model and grid so we’ve got to make a few different versions of these objects. To do this, I use <code>st_bbox</code> to get the bounding box for the data and convert that bbox into an <code>sf</code> object. Then, I create the interpolation grid by creating a blank raster within the bbox. We specify the resolution implicitly by specifying the number of rows and columns inside our raster. Once we have the raster, we convert into both a <code>data.frame</code> and an <code>sf</code> object. Lastly we bring a raster of the <code>meuse</code> dataset to provide a template fr cropping.</p>
+<div class="cell">
+<details open="">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>box <span class="ot">&lt;-</span> <span class="fu">st_as_sfc</span>(<span class="fu">st_bbox</span>(meuse_sf))</span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>grd <span class="ot">&lt;-</span> <span class="fu">rast</span>(<span class="fu">vect</span>(box), <span class="at">ncol=</span> <span class="dv">1000</span>, <span class="at">nrow=</span><span class="dv">1000</span>)</span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>grid_pts <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(<span class="fu">crds</span>(grd, <span class="at">df =</span> <span class="cn">TRUE</span>)) <span class="sc">%&gt;%</span> <span class="fu">rename</span>(<span class="at">x =</span> x, <span class="at">y =</span> y)</span>
+<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a>grid_sf <span class="ot">&lt;-</span> <span class="fu">st_as_sf</span>(grid_pts, <span class="at">coords =</span> <span class="fu">c</span>(<span class="st">"x"</span>, <span class="st">"y"</span>), <span class="at">crs =</span> <span class="fu">st_crs</span>(meuse_sf))</span>
+<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-6"><a href="#cb28-6" aria-hidden="true" tabindex="-1"></a>r <span class="ot">&lt;-</span><span class="fu">rast</span>(<span class="fu">system.file</span>(<span class="st">"ex/meuse.tif"</span>, <span class="at">package=</span><span class="st">"terra"</span>)) <span class="sc">|&gt;</span> </span>
+<span id="cb28-7"><a href="#cb28-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">project</span>(<span class="at">x=</span>_, <span class="at">y =</span> <span class="fu">crs</span>(<span class="st">"EPSG:28992"</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb28-8"><a href="#cb28-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">resample</span>(<span class="at">x=</span>_, <span class="at">y =</span> grd)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
 </section>
@@ -375,79 +423,116 @@ PROJCRS["Amersfoort / RD New",
 <h2 class="anchored" data-anchor-id="deterministic-approaches">Deterministic Approaches</h2>
 <section id="inverse-distance-weighting" class="level3">
 <h3 class="anchored" data-anchor-id="inverse-distance-weighting">Inverse Distance Weighting</h3>
+<p>The <code>gstat</code> function is similar to the <code>formula</code> function in base <code>R</code>, it’s just a way of taking the various arguments and constructing the appropriate spatial call. We pass an <code>id</code> parameter which <code>gstat</code> will use to identify the values produced by anything that uses the <code>formula</code> we construct. The <code>formula</code> argument allows us to specify what we want to model and how. In this case, we are using IDW so we are saying that zinc values are a function of (<code>~</code>) some unknown average. We pass a <code>locations</code> argument to let <code>gstat</code> know where the data and spatial locations are. The <code>nmax</code> argument sets the number of points that will be used to calculate our unknown average. Finally, the <code>set</code> argument accepts a variety of parameters that are specific to whichever form of model you are hoping to implement (you can find <a href="https://www.gstat.org/gstat.pdf">more information here at the original version of the <code>gstat</code> manual</a>).</p>
 <div class="cell">
 <details open="">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>idw_formula_lin <span class="ot">&lt;-</span> <span class="fu">gstat</span>(<span class="at">id =</span> <span class="st">"zinc"</span>, <span class="at">formula =</span> zinc<span class="sc">~</span><span class="dv">1</span>, <span class="at">locations =</span> meuse_sf, </span>
-<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>            <span class="at">nmax=</span><span class="dv">10</span>, <span class="at">set=</span><span class="fu">list</span>(<span class="at">idp =</span> <span class="dv">1</span>))</span>
-<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>idw_interp <span class="ot">&lt;-</span> <span class="fu">predict</span>(idw_formula_lin, grid_sf)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>idw_formula_lin <span class="ot">&lt;-</span> <span class="fu">gstat</span>(<span class="at">id =</span> <span class="st">"zinc"</span>, <span class="at">formula =</span> zinc<span class="sc">~</span><span class="dv">1</span>, <span class="at">locations =</span> meuse_sf, </span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>            <span class="at">nmax=</span><span class="dv">10</span>, <span class="at">set=</span><span class="fu">list</span>(<span class="at">idp =</span> <span class="dv">1</span>))</span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>idw_formula_lin</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>data:
+zinc : formula = zinc`~`1 ; data dim = 164 x 15 nmax = 10
+set idp = 1; </code></pre>
+</div>
+</div>
+<p>Once we have the formula set up, we can use the <code>predict</code> function to call the formula and predict values for all of the points in our grid. This outputs an <code>sf</code> object with predictions (and variance, though that is <code>NA</code> here because we’re using IDW) for all of the points. We convert that object to a raster with <code>rasterize</code> and mask it with our template raster (using <code>crop</code> with <code>mask=TRUE</code>) and combine our two rasters to plot them side by side.</p>
+<div class="cell">
+<details open="">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>idw_interp <span class="ot">&lt;-</span> <span class="fu">predict</span>(idw_formula_lin, grid_sf)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>[inverse distance weighted interpolation]</code></pre>
 </div>
 <details open="">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>idw_interp<span class="sc">$</span>x <span class="ot">&lt;-</span> <span class="fu">st_coordinates</span>(idw_interp)[,<span class="dv">1</span>]</span>
-<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>idw_interp<span class="sc">$</span>y <span class="ot">&lt;-</span> <span class="fu">st_coordinates</span>(idw_interp)[,<span class="dv">2</span>]</span>
-<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>idw_interp<span class="sc">$</span>pred <span class="ot">&lt;-</span> idw_interp<span class="sc">$</span>var1.pred</span>
-<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a>pred <span class="ot">&lt;-</span> terra<span class="sc">::</span><span class="fu">rasterize</span>(idw_interp, grd, <span class="at">field =</span> <span class="st">"zinc.pred"</span>, <span class="at">fun =</span> <span class="st">"mean"</span>)</span>
-<span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a>idw_lin_mask <span class="ot">&lt;-</span> <span class="fu">crop</span>(pred, r, <span class="at">mask=</span><span class="cn">TRUE</span>)</span>
-<span id="cb26-7"><a href="#cb26-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-8"><a href="#cb26-8" aria-hidden="true" tabindex="-1"></a>idw_formula_quad <span class="ot">&lt;-</span> <span class="fu">gstat</span>(<span class="at">id =</span> <span class="st">"zinc"</span>, <span class="at">formula =</span> zinc<span class="sc">~</span><span class="dv">1</span>, <span class="at">locations =</span> meuse_sf, </span>
-<span id="cb26-9"><a href="#cb26-9" aria-hidden="true" tabindex="-1"></a>            <span class="at">nmax=</span><span class="dv">10</span>, <span class="at">set=</span><span class="fu">list</span>(<span class="at">idp =</span> <span class="dv">2</span>))</span>
-<span id="cb26-10"><a href="#cb26-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-11"><a href="#cb26-11" aria-hidden="true" tabindex="-1"></a>idw_interp <span class="ot">&lt;-</span> <span class="fu">predict</span>(idw_formula_quad, grid_sf)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(idw_interp)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Classes 'sf' and 'data.frame':  1000000 obs. of  3 variables:
+ $ zinc.pred: num  993 993 993 993 993 ...
+ $ zinc.var : num  NA NA NA NA NA NA NA NA NA NA ...
+ $ geometry :sfc_POINT of length 1000000; first list element:  'XY' num  178606 333609
+ - attr(*, "sf_column")= chr "geometry"
+ - attr(*, "agr")= Factor w/ 3 levels "constant","aggregate",..: NA NA
+  ..- attr(*, "names")= chr [1:2] "zinc.pred" "zinc.var"</code></pre>
+</div>
+<details open="">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a>pred <span class="ot">&lt;-</span> terra<span class="sc">::</span><span class="fu">rasterize</span>(idw_interp, grd, <span class="at">field =</span> <span class="st">"zinc.pred"</span>, <span class="at">fun =</span> <span class="st">"mean"</span>)</span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a>idw_lin_mask <span class="ot">&lt;-</span> <span class="fu">crop</span>(pred, r, <span class="at">mask=</span><span class="cn">TRUE</span>)</span>
+<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a>comb_rst <span class="ot">&lt;-</span> <span class="fu">c</span>(pred, idw_lin_mask)</span>
+<span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(comb_rst)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<p><img src="19-lesson_files/figure-html/unnamed-chunk-4-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>Now that we’ve got the basics of IDW syntax figured out, we might want to explore how changing the inverse-distance power (<code>idp</code>) affects the resulting predictions of our dataset. To do that, I build a custom function that accepts the necessary arguments for each of the above steps. I finish with a call to <code>ggplot</code> using <code>tidyterra</code> because I want to use <code>patchwork</code> to create a nice multipanel plot of the surfaces that result from the different <code>idp</code> values. I <code>map</code> through a series of values to create maps of different <code>idp</code> values.</p>
+<div class="cell">
+<details open="">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a>idw_idp_explore <span class="ot">&lt;-</span> <span class="cf">function</span>(variable, nmx, pwr, loc_sf, grid_sf, grid_rst, templ_rst){</span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a>  <span class="do">## Need to convert the character variable name into something recognizeable as an object</span></span>
+<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a>  dv <span class="ot">&lt;-</span> <span class="fu">sym</span>(variable)</span>
+<span id="cb36-4"><a href="#cb36-4" aria-hidden="true" tabindex="-1"></a>  <span class="do">## Set up the idw formula to accept different arguments</span></span>
+<span id="cb36-5"><a href="#cb36-5" aria-hidden="true" tabindex="-1"></a>  idw_formula <span class="ot">&lt;-</span> <span class="fu">gstat</span>(<span class="at">id =</span> variable, <span class="at">formula =</span> <span class="fu">eval</span>(dv)<span class="sc">~</span><span class="dv">1</span>, <span class="at">locations =</span> loc_sf, </span>
+<span id="cb36-6"><a href="#cb36-6" aria-hidden="true" tabindex="-1"></a>            <span class="at">nmax=</span>nmx, <span class="at">set=</span><span class="fu">list</span>(<span class="at">idp =</span> pwr))</span>
+<span id="cb36-7"><a href="#cb36-7" aria-hidden="true" tabindex="-1"></a>  <span class="do">## Generate spatial predictions as sf object</span></span>
+<span id="cb36-8"><a href="#cb36-8" aria-hidden="true" tabindex="-1"></a>  pred_df <span class="ot">&lt;-</span> <span class="fu">predict</span>(idw_formula, grid_sf)</span>
+<span id="cb36-9"><a href="#cb36-9" aria-hidden="true" tabindex="-1"></a>  <span class="do">## Identify the column with the prediction</span></span>
+<span id="cb36-10"><a href="#cb36-10" aria-hidden="true" tabindex="-1"></a>  fld <span class="ot">&lt;-</span> <span class="fu">str_subset</span>(<span class="fu">colnames</span>(pred_df),<span class="at">pattern =</span> <span class="st">"pred"</span>)</span>
+<span id="cb36-11"><a href="#cb36-11" aria-hidden="true" tabindex="-1"></a>  <span class="do">## Make and mask the raster</span></span>
+<span id="cb36-12"><a href="#cb36-12" aria-hidden="true" tabindex="-1"></a>  pred_rst <span class="ot">&lt;-</span> terra<span class="sc">::</span><span class="fu">rasterize</span>(pred_df, grid_rst, <span class="at">field =</span> fld, <span class="at">fun =</span> <span class="st">"mean"</span>)</span>
+<span id="cb36-13"><a href="#cb36-13" aria-hidden="true" tabindex="-1"></a>  msk_rst <span class="ot">&lt;-</span> terra<span class="sc">::</span><span class="fu">crop</span>(pred_rst, templ_rst, <span class="at">mask =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb36-14"><a href="#cb36-14" aria-hidden="true" tabindex="-1"></a>  <span class="do">## Make a plot</span></span>
+<span id="cb36-15"><a href="#cb36-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>() <span class="sc">+</span></span>
+<span id="cb36-16"><a href="#cb36-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_spatraster</span>(<span class="at">data =</span> msk_rst, </span>
+<span id="cb36-17"><a href="#cb36-17" aria-hidden="true" tabindex="-1"></a>                  <span class="at">mapping =</span> <span class="fu">aes</span>(<span class="at">fill =</span> mean)) <span class="sc">+</span></span>
+<span id="cb36-18"><a href="#cb36-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_viridis_c</span>(<span class="at">na.value =</span> <span class="st">"transparent"</span>) <span class="sc">+</span></span>
+<span id="cb36-19"><a href="#cb36-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="fu">paste0</span>(<span class="st">"Interp Zinc Concentration (IDW, power = "</span>, pwr, <span class="st">")"</span>)) <span class="sc">+</span></span>
+<span id="cb36-20"><a href="#cb36-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>()</span>
+<span id="cb36-21"><a href="#cb36-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-22"><a href="#cb36-22" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb36-23"><a href="#cb36-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-24"><a href="#cb36-24" aria-hidden="true" tabindex="-1"></a>idp_plots <span class="ot">&lt;-</span> <span class="fu">map</span>(<span class="fu">c</span>(<span class="fl">0.5</span>, <span class="dv">2</span>, <span class="dv">4</span>, <span class="dv">8</span>), </span>
+<span id="cb36-25"><a href="#cb36-25" aria-hidden="true" tabindex="-1"></a>                 \(x) <span class="fu">idw_idp_explore</span>(<span class="at">variable =</span> <span class="st">"zinc"</span>, <span class="at">nmx =</span> <span class="dv">15</span>, </span>
+<span id="cb36-26"><a href="#cb36-26" aria-hidden="true" tabindex="-1"></a>                                      <span class="at">pwr =</span> x, <span class="at">loc_sf =</span> meuse_sf, </span>
+<span id="cb36-27"><a href="#cb36-27" aria-hidden="true" tabindex="-1"></a>                                      <span class="at">grid_sf =</span> grid_sf, <span class="at">grid_rst =</span> grd,</span>
+<span id="cb36-28"><a href="#cb36-28" aria-hidden="true" tabindex="-1"></a>                                      <span class="at">templ_rst =</span> r))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>[inverse distance weighted interpolation]</code></pre>
 </div>
-<details open="">
-<summary>Code</summary>
-<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>idw_interp<span class="sc">$</span>x <span class="ot">&lt;-</span> <span class="fu">st_coordinates</span>(idw_interp)[,<span class="dv">1</span>]</span>
-<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>idw_interp<span class="sc">$</span>y <span class="ot">&lt;-</span> <span class="fu">st_coordinates</span>(idw_interp)[,<span class="dv">2</span>]</span>
-<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>idw_interp<span class="sc">$</span>pred <span class="ot">&lt;-</span> idw_interp<span class="sc">$</span>var1.pred</span>
-<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a>pred <span class="ot">&lt;-</span> terra<span class="sc">::</span><span class="fu">rasterize</span>(idw_interp, grd, <span class="at">field =</span> <span class="st">"zinc.pred"</span>, <span class="at">fun =</span> <span class="st">"mean"</span>)</span>
-<span id="cb28-6"><a href="#cb28-6" aria-hidden="true" tabindex="-1"></a>idw_quad_mask <span class="ot">&lt;-</span> <span class="fu">crop</span>(pred, r, <span class="at">mask=</span><span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
+<div class="cell-output cell-output-stderr">
+<pre><code>&lt;SpatRaster&gt; resampled to 501264 cells.</code></pre>
 </div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[inverse distance weighted interpolation]</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>&lt;SpatRaster&gt; resampled to 501264 cells.</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[inverse distance weighted interpolation]</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>&lt;SpatRaster&gt; resampled to 501264 cells.</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[inverse distance weighted interpolation]</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>&lt;SpatRaster&gt; resampled to 501264 cells.</code></pre>
+</div>
+</div>
+<p>Then, I use patchwork to compose the resulting plots by accessing each of the plots in our <code>idp_plots</code> list.</p>
 <div class="cell">
 <details open="">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>meas_val <span class="ot">&lt;-</span> <span class="fu">ggplot</span>() <span class="sc">+</span></span>
-<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_sf</span>(<span class="at">data =</span> meuse_sf,</span>
-<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>          <span class="at">mapping =</span> <span class="fu">aes</span>(<span class="at">col =</span> zinc)) <span class="sc">+</span></span>
-<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_color_viridis_c</span>() <span class="sc">+</span></span>
-<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">"Measured Zinc Concentration"</span>) <span class="sc">+</span></span>
-<span id="cb29-6"><a href="#cb29-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>()</span>
-<span id="cb29-7"><a href="#cb29-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-8"><a href="#cb29-8" aria-hidden="true" tabindex="-1"></a>idw_lin <span class="ot">&lt;-</span> <span class="fu">ggplot</span>() <span class="sc">+</span></span>
-<span id="cb29-9"><a href="#cb29-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_spatraster</span>(<span class="at">data =</span> idw_lin_mask, </span>
-<span id="cb29-10"><a href="#cb29-10" aria-hidden="true" tabindex="-1"></a>                  <span class="at">mapping =</span> <span class="fu">aes</span>(<span class="at">fill =</span> mean)) <span class="sc">+</span></span>
-<span id="cb29-11"><a href="#cb29-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_viridis_c</span>(<span class="at">na.value =</span> <span class="st">"transparent"</span>) <span class="sc">+</span></span>
-<span id="cb29-12"><a href="#cb29-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">"Interp Zinc Concentration (IDW, power = 1)"</span>) <span class="sc">+</span></span>
-<span id="cb29-13"><a href="#cb29-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-<div class="cell-output cell-output-stderr">
-<pre><code>&lt;SpatRaster&gt; resampled to 501264 cells.</code></pre>
-</div>
-<details open="">
-<summary>Code</summary>
-<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>idw_quad <span class="ot">&lt;-</span> <span class="fu">ggplot</span>() <span class="sc">+</span></span>
-<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_spatraster</span>(<span class="at">data =</span> idw_quad_mask, </span>
-<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a>                  <span class="at">mapping =</span> <span class="fu">aes</span>(<span class="at">fill =</span> mean)) <span class="sc">+</span></span>
-<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_viridis_c</span>(<span class="at">na.value =</span> <span class="st">"transparent"</span>) <span class="sc">+</span></span>
-<span id="cb31-5"><a href="#cb31-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">"Interp Zinc Concentration (IDW, power = 2)"</span>) <span class="sc">+</span></span>
-<span id="cb31-6"><a href="#cb31-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-<div class="cell-output cell-output-stderr">
-<pre><code>&lt;SpatRaster&gt; resampled to 501264 cells.</code></pre>
-</div>
-<details open="">
-<summary>Code</summary>
-<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a>meas_val <span class="sc">+</span> idw_lin <span class="sc">+</span> idw_quad</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb45"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a>(idp_plots[[<span class="dv">1</span>]] <span class="sc">+</span> idp_plots[[<span class="dv">2</span>]])<span class="sc">/</span>(idp_plots[[<span class="dv">3</span>]] <span class="sc">+</span> idp_plots[[<span class="dv">4</span>]])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
 <p><img src="19-lesson_files/figure-html/pltcmpidw-1.png" class="img-fluid" width="1248"></p>
@@ -455,16 +540,18 @@ PROJCRS["Amersfoort / RD New",
 </div>
 </section>
 <section id="thin-plate-splines" class="level3">
-<h3 class="anchored" data-anchor-id="thin-plate-splines">Thin-Plate Splines</h3>
+<h3 class="anchored" data-anchor-id="thin-plate-splines">Thin Plate Splines</h3>
+<p>Thin plate splines (TPS) fit a smooth surface through scattered data in 2 (or more) dimensions by attempting to minimize the Residual Sum of Squares. The goal is to fit the data well while minimizing the total “bending energy” (i.e., surface roughness) of the surface. The <span class="math inline">\(\lambda\)</span> parameter controls the smoothness such that <span class="math inline">\(\lambda=0\)</span> produces an exact interpolation where the surface fits each data point exactly. Higher values of <span class="math inline">\(\lambda\)</span> increase the smoothness of the surface, but potentially provide a poor fit to the existing data.</p>
+<p>The <code>fields</code> package implements TPS for spatial data and works direcly with <code>terra</code>. However, because of this, we have to convert our data into a format that will work with <code>terra</code>. In this case, that means converting our spatial coordinates to a matrix (using <code>st_coordinates</code>) and our variable of interest into a vector. Once we’ve done that, we can call <code>fields::Tps</code>.</p>
 <div class="cell">
 <details open="">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a>coords <span class="ot">&lt;-</span> <span class="fu">st_coordinates</span>(meuse_sf)</span>
-<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a>z <span class="ot">&lt;-</span> meuse_sf<span class="sc">$</span>zinc</span>
-<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb34-5"><a href="#cb34-5" aria-hidden="true" tabindex="-1"></a>tps_model_cv <span class="ot">&lt;-</span> fields<span class="sc">::</span><span class="fu">Tps</span>(coords, z)</span>
-<span id="cb34-6"><a href="#cb34-6" aria-hidden="true" tabindex="-1"></a>tps_model_cv</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb46"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a>coords <span class="ot">&lt;-</span> <span class="fu">st_coordinates</span>(meuse_sf)</span>
+<span id="cb46-2"><a href="#cb46-2" aria-hidden="true" tabindex="-1"></a>z <span class="ot">&lt;-</span> meuse_sf<span class="sc">$</span>zinc</span>
+<span id="cb46-3"><a href="#cb46-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb46-4"><a href="#cb46-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb46-5"><a href="#cb46-5" aria-hidden="true" tabindex="-1"></a>tps_model_cv <span class="ot">&lt;-</span> fields<span class="sc">::</span><span class="fu">Tps</span>(coords, z)</span>
+<span id="cb46-6"><a href="#cb46-6" aria-hidden="true" tabindex="-1"></a>tps_model_cv</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>Call:
@@ -491,187 +578,139 @@ pure error           NA       NA       NA       NA           NA       NA
 REML       0.0003770842 52.49955 60875.86 203.4412     1135.935        4</code></pre>
 </div>
 </div>
+<p>By default, <code>fields::Tps</code> estimates <span class="math inline">\(\lambda\)</span> using a generalized cross-validation approach in order to balance the fit to the data with the degrees of freedom (number of knots) used by the spline. You can alter this approach by changing the <code>method</code> argument (see <code>?Tps</code> for the details). The nice part about using <code>fields::Tps</code> is that once the model has been fit, it can be used to make predictions very quickly even for large data. We do that using the <code>terra::interpolate</code> function and then mask our predictions again.</p>
 <div class="cell">
 <details open="">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a>tps_cv_rast <span class="ot">&lt;-</span> <span class="fu">interpolate</span>(grd, tps_model_cv)</span>
-<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a>tps_cv_crop <span class="ot">&lt;-</span> <span class="fu">crop</span>(tps_cv_rast, r, <span class="at">mask=</span><span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb48"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a>tps_cv_rast <span class="ot">&lt;-</span> <span class="fu">interpolate</span>(grd, tps_model_cv)</span>
+<span id="cb48-2"><a href="#cb48-2" aria-hidden="true" tabindex="-1"></a>tps_cv_crop <span class="ot">&lt;-</span> <span class="fu">crop</span>(tps_cv_rast, r, <span class="at">mask=</span><span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p>We’ll explore a couple of different <span class="math inline">\(\lambda\)</span> values and an alternative way of selecting <span class="math inline">\(\lambda\)</span> to demonstrate the effect of these different options on the resulting surface. We could write another function here, but I’m changing different things and passing different arguments so I’ll leave each call so that you can see what I’m changing.</p>
+<div class="cell">
+<details open="">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb49"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a>tps_model_03 <span class="ot">&lt;-</span> fields<span class="sc">::</span><span class="fu">Tps</span>(coords, z, <span class="at">lambda =</span> tps_model_cv<span class="sc">$</span>lambda<span class="sc">*</span><span class="dv">2</span>)</span>
+<span id="cb49-2"><a href="#cb49-2" aria-hidden="true" tabindex="-1"></a>tps_03_rast <span class="ot">&lt;-</span> <span class="fu">interpolate</span>(grd, tps_model_03)</span>
+<span id="cb49-3"><a href="#cb49-3" aria-hidden="true" tabindex="-1"></a>tps_03_crop <span class="ot">&lt;-</span> <span class="fu">crop</span>(tps_03_rast, r, <span class="at">mask=</span><span class="cn">TRUE</span>)</span>
+<span id="cb49-4"><a href="#cb49-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb49-5"><a href="#cb49-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb49-6"><a href="#cb49-6" aria-hidden="true" tabindex="-1"></a>tps_model_00001 <span class="ot">&lt;-</span> fields<span class="sc">::</span><span class="fu">Tps</span>(coords, z, <span class="at">lambda =</span> tps_model_cv<span class="sc">$</span>lambda<span class="sc">/</span><span class="dv">2</span>)</span>
+<span id="cb49-7"><a href="#cb49-7" aria-hidden="true" tabindex="-1"></a>tps_00001_rast <span class="ot">&lt;-</span> <span class="fu">interpolate</span>(grd, tps_model_00001)</span>
+<span id="cb49-8"><a href="#cb49-8" aria-hidden="true" tabindex="-1"></a>tps_00001_crop <span class="ot">&lt;-</span> <span class="fu">crop</span>(tps_00001_rast, r, <span class="at">mask=</span><span class="cn">TRUE</span>)</span>
+<span id="cb49-9"><a href="#cb49-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb49-10"><a href="#cb49-10" aria-hidden="true" tabindex="-1"></a>tps_model_cv_reml <span class="ot">&lt;-</span> fields<span class="sc">::</span><span class="fu">Tps</span>(coords, z, <span class="at">method =</span> <span class="st">"REML"</span>)</span>
+<span id="cb49-11"><a href="#cb49-11" aria-hidden="true" tabindex="-1"></a>tps_cvreml_rast <span class="ot">&lt;-</span> <span class="fu">interpolate</span>(grd, tps_model_cv_reml)</span>
+<span id="cb49-12"><a href="#cb49-12" aria-hidden="true" tabindex="-1"></a>tps_cvreml_crop <span class="ot">&lt;-</span> <span class="fu">crop</span>(tps_cvreml_rast, r, <span class="at">mask=</span><span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
 <div class="cell">
 <details open="">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a>tps_model_03 <span class="ot">&lt;-</span> fields<span class="sc">::</span><span class="fu">Tps</span>(coords, z, <span class="at">lambda =</span> tps_model_cv<span class="sc">$</span>lambda<span class="sc">*</span><span class="dv">2</span>)</span>
-<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a>tps_03_rast <span class="ot">&lt;-</span> <span class="fu">interpolate</span>(grd, tps_model_03)</span>
-<span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a>tps_03_crop <span class="ot">&lt;-</span> <span class="fu">crop</span>(tps_03_rast, r, <span class="at">mask=</span><span class="cn">TRUE</span>)</span>
-<span id="cb37-4"><a href="#cb37-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-5"><a href="#cb37-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-6"><a href="#cb37-6" aria-hidden="true" tabindex="-1"></a>tps_model_00001 <span class="ot">&lt;-</span> fields<span class="sc">::</span><span class="fu">Tps</span>(coords, z, <span class="at">lambda =</span> tps_model_cv<span class="sc">$</span>lambda<span class="sc">/</span><span class="dv">2</span>)</span>
-<span id="cb37-7"><a href="#cb37-7" aria-hidden="true" tabindex="-1"></a>tps_00001_rast <span class="ot">&lt;-</span> <span class="fu">interpolate</span>(grd, tps_model_00001)</span>
-<span id="cb37-8"><a href="#cb37-8" aria-hidden="true" tabindex="-1"></a>tps_00001_crop <span class="ot">&lt;-</span> <span class="fu">crop</span>(tps_00001_rast, r, <span class="at">mask=</span><span class="cn">TRUE</span>)</span>
-<span id="cb37-9"><a href="#cb37-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-10"><a href="#cb37-10" aria-hidden="true" tabindex="-1"></a>tps_model_cv_reml <span class="ot">&lt;-</span> fields<span class="sc">::</span><span class="fu">Tps</span>(coords, z, <span class="at">method =</span> <span class="st">"REML"</span>)</span>
-<span id="cb37-11"><a href="#cb37-11" aria-hidden="true" tabindex="-1"></a>tps_cvreml_rast <span class="ot">&lt;-</span> <span class="fu">interpolate</span>(grd, tps_model_cv_reml)</span>
-<span id="cb37-12"><a href="#cb37-12" aria-hidden="true" tabindex="-1"></a>tps_cvreml_crop <span class="ot">&lt;-</span> <span class="fu">crop</span>(tps_cvreml_rast, r, <span class="at">mask=</span><span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-</div>
-<div class="cell">
-<details open="">
-<summary>Code</summary>
-<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a>tps_def <span class="ot">&lt;-</span> <span class="fu">ggplot</span>() <span class="sc">+</span></span>
-<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_spatraster</span>(<span class="at">data =</span> tps_cv_crop, </span>
-<span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a>                  <span class="at">mapping =</span> <span class="fu">aes</span>(<span class="at">fill =</span> lyr<span class="fl">.1</span>)) <span class="sc">+</span></span>
-<span id="cb38-4"><a href="#cb38-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_viridis_c</span>(<span class="at">na.value =</span> <span class="st">"transparent"</span>) <span class="sc">+</span></span>
-<span id="cb38-5"><a href="#cb38-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">"Interp Zinc Concentration (TPS, lambda = default)"</span>) <span class="sc">+</span></span>
-<span id="cb38-6"><a href="#cb38-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb50"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a>tps_def <span class="ot">&lt;-</span> <span class="fu">ggplot</span>() <span class="sc">+</span></span>
+<span id="cb50-2"><a href="#cb50-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_spatraster</span>(<span class="at">data =</span> tps_cv_crop, </span>
+<span id="cb50-3"><a href="#cb50-3" aria-hidden="true" tabindex="-1"></a>                  <span class="at">mapping =</span> <span class="fu">aes</span>(<span class="at">fill =</span> lyr<span class="fl">.1</span>)) <span class="sc">+</span></span>
+<span id="cb50-4"><a href="#cb50-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_viridis_c</span>(<span class="at">na.value =</span> <span class="st">"transparent"</span>) <span class="sc">+</span></span>
+<span id="cb50-5"><a href="#cb50-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">"Interp Zinc Concentration (TPS, lambda = default)"</span>) <span class="sc">+</span></span>
+<span id="cb50-6"><a href="#cb50-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stderr">
 <pre><code>&lt;SpatRaster&gt; resampled to 501264 cells.</code></pre>
 </div>
 <details open="">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a>tps_double <span class="ot">&lt;-</span> <span class="fu">ggplot</span>() <span class="sc">+</span></span>
-<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_spatraster</span>(<span class="at">data =</span> tps_03_crop, </span>
-<span id="cb40-3"><a href="#cb40-3" aria-hidden="true" tabindex="-1"></a>                  <span class="at">mapping =</span> <span class="fu">aes</span>(<span class="at">fill =</span> lyr<span class="fl">.1</span>)) <span class="sc">+</span></span>
-<span id="cb40-4"><a href="#cb40-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_viridis_c</span>(<span class="at">na.value =</span> <span class="st">"transparent"</span>) <span class="sc">+</span></span>
-<span id="cb40-5"><a href="#cb40-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">"Interp Zinc Concentration (TPS, lambda = 0.0004)"</span>) <span class="sc">+</span></span>
-<span id="cb40-6"><a href="#cb40-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb52"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb52-1"><a href="#cb52-1" aria-hidden="true" tabindex="-1"></a>tps_double <span class="ot">&lt;-</span> <span class="fu">ggplot</span>() <span class="sc">+</span></span>
+<span id="cb52-2"><a href="#cb52-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_spatraster</span>(<span class="at">data =</span> tps_03_crop, </span>
+<span id="cb52-3"><a href="#cb52-3" aria-hidden="true" tabindex="-1"></a>                  <span class="at">mapping =</span> <span class="fu">aes</span>(<span class="at">fill =</span> lyr<span class="fl">.1</span>)) <span class="sc">+</span></span>
+<span id="cb52-4"><a href="#cb52-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_viridis_c</span>(<span class="at">na.value =</span> <span class="st">"transparent"</span>) <span class="sc">+</span></span>
+<span id="cb52-5"><a href="#cb52-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">"Interp Zinc Concentration (TPS, lambda = 0.0004)"</span>) <span class="sc">+</span></span>
+<span id="cb52-6"><a href="#cb52-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stderr">
 <pre><code>&lt;SpatRaster&gt; resampled to 501264 cells.</code></pre>
 </div>
 <details open="">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a>tps_half <span class="ot">&lt;-</span> <span class="fu">ggplot</span>() <span class="sc">+</span></span>
-<span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_spatraster</span>(<span class="at">data =</span> tps_00001_crop, </span>
-<span id="cb42-3"><a href="#cb42-3" aria-hidden="true" tabindex="-1"></a>                  <span class="at">mapping =</span> <span class="fu">aes</span>(<span class="at">fill =</span> lyr<span class="fl">.1</span>)) <span class="sc">+</span></span>
-<span id="cb42-4"><a href="#cb42-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_viridis_c</span>(<span class="at">na.value =</span> <span class="st">"transparent"</span>) <span class="sc">+</span></span>
-<span id="cb42-5"><a href="#cb42-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">"Interp Zinc Concentration (TPS, lambda = 0.000009)"</span>) <span class="sc">+</span></span>
-<span id="cb42-6"><a href="#cb42-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb54"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb54-1"><a href="#cb54-1" aria-hidden="true" tabindex="-1"></a>tps_half <span class="ot">&lt;-</span> <span class="fu">ggplot</span>() <span class="sc">+</span></span>
+<span id="cb54-2"><a href="#cb54-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_spatraster</span>(<span class="at">data =</span> tps_00001_crop, </span>
+<span id="cb54-3"><a href="#cb54-3" aria-hidden="true" tabindex="-1"></a>                  <span class="at">mapping =</span> <span class="fu">aes</span>(<span class="at">fill =</span> lyr<span class="fl">.1</span>)) <span class="sc">+</span></span>
+<span id="cb54-4"><a href="#cb54-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_viridis_c</span>(<span class="at">na.value =</span> <span class="st">"transparent"</span>) <span class="sc">+</span></span>
+<span id="cb54-5"><a href="#cb54-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">"Interp Zinc Concentration (TPS, lambda = 0.000009)"</span>) <span class="sc">+</span></span>
+<span id="cb54-6"><a href="#cb54-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stderr">
 <pre><code>&lt;SpatRaster&gt; resampled to 501264 cells.</code></pre>
 </div>
 <details open="">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb44"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a>tps_reml <span class="ot">&lt;-</span> <span class="fu">ggplot</span>() <span class="sc">+</span></span>
-<span id="cb44-2"><a href="#cb44-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_spatraster</span>(<span class="at">data =</span> tps_cvreml_crop, </span>
-<span id="cb44-3"><a href="#cb44-3" aria-hidden="true" tabindex="-1"></a>                  <span class="at">mapping =</span> <span class="fu">aes</span>(<span class="at">fill =</span> lyr<span class="fl">.1</span>)) <span class="sc">+</span></span>
-<span id="cb44-4"><a href="#cb44-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_viridis_c</span>(<span class="at">na.value =</span> <span class="st">"transparent"</span>) <span class="sc">+</span></span>
-<span id="cb44-5"><a href="#cb44-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">"Interp Zinc Concentration (TPS, lambda = REML)"</span>) <span class="sc">+</span></span>
-<span id="cb44-6"><a href="#cb44-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb56"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb56-1"><a href="#cb56-1" aria-hidden="true" tabindex="-1"></a>tps_reml <span class="ot">&lt;-</span> <span class="fu">ggplot</span>() <span class="sc">+</span></span>
+<span id="cb56-2"><a href="#cb56-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_spatraster</span>(<span class="at">data =</span> tps_cvreml_crop, </span>
+<span id="cb56-3"><a href="#cb56-3" aria-hidden="true" tabindex="-1"></a>                  <span class="at">mapping =</span> <span class="fu">aes</span>(<span class="at">fill =</span> lyr<span class="fl">.1</span>)) <span class="sc">+</span></span>
+<span id="cb56-4"><a href="#cb56-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_viridis_c</span>(<span class="at">na.value =</span> <span class="st">"transparent"</span>) <span class="sc">+</span></span>
+<span id="cb56-5"><a href="#cb56-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">"Interp Zinc Concentration (TPS, lambda = REML)"</span>) <span class="sc">+</span></span>
+<span id="cb56-6"><a href="#cb56-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stderr">
 <pre><code>&lt;SpatRaster&gt; resampled to 501264 cells.</code></pre>
 </div>
 <details open="">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb46"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a>(tps_def <span class="sc">+</span> tps_double)<span class="sc">/</span>(tps_half <span class="sc">+</span> tps_reml)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb58"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb58-1"><a href="#cb58-1" aria-hidden="true" tabindex="-1"></a>(tps_def <span class="sc">+</span> tps_double)<span class="sc">/</span>(tps_half <span class="sc">+</span> tps_reml)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
 <p><img src="19-lesson_files/figure-html/plttps-1.png" class="img-fluid" width="1248"></p>
 </div>
 </div>
+<p>You can see that different values of at <span class="math inline">\(\lambda\)</span> smooth the surface differently (with the higher values allowing for more “bending” around the measured points giving higher values to the neighboring pixels than we’d get with lower <span class="math inline">\(\lambda\)</span> values). You can also see (in the bottom-right plot) that using a different method for automating the selection of <span class="math inline">\(\lambda\)</span> results in a different choice. While GCV is the default choice, it’s focus is to minimize the error values in a leave-one out cross-validation approach. The REML (Restricted Maximum Likelihood) approach tends to penalize overfitting of the data to find a parsimonious solution that explains most of the variation without adding unnecessary parameters. In practice, the REML approach tends to be more stable and is more likely to find the true minimum value for <span class="math inline">\(lambda\)</span>; however, it can be computationally costly and does not always converge on a solution.</p>
 </section>
+<section id="probabalistic-approaches-kriging" class="level3">
+<h3 class="anchored" data-anchor-id="probabalistic-approaches-kriging">Probabalistic approaches: Kriging</h3>
+<p>In the previous deterministic approaches, we’ve basically assumed that the function producing the measurements we have is stable throughout the landscape (i.e., homogeneous) and relied on that to assume that unmeasured locations should have values that are consistent with that rate and scaled by the distance between points (and potentially a smoothing parameter). These approaches are deterministic in that the measurements are fixed, the distances are known, and the smoothing parameter is set by you. They will generate the same prediction every time you run them so long as the smoothing parameter and the data you use remain the same.</p>
+<p>We might imagine that we are uncertain whether the rate is homogeneous. Moreover, we might not be quite sure that the best prediction is simply a function of the distance between the points. In such cases, we might want to generate a probabilistic output (i.e., one with both predictions and variances.). <strong>Kriging</strong> allows us to do just that. It enables us to say that the mean value is unknown (and our measurements tell us something about what it should be), rather than assuming that the measurements are perfectly reflective of the underlying first-order process. It also allows us to use the empirical estimates of spatial covariance (i.e., how does variance among the points change as a function of distance) to estimate the role of distance in driving the process. We combine some “statistical machinery” to estimate these different elements and generate predictions along with the variance around those predictions. The key piece is to figure out the spatial covariance. We’ll do this using variograms.</p>
 </section>
-<section id="kriging" class="level2">
-<h2 class="anchored" data-anchor-id="kriging">Kriging</h2>
 <section id="variograms" class="level3">
 <h3 class="anchored" data-anchor-id="variograms">Variograms</h3>
+<p>The <code>gstat</code> package has a <code>variogram</code> function that allows you to estimate the (semi-)variance between points as a function of distance. The semi-variance is just the “half” value of the variance because we are assuming that the function is <strong>isotropic</strong> (i.e., the same in both directions). We can look at the raw data first by setting the argument <code>cloud = TRUE</code>.</p>
 <div class="cell">
 <details open="">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb47"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a>zinc_vc <span class="ot">&lt;-</span> <span class="fu">variogram</span>(<span class="fu">log</span>(zinc) <span class="sc">~</span> <span class="dv">1</span>, meuse_sf, <span class="at">cloud =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb47-2"><a href="#cb47-2" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(zinc_vc)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-<div class="cell-output-display">
-<p><img src="19-lesson_files/figure-html/unnamed-chunk-3-1.png" class="img-fluid" width="672"></p>
-</div>
-</div>
-<div class="cell">
-<details open="">
-<summary>Code</summary>
-<div class="sourceCode cell-code" id="cb48"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a>sample_vgm <span class="ot">&lt;-</span> <span class="fu">variogram</span>(<span class="fu">log</span>(zinc) <span class="sc">~</span> <span class="dv">1</span>, <span class="at">data =</span> meuse_sf)</span>
-<span id="cb48-2"><a href="#cb48-2" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(sample_vgm)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-<div class="cell-output-display">
-<p><img src="19-lesson_files/figure-html/unnamed-chunk-4-1.png" class="img-fluid" width="672"></p>
-</div>
-</div>
-<div class="cell">
-<details open="">
-<summary>Code</summary>
-<div class="sourceCode cell-code" id="cb49"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a><span class="fu">show.vgms</span>(<span class="at">par.strip.text =</span> <span class="fu">list</span>(<span class="at">cex =</span> <span class="fl">0.75</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-<div class="cell-output-display">
-<p><img src="19-lesson_files/figure-html/unnamed-chunk-5-1.png" class="img-fluid" width="672"></p>
-</div>
-</div>
-<div class="cell">
-<details open="">
-<summary>Code</summary>
-<div class="sourceCode cell-code" id="cb50"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a>sph_vgm_r900 <span class="ot">&lt;-</span> <span class="fu">vgm</span>(<span class="at">psill =</span> <span class="fl">0.5</span>, <span class="at">model =</span> <span class="st">"Sph"</span>,</span>
-<span id="cb50-2"><a href="#cb50-2" aria-hidden="true" tabindex="-1"></a>                <span class="at">range =</span> <span class="dv">900</span>, <span class="at">nugget =</span> <span class="fl">0.1</span>)</span>
-<span id="cb50-3"><a href="#cb50-3" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(sample_vgm, sph_vgm_r900, <span class="at">cutoff =</span> <span class="dv">1000</span>, <span class="at">cex =</span> <span class="fl">1.5</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb59"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb59-1"><a href="#cb59-1" aria-hidden="true" tabindex="-1"></a>zinc_vc <span class="ot">&lt;-</span> <span class="fu">variogram</span>(<span class="fu">log</span>(zinc) <span class="sc">~</span> <span class="dv">1</span>, meuse_sf, <span class="at">cloud =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb59-2"><a href="#cb59-2" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(zinc_vc)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
 <p><img src="19-lesson_files/figure-html/unnamed-chunk-6-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
+<p>Holy smokes!! That’s a lot of points!! We only have 164 measurements, so how do we get so many points? This calculation involves comparing the differences between all pairs of points. We can calculate this as: <span class="math display">\[
+Pairs = \frac{N \times (N-1)}{2}
+\]</span> Which in our case gives 13,366 points. These cloud plots can be helpful for identifying outliers or strange trends in the data, but are usually too overwhelming to identify things like the <strong>nugget, sill, and range</strong>. To look at the binned version of the plot (where the variances are combined into a series of lag-distance bins), we can just run the <code>variogram</code> function with its default argument of <code>cloud = FALSE</code>. In both cases, you can alter the number of points considered in the <code>variogram</code> by specifying a <code>cutoff</code> value which will eliminate pairs beyond a certain distance.</p>
 <div class="cell">
 <details open="">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb51"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a>sph_vgm_Mat <span class="ot">&lt;-</span> <span class="fu">vgm</span>(<span class="at">psill =</span> <span class="fl">0.6</span>, <span class="at">model =</span> <span class="st">"Mat"</span>,</span>
-<span id="cb51-2"><a href="#cb51-2" aria-hidden="true" tabindex="-1"></a>                <span class="at">range =</span> <span class="dv">1100</span>, <span class="at">nugget =</span> <span class="fl">0.1</span>)</span>
-<span id="cb51-3"><a href="#cb51-3" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(sample_vgm, sph_vgm_Mat, <span class="at">cutoff =</span> <span class="dv">1000</span>, <span class="at">cex =</span> <span class="fl">1.5</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb60"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb60-1"><a href="#cb60-1" aria-hidden="true" tabindex="-1"></a>sample_vgm <span class="ot">&lt;-</span> <span class="fu">variogram</span>(<span class="fu">log</span>(zinc) <span class="sc">~</span> <span class="dv">1</span>, <span class="at">data =</span> meuse_sf)</span>
+<span id="cb60-2"><a href="#cb60-2" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(sample_vgm)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
 <p><img src="19-lesson_files/figure-html/unnamed-chunk-7-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
+<p>Inspection of this plot is much easier. We can see that the <strong>nugget</strong> (the semivariance when distances are small) is probably somewhere around 0.2, the <strong>partial sill</strong> (the point at which semivariance no longer seems to be a function of distance) occurs between 0.5 and 0.7, and the <strong>range</strong> (the distance at which the sill occurs) is probably around 1000m. Now we’ve got to figure out which of our variogram models makes sense to approximate this relationship.</p>
 <div class="cell">
 <details open="">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb52"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb52-1"><a href="#cb52-1" aria-hidden="true" tabindex="-1"></a>fit_vgm <span class="ot">&lt;-</span> <span class="fu">fit.variogram</span>(<span class="at">object =</span> sample_vgm,</span>
-<span id="cb52-2"><a href="#cb52-2" aria-hidden="true" tabindex="-1"></a>                    <span class="at">model =</span> <span class="fu">vgm</span>(<span class="at">psill =</span> <span class="fl">0.5</span>, <span class="at">model =</span> <span class="st">"Sph"</span>,</span>
-<span id="cb52-3"><a href="#cb52-3" aria-hidden="true" tabindex="-1"></a>                                <span class="at">range =</span> <span class="dv">900</span>, <span class="at">nugget =</span> <span class="fl">0.1</span>))</span>
-<span id="cb52-4"><a href="#cb52-4" aria-hidden="true" tabindex="-1"></a>fit_vgm</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-<div class="cell-output cell-output-stdout">
-<pre><code>  model     psill    range
-1   Nug 0.1229519   0.0000
-2   Sph 0.5232435 880.9165</code></pre>
-</div>
-<details open="">
-<summary>Code</summary>
-<div class="sourceCode cell-code" id="cb54"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb54-1"><a href="#cb54-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(sample_vgm, fit_vgm, <span class="at">cex =</span> <span class="fl">1.5</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb61"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb61-1"><a href="#cb61-1" aria-hidden="true" tabindex="-1"></a><span class="fu">show.vgms</span>(<span class="at">par.strip.text =</span> <span class="fu">list</span>(<span class="at">cex =</span> <span class="fl">0.75</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
 <p><img src="19-lesson_files/figure-html/unnamed-chunk-8-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
-</section>
-<section id="kriging-1" class="level3">
-<h3 class="anchored" data-anchor-id="kriging-1">Kriging</h3>
+<p>This part is a bit more “art” than “science”, but that’s okay! The goal is to choose a functional form that does a reasonable job of approximating the relationship between distance and semivariance so that we can estimate the parameters necessary to input into our kriging model. Based on the shapes, we might choose a spherical (<code>Sph</code>) or Matern (<code>Mat</code>) shape. We can use the <code>vgm</code> function to generate the appropriate variograms based on our guesses above. These don’t have to be perfect, we will estimate the parameters in a subsequent step. For now, we are just trying to see if we like either of the shapes we’ve chosen once they are imposed on the data we actually have.</p>
 <div class="cell">
 <details open="">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb55"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb55-1"><a href="#cb55-1" aria-hidden="true" tabindex="-1"></a>ok_krig_formula <span class="ot">&lt;-</span> <span class="fu">gstat</span>(<span class="at">id =</span> <span class="st">"log.zinc"</span>,</span>
-<span id="cb55-2"><a href="#cb55-2" aria-hidden="true" tabindex="-1"></a>                      <span class="at">formula =</span> <span class="fu">log</span>(zinc) <span class="sc">~</span> <span class="dv">1</span>,</span>
-<span id="cb55-3"><a href="#cb55-3" aria-hidden="true" tabindex="-1"></a>                      <span class="at">data =</span> meuse_sf,</span>
-<span id="cb55-4"><a href="#cb55-4" aria-hidden="true" tabindex="-1"></a>                      <span class="at">model =</span> fit_vgm)</span>
-<span id="cb55-5"><a href="#cb55-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb55-6"><a href="#cb55-6" aria-hidden="true" tabindex="-1"></a>krig_pred <span class="ot">&lt;-</span> <span class="fu">predict</span>(ok_krig_formula, grid_sf)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-<div class="cell-output cell-output-stdout">
-<pre><code>[using ordinary kriging]</code></pre>
-</div>
-<details open="">
-<summary>Code</summary>
-<div class="sourceCode cell-code" id="cb57"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb57-1"><a href="#cb57-1" aria-hidden="true" tabindex="-1"></a>pred_rast <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fu">rasterize</span>(<span class="fu">vect</span>(krig_pred), grd, <span class="at">field=</span><span class="st">"log.zinc.pred"</span>), <span class="fu">rasterize</span>(<span class="fu">vect</span>(krig_pred), grd, <span class="at">field=</span><span class="st">"log.zinc.var"</span>))</span>
-<span id="cb57-2"><a href="#cb57-2" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(pred_rast) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"pred"</span>, <span class="st">"var"</span>)</span>
-<span id="cb57-3"><a href="#cb57-3" aria-hidden="true" tabindex="-1"></a>pred_rast_mask <span class="ot">&lt;-</span> <span class="fu">crop</span>(pred_rast, r, <span class="at">mask=</span><span class="cn">TRUE</span>)</span>
-<span id="cb57-4"><a href="#cb57-4" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(pred_rast_mask)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb62"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb62-1"><a href="#cb62-1" aria-hidden="true" tabindex="-1"></a>sph_vgm_r900 <span class="ot">&lt;-</span> <span class="fu">vgm</span>(<span class="at">psill =</span> <span class="fl">0.5</span>, <span class="at">model =</span> <span class="st">"Sph"</span>,</span>
+<span id="cb62-2"><a href="#cb62-2" aria-hidden="true" tabindex="-1"></a>                <span class="at">range =</span> <span class="dv">900</span>, <span class="at">nugget =</span> <span class="fl">0.1</span>)</span>
+<span id="cb62-3"><a href="#cb62-3" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(sample_vgm, sph_vgm_r900, <span class="at">cutoff =</span> <span class="dv">1000</span>, <span class="at">cex =</span> <span class="fl">1.5</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
 <p><img src="19-lesson_files/figure-html/unnamed-chunk-9-1.png" class="img-fluid" width="672"></p>
@@ -680,34 +719,114 @@ REML       0.0003770842 52.49955 60875.86 203.4412     1135.935        4</code><
 <div class="cell">
 <details open="">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb58"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb58-1"><a href="#cb58-1" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(meuse.grid, <span class="at">package =</span> <span class="st">"sp"</span>)</span>
-<span id="cb58-2"><a href="#cb58-2" aria-hidden="true" tabindex="-1"></a>meuse_grid_sf <span class="ot">&lt;-</span> <span class="fu">st_as_sf</span>(meuse.grid, <span class="at">coords =</span> <span class="fu">c</span>(<span class="st">"x"</span>, <span class="st">"y"</span>), <span class="at">crs =</span> <span class="dv">28992</span>)</span>
-<span id="cb58-3"><a href="#cb58-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb58-4"><a href="#cb58-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb58-5"><a href="#cb58-5" aria-hidden="true" tabindex="-1"></a>univ_krig <span class="ot">&lt;-</span> <span class="fu">gstat</span>(<span class="at">id =</span> <span class="st">"log.zinc"</span>,</span>
-<span id="cb58-6"><a href="#cb58-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">formula =</span> <span class="fu">log</span>(zinc) <span class="sc">~</span> soil,      </span>
-<span id="cb58-7"><a href="#cb58-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">locations =</span> meuse_sf,              </span>
-<span id="cb58-8"><a href="#cb58-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">model =</span> fit_vgm</span>
-<span id="cb58-9"><a href="#cb58-9" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb58-10"><a href="#cb58-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb58-11"><a href="#cb58-11" aria-hidden="true" tabindex="-1"></a>uk_pred <span class="ot">&lt;-</span> <span class="fu">predict</span>(univ_krig, meuse_grid_sf)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb63"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb63-1"><a href="#cb63-1" aria-hidden="true" tabindex="-1"></a>sph_vgm_Mat <span class="ot">&lt;-</span> <span class="fu">vgm</span>(<span class="at">psill =</span> <span class="fl">0.6</span>, <span class="at">model =</span> <span class="st">"Mat"</span>,</span>
+<span id="cb63-2"><a href="#cb63-2" aria-hidden="true" tabindex="-1"></a>                <span class="at">range =</span> <span class="dv">1100</span>, <span class="at">nugget =</span> <span class="fl">0.1</span>)</span>
+<span id="cb63-3"><a href="#cb63-3" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(sample_vgm, sph_vgm_Mat, <span class="at">cutoff =</span> <span class="dv">1000</span>, <span class="at">cex =</span> <span class="fl">1.5</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<p><img src="19-lesson_files/figure-html/unnamed-chunk-10-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>Based on these two plots, it doesn’t look like the Matern functional form generates enough “take off” in the values. That is, semivariance increases too slowly in the shorter distance lags. We’ll move forward with the spherical function and actually fit a model to estimate the parameters. When we use <code>fit.variogram</code> we provide the sample variogram as the <code>object</code> and then specify the model like we did in the previous step. We need to proivde the psill, nugget, and range as reasonable starting values to ensure that the empirical variogram can be estimated.</p>
+<div class="cell">
+<details open="">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb64"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb64-1"><a href="#cb64-1" aria-hidden="true" tabindex="-1"></a>fit_vgm <span class="ot">&lt;-</span> <span class="fu">fit.variogram</span>(<span class="at">object =</span> sample_vgm,</span>
+<span id="cb64-2"><a href="#cb64-2" aria-hidden="true" tabindex="-1"></a>                    <span class="at">model =</span> <span class="fu">vgm</span>(<span class="at">psill =</span> <span class="fl">0.5</span>, <span class="at">model =</span> <span class="st">"Sph"</span>,</span>
+<span id="cb64-3"><a href="#cb64-3" aria-hidden="true" tabindex="-1"></a>                                <span class="at">range =</span> <span class="dv">900</span>, <span class="at">nugget =</span> <span class="fl">0.1</span>))</span>
+<span id="cb64-4"><a href="#cb64-4" aria-hidden="true" tabindex="-1"></a>fit_vgm</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>  model     psill    range
+1   Nug 0.1229519   0.0000
+2   Sph 0.5232435 880.9165</code></pre>
+</div>
+<details open="">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb66"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb66-1"><a href="#cb66-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(sample_vgm, fit_vgm, <span class="at">cex =</span> <span class="fl">1.5</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<p><img src="19-lesson_files/figure-html/unnamed-chunk-11-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>The resuls show you what the estimate for the nugget (constant semivariance) model would be (0.12 which was pretty close to our guess) and then what the partial sill and range are under the spherical model (0.5 for the sill, and ~881 for the range). You can see that while our initial guesses were wrong, we didn’t do too badly!!</p>
+</section>
+<section id="kriging" class="level3">
+<h3 class="anchored" data-anchor-id="kriging">Kriging</h3>
+<p>Now that we’ve got our spatial covariance described and modelable, we can turn to generating predictions using kriging.</p>
+<p><em>Ordinary Kriging</em></p>
+<p>Ordinary kriging assumes that the (unknown) mean of the spatial process is constant and needs to be estimated. Once that estimate is obtained, we can adjust it based on the empirical variogram we built in the previous step. We use the <code>gstat</code> function to set up the necessary prediction formula, then the <code>predict</code> function to interpolate all of the values in our missing grid. Finally, we convert the data to a raster for plotting.</p>
+<div class="cell">
+<details open="">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb67"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb67-1"><a href="#cb67-1" aria-hidden="true" tabindex="-1"></a>ok_krig_formula <span class="ot">&lt;-</span> <span class="fu">gstat</span>(<span class="at">id =</span> <span class="st">"log.zinc"</span>,</span>
+<span id="cb67-2"><a href="#cb67-2" aria-hidden="true" tabindex="-1"></a>                      <span class="at">formula =</span> <span class="fu">log</span>(zinc) <span class="sc">~</span> <span class="dv">1</span>,</span>
+<span id="cb67-3"><a href="#cb67-3" aria-hidden="true" tabindex="-1"></a>                      <span class="at">data =</span> meuse_sf,</span>
+<span id="cb67-4"><a href="#cb67-4" aria-hidden="true" tabindex="-1"></a>                      <span class="at">model =</span> fit_vgm)</span>
+<span id="cb67-5"><a href="#cb67-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb67-6"><a href="#cb67-6" aria-hidden="true" tabindex="-1"></a>krig_pred <span class="ot">&lt;-</span> <span class="fu">predict</span>(ok_krig_formula, grid_sf)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>[using ordinary kriging]</code></pre>
+</div>
+<details open="">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb69"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb69-1"><a href="#cb69-1" aria-hidden="true" tabindex="-1"></a>pred_rast <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fu">rasterize</span>(<span class="fu">vect</span>(krig_pred), grd, <span class="at">field=</span><span class="st">"log.zinc.pred"</span>), <span class="fu">rasterize</span>(<span class="fu">vect</span>(krig_pred), grd, <span class="at">field=</span><span class="st">"log.zinc.var"</span>))</span>
+<span id="cb69-2"><a href="#cb69-2" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(pred_rast) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"pred"</span>, <span class="st">"var"</span>)</span>
+<span id="cb69-3"><a href="#cb69-3" aria-hidden="true" tabindex="-1"></a>pred_rast_mask <span class="ot">&lt;-</span> <span class="fu">crop</span>(pred_rast, r, <span class="at">mask=</span><span class="cn">TRUE</span>)</span>
+<span id="cb69-4"><a href="#cb69-4" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(pred_rast_mask)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<p><img src="19-lesson_files/figure-html/unnamed-chunk-12-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>You can see from these plots that variance tends to be highest in places where our sample points are less dense and that the nature of the smoothing (more high values in the places where we have lots of high values and more low values in the places where our measurements were low) is different from those produced by deterministic models.</p>
+<p><em>Universal kriging</em></p>
+<p>Sometimes we might imagine that our unknown mean varies in space either as a function of location or of some other covariate. In those cases, we are estimating an <em>inhomogeneous process</em> as the first order mean can vary spatially. Universal kriging allows us to estimate the spatial trend in <span class="math inline">\(\mu\)</span> and then apply our spatial covariance to generate interpolations based on the process and our spatial covariance. Here, we use another preloaded dataset of soil types to add a predictor to describe what we think might be driving the inhomogeneity in the process. The only other difference is that we modify our formula in the <code>gstat</code> call to reflect that we think soil is driving the spatial process.</p>
+<div class="cell">
+<details open="">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb70"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb70-1"><a href="#cb70-1" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(meuse.grid, <span class="at">package =</span> <span class="st">"sp"</span>)</span>
+<span id="cb70-2"><a href="#cb70-2" aria-hidden="true" tabindex="-1"></a>meuse_grid_sf <span class="ot">&lt;-</span> <span class="fu">st_as_sf</span>(meuse.grid, <span class="at">coords =</span> <span class="fu">c</span>(<span class="st">"x"</span>, <span class="st">"y"</span>), <span class="at">crs =</span> <span class="dv">28992</span>)</span>
+<span id="cb70-3"><a href="#cb70-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb70-4"><a href="#cb70-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb70-5"><a href="#cb70-5" aria-hidden="true" tabindex="-1"></a>univ_krig <span class="ot">&lt;-</span> <span class="fu">gstat</span>(<span class="at">id =</span> <span class="st">"log.zinc"</span>,</span>
+<span id="cb70-6"><a href="#cb70-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">formula =</span> <span class="fu">log</span>(zinc) <span class="sc">~</span> soil,      </span>
+<span id="cb70-7"><a href="#cb70-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">locations =</span> meuse_sf,              </span>
+<span id="cb70-8"><a href="#cb70-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">model =</span> fit_vgm</span>
+<span id="cb70-9"><a href="#cb70-9" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb70-10"><a href="#cb70-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb70-11"><a href="#cb70-11" aria-hidden="true" tabindex="-1"></a>uk_pred <span class="ot">&lt;-</span> <span class="fu">predict</span>(univ_krig, meuse_grid_sf)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>[using universal kriging]</code></pre>
 </div>
 <details open="">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb60"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb60-1"><a href="#cb60-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(uk_pred) <span class="sc">+</span></span>
-<span id="cb60-2"><a href="#cb60-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_sf</span>(<span class="fu">aes</span>(<span class="at">color =</span> log.zinc.pred)) <span class="sc">+</span></span>
-<span id="cb60-3"><a href="#cb60-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_color_viridis_c</span>() <span class="sc">+</span></span>
-<span id="cb60-4"><a href="#cb60-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
-<span id="cb60-5"><a href="#cb60-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Universal Kriging Prediction of Zinc"</span>,</span>
-<span id="cb60-6"><a href="#cb60-6" aria-hidden="true" tabindex="-1"></a>       <span class="at">color =</span> <span class="st">"Predicted Zn"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb72"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb72-1"><a href="#cb72-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(uk_pred) <span class="sc">+</span></span>
+<span id="cb72-2"><a href="#cb72-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_sf</span>(<span class="fu">aes</span>(<span class="at">color =</span> log.zinc.pred)) <span class="sc">+</span></span>
+<span id="cb72-3"><a href="#cb72-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_color_viridis_c</span>() <span class="sc">+</span></span>
+<span id="cb72-4"><a href="#cb72-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
+<span id="cb72-5"><a href="#cb72-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Universal Kriging Prediction of Zinc"</span>,</span>
+<span id="cb72-6"><a href="#cb72-6" aria-hidden="true" tabindex="-1"></a>       <span class="at">color =</span> <span class="st">"Predicted Zn"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
-<p><img src="19-lesson_files/figure-html/unnamed-chunk-10-1.png" class="img-fluid" width="672"></p>
+<p><img src="19-lesson_files/figure-html/unnamed-chunk-13-1.png" class="img-fluid" width="672"></p>
+</div>
+<details open="">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb73"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb73-1"><a href="#cb73-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(uk_pred) <span class="sc">+</span></span>
+<span id="cb73-2"><a href="#cb73-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_sf</span>(<span class="fu">aes</span>(<span class="at">color =</span> log.zinc.var)) <span class="sc">+</span></span>
+<span id="cb73-3"><a href="#cb73-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_color_viridis_c</span>() <span class="sc">+</span></span>
+<span id="cb73-4"><a href="#cb73-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
+<span id="cb73-5"><a href="#cb73-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Universal Kriging Variance of Zinc"</span>,</span>
+<span id="cb73-6"><a href="#cb73-6" aria-hidden="true" tabindex="-1"></a>       <span class="at">color =</span> <span class="st">"Predicted Zn"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<p><img src="19-lesson_files/figure-html/unnamed-chunk-13-2.png" class="img-fluid" width="672"></p>
 </div>
 </div>
+<p>You can see in this plot the “chunky” nature of the soil type data creates some new patterns in the prediction, but the variance patterns remain roughly the same.</p>
 
 
 <!-- -->
@@ -1000,256 +1119,323 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
   }
 });
 </script><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Source Code</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">
-<div class="sourceCode" id="cb61" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb61-1"><a href="#cb61-1" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
-<span id="cb61-2"><a href="#cb61-2" aria-hidden="true" tabindex="-1"></a><span class="an">title:</span><span class="co"> "Interpolation and Kriging"</span></span>
-<span id="cb61-3"><a href="#cb61-3" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
-<span id="cb61-4"><a href="#cb61-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb61-5"><a href="#cb61-5" aria-hidden="true" tabindex="-1"></a><span class="fu">## Getting Started</span></span>
-<span id="cb61-6"><a href="#cb61-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb61-9"><a href="#cb61-9" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb61-10"><a href="#cb61-10" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(gstat)</span>
-<span id="cb61-11"><a href="#cb61-11" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(sf)</span>
-<span id="cb61-12"><a href="#cb61-12" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(terra)</span>
-<span id="cb61-13"><a href="#cb61-13" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(fields)</span>
-<span id="cb61-14"><a href="#cb61-14" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
-<span id="cb61-15"><a href="#cb61-15" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(patchwork)</span>
-<span id="cb61-16"><a href="#cb61-16" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyterra)</span>
-<span id="cb61-17"><a href="#cb61-17" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb61-18"><a href="#cb61-18" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb61-19"><a href="#cb61-19" aria-hidden="true" tabindex="-1"></a><span class="fu">## Loading the Data</span></span>
-<span id="cb61-20"><a href="#cb61-20" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb61-21"><a href="#cb61-21" aria-hidden="true" tabindex="-1"></a><span class="in">```{r lddata}</span></span>
-<span id="cb61-22"><a href="#cb61-22" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(meuse.all)</span>
-<span id="cb61-23"><a href="#cb61-23" aria-hidden="true" tabindex="-1"></a>meuse_sf <span class="ot">&lt;-</span> <span class="fu">st_as_sf</span>(meuse.all, </span>
-<span id="cb61-24"><a href="#cb61-24" aria-hidden="true" tabindex="-1"></a>                     <span class="at">coords =</span> <span class="fu">c</span>(<span class="st">"x"</span>, <span class="st">"y"</span>), </span>
-<span id="cb61-25"><a href="#cb61-25" aria-hidden="true" tabindex="-1"></a>                     <span class="at">crs =</span> <span class="dv">28992</span>, </span>
-<span id="cb61-26"><a href="#cb61-26" aria-hidden="true" tabindex="-1"></a>                     <span class="at">agr =</span> <span class="st">"constant"</span>)</span>
-<span id="cb61-27"><a href="#cb61-27" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb61-28"><a href="#cb61-28" aria-hidden="true" tabindex="-1"></a><span class="fu">st_crs</span>(meuse_sf)</span>
-<span id="cb61-29"><a href="#cb61-29" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb61-30"><a href="#cb61-30" aria-hidden="true" tabindex="-1"></a>box <span class="ot">&lt;-</span> <span class="fu">st_as_sfc</span>(<span class="fu">st_bbox</span>(meuse_sf))</span>
-<span id="cb61-31"><a href="#cb61-31" aria-hidden="true" tabindex="-1"></a>grd <span class="ot">&lt;-</span> <span class="fu">rast</span>(<span class="fu">vect</span>(box), <span class="at">ncol=</span> <span class="dv">1000</span>, <span class="at">nrow=</span><span class="dv">1000</span>)</span>
-<span id="cb61-32"><a href="#cb61-32" aria-hidden="true" tabindex="-1"></a>grid_pts <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(<span class="fu">crds</span>(grd, <span class="at">df =</span> <span class="cn">TRUE</span>)) <span class="sc">%&gt;%</span> <span class="fu">rename</span>(<span class="at">x =</span> x, <span class="at">y =</span> y)</span>
-<span id="cb61-33"><a href="#cb61-33" aria-hidden="true" tabindex="-1"></a>grid_sf <span class="ot">&lt;-</span> <span class="fu">st_as_sf</span>(grid_pts, <span class="at">coords =</span> <span class="fu">c</span>(<span class="st">"x"</span>, <span class="st">"y"</span>), <span class="at">crs =</span> <span class="fu">st_crs</span>(meuse_sf))</span>
-<span id="cb61-34"><a href="#cb61-34" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb61-35"><a href="#cb61-35" aria-hidden="true" tabindex="-1"></a>r <span class="ot">&lt;-</span><span class="fu">rast</span>(<span class="fu">system.file</span>(<span class="st">"ex/meuse.tif"</span>, <span class="at">package=</span><span class="st">"terra"</span>)) <span class="sc">|&gt;</span> </span>
-<span id="cb61-36"><a href="#cb61-36" aria-hidden="true" tabindex="-1"></a>  <span class="fu">project</span>(<span class="at">x=</span>_, <span class="at">y =</span> <span class="fu">crs</span>(<span class="st">"EPSG:28992"</span>)) <span class="sc">|&gt;</span></span>
-<span id="cb61-37"><a href="#cb61-37" aria-hidden="true" tabindex="-1"></a>  <span class="fu">resample</span>(<span class="at">x=</span>_, <span class="at">y =</span> grd)</span>
-<span id="cb61-38"><a href="#cb61-38" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb61-39"><a href="#cb61-39" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb61-40"><a href="#cb61-40" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb61-41"><a href="#cb61-41" aria-hidden="true" tabindex="-1"></a><span class="fu">## Deterministic Approaches</span></span>
-<span id="cb61-42"><a href="#cb61-42" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb61-43"><a href="#cb61-43" aria-hidden="true" tabindex="-1"></a><span class="fu">### Inverse Distance Weighting</span></span>
-<span id="cb61-44"><a href="#cb61-44" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb61-45"><a href="#cb61-45" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb61-48"><a href="#cb61-48" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb61-49"><a href="#cb61-49" aria-hidden="true" tabindex="-1"></a>idw_formula_lin <span class="ot">&lt;-</span> <span class="fu">gstat</span>(<span class="at">id =</span> <span class="st">"zinc"</span>, <span class="at">formula =</span> zinc<span class="sc">~</span><span class="dv">1</span>, <span class="at">locations =</span> meuse_sf, </span>
-<span id="cb61-50"><a href="#cb61-50" aria-hidden="true" tabindex="-1"></a>            <span class="at">nmax=</span><span class="dv">10</span>, <span class="at">set=</span><span class="fu">list</span>(<span class="at">idp =</span> <span class="dv">1</span>))</span>
-<span id="cb61-51"><a href="#cb61-51" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb61-52"><a href="#cb61-52" aria-hidden="true" tabindex="-1"></a>idw_interp <span class="ot">&lt;-</span> <span class="fu">predict</span>(idw_formula_lin, grid_sf)</span>
-<span id="cb61-53"><a href="#cb61-53" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb61-54"><a href="#cb61-54" aria-hidden="true" tabindex="-1"></a>idw_interp<span class="sc">$</span>x <span class="ot">&lt;-</span> <span class="fu">st_coordinates</span>(idw_interp)[,<span class="dv">1</span>]</span>
-<span id="cb61-55"><a href="#cb61-55" aria-hidden="true" tabindex="-1"></a>idw_interp<span class="sc">$</span>y <span class="ot">&lt;-</span> <span class="fu">st_coordinates</span>(idw_interp)[,<span class="dv">2</span>]</span>
-<span id="cb61-56"><a href="#cb61-56" aria-hidden="true" tabindex="-1"></a>idw_interp<span class="sc">$</span>pred <span class="ot">&lt;-</span> idw_interp<span class="sc">$</span>var1.pred</span>
-<span id="cb61-57"><a href="#cb61-57" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb61-58"><a href="#cb61-58" aria-hidden="true" tabindex="-1"></a>pred <span class="ot">&lt;-</span> terra<span class="sc">::</span><span class="fu">rasterize</span>(idw_interp, grd, <span class="at">field =</span> <span class="st">"zinc.pred"</span>, <span class="at">fun =</span> <span class="st">"mean"</span>)</span>
-<span id="cb61-59"><a href="#cb61-59" aria-hidden="true" tabindex="-1"></a>idw_lin_mask <span class="ot">&lt;-</span> <span class="fu">crop</span>(pred, r, <span class="at">mask=</span><span class="cn">TRUE</span>)</span>
-<span id="cb61-60"><a href="#cb61-60" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb61-61"><a href="#cb61-61" aria-hidden="true" tabindex="-1"></a>idw_formula_quad <span class="ot">&lt;-</span> <span class="fu">gstat</span>(<span class="at">id =</span> <span class="st">"zinc"</span>, <span class="at">formula =</span> zinc<span class="sc">~</span><span class="dv">1</span>, <span class="at">locations =</span> meuse_sf, </span>
-<span id="cb61-62"><a href="#cb61-62" aria-hidden="true" tabindex="-1"></a>            <span class="at">nmax=</span><span class="dv">10</span>, <span class="at">set=</span><span class="fu">list</span>(<span class="at">idp =</span> <span class="dv">2</span>))</span>
-<span id="cb61-63"><a href="#cb61-63" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb61-64"><a href="#cb61-64" aria-hidden="true" tabindex="-1"></a>idw_interp <span class="ot">&lt;-</span> <span class="fu">predict</span>(idw_formula_quad, grid_sf)</span>
-<span id="cb61-65"><a href="#cb61-65" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb61-66"><a href="#cb61-66" aria-hidden="true" tabindex="-1"></a>idw_interp<span class="sc">$</span>x <span class="ot">&lt;-</span> <span class="fu">st_coordinates</span>(idw_interp)[,<span class="dv">1</span>]</span>
-<span id="cb61-67"><a href="#cb61-67" aria-hidden="true" tabindex="-1"></a>idw_interp<span class="sc">$</span>y <span class="ot">&lt;-</span> <span class="fu">st_coordinates</span>(idw_interp)[,<span class="dv">2</span>]</span>
-<span id="cb61-68"><a href="#cb61-68" aria-hidden="true" tabindex="-1"></a>idw_interp<span class="sc">$</span>pred <span class="ot">&lt;-</span> idw_interp<span class="sc">$</span>var1.pred</span>
-<span id="cb61-69"><a href="#cb61-69" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb61-70"><a href="#cb61-70" aria-hidden="true" tabindex="-1"></a>pred <span class="ot">&lt;-</span> terra<span class="sc">::</span><span class="fu">rasterize</span>(idw_interp, grd, <span class="at">field =</span> <span class="st">"zinc.pred"</span>, <span class="at">fun =</span> <span class="st">"mean"</span>)</span>
-<span id="cb61-71"><a href="#cb61-71" aria-hidden="true" tabindex="-1"></a>idw_quad_mask <span class="ot">&lt;-</span> <span class="fu">crop</span>(pred, r, <span class="at">mask=</span><span class="cn">TRUE</span>)</span>
-<span id="cb61-72"><a href="#cb61-72" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb61-73"><a href="#cb61-73" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb61-74"><a href="#cb61-74" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb61-75"><a href="#cb61-75" aria-hidden="true" tabindex="-1"></a><span class="in">```{r pltcmpidw}</span></span>
-<span id="cb61-76"><a href="#cb61-76" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-width: 13</span></span>
-<span id="cb61-77"><a href="#cb61-77" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb61-78"><a href="#cb61-78" aria-hidden="true" tabindex="-1"></a>meas_val <span class="ot">&lt;-</span> <span class="fu">ggplot</span>() <span class="sc">+</span></span>
-<span id="cb61-79"><a href="#cb61-79" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_sf</span>(<span class="at">data =</span> meuse_sf,</span>
-<span id="cb61-80"><a href="#cb61-80" aria-hidden="true" tabindex="-1"></a>          <span class="at">mapping =</span> <span class="fu">aes</span>(<span class="at">col =</span> zinc)) <span class="sc">+</span></span>
-<span id="cb61-81"><a href="#cb61-81" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_color_viridis_c</span>() <span class="sc">+</span></span>
-<span id="cb61-82"><a href="#cb61-82" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">"Measured Zinc Concentration"</span>) <span class="sc">+</span></span>
-<span id="cb61-83"><a href="#cb61-83" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>()</span>
-<span id="cb61-84"><a href="#cb61-84" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb61-85"><a href="#cb61-85" aria-hidden="true" tabindex="-1"></a>idw_lin <span class="ot">&lt;-</span> <span class="fu">ggplot</span>() <span class="sc">+</span></span>
-<span id="cb61-86"><a href="#cb61-86" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_spatraster</span>(<span class="at">data =</span> idw_lin_mask, </span>
-<span id="cb61-87"><a href="#cb61-87" aria-hidden="true" tabindex="-1"></a>                  <span class="at">mapping =</span> <span class="fu">aes</span>(<span class="at">fill =</span> mean)) <span class="sc">+</span></span>
-<span id="cb61-88"><a href="#cb61-88" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_viridis_c</span>(<span class="at">na.value =</span> <span class="st">"transparent"</span>) <span class="sc">+</span></span>
-<span id="cb61-89"><a href="#cb61-89" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">"Interp Zinc Concentration (IDW, power = 1)"</span>) <span class="sc">+</span></span>
-<span id="cb61-90"><a href="#cb61-90" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>()</span>
-<span id="cb61-91"><a href="#cb61-91" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb61-92"><a href="#cb61-92" aria-hidden="true" tabindex="-1"></a>idw_quad <span class="ot">&lt;-</span> <span class="fu">ggplot</span>() <span class="sc">+</span></span>
-<span id="cb61-93"><a href="#cb61-93" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_spatraster</span>(<span class="at">data =</span> idw_quad_mask, </span>
-<span id="cb61-94"><a href="#cb61-94" aria-hidden="true" tabindex="-1"></a>                  <span class="at">mapping =</span> <span class="fu">aes</span>(<span class="at">fill =</span> mean)) <span class="sc">+</span></span>
-<span id="cb61-95"><a href="#cb61-95" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_viridis_c</span>(<span class="at">na.value =</span> <span class="st">"transparent"</span>) <span class="sc">+</span></span>
-<span id="cb61-96"><a href="#cb61-96" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">"Interp Zinc Concentration (IDW, power = 2)"</span>) <span class="sc">+</span></span>
-<span id="cb61-97"><a href="#cb61-97" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>()</span>
-<span id="cb61-98"><a href="#cb61-98" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb61-99"><a href="#cb61-99" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb61-100"><a href="#cb61-100" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb61-101"><a href="#cb61-101" aria-hidden="true" tabindex="-1"></a>meas_val <span class="sc">+</span> idw_lin <span class="sc">+</span> idw_quad</span>
-<span id="cb61-102"><a href="#cb61-102" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb61-103"><a href="#cb61-103" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb61-104"><a href="#cb61-104" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb61-105"><a href="#cb61-105" aria-hidden="true" tabindex="-1"></a><span class="fu">### Thin-Plate Splines</span></span>
-<span id="cb61-106"><a href="#cb61-106" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb61-107"><a href="#cb61-107" aria-hidden="true" tabindex="-1"></a><span class="in">```{r tpsex}</span></span>
-<span id="cb61-108"><a href="#cb61-108" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb61-109"><a href="#cb61-109" aria-hidden="true" tabindex="-1"></a>coords <span class="ot">&lt;-</span> <span class="fu">st_coordinates</span>(meuse_sf)</span>
-<span id="cb61-110"><a href="#cb61-110" aria-hidden="true" tabindex="-1"></a>z <span class="ot">&lt;-</span> meuse_sf<span class="sc">$</span>zinc</span>
-<span id="cb61-111"><a href="#cb61-111" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb61-112"><a href="#cb61-112" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb61-113"><a href="#cb61-113" aria-hidden="true" tabindex="-1"></a>tps_model_cv <span class="ot">&lt;-</span> fields<span class="sc">::</span><span class="fu">Tps</span>(coords, z)</span>
-<span id="cb61-114"><a href="#cb61-114" aria-hidden="true" tabindex="-1"></a>tps_model_cv</span>
-<span id="cb61-115"><a href="#cb61-115" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb61-116"><a href="#cb61-116" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb61-117"><a href="#cb61-117" aria-hidden="true" tabindex="-1"></a><span class="in">```{r rsttps}</span></span>
-<span id="cb61-118"><a href="#cb61-118" aria-hidden="true" tabindex="-1"></a>tps_cv_rast <span class="ot">&lt;-</span> <span class="fu">interpolate</span>(grd, tps_model_cv)</span>
-<span id="cb61-119"><a href="#cb61-119" aria-hidden="true" tabindex="-1"></a>tps_cv_crop <span class="ot">&lt;-</span> <span class="fu">crop</span>(tps_cv_rast, r, <span class="at">mask=</span><span class="cn">TRUE</span>)</span>
-<span id="cb61-120"><a href="#cb61-120" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb61-121"><a href="#cb61-121" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb61-122"><a href="#cb61-122" aria-hidden="true" tabindex="-1"></a><span class="in">```{r tpsvary}</span></span>
-<span id="cb61-123"><a href="#cb61-123" aria-hidden="true" tabindex="-1"></a>tps_model_03 <span class="ot">&lt;-</span> fields<span class="sc">::</span><span class="fu">Tps</span>(coords, z, <span class="at">lambda =</span> tps_model_cv<span class="sc">$</span>lambda<span class="sc">*</span><span class="dv">2</span>)</span>
-<span id="cb61-124"><a href="#cb61-124" aria-hidden="true" tabindex="-1"></a>tps_03_rast <span class="ot">&lt;-</span> <span class="fu">interpolate</span>(grd, tps_model_03)</span>
-<span id="cb61-125"><a href="#cb61-125" aria-hidden="true" tabindex="-1"></a>tps_03_crop <span class="ot">&lt;-</span> <span class="fu">crop</span>(tps_03_rast, r, <span class="at">mask=</span><span class="cn">TRUE</span>)</span>
-<span id="cb61-126"><a href="#cb61-126" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb61-127"><a href="#cb61-127" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb61-128"><a href="#cb61-128" aria-hidden="true" tabindex="-1"></a>tps_model_00001 <span class="ot">&lt;-</span> fields<span class="sc">::</span><span class="fu">Tps</span>(coords, z, <span class="at">lambda =</span> tps_model_cv<span class="sc">$</span>lambda<span class="sc">/</span><span class="dv">2</span>)</span>
-<span id="cb61-129"><a href="#cb61-129" aria-hidden="true" tabindex="-1"></a>tps_00001_rast <span class="ot">&lt;-</span> <span class="fu">interpolate</span>(grd, tps_model_00001)</span>
-<span id="cb61-130"><a href="#cb61-130" aria-hidden="true" tabindex="-1"></a>tps_00001_crop <span class="ot">&lt;-</span> <span class="fu">crop</span>(tps_00001_rast, r, <span class="at">mask=</span><span class="cn">TRUE</span>)</span>
-<span id="cb61-131"><a href="#cb61-131" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb61-132"><a href="#cb61-132" aria-hidden="true" tabindex="-1"></a>tps_model_cv_reml <span class="ot">&lt;-</span> fields<span class="sc">::</span><span class="fu">Tps</span>(coords, z, <span class="at">method =</span> <span class="st">"REML"</span>)</span>
-<span id="cb61-133"><a href="#cb61-133" aria-hidden="true" tabindex="-1"></a>tps_cvreml_rast <span class="ot">&lt;-</span> <span class="fu">interpolate</span>(grd, tps_model_cv_reml)</span>
-<span id="cb61-134"><a href="#cb61-134" aria-hidden="true" tabindex="-1"></a>tps_cvreml_crop <span class="ot">&lt;-</span> <span class="fu">crop</span>(tps_cvreml_rast, r, <span class="at">mask=</span><span class="cn">TRUE</span>)</span>
-<span id="cb61-135"><a href="#cb61-135" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb61-136"><a href="#cb61-136" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb61-137"><a href="#cb61-137" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb61-138"><a href="#cb61-138" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb61-139"><a href="#cb61-139" aria-hidden="true" tabindex="-1"></a><span class="in">```{r plttps}</span></span>
-<span id="cb61-140"><a href="#cb61-140" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-width: 13</span></span>
-<span id="cb61-141"><a href="#cb61-141" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb61-142"><a href="#cb61-142" aria-hidden="true" tabindex="-1"></a>tps_def <span class="ot">&lt;-</span> <span class="fu">ggplot</span>() <span class="sc">+</span></span>
-<span id="cb61-143"><a href="#cb61-143" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_spatraster</span>(<span class="at">data =</span> tps_cv_crop, </span>
-<span id="cb61-144"><a href="#cb61-144" aria-hidden="true" tabindex="-1"></a>                  <span class="at">mapping =</span> <span class="fu">aes</span>(<span class="at">fill =</span> lyr<span class="fl">.1</span>)) <span class="sc">+</span></span>
-<span id="cb61-145"><a href="#cb61-145" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_viridis_c</span>(<span class="at">na.value =</span> <span class="st">"transparent"</span>) <span class="sc">+</span></span>
-<span id="cb61-146"><a href="#cb61-146" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">"Interp Zinc Concentration (TPS, lambda = default)"</span>) <span class="sc">+</span></span>
-<span id="cb61-147"><a href="#cb61-147" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>()</span>
-<span id="cb61-148"><a href="#cb61-148" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb61-149"><a href="#cb61-149" aria-hidden="true" tabindex="-1"></a>tps_double <span class="ot">&lt;-</span> <span class="fu">ggplot</span>() <span class="sc">+</span></span>
-<span id="cb61-150"><a href="#cb61-150" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_spatraster</span>(<span class="at">data =</span> tps_03_crop, </span>
-<span id="cb61-151"><a href="#cb61-151" aria-hidden="true" tabindex="-1"></a>                  <span class="at">mapping =</span> <span class="fu">aes</span>(<span class="at">fill =</span> lyr<span class="fl">.1</span>)) <span class="sc">+</span></span>
-<span id="cb61-152"><a href="#cb61-152" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_viridis_c</span>(<span class="at">na.value =</span> <span class="st">"transparent"</span>) <span class="sc">+</span></span>
-<span id="cb61-153"><a href="#cb61-153" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">"Interp Zinc Concentration (TPS, lambda = 0.0004)"</span>) <span class="sc">+</span></span>
-<span id="cb61-154"><a href="#cb61-154" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>()</span>
-<span id="cb61-155"><a href="#cb61-155" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb61-156"><a href="#cb61-156" aria-hidden="true" tabindex="-1"></a>tps_half <span class="ot">&lt;-</span> <span class="fu">ggplot</span>() <span class="sc">+</span></span>
-<span id="cb61-157"><a href="#cb61-157" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_spatraster</span>(<span class="at">data =</span> tps_00001_crop, </span>
-<span id="cb61-158"><a href="#cb61-158" aria-hidden="true" tabindex="-1"></a>                  <span class="at">mapping =</span> <span class="fu">aes</span>(<span class="at">fill =</span> lyr<span class="fl">.1</span>)) <span class="sc">+</span></span>
-<span id="cb61-159"><a href="#cb61-159" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_viridis_c</span>(<span class="at">na.value =</span> <span class="st">"transparent"</span>) <span class="sc">+</span></span>
-<span id="cb61-160"><a href="#cb61-160" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">"Interp Zinc Concentration (TPS, lambda = 0.000009)"</span>) <span class="sc">+</span></span>
-<span id="cb61-161"><a href="#cb61-161" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>()</span>
-<span id="cb61-162"><a href="#cb61-162" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb61-163"><a href="#cb61-163" aria-hidden="true" tabindex="-1"></a>tps_reml <span class="ot">&lt;-</span> <span class="fu">ggplot</span>() <span class="sc">+</span></span>
-<span id="cb61-164"><a href="#cb61-164" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_spatraster</span>(<span class="at">data =</span> tps_cvreml_crop, </span>
-<span id="cb61-165"><a href="#cb61-165" aria-hidden="true" tabindex="-1"></a>                  <span class="at">mapping =</span> <span class="fu">aes</span>(<span class="at">fill =</span> lyr<span class="fl">.1</span>)) <span class="sc">+</span></span>
-<span id="cb61-166"><a href="#cb61-166" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_viridis_c</span>(<span class="at">na.value =</span> <span class="st">"transparent"</span>) <span class="sc">+</span></span>
-<span id="cb61-167"><a href="#cb61-167" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">"Interp Zinc Concentration (TPS, lambda = REML)"</span>) <span class="sc">+</span></span>
-<span id="cb61-168"><a href="#cb61-168" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>()</span>
-<span id="cb61-169"><a href="#cb61-169" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb61-170"><a href="#cb61-170" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb61-171"><a href="#cb61-171" aria-hidden="true" tabindex="-1"></a>(tps_def <span class="sc">+</span> tps_double)<span class="sc">/</span>(tps_half <span class="sc">+</span> tps_reml)</span>
-<span id="cb61-172"><a href="#cb61-172" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb61-173"><a href="#cb61-173" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb61-174"><a href="#cb61-174" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb61-175"><a href="#cb61-175" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb61-176"><a href="#cb61-176" aria-hidden="true" tabindex="-1"></a><span class="fu">## Kriging</span></span>
-<span id="cb61-177"><a href="#cb61-177" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb61-178"><a href="#cb61-178" aria-hidden="true" tabindex="-1"></a><span class="fu">### Variograms</span></span>
-<span id="cb61-179"><a href="#cb61-179" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb61-182"><a href="#cb61-182" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb61-183"><a href="#cb61-183" aria-hidden="true" tabindex="-1"></a>zinc_vc <span class="ot">&lt;-</span> <span class="fu">variogram</span>(<span class="fu">log</span>(zinc) <span class="sc">~</span> <span class="dv">1</span>, meuse_sf, <span class="at">cloud =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb61-184"><a href="#cb61-184" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(zinc_vc)</span>
-<span id="cb61-185"><a href="#cb61-185" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb61-188"><a href="#cb61-188" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb61-189"><a href="#cb61-189" aria-hidden="true" tabindex="-1"></a>sample_vgm <span class="ot">&lt;-</span> <span class="fu">variogram</span>(<span class="fu">log</span>(zinc) <span class="sc">~</span> <span class="dv">1</span>, <span class="at">data =</span> meuse_sf)</span>
-<span id="cb61-190"><a href="#cb61-190" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(sample_vgm)</span>
-<span id="cb61-191"><a href="#cb61-191" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb61-192"><a href="#cb61-192" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb61-193"><a href="#cb61-193" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb61-196"><a href="#cb61-196" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb61-197"><a href="#cb61-197" aria-hidden="true" tabindex="-1"></a><span class="fu">show.vgms</span>(<span class="at">par.strip.text =</span> <span class="fu">list</span>(<span class="at">cex =</span> <span class="fl">0.75</span>))</span>
-<span id="cb61-198"><a href="#cb61-198" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb61-199"><a href="#cb61-199" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb61-200"><a href="#cb61-200" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb61-203"><a href="#cb61-203" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb61-204"><a href="#cb61-204" aria-hidden="true" tabindex="-1"></a>sph_vgm_r900 <span class="ot">&lt;-</span> <span class="fu">vgm</span>(<span class="at">psill =</span> <span class="fl">0.5</span>, <span class="at">model =</span> <span class="st">"Sph"</span>,</span>
-<span id="cb61-205"><a href="#cb61-205" aria-hidden="true" tabindex="-1"></a>                <span class="at">range =</span> <span class="dv">900</span>, <span class="at">nugget =</span> <span class="fl">0.1</span>)</span>
-<span id="cb61-206"><a href="#cb61-206" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(sample_vgm, sph_vgm_r900, <span class="at">cutoff =</span> <span class="dv">1000</span>, <span class="at">cex =</span> <span class="fl">1.5</span>)</span>
-<span id="cb61-207"><a href="#cb61-207" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb61-208"><a href="#cb61-208" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb61-211"><a href="#cb61-211" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb61-212"><a href="#cb61-212" aria-hidden="true" tabindex="-1"></a>sph_vgm_Mat <span class="ot">&lt;-</span> <span class="fu">vgm</span>(<span class="at">psill =</span> <span class="fl">0.6</span>, <span class="at">model =</span> <span class="st">"Mat"</span>,</span>
-<span id="cb61-213"><a href="#cb61-213" aria-hidden="true" tabindex="-1"></a>                <span class="at">range =</span> <span class="dv">1100</span>, <span class="at">nugget =</span> <span class="fl">0.1</span>)</span>
-<span id="cb61-214"><a href="#cb61-214" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(sample_vgm, sph_vgm_Mat, <span class="at">cutoff =</span> <span class="dv">1000</span>, <span class="at">cex =</span> <span class="fl">1.5</span>)</span>
-<span id="cb61-215"><a href="#cb61-215" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb61-216"><a href="#cb61-216" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb61-217"><a href="#cb61-217" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb61-220"><a href="#cb61-220" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb61-221"><a href="#cb61-221" aria-hidden="true" tabindex="-1"></a>fit_vgm <span class="ot">&lt;-</span> <span class="fu">fit.variogram</span>(<span class="at">object =</span> sample_vgm,</span>
-<span id="cb61-222"><a href="#cb61-222" aria-hidden="true" tabindex="-1"></a>                    <span class="at">model =</span> <span class="fu">vgm</span>(<span class="at">psill =</span> <span class="fl">0.5</span>, <span class="at">model =</span> <span class="st">"Sph"</span>,</span>
-<span id="cb61-223"><a href="#cb61-223" aria-hidden="true" tabindex="-1"></a>                                <span class="at">range =</span> <span class="dv">900</span>, <span class="at">nugget =</span> <span class="fl">0.1</span>))</span>
-<span id="cb61-224"><a href="#cb61-224" aria-hidden="true" tabindex="-1"></a>fit_vgm</span>
-<span id="cb61-225"><a href="#cb61-225" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(sample_vgm, fit_vgm, <span class="at">cex =</span> <span class="fl">1.5</span>)</span>
-<span id="cb61-226"><a href="#cb61-226" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb61-227"><a href="#cb61-227" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb61-228"><a href="#cb61-228" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb61-229"><a href="#cb61-229" aria-hidden="true" tabindex="-1"></a><span class="fu">### Kriging</span></span>
-<span id="cb61-230"><a href="#cb61-230" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb61-233"><a href="#cb61-233" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb61-234"><a href="#cb61-234" aria-hidden="true" tabindex="-1"></a>ok_krig_formula <span class="ot">&lt;-</span> <span class="fu">gstat</span>(<span class="at">id =</span> <span class="st">"log.zinc"</span>,</span>
-<span id="cb61-235"><a href="#cb61-235" aria-hidden="true" tabindex="-1"></a>                      <span class="at">formula =</span> <span class="fu">log</span>(zinc) <span class="sc">~</span> <span class="dv">1</span>,</span>
-<span id="cb61-236"><a href="#cb61-236" aria-hidden="true" tabindex="-1"></a>                      <span class="at">data =</span> meuse_sf,</span>
-<span id="cb61-237"><a href="#cb61-237" aria-hidden="true" tabindex="-1"></a>                      <span class="at">model =</span> fit_vgm)</span>
-<span id="cb61-238"><a href="#cb61-238" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb61-239"><a href="#cb61-239" aria-hidden="true" tabindex="-1"></a>krig_pred <span class="ot">&lt;-</span> <span class="fu">predict</span>(ok_krig_formula, grid_sf)</span>
-<span id="cb61-240"><a href="#cb61-240" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb61-241"><a href="#cb61-241" aria-hidden="true" tabindex="-1"></a>pred_rast <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fu">rasterize</span>(<span class="fu">vect</span>(krig_pred), grd, <span class="at">field=</span><span class="st">"log.zinc.pred"</span>), <span class="fu">rasterize</span>(<span class="fu">vect</span>(krig_pred), grd, <span class="at">field=</span><span class="st">"log.zinc.var"</span>))</span>
-<span id="cb61-242"><a href="#cb61-242" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(pred_rast) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"pred"</span>, <span class="st">"var"</span>)</span>
-<span id="cb61-243"><a href="#cb61-243" aria-hidden="true" tabindex="-1"></a>pred_rast_mask <span class="ot">&lt;-</span> <span class="fu">crop</span>(pred_rast, r, <span class="at">mask=</span><span class="cn">TRUE</span>)</span>
-<span id="cb61-244"><a href="#cb61-244" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(pred_rast_mask)</span>
-<span id="cb61-245"><a href="#cb61-245" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb61-246"><a href="#cb61-246" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb61-247"><a href="#cb61-247" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb61-250"><a href="#cb61-250" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb61-251"><a href="#cb61-251" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(meuse.grid, <span class="at">package =</span> <span class="st">"sp"</span>)</span>
-<span id="cb61-252"><a href="#cb61-252" aria-hidden="true" tabindex="-1"></a>meuse_grid_sf <span class="ot">&lt;-</span> <span class="fu">st_as_sf</span>(meuse.grid, <span class="at">coords =</span> <span class="fu">c</span>(<span class="st">"x"</span>, <span class="st">"y"</span>), <span class="at">crs =</span> <span class="dv">28992</span>)</span>
-<span id="cb61-253"><a href="#cb61-253" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb61-254"><a href="#cb61-254" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb61-255"><a href="#cb61-255" aria-hidden="true" tabindex="-1"></a>univ_krig <span class="ot">&lt;-</span> <span class="fu">gstat</span>(<span class="at">id =</span> <span class="st">"log.zinc"</span>,</span>
-<span id="cb61-256"><a href="#cb61-256" aria-hidden="true" tabindex="-1"></a>  <span class="at">formula =</span> <span class="fu">log</span>(zinc) <span class="sc">~</span> soil,      </span>
-<span id="cb61-257"><a href="#cb61-257" aria-hidden="true" tabindex="-1"></a>  <span class="at">locations =</span> meuse_sf,              </span>
-<span id="cb61-258"><a href="#cb61-258" aria-hidden="true" tabindex="-1"></a>  <span class="at">model =</span> fit_vgm</span>
-<span id="cb61-259"><a href="#cb61-259" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb61-260"><a href="#cb61-260" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb61-261"><a href="#cb61-261" aria-hidden="true" tabindex="-1"></a>uk_pred <span class="ot">&lt;-</span> <span class="fu">predict</span>(univ_krig, meuse_grid_sf)</span>
-<span id="cb61-262"><a href="#cb61-262" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb61-263"><a href="#cb61-263" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb61-264"><a href="#cb61-264" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(uk_pred) <span class="sc">+</span></span>
-<span id="cb61-265"><a href="#cb61-265" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_sf</span>(<span class="fu">aes</span>(<span class="at">color =</span> log.zinc.pred)) <span class="sc">+</span></span>
-<span id="cb61-266"><a href="#cb61-266" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_color_viridis_c</span>() <span class="sc">+</span></span>
-<span id="cb61-267"><a href="#cb61-267" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
-<span id="cb61-268"><a href="#cb61-268" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Universal Kriging Prediction of Zinc"</span>,</span>
-<span id="cb61-269"><a href="#cb61-269" aria-hidden="true" tabindex="-1"></a>       <span class="at">color =</span> <span class="st">"Predicted Zn"</span>)</span>
-<span id="cb61-270"><a href="#cb61-270" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<div class="sourceCode" id="cb74" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb74-1"><a href="#cb74-1" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb74-2"><a href="#cb74-2" aria-hidden="true" tabindex="-1"></a><span class="an">title:</span><span class="co"> "Interpolation and Kriging"</span></span>
+<span id="cb74-3"><a href="#cb74-3" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb74-4"><a href="#cb74-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb74-5"><a href="#cb74-5" aria-hidden="true" tabindex="-1"></a><span class="fu">## Getting Started</span></span>
+<span id="cb74-6"><a href="#cb74-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb74-7"><a href="#cb74-7" aria-hidden="true" tabindex="-1"></a>We'll be using the <span class="in">`meuse.all`</span> data that ships with the <span class="in">`gstat`</span> package as it is one that shows up in many explanations of geostatistical interpolation. It has the added bonus of being a reasonably small dataset to allow us to practice a few things without having to wait an extremly long time for the models to run. In addition to the <span class="in">`gstat`</span> package, we're adding the <span class="in">`fields`</span> package which allows us to fit a variety of functional forms to spatial data. Beyond that, the rest of the packages should look familiar.</span>
+<span id="cb74-8"><a href="#cb74-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb74-11"><a href="#cb74-11" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb74-12"><a href="#cb74-12" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(gstat)</span>
+<span id="cb74-13"><a href="#cb74-13" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(sf)</span>
+<span id="cb74-14"><a href="#cb74-14" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(terra)</span>
+<span id="cb74-15"><a href="#cb74-15" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(fields)</span>
+<span id="cb74-16"><a href="#cb74-16" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb74-17"><a href="#cb74-17" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(patchwork)</span>
+<span id="cb74-18"><a href="#cb74-18" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyterra)</span>
+<span id="cb74-19"><a href="#cb74-19" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb74-20"><a href="#cb74-20" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(stringr)</span>
+<span id="cb74-21"><a href="#cb74-21" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb74-22"><a href="#cb74-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb74-23"><a href="#cb74-23" aria-hidden="true" tabindex="-1"></a><span class="fu">## Loading the Data</span></span>
+<span id="cb74-24"><a href="#cb74-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb74-25"><a href="#cb74-25" aria-hidden="true" tabindex="-1"></a>Because the data ships with a package, we can use the <span class="in">`data`</span> function to load it directly into our environment. Then we need to get it into an <span class="in">`sf`</span> object. We'll take a quick look at the CRS (with <span class="in">`st_crs`</span>) just to get a sense for what the units look like.</span>
+<span id="cb74-26"><a href="#cb74-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb74-27"><a href="#cb74-27" aria-hidden="true" tabindex="-1"></a><span class="in">```{r lddata}</span></span>
+<span id="cb74-28"><a href="#cb74-28" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(meuse.all)</span>
+<span id="cb74-29"><a href="#cb74-29" aria-hidden="true" tabindex="-1"></a>meuse_sf <span class="ot">&lt;-</span> <span class="fu">st_as_sf</span>(meuse.all, </span>
+<span id="cb74-30"><a href="#cb74-30" aria-hidden="true" tabindex="-1"></a>                     <span class="at">coords =</span> <span class="fu">c</span>(<span class="st">"x"</span>, <span class="st">"y"</span>), </span>
+<span id="cb74-31"><a href="#cb74-31" aria-hidden="true" tabindex="-1"></a>                     <span class="at">crs =</span> <span class="dv">28992</span>, </span>
+<span id="cb74-32"><a href="#cb74-32" aria-hidden="true" tabindex="-1"></a>                     <span class="at">agr =</span> <span class="st">"constant"</span>)</span>
+<span id="cb74-33"><a href="#cb74-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb74-34"><a href="#cb74-34" aria-hidden="true" tabindex="-1"></a><span class="fu">st_crs</span>(meuse_sf)</span>
+<span id="cb74-35"><a href="#cb74-35" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(meuse_sf)</span>
+<span id="cb74-36"><a href="#cb74-36" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb74-37"><a href="#cb74-37" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb74-38"><a href="#cb74-38" aria-hidden="true" tabindex="-1"></a>Now that you've gotten a chance to look at the data a bit, we'll set up our interpolation grid. Unfortunately, the various interpolation functions available have different expectations for what data types your using to generate the interpolation model and grid so we've got to make a few different versions of these objects. To do this, I use <span class="in">`st_bbox`</span> to get the bounding box for the data and convert that bbox into an <span class="in">`sf`</span> object. Then, I create the interpolation grid by creating a blank raster within the bbox. We specify the resolution implicitly by specifying the number of rows and columns inside our raster. Once we have the raster, we convert into both a <span class="in">`data.frame`</span> and an <span class="in">`sf`</span> object. Lastly we bring a raster of the <span class="in">`meuse`</span> dataset to provide a template fr cropping.</span>
+<span id="cb74-39"><a href="#cb74-39" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb74-42"><a href="#cb74-42" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb74-43"><a href="#cb74-43" aria-hidden="true" tabindex="-1"></a>box <span class="ot">&lt;-</span> <span class="fu">st_as_sfc</span>(<span class="fu">st_bbox</span>(meuse_sf))</span>
+<span id="cb74-44"><a href="#cb74-44" aria-hidden="true" tabindex="-1"></a>grd <span class="ot">&lt;-</span> <span class="fu">rast</span>(<span class="fu">vect</span>(box), <span class="at">ncol=</span> <span class="dv">1000</span>, <span class="at">nrow=</span><span class="dv">1000</span>)</span>
+<span id="cb74-45"><a href="#cb74-45" aria-hidden="true" tabindex="-1"></a>grid_pts <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(<span class="fu">crds</span>(grd, <span class="at">df =</span> <span class="cn">TRUE</span>)) <span class="sc">%&gt;%</span> <span class="fu">rename</span>(<span class="at">x =</span> x, <span class="at">y =</span> y)</span>
+<span id="cb74-46"><a href="#cb74-46" aria-hidden="true" tabindex="-1"></a>grid_sf <span class="ot">&lt;-</span> <span class="fu">st_as_sf</span>(grid_pts, <span class="at">coords =</span> <span class="fu">c</span>(<span class="st">"x"</span>, <span class="st">"y"</span>), <span class="at">crs =</span> <span class="fu">st_crs</span>(meuse_sf))</span>
+<span id="cb74-47"><a href="#cb74-47" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb74-48"><a href="#cb74-48" aria-hidden="true" tabindex="-1"></a>r <span class="ot">&lt;-</span><span class="fu">rast</span>(<span class="fu">system.file</span>(<span class="st">"ex/meuse.tif"</span>, <span class="at">package=</span><span class="st">"terra"</span>)) <span class="sc">|&gt;</span> </span>
+<span id="cb74-49"><a href="#cb74-49" aria-hidden="true" tabindex="-1"></a>  <span class="fu">project</span>(<span class="at">x=</span>_, <span class="at">y =</span> <span class="fu">crs</span>(<span class="st">"EPSG:28992"</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb74-50"><a href="#cb74-50" aria-hidden="true" tabindex="-1"></a>  <span class="fu">resample</span>(<span class="at">x=</span>_, <span class="at">y =</span> grd)</span>
+<span id="cb74-51"><a href="#cb74-51" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb74-52"><a href="#cb74-52" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb74-53"><a href="#cb74-53" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb74-54"><a href="#cb74-54" aria-hidden="true" tabindex="-1"></a><span class="fu">## Deterministic Approaches</span></span>
+<span id="cb74-55"><a href="#cb74-55" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb74-56"><a href="#cb74-56" aria-hidden="true" tabindex="-1"></a><span class="fu">### Inverse Distance Weighting</span></span>
+<span id="cb74-57"><a href="#cb74-57" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb74-58"><a href="#cb74-58" aria-hidden="true" tabindex="-1"></a>The <span class="in">`gstat`</span> function is similar to the <span class="in">`formula`</span> function in base <span class="in">`R`</span>, it's just a way of taking the various arguments and constructing the appropriate spatial call. We pass an <span class="in">`id`</span> parameter which <span class="in">`gstat`</span> will use to identify the values produced by anything that uses the <span class="in">`formula`</span> we construct. The <span class="in">`formula`</span> argument allows us to specify what we want to model and how. In this case, we are using IDW so we are saying that zinc values are a function of (<span class="in">`~`</span>) some unknown average. We pass a <span class="in">`locations`</span> argument to let <span class="in">`gstat`</span> know where the data and spatial locations are. The <span class="in">`nmax`</span> argument sets the number of points that will be used to calculate our unknown average. Finally, the <span class="in">`set`</span> argument accepts a variety of parameters that are specific to whichever form of model you are hoping to implement (you can find <span class="co">[</span><span class="ot">more information here at the original version of the `gstat` manual</span><span class="co">](https://www.gstat.org/gstat.pdf)</span>). </span>
+<span id="cb74-59"><a href="#cb74-59" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb74-62"><a href="#cb74-62" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb74-63"><a href="#cb74-63" aria-hidden="true" tabindex="-1"></a>idw_formula_lin <span class="ot">&lt;-</span> <span class="fu">gstat</span>(<span class="at">id =</span> <span class="st">"zinc"</span>, <span class="at">formula =</span> zinc<span class="sc">~</span><span class="dv">1</span>, <span class="at">locations =</span> meuse_sf, </span>
+<span id="cb74-64"><a href="#cb74-64" aria-hidden="true" tabindex="-1"></a>            <span class="at">nmax=</span><span class="dv">10</span>, <span class="at">set=</span><span class="fu">list</span>(<span class="at">idp =</span> <span class="dv">1</span>))</span>
+<span id="cb74-65"><a href="#cb74-65" aria-hidden="true" tabindex="-1"></a>idw_formula_lin</span>
+<span id="cb74-66"><a href="#cb74-66" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb74-67"><a href="#cb74-67" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb74-68"><a href="#cb74-68" aria-hidden="true" tabindex="-1"></a>Once we have the formula set up, we can use the <span class="in">`predict`</span> function to call the formula and predict values for all of the points in our grid. This outputs an <span class="in">`sf`</span> object with predictions (and variance, though that is <span class="in">`NA`</span> here because we're using IDW) for all of the points. We convert that object to a raster with <span class="in">`rasterize`</span> and mask it with our template raster (using <span class="in">`crop`</span> with <span class="in">`mask=TRUE`</span>) and combine our two rasters to plot them side by side.</span>
+<span id="cb74-69"><a href="#cb74-69" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb74-72"><a href="#cb74-72" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb74-73"><a href="#cb74-73" aria-hidden="true" tabindex="-1"></a>idw_interp <span class="ot">&lt;-</span> <span class="fu">predict</span>(idw_formula_lin, grid_sf)</span>
+<span id="cb74-74"><a href="#cb74-74" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(idw_interp)</span>
+<span id="cb74-75"><a href="#cb74-75" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb74-76"><a href="#cb74-76" aria-hidden="true" tabindex="-1"></a>pred <span class="ot">&lt;-</span> terra<span class="sc">::</span><span class="fu">rasterize</span>(idw_interp, grd, <span class="at">field =</span> <span class="st">"zinc.pred"</span>, <span class="at">fun =</span> <span class="st">"mean"</span>)</span>
+<span id="cb74-77"><a href="#cb74-77" aria-hidden="true" tabindex="-1"></a>idw_lin_mask <span class="ot">&lt;-</span> <span class="fu">crop</span>(pred, r, <span class="at">mask=</span><span class="cn">TRUE</span>)</span>
+<span id="cb74-78"><a href="#cb74-78" aria-hidden="true" tabindex="-1"></a>comb_rst <span class="ot">&lt;-</span> <span class="fu">c</span>(pred, idw_lin_mask)</span>
+<span id="cb74-79"><a href="#cb74-79" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(comb_rst)</span>
+<span id="cb74-80"><a href="#cb74-80" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb74-81"><a href="#cb74-81" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb74-82"><a href="#cb74-82" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb74-83"><a href="#cb74-83" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb74-84"><a href="#cb74-84" aria-hidden="true" tabindex="-1"></a>Now that we've got the basics of IDW syntax figured out, we might want to explore how changing the inverse-distance power (<span class="in">`idp`</span>) affects the resulting predictions of our dataset. To do that, I build a custom function that accepts the necessary arguments for each of the above steps. I finish with a call to <span class="in">`ggplot`</span> using <span class="in">`tidyterra`</span> because I want to use <span class="in">`patchwork`</span> to create a nice multipanel plot of the surfaces that result from the different <span class="in">`idp`</span> values. I <span class="in">`map`</span> through a series of values to create maps of different <span class="in">`idp`</span> values.</span>
+<span id="cb74-85"><a href="#cb74-85" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb74-88"><a href="#cb74-88" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb74-89"><a href="#cb74-89" aria-hidden="true" tabindex="-1"></a>idw_idp_explore <span class="ot">&lt;-</span> <span class="cf">function</span>(variable, nmx, pwr, loc_sf, grid_sf, grid_rst, templ_rst){</span>
+<span id="cb74-90"><a href="#cb74-90" aria-hidden="true" tabindex="-1"></a>  <span class="do">## Need to convert the character variable name into something recognizeable as an object</span></span>
+<span id="cb74-91"><a href="#cb74-91" aria-hidden="true" tabindex="-1"></a>  dv <span class="ot">&lt;-</span> <span class="fu">sym</span>(variable)</span>
+<span id="cb74-92"><a href="#cb74-92" aria-hidden="true" tabindex="-1"></a>  <span class="do">## Set up the idw formula to accept different arguments</span></span>
+<span id="cb74-93"><a href="#cb74-93" aria-hidden="true" tabindex="-1"></a>  idw_formula <span class="ot">&lt;-</span> <span class="fu">gstat</span>(<span class="at">id =</span> variable, <span class="at">formula =</span> <span class="fu">eval</span>(dv)<span class="sc">~</span><span class="dv">1</span>, <span class="at">locations =</span> loc_sf, </span>
+<span id="cb74-94"><a href="#cb74-94" aria-hidden="true" tabindex="-1"></a>            <span class="at">nmax=</span>nmx, <span class="at">set=</span><span class="fu">list</span>(<span class="at">idp =</span> pwr))</span>
+<span id="cb74-95"><a href="#cb74-95" aria-hidden="true" tabindex="-1"></a>  <span class="do">## Generate spatial predictions as sf object</span></span>
+<span id="cb74-96"><a href="#cb74-96" aria-hidden="true" tabindex="-1"></a>  pred_df <span class="ot">&lt;-</span> <span class="fu">predict</span>(idw_formula, grid_sf)</span>
+<span id="cb74-97"><a href="#cb74-97" aria-hidden="true" tabindex="-1"></a>  <span class="do">## Identify the column with the prediction</span></span>
+<span id="cb74-98"><a href="#cb74-98" aria-hidden="true" tabindex="-1"></a>  fld <span class="ot">&lt;-</span> <span class="fu">str_subset</span>(<span class="fu">colnames</span>(pred_df),<span class="at">pattern =</span> <span class="st">"pred"</span>)</span>
+<span id="cb74-99"><a href="#cb74-99" aria-hidden="true" tabindex="-1"></a>  <span class="do">## Make and mask the raster</span></span>
+<span id="cb74-100"><a href="#cb74-100" aria-hidden="true" tabindex="-1"></a>  pred_rst <span class="ot">&lt;-</span> terra<span class="sc">::</span><span class="fu">rasterize</span>(pred_df, grid_rst, <span class="at">field =</span> fld, <span class="at">fun =</span> <span class="st">"mean"</span>)</span>
+<span id="cb74-101"><a href="#cb74-101" aria-hidden="true" tabindex="-1"></a>  msk_rst <span class="ot">&lt;-</span> terra<span class="sc">::</span><span class="fu">crop</span>(pred_rst, templ_rst, <span class="at">mask =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb74-102"><a href="#cb74-102" aria-hidden="true" tabindex="-1"></a>  <span class="do">## Make a plot</span></span>
+<span id="cb74-103"><a href="#cb74-103" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>() <span class="sc">+</span></span>
+<span id="cb74-104"><a href="#cb74-104" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_spatraster</span>(<span class="at">data =</span> msk_rst, </span>
+<span id="cb74-105"><a href="#cb74-105" aria-hidden="true" tabindex="-1"></a>                  <span class="at">mapping =</span> <span class="fu">aes</span>(<span class="at">fill =</span> mean)) <span class="sc">+</span></span>
+<span id="cb74-106"><a href="#cb74-106" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_viridis_c</span>(<span class="at">na.value =</span> <span class="st">"transparent"</span>) <span class="sc">+</span></span>
+<span id="cb74-107"><a href="#cb74-107" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="fu">paste0</span>(<span class="st">"Interp Zinc Concentration (IDW, power = "</span>, pwr, <span class="st">")"</span>)) <span class="sc">+</span></span>
+<span id="cb74-108"><a href="#cb74-108" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>()</span>
+<span id="cb74-109"><a href="#cb74-109" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb74-110"><a href="#cb74-110" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb74-111"><a href="#cb74-111" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb74-112"><a href="#cb74-112" aria-hidden="true" tabindex="-1"></a>idp_plots <span class="ot">&lt;-</span> <span class="fu">map</span>(<span class="fu">c</span>(<span class="fl">0.5</span>, <span class="dv">2</span>, <span class="dv">4</span>, <span class="dv">8</span>), </span>
+<span id="cb74-113"><a href="#cb74-113" aria-hidden="true" tabindex="-1"></a>                 \(x) <span class="fu">idw_idp_explore</span>(<span class="at">variable =</span> <span class="st">"zinc"</span>, <span class="at">nmx =</span> <span class="dv">15</span>, </span>
+<span id="cb74-114"><a href="#cb74-114" aria-hidden="true" tabindex="-1"></a>                                      <span class="at">pwr =</span> x, <span class="at">loc_sf =</span> meuse_sf, </span>
+<span id="cb74-115"><a href="#cb74-115" aria-hidden="true" tabindex="-1"></a>                                      <span class="at">grid_sf =</span> grid_sf, <span class="at">grid_rst =</span> grd,</span>
+<span id="cb74-116"><a href="#cb74-116" aria-hidden="true" tabindex="-1"></a>                                      <span class="at">templ_rst =</span> r))</span>
+<span id="cb74-117"><a href="#cb74-117" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb74-118"><a href="#cb74-118" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb74-119"><a href="#cb74-119" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb74-120"><a href="#cb74-120" aria-hidden="true" tabindex="-1"></a>Then, I use patchwork to compose the resulting plots by accessing each of the plots in our <span class="in">`idp_plots`</span> list.</span>
+<span id="cb74-121"><a href="#cb74-121" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb74-122"><a href="#cb74-122" aria-hidden="true" tabindex="-1"></a><span class="in">```{r pltcmpidw}</span></span>
+<span id="cb74-123"><a href="#cb74-123" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-width: 13</span></span>
+<span id="cb74-124"><a href="#cb74-124" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb74-125"><a href="#cb74-125" aria-hidden="true" tabindex="-1"></a>(idp_plots[[<span class="dv">1</span>]] <span class="sc">+</span> idp_plots[[<span class="dv">2</span>]])<span class="sc">/</span>(idp_plots[[<span class="dv">3</span>]] <span class="sc">+</span> idp_plots[[<span class="dv">4</span>]])</span>
+<span id="cb74-126"><a href="#cb74-126" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb74-127"><a href="#cb74-127" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb74-128"><a href="#cb74-128" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb74-129"><a href="#cb74-129" aria-hidden="true" tabindex="-1"></a><span class="fu">### Thin Plate Splines</span></span>
+<span id="cb74-130"><a href="#cb74-130" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb74-131"><a href="#cb74-131" aria-hidden="true" tabindex="-1"></a>Thin plate splines (TPS) fit a smooth surface through scattered data in 2 (or more) dimensions by attempting to minimize the Residual Sum of Squares. The goal is to fit the data well while minimizing the total "bending energy" (i.e., surface roughness) of the surface. The $\lambda$ parameter controls the smoothness such that $\lambda=0$ produces an exact interpolation where the surface fits each data point exactly. Higher values of $\lambda$ increase the smoothness of the surface, but potentially provide a poor fit to the existing data.</span>
+<span id="cb74-132"><a href="#cb74-132" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb74-133"><a href="#cb74-133" aria-hidden="true" tabindex="-1"></a>The <span class="in">`fields`</span> package implements TPS for spatial data and works direcly with <span class="in">`terra`</span>. However, because of this, we have to convert our data into a format that will work with <span class="in">`terra`</span>. In this case, that means converting our spatial coordinates to a matrix (using <span class="in">`st_coordinates`</span>) and our variable of interest into a vector. Once we've done that, we can call <span class="in">`fields::Tps`</span>. </span>
+<span id="cb74-134"><a href="#cb74-134" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb74-135"><a href="#cb74-135" aria-hidden="true" tabindex="-1"></a><span class="in">```{r tpsex}</span></span>
+<span id="cb74-136"><a href="#cb74-136" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb74-137"><a href="#cb74-137" aria-hidden="true" tabindex="-1"></a>coords <span class="ot">&lt;-</span> <span class="fu">st_coordinates</span>(meuse_sf)</span>
+<span id="cb74-138"><a href="#cb74-138" aria-hidden="true" tabindex="-1"></a>z <span class="ot">&lt;-</span> meuse_sf<span class="sc">$</span>zinc</span>
+<span id="cb74-139"><a href="#cb74-139" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb74-140"><a href="#cb74-140" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb74-141"><a href="#cb74-141" aria-hidden="true" tabindex="-1"></a>tps_model_cv <span class="ot">&lt;-</span> fields<span class="sc">::</span><span class="fu">Tps</span>(coords, z)</span>
+<span id="cb74-142"><a href="#cb74-142" aria-hidden="true" tabindex="-1"></a>tps_model_cv</span>
+<span id="cb74-143"><a href="#cb74-143" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb74-144"><a href="#cb74-144" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb74-145"><a href="#cb74-145" aria-hidden="true" tabindex="-1"></a>By default, <span class="in">`fields::Tps`</span> estimates $\lambda$ using a generalized cross-validation approach in order to balance the fit to the data with the degrees of freedom (number of knots) used by the spline. You can alter this approach by changing the <span class="in">`method`</span> argument (see <span class="in">`?Tps`</span> for the details). The nice part about using <span class="in">`fields::Tps`</span> is that once the model has been fit, it can be used to make predictions very quickly even for large data. We do that using the <span class="in">`terra::interpolate`</span> function and then mask our predictions again.</span>
+<span id="cb74-146"><a href="#cb74-146" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb74-147"><a href="#cb74-147" aria-hidden="true" tabindex="-1"></a><span class="in">```{r rsttps}</span></span>
+<span id="cb74-148"><a href="#cb74-148" aria-hidden="true" tabindex="-1"></a>tps_cv_rast <span class="ot">&lt;-</span> <span class="fu">interpolate</span>(grd, tps_model_cv)</span>
+<span id="cb74-149"><a href="#cb74-149" aria-hidden="true" tabindex="-1"></a>tps_cv_crop <span class="ot">&lt;-</span> <span class="fu">crop</span>(tps_cv_rast, r, <span class="at">mask=</span><span class="cn">TRUE</span>)</span>
+<span id="cb74-150"><a href="#cb74-150" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb74-151"><a href="#cb74-151" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb74-152"><a href="#cb74-152" aria-hidden="true" tabindex="-1"></a>We'll explore a couple of different $\lambda$ values and an alternative way of selecting $\lambda$ to demonstrate the effect of these different options on the resulting surface. We could write another function here, but I'm changing different things and passing different arguments so I'll leave each call so that you can see what I'm changing.  </span>
+<span id="cb74-153"><a href="#cb74-153" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb74-154"><a href="#cb74-154" aria-hidden="true" tabindex="-1"></a><span class="in">```{r tpsvary}</span></span>
+<span id="cb74-155"><a href="#cb74-155" aria-hidden="true" tabindex="-1"></a>tps_model_03 <span class="ot">&lt;-</span> fields<span class="sc">::</span><span class="fu">Tps</span>(coords, z, <span class="at">lambda =</span> tps_model_cv<span class="sc">$</span>lambda<span class="sc">*</span><span class="dv">2</span>)</span>
+<span id="cb74-156"><a href="#cb74-156" aria-hidden="true" tabindex="-1"></a>tps_03_rast <span class="ot">&lt;-</span> <span class="fu">interpolate</span>(grd, tps_model_03)</span>
+<span id="cb74-157"><a href="#cb74-157" aria-hidden="true" tabindex="-1"></a>tps_03_crop <span class="ot">&lt;-</span> <span class="fu">crop</span>(tps_03_rast, r, <span class="at">mask=</span><span class="cn">TRUE</span>)</span>
+<span id="cb74-158"><a href="#cb74-158" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb74-159"><a href="#cb74-159" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb74-160"><a href="#cb74-160" aria-hidden="true" tabindex="-1"></a>tps_model_00001 <span class="ot">&lt;-</span> fields<span class="sc">::</span><span class="fu">Tps</span>(coords, z, <span class="at">lambda =</span> tps_model_cv<span class="sc">$</span>lambda<span class="sc">/</span><span class="dv">2</span>)</span>
+<span id="cb74-161"><a href="#cb74-161" aria-hidden="true" tabindex="-1"></a>tps_00001_rast <span class="ot">&lt;-</span> <span class="fu">interpolate</span>(grd, tps_model_00001)</span>
+<span id="cb74-162"><a href="#cb74-162" aria-hidden="true" tabindex="-1"></a>tps_00001_crop <span class="ot">&lt;-</span> <span class="fu">crop</span>(tps_00001_rast, r, <span class="at">mask=</span><span class="cn">TRUE</span>)</span>
+<span id="cb74-163"><a href="#cb74-163" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb74-164"><a href="#cb74-164" aria-hidden="true" tabindex="-1"></a>tps_model_cv_reml <span class="ot">&lt;-</span> fields<span class="sc">::</span><span class="fu">Tps</span>(coords, z, <span class="at">method =</span> <span class="st">"REML"</span>)</span>
+<span id="cb74-165"><a href="#cb74-165" aria-hidden="true" tabindex="-1"></a>tps_cvreml_rast <span class="ot">&lt;-</span> <span class="fu">interpolate</span>(grd, tps_model_cv_reml)</span>
+<span id="cb74-166"><a href="#cb74-166" aria-hidden="true" tabindex="-1"></a>tps_cvreml_crop <span class="ot">&lt;-</span> <span class="fu">crop</span>(tps_cvreml_rast, r, <span class="at">mask=</span><span class="cn">TRUE</span>)</span>
+<span id="cb74-167"><a href="#cb74-167" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb74-168"><a href="#cb74-168" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb74-169"><a href="#cb74-169" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb74-170"><a href="#cb74-170" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb74-171"><a href="#cb74-171" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb74-172"><a href="#cb74-172" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb74-173"><a href="#cb74-173" aria-hidden="true" tabindex="-1"></a><span class="in">```{r plttps}</span></span>
+<span id="cb74-174"><a href="#cb74-174" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-width: 13</span></span>
+<span id="cb74-175"><a href="#cb74-175" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb74-176"><a href="#cb74-176" aria-hidden="true" tabindex="-1"></a>tps_def <span class="ot">&lt;-</span> <span class="fu">ggplot</span>() <span class="sc">+</span></span>
+<span id="cb74-177"><a href="#cb74-177" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_spatraster</span>(<span class="at">data =</span> tps_cv_crop, </span>
+<span id="cb74-178"><a href="#cb74-178" aria-hidden="true" tabindex="-1"></a>                  <span class="at">mapping =</span> <span class="fu">aes</span>(<span class="at">fill =</span> lyr<span class="fl">.1</span>)) <span class="sc">+</span></span>
+<span id="cb74-179"><a href="#cb74-179" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_viridis_c</span>(<span class="at">na.value =</span> <span class="st">"transparent"</span>) <span class="sc">+</span></span>
+<span id="cb74-180"><a href="#cb74-180" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">"Interp Zinc Concentration (TPS, lambda = default)"</span>) <span class="sc">+</span></span>
+<span id="cb74-181"><a href="#cb74-181" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>()</span>
+<span id="cb74-182"><a href="#cb74-182" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb74-183"><a href="#cb74-183" aria-hidden="true" tabindex="-1"></a>tps_double <span class="ot">&lt;-</span> <span class="fu">ggplot</span>() <span class="sc">+</span></span>
+<span id="cb74-184"><a href="#cb74-184" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_spatraster</span>(<span class="at">data =</span> tps_03_crop, </span>
+<span id="cb74-185"><a href="#cb74-185" aria-hidden="true" tabindex="-1"></a>                  <span class="at">mapping =</span> <span class="fu">aes</span>(<span class="at">fill =</span> lyr<span class="fl">.1</span>)) <span class="sc">+</span></span>
+<span id="cb74-186"><a href="#cb74-186" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_viridis_c</span>(<span class="at">na.value =</span> <span class="st">"transparent"</span>) <span class="sc">+</span></span>
+<span id="cb74-187"><a href="#cb74-187" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">"Interp Zinc Concentration (TPS, lambda = 0.0004)"</span>) <span class="sc">+</span></span>
+<span id="cb74-188"><a href="#cb74-188" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>()</span>
+<span id="cb74-189"><a href="#cb74-189" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb74-190"><a href="#cb74-190" aria-hidden="true" tabindex="-1"></a>tps_half <span class="ot">&lt;-</span> <span class="fu">ggplot</span>() <span class="sc">+</span></span>
+<span id="cb74-191"><a href="#cb74-191" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_spatraster</span>(<span class="at">data =</span> tps_00001_crop, </span>
+<span id="cb74-192"><a href="#cb74-192" aria-hidden="true" tabindex="-1"></a>                  <span class="at">mapping =</span> <span class="fu">aes</span>(<span class="at">fill =</span> lyr<span class="fl">.1</span>)) <span class="sc">+</span></span>
+<span id="cb74-193"><a href="#cb74-193" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_viridis_c</span>(<span class="at">na.value =</span> <span class="st">"transparent"</span>) <span class="sc">+</span></span>
+<span id="cb74-194"><a href="#cb74-194" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">"Interp Zinc Concentration (TPS, lambda = 0.000009)"</span>) <span class="sc">+</span></span>
+<span id="cb74-195"><a href="#cb74-195" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>()</span>
+<span id="cb74-196"><a href="#cb74-196" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb74-197"><a href="#cb74-197" aria-hidden="true" tabindex="-1"></a>tps_reml <span class="ot">&lt;-</span> <span class="fu">ggplot</span>() <span class="sc">+</span></span>
+<span id="cb74-198"><a href="#cb74-198" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_spatraster</span>(<span class="at">data =</span> tps_cvreml_crop, </span>
+<span id="cb74-199"><a href="#cb74-199" aria-hidden="true" tabindex="-1"></a>                  <span class="at">mapping =</span> <span class="fu">aes</span>(<span class="at">fill =</span> lyr<span class="fl">.1</span>)) <span class="sc">+</span></span>
+<span id="cb74-200"><a href="#cb74-200" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_viridis_c</span>(<span class="at">na.value =</span> <span class="st">"transparent"</span>) <span class="sc">+</span></span>
+<span id="cb74-201"><a href="#cb74-201" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">"Interp Zinc Concentration (TPS, lambda = REML)"</span>) <span class="sc">+</span></span>
+<span id="cb74-202"><a href="#cb74-202" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>()</span>
+<span id="cb74-203"><a href="#cb74-203" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb74-204"><a href="#cb74-204" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb74-205"><a href="#cb74-205" aria-hidden="true" tabindex="-1"></a>(tps_def <span class="sc">+</span> tps_double)<span class="sc">/</span>(tps_half <span class="sc">+</span> tps_reml)</span>
+<span id="cb74-206"><a href="#cb74-206" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb74-207"><a href="#cb74-207" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb74-208"><a href="#cb74-208" aria-hidden="true" tabindex="-1"></a>You can see that different values of at $\lambda$ smooth the surface differently (with the higher values allowing for more "bending" around the measured points giving higher values to the neighboring pixels than we'd get with lower $\lambda$ values). You can also see (in the bottom-right plot) that using a different method for automating the selection of $\lambda$ results in a different choice. While GCV is the default choice, it's focus is to minimize the error values in a leave-one out cross-validation approach. The REML (Restricted Maximum Likelihood) approach tends to penalize overfitting of the data to find a parsimonious solution that explains most of the variation without adding unnecessary parameters. In practice, the REML approach tends to be more stable and is more likely to find the true minimum value for $lambda$; however, it can be computationally costly and does not always converge on a solution.</span>
+<span id="cb74-209"><a href="#cb74-209" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb74-210"><a href="#cb74-210" aria-hidden="true" tabindex="-1"></a><span class="fu">### Probabalistic approaches: Kriging</span></span>
+<span id="cb74-211"><a href="#cb74-211" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb74-212"><a href="#cb74-212" aria-hidden="true" tabindex="-1"></a>In the previous deterministic approaches, we've basically assumed that the function producing the measurements we have is stable throughout the landscape (i.e., homogeneous) and relied on that to assume that unmeasured locations should have values that are consistent with that rate and scaled by the distance between points (and potentially a smoothing parameter). These approaches are deterministic in that the measurements are fixed, the distances are known, and the smoothing parameter is set by you. They will generate the same prediction every time you run them so long as the smoothing parameter and the data you use remain the same.</span>
+<span id="cb74-213"><a href="#cb74-213" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb74-214"><a href="#cb74-214" aria-hidden="true" tabindex="-1"></a>We might imagine that we are uncertain whether the rate is homogeneous. Moreover, we might not be quite sure that the best prediction is simply a function of the distance between the points. In such cases, we might want to generate a probabilistic output (i.e., one with both predictions and variances.). **Kriging** allows us to do just that. It enables us to say that the mean value is unknown (and our measurements tell us something about what it should be), rather than assuming that the measurements are perfectly reflective of the underlying first-order process. It also allows us to use the empirical estimates of spatial covariance (i.e., how does variance among the points change as a function of distance) to estimate the role of distance in driving the process. We combine some "statistical machinery" to estimate these different elements and generate predictions along with the variance around those predictions. The key piece is to figure out the spatial covariance. We'll do this using variograms.</span>
+<span id="cb74-215"><a href="#cb74-215" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb74-216"><a href="#cb74-216" aria-hidden="true" tabindex="-1"></a><span class="fu">### Variograms</span></span>
+<span id="cb74-217"><a href="#cb74-217" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb74-218"><a href="#cb74-218" aria-hidden="true" tabindex="-1"></a>The <span class="in">`gstat`</span> package has a <span class="in">`variogram`</span> function that allows you to estimate the (semi-)variance between points as a function of distance. The semi-variance is just the "half" value of the variance because we are assuming that the function is **isotropic** (i.e., the same in both directions). We can look at the raw data first by setting the argument <span class="in">`cloud = TRUE`</span>.</span>
+<span id="cb74-219"><a href="#cb74-219" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb74-222"><a href="#cb74-222" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb74-223"><a href="#cb74-223" aria-hidden="true" tabindex="-1"></a>zinc_vc <span class="ot">&lt;-</span> <span class="fu">variogram</span>(<span class="fu">log</span>(zinc) <span class="sc">~</span> <span class="dv">1</span>, meuse_sf, <span class="at">cloud =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb74-224"><a href="#cb74-224" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(zinc_vc)</span>
+<span id="cb74-225"><a href="#cb74-225" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb74-226"><a href="#cb74-226" aria-hidden="true" tabindex="-1"></a>Holy smokes!! That's a lot of points!! We only have 164 measurements, so how do we get so many points? This calculation involves comparing the differences between all pairs of points. We can calculate this as:</span>
+<span id="cb74-227"><a href="#cb74-227" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb74-228"><a href="#cb74-228" aria-hidden="true" tabindex="-1"></a>Pairs = \frac{N \times (N-1)}{2}</span>
+<span id="cb74-229"><a href="#cb74-229" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb74-230"><a href="#cb74-230" aria-hidden="true" tabindex="-1"></a>Which in our case gives 13,366 points. These cloud plots can be helpful for identifying outliers or strange trends in the data, but are usually too overwhelming to identify things like the **nugget, sill, and range**. To look at the binned version of the plot (where the variances are combined into a series of lag-distance bins), we can just run the <span class="in">`variogram`</span> function with its default argument of <span class="in">`cloud = FALSE`</span>. In both cases, you can alter the number of points considered in the <span class="in">`variogram`</span> by specifying a <span class="in">`cutoff`</span> value which will eliminate pairs beyond a certain distance.</span>
+<span id="cb74-231"><a href="#cb74-231" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb74-232"><a href="#cb74-232" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb74-235"><a href="#cb74-235" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb74-236"><a href="#cb74-236" aria-hidden="true" tabindex="-1"></a>sample_vgm <span class="ot">&lt;-</span> <span class="fu">variogram</span>(<span class="fu">log</span>(zinc) <span class="sc">~</span> <span class="dv">1</span>, <span class="at">data =</span> meuse_sf)</span>
+<span id="cb74-237"><a href="#cb74-237" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(sample_vgm)</span>
+<span id="cb74-238"><a href="#cb74-238" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb74-239"><a href="#cb74-239" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb74-240"><a href="#cb74-240" aria-hidden="true" tabindex="-1"></a>Inspection of this plot is much easier. We can see that the **nugget** (the semivariance when distances are small) is probably somewhere around 0.2, the **partial sill** (the point at which semivariance no longer seems to be a function of distance) occurs between 0.5 and 0.7, and the **range** (the distance at which the sill occurs) is probably around 1000m. Now we've got to figure out which of our variogram models makes sense to approximate this relationship.</span>
+<span id="cb74-241"><a href="#cb74-241" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb74-244"><a href="#cb74-244" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb74-245"><a href="#cb74-245" aria-hidden="true" tabindex="-1"></a><span class="fu">show.vgms</span>(<span class="at">par.strip.text =</span> <span class="fu">list</span>(<span class="at">cex =</span> <span class="fl">0.75</span>))</span>
+<span id="cb74-246"><a href="#cb74-246" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb74-247"><a href="#cb74-247" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb74-248"><a href="#cb74-248" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb74-249"><a href="#cb74-249" aria-hidden="true" tabindex="-1"></a>This part is a bit more "art" than "science", but that's okay! The goal is to choose a functional form that does a reasonable job of approximating the relationship between distance and semivariance so that we can estimate the parameters necessary to input into our kriging model. Based on the shapes, we might choose a spherical (<span class="in">`Sph`</span>) or Matern (<span class="in">`Mat`</span>) shape. We can use the <span class="in">`vgm`</span> function to generate the appropriate variograms based on our guesses above. These don't have to be perfect, we will estimate the parameters in a subsequent step. For now, we are just trying to see if we like either of the shapes we've chosen once they are imposed on the data we actually have. </span>
+<span id="cb74-250"><a href="#cb74-250" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb74-253"><a href="#cb74-253" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb74-254"><a href="#cb74-254" aria-hidden="true" tabindex="-1"></a>sph_vgm_r900 <span class="ot">&lt;-</span> <span class="fu">vgm</span>(<span class="at">psill =</span> <span class="fl">0.5</span>, <span class="at">model =</span> <span class="st">"Sph"</span>,</span>
+<span id="cb74-255"><a href="#cb74-255" aria-hidden="true" tabindex="-1"></a>                <span class="at">range =</span> <span class="dv">900</span>, <span class="at">nugget =</span> <span class="fl">0.1</span>)</span>
+<span id="cb74-256"><a href="#cb74-256" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(sample_vgm, sph_vgm_r900, <span class="at">cutoff =</span> <span class="dv">1000</span>, <span class="at">cex =</span> <span class="fl">1.5</span>)</span>
+<span id="cb74-257"><a href="#cb74-257" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb74-258"><a href="#cb74-258" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb74-259"><a href="#cb74-259" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb74-260"><a href="#cb74-260" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb74-263"><a href="#cb74-263" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb74-264"><a href="#cb74-264" aria-hidden="true" tabindex="-1"></a>sph_vgm_Mat <span class="ot">&lt;-</span> <span class="fu">vgm</span>(<span class="at">psill =</span> <span class="fl">0.6</span>, <span class="at">model =</span> <span class="st">"Mat"</span>,</span>
+<span id="cb74-265"><a href="#cb74-265" aria-hidden="true" tabindex="-1"></a>                <span class="at">range =</span> <span class="dv">1100</span>, <span class="at">nugget =</span> <span class="fl">0.1</span>)</span>
+<span id="cb74-266"><a href="#cb74-266" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(sample_vgm, sph_vgm_Mat, <span class="at">cutoff =</span> <span class="dv">1000</span>, <span class="at">cex =</span> <span class="fl">1.5</span>)</span>
+<span id="cb74-267"><a href="#cb74-267" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb74-268"><a href="#cb74-268" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb74-269"><a href="#cb74-269" aria-hidden="true" tabindex="-1"></a>Based on these two plots, it doesn't look like the Matern functional form generates enough "take off" in the values. That is, semivariance increases too slowly in the shorter distance lags.  We'll move forward with the spherical function and actually fit a model to estimate the parameters. When we use <span class="in">`fit.variogram`</span> we provide the sample variogram as the <span class="in">`object`</span> and then specify the model like we did in the previous step. We need to proivde the psill, nugget, and range as reasonable starting values to ensure that the empirical variogram can be estimated.</span>
+<span id="cb74-270"><a href="#cb74-270" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb74-273"><a href="#cb74-273" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb74-274"><a href="#cb74-274" aria-hidden="true" tabindex="-1"></a>fit_vgm <span class="ot">&lt;-</span> <span class="fu">fit.variogram</span>(<span class="at">object =</span> sample_vgm,</span>
+<span id="cb74-275"><a href="#cb74-275" aria-hidden="true" tabindex="-1"></a>                    <span class="at">model =</span> <span class="fu">vgm</span>(<span class="at">psill =</span> <span class="fl">0.5</span>, <span class="at">model =</span> <span class="st">"Sph"</span>,</span>
+<span id="cb74-276"><a href="#cb74-276" aria-hidden="true" tabindex="-1"></a>                                <span class="at">range =</span> <span class="dv">900</span>, <span class="at">nugget =</span> <span class="fl">0.1</span>))</span>
+<span id="cb74-277"><a href="#cb74-277" aria-hidden="true" tabindex="-1"></a>fit_vgm</span>
+<span id="cb74-278"><a href="#cb74-278" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(sample_vgm, fit_vgm, <span class="at">cex =</span> <span class="fl">1.5</span>)</span>
+<span id="cb74-279"><a href="#cb74-279" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb74-280"><a href="#cb74-280" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb74-281"><a href="#cb74-281" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb74-282"><a href="#cb74-282" aria-hidden="true" tabindex="-1"></a>The resuls show you what the estimate for the nugget (constant semivariance) model would be (0.12 which was pretty close to our guess) and then what the partial sill and range are under the spherical model (0.5 for the sill, and ~881 for the range). You can see that while our initial guesses were wrong, we didn't do too badly!!</span>
+<span id="cb74-283"><a href="#cb74-283" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb74-284"><a href="#cb74-284" aria-hidden="true" tabindex="-1"></a><span class="fu">### Kriging</span></span>
+<span id="cb74-285"><a href="#cb74-285" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb74-286"><a href="#cb74-286" aria-hidden="true" tabindex="-1"></a>Now that we've got our spatial covariance described and modelable, we can turn to generating predictions using kriging.</span>
+<span id="cb74-287"><a href="#cb74-287" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb74-288"><a href="#cb74-288" aria-hidden="true" tabindex="-1"></a>_Ordinary Kriging_</span>
+<span id="cb74-289"><a href="#cb74-289" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb74-290"><a href="#cb74-290" aria-hidden="true" tabindex="-1"></a>Ordinary kriging assumes that the (unknown) mean of the spatial process is constant and needs to be estimated. Once that estimate is obtained, we can adjust it based on the empirical variogram we built in the previous step. We use the <span class="in">`gstat`</span> function to set up the necessary prediction formula, then the <span class="in">`predict`</span> function to interpolate all of the values in our missing grid. Finally, we convert the data to a raster for plotting.</span>
+<span id="cb74-291"><a href="#cb74-291" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb74-294"><a href="#cb74-294" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb74-295"><a href="#cb74-295" aria-hidden="true" tabindex="-1"></a>ok_krig_formula <span class="ot">&lt;-</span> <span class="fu">gstat</span>(<span class="at">id =</span> <span class="st">"log.zinc"</span>,</span>
+<span id="cb74-296"><a href="#cb74-296" aria-hidden="true" tabindex="-1"></a>                      <span class="at">formula =</span> <span class="fu">log</span>(zinc) <span class="sc">~</span> <span class="dv">1</span>,</span>
+<span id="cb74-297"><a href="#cb74-297" aria-hidden="true" tabindex="-1"></a>                      <span class="at">data =</span> meuse_sf,</span>
+<span id="cb74-298"><a href="#cb74-298" aria-hidden="true" tabindex="-1"></a>                      <span class="at">model =</span> fit_vgm)</span>
+<span id="cb74-299"><a href="#cb74-299" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb74-300"><a href="#cb74-300" aria-hidden="true" tabindex="-1"></a>krig_pred <span class="ot">&lt;-</span> <span class="fu">predict</span>(ok_krig_formula, grid_sf)</span>
+<span id="cb74-301"><a href="#cb74-301" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb74-302"><a href="#cb74-302" aria-hidden="true" tabindex="-1"></a>pred_rast <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fu">rasterize</span>(<span class="fu">vect</span>(krig_pred), grd, <span class="at">field=</span><span class="st">"log.zinc.pred"</span>), <span class="fu">rasterize</span>(<span class="fu">vect</span>(krig_pred), grd, <span class="at">field=</span><span class="st">"log.zinc.var"</span>))</span>
+<span id="cb74-303"><a href="#cb74-303" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(pred_rast) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"pred"</span>, <span class="st">"var"</span>)</span>
+<span id="cb74-304"><a href="#cb74-304" aria-hidden="true" tabindex="-1"></a>pred_rast_mask <span class="ot">&lt;-</span> <span class="fu">crop</span>(pred_rast, r, <span class="at">mask=</span><span class="cn">TRUE</span>)</span>
+<span id="cb74-305"><a href="#cb74-305" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(pred_rast_mask)</span>
+<span id="cb74-306"><a href="#cb74-306" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb74-307"><a href="#cb74-307" aria-hidden="true" tabindex="-1"></a>You can see from these plots that variance tends to be highest in places where our sample points are less dense and that the nature of the smoothing (more high values in the places where we have lots of high values and more low values in the places where our measurements were low) is different from those produced by deterministic models. </span>
+<span id="cb74-308"><a href="#cb74-308" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb74-309"><a href="#cb74-309" aria-hidden="true" tabindex="-1"></a>_Universal kriging_</span>
+<span id="cb74-310"><a href="#cb74-310" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb74-311"><a href="#cb74-311" aria-hidden="true" tabindex="-1"></a>Sometimes we might imagine that our unknown mean varies in space either as a function of location or of some other covariate. In those cases, we are estimating an _inhomogeneous process_ as the first order mean can vary spatially. Universal kriging allows us to estimate the spatial trend in $\mu$ and then apply our spatial covariance to generate interpolations based on the process and our spatial covariance. Here, we use another preloaded dataset of soil types to add a predictor to describe what we think might be driving the inhomogeneity in the process. The only other difference is that we modify our formula in the <span class="in">`gstat`</span> call to reflect that we think soil is driving the spatial process.</span>
+<span id="cb74-312"><a href="#cb74-312" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb74-315"><a href="#cb74-315" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb74-316"><a href="#cb74-316" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(meuse.grid, <span class="at">package =</span> <span class="st">"sp"</span>)</span>
+<span id="cb74-317"><a href="#cb74-317" aria-hidden="true" tabindex="-1"></a>meuse_grid_sf <span class="ot">&lt;-</span> <span class="fu">st_as_sf</span>(meuse.grid, <span class="at">coords =</span> <span class="fu">c</span>(<span class="st">"x"</span>, <span class="st">"y"</span>), <span class="at">crs =</span> <span class="dv">28992</span>)</span>
+<span id="cb74-318"><a href="#cb74-318" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb74-319"><a href="#cb74-319" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb74-320"><a href="#cb74-320" aria-hidden="true" tabindex="-1"></a>univ_krig <span class="ot">&lt;-</span> <span class="fu">gstat</span>(<span class="at">id =</span> <span class="st">"log.zinc"</span>,</span>
+<span id="cb74-321"><a href="#cb74-321" aria-hidden="true" tabindex="-1"></a>  <span class="at">formula =</span> <span class="fu">log</span>(zinc) <span class="sc">~</span> soil,      </span>
+<span id="cb74-322"><a href="#cb74-322" aria-hidden="true" tabindex="-1"></a>  <span class="at">locations =</span> meuse_sf,              </span>
+<span id="cb74-323"><a href="#cb74-323" aria-hidden="true" tabindex="-1"></a>  <span class="at">model =</span> fit_vgm</span>
+<span id="cb74-324"><a href="#cb74-324" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb74-325"><a href="#cb74-325" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb74-326"><a href="#cb74-326" aria-hidden="true" tabindex="-1"></a>uk_pred <span class="ot">&lt;-</span> <span class="fu">predict</span>(univ_krig, meuse_grid_sf)</span>
+<span id="cb74-327"><a href="#cb74-327" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb74-328"><a href="#cb74-328" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb74-329"><a href="#cb74-329" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(uk_pred) <span class="sc">+</span></span>
+<span id="cb74-330"><a href="#cb74-330" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_sf</span>(<span class="fu">aes</span>(<span class="at">color =</span> log.zinc.pred)) <span class="sc">+</span></span>
+<span id="cb74-331"><a href="#cb74-331" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_color_viridis_c</span>() <span class="sc">+</span></span>
+<span id="cb74-332"><a href="#cb74-332" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
+<span id="cb74-333"><a href="#cb74-333" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Universal Kriging Prediction of Zinc"</span>,</span>
+<span id="cb74-334"><a href="#cb74-334" aria-hidden="true" tabindex="-1"></a>       <span class="at">color =</span> <span class="st">"Predicted Zn"</span>)</span>
+<span id="cb74-335"><a href="#cb74-335" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb74-336"><a href="#cb74-336" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(uk_pred) <span class="sc">+</span></span>
+<span id="cb74-337"><a href="#cb74-337" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_sf</span>(<span class="fu">aes</span>(<span class="at">color =</span> log.zinc.var)) <span class="sc">+</span></span>
+<span id="cb74-338"><a href="#cb74-338" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_color_viridis_c</span>() <span class="sc">+</span></span>
+<span id="cb74-339"><a href="#cb74-339" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
+<span id="cb74-340"><a href="#cb74-340" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Universal Kriging Variance of Zinc"</span>,</span>
+<span id="cb74-341"><a href="#cb74-341" aria-hidden="true" tabindex="-1"></a>       <span class="at">color =</span> <span class="st">"Predicted Zn"</span>)</span>
+<span id="cb74-342"><a href="#cb74-342" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb74-343"><a href="#cb74-343" aria-hidden="true" tabindex="-1"></a>You can see in this plot the "chunky" nature of the soil type data creates some new patterns in the prediction, but the variance patterns remain roughly the same.</span>
 </code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div></div></div></div></div>
 </div> <!-- /content -->

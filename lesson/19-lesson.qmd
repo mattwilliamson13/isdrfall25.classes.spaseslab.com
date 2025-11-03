@@ -4,6 +4,8 @@ title: "Interpolation and Kriging"
 
 ## Getting Started
 
+We'll be using the `meuse.all` data that ships with the `gstat` package as it is one that shows up in many explanations of geostatistical interpolation. It has the added bonus of being a reasonably small dataset to allow us to practice a few things without having to wait an extremly long time for the models to run. In addition to the `gstat` package, we're adding the `fields` package which allows us to fit a variety of functional forms to spatial data. Beyond that, the rest of the packages should look familiar.
+
 ```{r}
 library(gstat)
 library(sf)
@@ -12,9 +14,13 @@ library(fields)
 library(ggplot2)
 library(patchwork)
 library(tidyterra)
+library(tidyverse)
+library(stringr)
 ```
 
 ## Loading the Data
+
+Because the data ships with a package, we can use the `data` function to load it directly into our environment. Then we need to get it into an `sf` object. We'll take a quick look at the CRS (with `st_crs`) just to get a sense for what the units look like.
 
 ```{r lddata}
 data(meuse.all)
@@ -24,7 +30,12 @@ meuse_sf <- st_as_sf(meuse.all,
                      agr = "constant")
 
 st_crs(meuse_sf)
+glimpse(meuse_sf)
+```
 
+Now that you've gotten a chance to look at the data a bit, we'll set up our interpolation grid. Unfortunately, the various interpolation functions available have different expectations for what data types your using to generate the interpolation model and grid so we've got to make a few different versions of these objects. To do this, I use `st_bbox` to get the bounding box for the data and convert that bbox into an `sf` object. Then, I create the interpolation grid by creating a blank raster within the bbox. We specify the resolution implicitly by specifying the number of rows and columns inside our raster. Once we have the raster, we convert into both a `data.frame` and an `sf` object. Lastly we bring a raster of the `meuse` dataset to provide a template fr cropping.
+
+```{r}
 box <- st_as_sfc(st_bbox(meuse_sf))
 grd <- rast(vect(box), ncol= 1000, nrow=1000)
 grid_pts <- as.data.frame(crds(grd, df = TRUE)) %>% rename(x = x, y = y)
@@ -40,65 +51,77 @@ r <-rast(system.file("ex/meuse.tif", package="terra")) |>
 
 ### Inverse Distance Weighting
 
+The `gstat` function is similar to the `formula` function in base `R`, it's just a way of taking the various arguments and constructing the appropriate spatial call. We pass an `id` parameter which `gstat` will use to identify the values produced by anything that uses the `formula` we construct. The `formula` argument allows us to specify what we want to model and how. In this case, we are using IDW so we are saying that zinc values are a function of (`~`) some unknown average. We pass a `locations` argument to let `gstat` know where the data and spatial locations are. The `nmax` argument sets the number of points that will be used to calculate our unknown average. Finally, the `set` argument accepts a variety of parameters that are specific to whichever form of model you are hoping to implement (you can find [more information here at the original version of the `gstat` manual](https://www.gstat.org/gstat.pdf)). 
 
 ```{r}
 idw_formula_lin <- gstat(id = "zinc", formula = zinc~1, locations = meuse_sf, 
             nmax=10, set=list(idp = 1))
+idw_formula_lin
+```
 
+Once we have the formula set up, we can use the `predict` function to call the formula and predict values for all of the points in our grid. This outputs an `sf` object with predictions (and variance, though that is `NA` here because we're using IDW) for all of the points. We convert that object to a raster with `rasterize` and mask it with our template raster (using `crop` with `mask=TRUE`) and combine our two rasters to plot them side by side.
+
+```{r}
 idw_interp <- predict(idw_formula_lin, grid_sf)
-
-idw_interp$x <- st_coordinates(idw_interp)[,1]
-idw_interp$y <- st_coordinates(idw_interp)[,2]
-idw_interp$pred <- idw_interp$var1.pred
+str(idw_interp)
 
 pred <- terra::rasterize(idw_interp, grd, field = "zinc.pred", fun = "mean")
 idw_lin_mask <- crop(pred, r, mask=TRUE)
+comb_rst <- c(pred, idw_lin_mask)
+plot(comb_rst)
 
-idw_formula_quad <- gstat(id = "zinc", formula = zinc~1, locations = meuse_sf, 
-            nmax=10, set=list(idp = 2))
-
-idw_interp <- predict(idw_formula_quad, grid_sf)
-
-idw_interp$x <- st_coordinates(idw_interp)[,1]
-idw_interp$y <- st_coordinates(idw_interp)[,2]
-idw_interp$pred <- idw_interp$var1.pred
-
-pred <- terra::rasterize(idw_interp, grd, field = "zinc.pred", fun = "mean")
-idw_quad_mask <- crop(pred, r, mask=TRUE)
 ```
 
+
+Now that we've got the basics of IDW syntax figured out, we might want to explore how changing the inverse-distance power (`idp`) affects the resulting predictions of our dataset. To do that, I build a custom function that accepts the necessary arguments for each of the above steps. I finish with a call to `ggplot` using `tidyterra` because I want to use `patchwork` to create a nice multipanel plot of the surfaces that result from the different `idp` values. I `map` through a series of values to create maps of different `idp` values.
+
+```{r}
+
+idw_idp_explore <- function(variable, nmx, pwr, loc_sf, grid_sf, grid_rst, templ_rst){
+  ## Need to convert the character variable name into something recognizeable as an object
+  dv <- sym(variable)
+  ## Set up the idw formula to accept different arguments
+  idw_formula <- gstat(id = variable, formula = eval(dv)~1, locations = loc_sf, 
+            nmax=nmx, set=list(idp = pwr))
+  ## Generate spatial predictions as sf object
+  pred_df <- predict(idw_formula, grid_sf)
+  ## Identify the column with the prediction
+  fld <- str_subset(colnames(pred_df),pattern = "pred")
+  ## Make and mask the raster
+  pred_rst <- terra::rasterize(pred_df, grid_rst, field = fld, fun = "mean")
+  msk_rst <- terra::crop(pred_rst, templ_rst, mask = TRUE)
+  ## Make a plot
+  ggplot() +
+  geom_spatraster(data = msk_rst, 
+                  mapping = aes(fill = mean)) +
+  scale_fill_viridis_c(na.value = "transparent") +
+  ggtitle(paste0("Interp Zinc Concentration (IDW, power = ", pwr, ")")) +
+  theme_bw()
+
+}
+
+idp_plots <- map(c(0.5, 2, 4, 8), 
+                 \(x) idw_idp_explore(variable = "zinc", nmx = 15, 
+                                      pwr = x, loc_sf = meuse_sf, 
+                                      grid_sf = grid_sf, grid_rst = grd,
+                                      templ_rst = r))
+
+```
+
+Then, I use patchwork to compose the resulting plots by accessing each of the plots in our `idp_plots` list.
 
 ```{r pltcmpidw}
 #| fig-width: 13
 
-meas_val <- ggplot() +
-  geom_sf(data = meuse_sf,
-          mapping = aes(col = zinc)) +
-  scale_color_viridis_c() +
-  ggtitle("Measured Zinc Concentration") +
-  theme_bw()
-
-idw_lin <- ggplot() +
-  geom_spatraster(data = idw_lin_mask, 
-                  mapping = aes(fill = mean)) +
-  scale_fill_viridis_c(na.value = "transparent") +
-  ggtitle("Interp Zinc Concentration (IDW, power = 1)") +
-  theme_bw()
-
-idw_quad <- ggplot() +
-  geom_spatraster(data = idw_quad_mask, 
-                  mapping = aes(fill = mean)) +
-  scale_fill_viridis_c(na.value = "transparent") +
-  ggtitle("Interp Zinc Concentration (IDW, power = 2)") +
-  theme_bw()
-
-
-
-meas_val + idw_lin + idw_quad
+(idp_plots[[1]] + idp_plots[[2]])/(idp_plots[[3]] + idp_plots[[4]])
 
 ```
 
-### Thin-Plate Splines
+### Thin Plate Splines
+
+Thin plate splines (TPS) fit a smooth surface through scattered data in 2 (or more) dimensions by attempting to minimize the Residual Sum of Squares. The goal is to fit the data well while minimizing the total "bending energy" (i.e., surface roughness) of the surface. The $\lambda$ parameter controls the smoothness such that $\lambda=0$ produces an exact interpolation where the surface fits each data point exactly. Higher values of $\lambda$ increase the smoothness of the surface, but potentially provide a poor fit to the existing data.
+
+The `fields` package implements TPS for spatial data and works direcly with `terra`. However, because of this, we have to convert our data into a format that will work with `terra`. In this case, that means converting our spatial coordinates to a matrix (using `st_coordinates`) and our variable of interest into a vector. Once we've done that, we can call `fields::Tps`. 
 
 ```{r tpsex}
 
@@ -110,10 +133,14 @@ tps_model_cv <- fields::Tps(coords, z)
 tps_model_cv
 ```
 
+By default, `fields::Tps` estimates $\lambda$ using a generalized cross-validation approach in order to balance the fit to the data with the degrees of freedom (number of knots) used by the spline. You can alter this approach by changing the `method` argument (see `?Tps` for the details). The nice part about using `fields::Tps` is that once the model has been fit, it can be used to make predictions very quickly even for large data. We do that using the `terra::interpolate` function and then mask our predictions again.
+
 ```{r rsttps}
 tps_cv_rast <- interpolate(grd, tps_model_cv)
 tps_cv_crop <- crop(tps_cv_rast, r, mask=TRUE)
 ```
+
+We'll explore a couple of different $\lambda$ values and an alternative way of selecting $\lambda$ to demonstrate the effect of these different options on the resulting surface. We could write another function here, but I'm changing different things and passing different arguments so I'll leave each call so that you can see what I'm changing.  
 
 ```{r tpsvary}
 tps_model_03 <- fields::Tps(coords, z, lambda = tps_model_cv$lambda*2)
@@ -129,6 +156,8 @@ tps_model_cv_reml <- fields::Tps(coords, z, method = "REML")
 tps_cvreml_rast <- interpolate(grd, tps_model_cv_reml)
 tps_cvreml_crop <- crop(tps_cvreml_rast, r, mask=TRUE)
 ```
+
+
 
 
 
@@ -167,22 +196,36 @@ tps_reml <- ggplot() +
 (tps_def + tps_double)/(tps_half + tps_reml)
 
 ```
+You can see that different values of at $\lambda$ smooth the surface differently (with the higher values allowing for more "bending" around the measured points giving higher values to the neighboring pixels than we'd get with lower $\lambda$ values). You can also see (in the bottom-right plot) that using a different method for automating the selection of $\lambda$ results in a different choice. While GCV is the default choice, it's focus is to minimize the error values in a leave-one out cross-validation approach. The REML (Restricted Maximum Likelihood) approach tends to penalize overfitting of the data to find a parsimonious solution that explains most of the variation without adding unnecessary parameters. In practice, the REML approach tends to be more stable and is more likely to find the true minimum value for $lambda$; however, it can be computationally costly and does not always converge on a solution.
 
+### Probabalistic approaches: Kriging
 
-## Kriging
+In the previous deterministic approaches, we've basically assumed that the function producing the measurements we have is stable throughout the landscape (i.e., homogeneous) and relied on that to assume that unmeasured locations should have values that are consistent with that rate and scaled by the distance between points (and potentially a smoothing parameter). These approaches are deterministic in that the measurements are fixed, the distances are known, and the smoothing parameter is set by you. They will generate the same prediction every time you run them so long as the smoothing parameter and the data you use remain the same.
+
+We might imagine that we are uncertain whether the rate is homogeneous. Moreover, we might not be quite sure that the best prediction is simply a function of the distance between the points. In such cases, we might want to generate a probabilistic output (i.e., one with both predictions and variances.). **Kriging** allows us to do just that. It enables us to say that the mean value is unknown (and our measurements tell us something about what it should be), rather than assuming that the measurements are perfectly reflective of the underlying first-order process. It also allows us to use the empirical estimates of spatial covariance (i.e., how does variance among the points change as a function of distance) to estimate the role of distance in driving the process. We combine some "statistical machinery" to estimate these different elements and generate predictions along with the variance around those predictions. The key piece is to figure out the spatial covariance. We'll do this using variograms.
 
 ### Variograms
+
+The `gstat` package has a `variogram` function that allows you to estimate the (semi-)variance between points as a function of distance. The semi-variance is just the "half" value of the variance because we are assuming that the function is **isotropic** (i.e., the same in both directions). We can look at the raw data first by setting the argument `cloud = TRUE`.
 
 ```{r}
 
 zinc_vc <- variogram(log(zinc) ~ 1, meuse_sf, cloud = TRUE)
 plot(zinc_vc)
 ```
+Holy smokes!! That's a lot of points!! We only have 164 measurements, so how do we get so many points? This calculation involves comparing the differences between all pairs of points. We can calculate this as:
+$$
+Pairs = \frac{N \times (N-1)}{2}
+$$
+Which in our case gives 13,366 points. These cloud plots can be helpful for identifying outliers or strange trends in the data, but are usually too overwhelming to identify things like the **nugget, sill, and range**. To look at the binned version of the plot (where the variances are combined into a series of lag-distance bins), we can just run the `variogram` function with its default argument of `cloud = FALSE`. In both cases, you can alter the number of points considered in the `variogram` by specifying a `cutoff` value which will eliminate pairs beyond a certain distance.
+
+
 ```{r}
 sample_vgm <- variogram(log(zinc) ~ 1, data = meuse_sf)
 plot(sample_vgm)
 
 ```
+Inspection of this plot is much easier. We can see that the **nugget** (the semivariance when distances are small) is probably somewhere around 0.2, the **partial sill** (the point at which semivariance no longer seems to be a function of distance) occurs between 0.5 and 0.7, and the **range** (the distance at which the sill occurs) is probably around 1000m. Now we've got to figure out which of our variogram models makes sense to approximate this relationship.
 
 ```{r}
 
@@ -192,18 +235,23 @@ show.vgms(par.strip.text = list(cex = 0.75))
 
 ```
 
+This part is a bit more "art" than "science", but that's okay! The goal is to choose a functional form that does a reasonable job of approximating the relationship between distance and semivariance so that we can estimate the parameters necessary to input into our kriging model. Based on the shapes, we might choose a spherical (`Sph`) or Matern (`Mat`) shape. We can use the `vgm` function to generate the appropriate variograms based on our guesses above. These don't have to be perfect, we will estimate the parameters in a subsequent step. For now, we are just trying to see if we like either of the shapes we've chosen once they are imposed on the data we actually have. 
+
 ```{r}
 sph_vgm_r900 <- vgm(psill = 0.5, model = "Sph",
                 range = 900, nugget = 0.1)
 plot(sample_vgm, sph_vgm_r900, cutoff = 1000, cex = 1.5)
 
 ```
+
+
 ```{r}
 sph_vgm_Mat <- vgm(psill = 0.6, model = "Mat",
                 range = 1100, nugget = 0.1)
 plot(sample_vgm, sph_vgm_Mat, cutoff = 1000, cex = 1.5)
 
 ```
+Based on these two plots, it doesn't look like the Matern functional form generates enough "take off" in the values. That is, semivariance increases too slowly in the shorter distance lags.  We'll move forward with the spherical function and actually fit a model to estimate the parameters. When we use `fit.variogram` we provide the sample variogram as the `object` and then specify the model like we did in the previous step. We need to proivde the psill, nugget, and range as reasonable starting values to ensure that the empirical variogram can be estimated.
 
 ```{r}
 
@@ -215,7 +263,15 @@ plot(sample_vgm, fit_vgm, cex = 1.5)
 
 ```
 
+The resuls show you what the estimate for the nugget (constant semivariance) model would be (0.12 which was pretty close to our guess) and then what the partial sill and range are under the spherical model (0.5 for the sill, and ~881 for the range). You can see that while our initial guesses were wrong, we didn't do too badly!!
+
 ### Kriging
+
+Now that we've got our spatial covariance described and modelable, we can turn to generating predictions using kriging.
+
+_Ordinary Kriging_
+
+Ordinary kriging assumes that the (unknown) mean of the spatial process is constant and needs to be estimated. Once that estimate is obtained, we can adjust it based on the empirical variogram we built in the previous step. We use the `gstat` function to set up the necessary prediction formula, then the `predict` function to interpolate all of the values in our missing grid. Finally, we convert the data to a raster for plotting.
 
 ```{r}
 ok_krig_formula <- gstat(id = "log.zinc",
@@ -230,7 +286,11 @@ names(pred_rast) <- c("pred", "var")
 pred_rast_mask <- crop(pred_rast, r, mask=TRUE)
 plot(pred_rast_mask)
 ```
+You can see from these plots that variance tends to be highest in places where our sample points are less dense and that the nature of the smoothing (more high values in the places where we have lots of high values and more low values in the places where our measurements were low) is different from those produced by deterministic models. 
 
+_Universal kriging_
+
+Sometimes we might imagine that our unknown mean varies in space either as a function of location or of some other covariate. In those cases, we are estimating an _inhomogeneous process_ as the first order mean can vary spatially. Universal kriging allows us to estimate the spatial trend in $\mu$ and then apply our spatial covariance to generate interpolations based on the process and our spatial covariance. Here, we use another preloaded dataset of soil types to add a predictor to describe what we think might be driving the inhomogeneity in the process. The only other difference is that we modify our formula in the `gstat` call to reflect that we think soil is driving the spatial process.
 
 ```{r}
 data(meuse.grid, package = "sp")
@@ -252,5 +312,12 @@ ggplot(uk_pred) +
   theme_minimal() +
   labs(title = "Universal Kriging Prediction of Zinc",
        color = "Predicted Zn")
-```
 
+ggplot(uk_pred) +
+  geom_sf(aes(color = log.zinc.var)) +
+  scale_color_viridis_c() +
+  theme_minimal() +
+  labs(title = "Universal Kriging Variance of Zinc",
+       color = "Predicted Zn")
+```
+You can see in this plot the "chunky" nature of the soil type data creates some new patterns in the prediction, but the variance patterns remain roughly the same.

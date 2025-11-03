@@ -1,4 +1,5 @@
 ---
-title: "Generic Lesson"
+title: "Random Forests for Spatial Data"
 ---
 
+Rather than create an entirely new lesson, I'd like you to work through the `caret` portion of [Jakub Nowosad's](https://geocompx.org/post/2025/sml-bp1/) intro to ML in `R`. This should give you the hang of the core concepts without getting you too bogged down in all the details of the different packages.

@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Intro to Spatial Data in R - Spatial Autocorrelation</title>
+<title>Intro to Spatial Data in R - Machine Learning Models: Trees</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -20,7 +20,26 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
-</style>
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
 
 
 <script src="../site_libs/quarto-nav/quarto-nav.js"></script>
@@ -62,7 +81,7 @@ ul.task-list li input[type="checkbox"] {
 }</script>
 
 
-<meta property="og:title" content="Intro to Spatial Data in R - Spatial Autocorrelation">
+<meta property="og:title" content="Intro to Spatial Data in R - Machine Learning Models: Trees">
 <meta property="og:description" content="">
 <meta property="og:image" content="https://isdrfall25.classes.spaseslab.com/files/social-image-f22.png">
 <meta property="og:site-name" content="Intro to Spatial Data in R">
@@ -373,30 +392,31 @@ ul.task-list li input[type="checkbox"] {
 <main class="content" id="quarto-document-content">
 
 <header id="title-block-header">
-<h1 class="title display-7">Spatial Autocorrelation</h1>
+<h1 class="title display-7">Machine Learning Models: Trees</h1>
 
 <div class="date-block bg-content text-white p-2">
-  <p class="date">Content for Monday, October 30, 2023</p>
+  <p class="date">Content for Thursday, October 30, 2025</p>
 </div>
 </header>
 
-<p>Now that we’ve learned about the power of spatial autocorrelation for interpolation from point data, it’s time to explore methods for spatial autocorrelation with areal data. We’ll have to define neighbors because distance is a little more ambiguous here and then look at some global and local measures of autocorrelation.</p>
+<p>In the previous set of lectures, we thought about explanation of spatial patterns through a fairly simple lens. Namely, that the best explanation for variation in values is a function of distance. As such, the best prediction of new values take into account the measurement and some function of distance. In deterministic methods, we assume that the measurements we have should simpley be smoothed based on distance. In probabilistic methods, we allow for the idea that the underlying mean of the process is unknown (and can vary) and then exploit spatial covariance to more meaningfully account for relationship between distance and the mean of the process (allowing for potential second-order effects). It is often the case, however, that we want to know more about this unknown mean value (which factors are most important, how do they affect the process, etc). This might be because we are interested in inference about those factors more than we care about complete predictions. In this case, me might use statistical-learning models to take advantage of the data we have in a way that is computationally efficient. We’ll talk about some of the simpler methods for doing that today: tree based methods.</p>
 <section id="resources" class="level2">
 <h2 class="anchored" data-anchor-id="resources">Resources</h2>
 <ul>
-<li><p><i class="fas fa-external-link-square-alt"></i> <a href="https://www.paulamoraga.com/book-spatial/spatial-neighborhood-matrices.html">Ch. 7: Spatial Neighborhood Matrices</a> in from Paula Moraga’s new book Spatial Statistics for Data Science: Theory and Practice with <code>R</code> gives a little gentler introduction to spatial neighbors specifically in the context of statistical models.</p></li>
-<li><p><i class="fas fa-book"></i> <a href="https://r-spatial.org/book/14-Areal.html">Chapter 14 Proximity and Areal Data</a> in Spatial Data Science by Edzer Pebesma and Roger Bivand provides explanations of how the <code>spdep</code> package can be used to construct neighborhood weights.</p></li>
+<li><p><i class="fas fa-external-link-square-alt"></i> <a href="https://esajournals.onlinelibrary.wiley.com/doi/full/10.1890/07-0539.1">Random forests for Classification in Ecology</a> by <span class="citation" data-cites="cutler2007">(<a href="#ref-cutler2007" role="doc-biblioref">Cutler et al. 2007</a>)</span> provides an introduction to the utility of Random Forests for ecologists.</p></li>
+<li><p><i class="fas fa-external-link-square-alt"></i><a href="https://r-spatial.org/book/10-Models.html">Statistical modeling of spatial data</a> in <span class="citation" data-cites="sds">(<a href="#ref-sds" role="doc-biblioref">Pebesma and Bivand 2023</a>)</span> gives a nice overview of the different goals for spatial statistical modeling and considerations one should be aware of when trying to draw inference from these types of analyses.</p></li>
+<li><p><i class="fas fa-external-link-square-alt"></i> <a href="https://hastie.su.domains/ISLR2/ISLRv2_corrected_June_2023.pdf.download.html">An Introduction to Statistical Learning</a> by <span class="citation" data-cites="James2021">(<a href="#ref-James2021" role="doc-biblioref">James et al. 2021</a>)</span> is a comprehensive introduction to a number of statistical learning techniques with examples in <code>R</code>. Although these examples are not necessarily spatial, the chapters provide a lot of the background necessary for understanding what the models are doing.</p></li>
+<li><p><i class="fas fa-external-link-square-alt"></i><a href="https://geocompx.org/post/2025/sml-bp1/">Spatial machine learning with R: caret, tidymodels, and mlr3</a> by Jakub Nowosad provides a useful introduction to fitting Random Forests under 3 different modeling paradigms. The <code>caret</code> package has been around for a long time and is a “go to” for lots of machine learning methods. The other two are newer and have quite a few more methods, but have been less integrated into the existing spatial modeling paradigms.</p></li>
 </ul>
-<p><i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i> <a href="https://mgimond.github.io/Spatial/spatial-autocorrelation-in-r.html">Spatial Autocorrelation in R</a> provides some easy code for working through neighbors with areal data and calculating spatial autocorrelation measures.</p>
 </section>
 <section id="objectives" class="level2">
 <h2 class="anchored" data-anchor-id="objectives">Objectives</h2>
 <p>By the end of today you should be able to:</p>
 <ul>
-<li><p>Use the <code>spdep</code> package to identify the neighbors of a given polygon based on proximity, distance, and minimum number</p></li>
-<li><p>Understand the underlying mechanics of Moran’s I and calculate it for various neighbors</p></li>
-<li><p>Distinguish between global and local measures of spatial autocorrelation</p></li>
-<li><p>Visualize neighbors and clusters</p></li>
+<li><p><strong>Differentiate</strong> supervised from unsupervised classification</p></li>
+<li><p><strong>Recognize</strong> the linkage between statistical learning models and interpolation</p></li>
+<li><p><strong>Define</strong> the key elements of tree-based classifiers</p></li>
+<li><p><strong>Articulate</strong> the differences in statistical learning for spatial data</p></li>
 </ul>
 <p class="text-center buttons">
 <a class="btn btn-danger" target="_blank" href="../slides/21-slides.html"><i class="fa-solid fa-arrow-up-right-from-square"></i> View all slides in new window</a> <a class="btn btn-danger" target="_blank" href="../slides/21-slides.pdf" role="button"><i class="fa-solid fa-file-pdf"></i> Download PDF of all slides</a>
@@ -404,12 +424,22 @@ ul.task-list li input[type="checkbox"] {
 <div>
 <iframe class="slide-deck" src="../slides/21-slides.html"></iframe>
 </div>
-<p><a href="https://boisestate.hosted.panopto.com/Panopto/Pages/Viewer.aspx?id=4e8ef8ee-2dd0-4681-91b5-b0ab01431905">Link to Panopto Video</a></p>
+
 
 
 </section>
 
-</main> <!-- /main -->
+<div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" role="doc-bibliography"><h2 class="anchored quarto-appendix-heading">References</h2><div id="refs" class="references csl-bib-body hanging-indent" data-line-spacing="2" role="list">
+<div id="ref-cutler2007" class="csl-entry" role="listitem">
+Cutler, D. R., T. C. Edwards Jr., K. H. Beard, A. Cutler, K. T. Hess, J. Gibson, and J. J. Lawler. 2007. <a href="https://doi.org/10.1890/07-0539.1">RANDOM FORESTS FOR CLASSIFICATION IN ECOLOGY</a>. Ecology 88:2783–2792.
+</div>
+<div id="ref-James2021" class="csl-entry" role="listitem">
+James, G., D. Witten, T. Hastie, and R. Tibshirani. 2021. <a href="https://doi.org/10.1007/978-1-0716-1418-1_4">Classification</a>. Pages 129–195 An introduction to statistical learning: With applications in r. Springer US, New York, NY.
+</div>
+<div id="ref-sds" class="csl-entry" role="listitem">
+Pebesma, E., and R. Bivand. 2023. <a href="https://doi.org/10.1201/9780429459016">Spatial data science: With applications in <span>R</span></a>. Chapman; Hall/CRC, Boca Raton.
+</div>
+</div></section></div></main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
 window.document.addEventListener("DOMContentLoaded", function (event) {
   const toggleBodyColorMode = (bsSheetEl) => {
