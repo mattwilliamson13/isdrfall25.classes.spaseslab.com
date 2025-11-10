@@ -109,7 +109,7 @@
     "href": "slides/23-slides.html#common-regression-forms",
     "title": "Statistical Modeling I",
     "section": "Common Regression Forms",
-    "text": "Common Regression Forms\n\\[\n\\begin{equation}\ny \\sim N(\\bar{y}, \\bar{sigma})\\\\\ny = w_0 + \\sum_{i=1}^{m}w_iX_i(\\mathbf{s}) + \\epsilon\\\\\n\\newline\ny \\sim Bern(p)\\\\\nlogit(y) = w_0 + \\sum_{i=1}^{m}w_iX_i(\\mathbf{s}) + \\epsilon\\\\\n\\newline\n\\end{equation}\ny \\sim Poisson(\\lambda)\\\\\nlog(\\lambda) = w_0 + \\sum_{i=1}^{m}w_iX_i(\\mathbf{s}) + \\epsilon\\\\\n\\]"
+    "text": "Common Regression Forms\n\n\\[\n\\begin{aligned}\ny &\\sim N(\\bar{y}, \\bar{\\sigma}) &&\\quad\\text{(linear regression)}\\\\\ny &= w_0 + \\sum_{i=1}^{m}w_iX_i(\\mathbf{s}) + \\epsilon\\\\\n\\\\\ny &\\sim \\text{Bern}(p) &&\\quad\\text{(logistic regression)}\\\\\n\\text{logit}(y) &= w_0 + \\sum_{i=1}^{m}w_iX_i(\\mathbf{s}) + \\epsilon\\\\\n\\\\\ny &\\sim \\text{Poisson}(\\lambda) &&\\quad\\text{(Poisson regression)}\\\\\n\\log(\\lambda) &= w_0 + \\sum_{i=1}^{m}w_iX_i(\\mathbf{s}) + \\epsilon\n\\end{aligned}\n\\]"
   },
   {
     "objectID": "slides/23-slides.html#key-components",
@@ -130,7 +130,14 @@
     "href": "slides/23-slides.html#estimating-parameters-via-the-likelihood-function",
     "title": "Statistical Modeling I",
     "section": "Estimating parameters via the Likelihood Function",
-    "text": "Estimating parameters via the Likelihood Function\n\\[\np(y_i \\mid \\beta, \\sigma)\n= \\frac{1}{\\sqrt{2\\pi\\sigma^2}}\n\\exp\\!\\left(-\\frac{(y_i - w_iX_i(\\mathbf{s}))^2}{2\\sigma^2}\\right)\\\\\np(\\mathbf{y}\\mid \\beta, \\sigma)\n= \\prod_{i=1}^n\n\\frac{1}{\\sqrt{2\\pi\\sigma^2}}\n\\exp\\!\\left(-\\frac{(y_i - w_iX_i(\\mathbf{s}))^2}{2\\sigma^2}\\right)\n\\] ## Estimating parameters via the likelihood function\n\nMaximum Likelihood: treats \\(w_i\\) as fixed, unknown constants. Uncertainty calculated after…\nBayesian = \\(w_i\\) is a random quantity which varies within the constraints of our prior. Uncertainty built into the estimation process."
+    "text": "Estimating parameters via the Likelihood Function\n\\[\np(y_i \\mid w, \\sigma)\n= \\frac{1}{\\sqrt{2\\pi\\sigma^2}}\n\\exp\\!\\left(-\\frac{(y_i - w_iX_i(\\mathbf{s}))^2}{2\\sigma^2}\\right)\\\\\np(\\mathbf{y}\\mid w, \\sigma)\n= \\prod_{i=1}^n\n\\frac{1}{\\sqrt{2\\pi\\sigma^2}}\n\\exp\\!\\left(-\\frac{(y_i - w_iX_i(\\mathbf{s}))^2}{2\\sigma^2}\\right)\n\\]"
+  },
+  {
+    "objectID": "slides/23-slides.html#estimating-parameters-via-the-likelihood-function-1",
+    "href": "slides/23-slides.html#estimating-parameters-via-the-likelihood-function-1",
+    "title": "Statistical Modeling I",
+    "section": "Estimating parameters via the likelihood function",
+    "text": "Estimating parameters via the likelihood function\n\nMaximum Likelihood: treats \\(w_i\\) as fixed, unknown constants. Uncertainty calculated after…\nBayesian = \\(w_i\\) is a random quantity which varies within the constraints of our prior. Uncertainty built into the estimation process."
   },
   {
     "objectID": "slides/23-slides.html#section",

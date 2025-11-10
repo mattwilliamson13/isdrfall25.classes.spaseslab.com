@@ -1201,18 +1201,20 @@ z(\mathbf{s}) \sim Distr(\mu, \sigma)\\
 </section>
 <section id="common-regression-forms" class="slide level2">
 <h2>Common Regression Forms</h2>
+<div style="text-align: left; margin-left: 1em;">
 <p><span class="math display">\[
-\begin{equation}
-y \sim N(\bar{y}, \bar{sigma})\\
-y = w_0 + \sum_{i=1}^{m}w_iX_i(\mathbf{s}) + \epsilon\\
-\newline
-y \sim Bern(p)\\
-logit(y) = w_0 + \sum_{i=1}^{m}w_iX_i(\mathbf{s}) + \epsilon\\
-\newline
-\end{equation}
-y \sim Poisson(\lambda)\\
-log(\lambda) = w_0 + \sum_{i=1}^{m}w_iX_i(\mathbf{s}) + \epsilon\\
+\begin{aligned}
+y &amp;\sim N(\bar{y}, \bar{\sigma}) &amp;&amp;\quad\text{(linear regression)}\\
+y &amp;= w_0 + \sum_{i=1}^{m}w_iX_i(\mathbf{s}) + \epsilon\\
+\\
+y &amp;\sim \text{Bern}(p) &amp;&amp;\quad\text{(logistic regression)}\\
+\text{logit}(y) &amp;= w_0 + \sum_{i=1}^{m}w_iX_i(\mathbf{s}) + \epsilon\\
+\\
+y &amp;\sim \text{Poisson}(\lambda) &amp;&amp;\quad\text{(Poisson regression)}\\
+\log(\lambda) &amp;= w_0 + \sum_{i=1}^{m}w_iX_i(\mathbf{s}) + \epsilon
+\end{aligned}
 \]</span></p>
+</div>
 </section>
 <section id="key-components" class="slide level2">
 <h2>Key components</h2>
@@ -1233,14 +1235,17 @@ log(\lambda) = w_0 + \sum_{i=1}^{m}w_iX_i(\mathbf{s}) + \epsilon\\
 <section id="estimating-parameters-via-the-likelihood-function" class="slide level2">
 <h2>Estimating parameters via the Likelihood Function</h2>
 <p><span class="math display">\[
-p(y_i \mid \beta, \sigma)
+p(y_i \mid w, \sigma)
 = \frac{1}{\sqrt{2\pi\sigma^2}}
 \exp\!\left(-\frac{(y_i - w_iX_i(\mathbf{s}))^2}{2\sigma^2}\right)\\
-p(\mathbf{y}\mid \beta, \sigma)
+p(\mathbf{y}\mid w, \sigma)
 = \prod_{i=1}^n
 \frac{1}{\sqrt{2\pi\sigma^2}}
 \exp\!\left(-\frac{(y_i - w_iX_i(\mathbf{s}))^2}{2\sigma^2}\right)
-\]</span> ## Estimating parameters via the likelihood function</p>
+\]</span></p>
+</section>
+<section id="estimating-parameters-via-the-likelihood-function-1" class="slide level2">
+<h2>Estimating parameters via the likelihood function</h2>
 <ul>
 <li><p>Maximum Likelihood: treats <span class="math inline">\(w_i\)</span> as fixed, unknown constants. Uncertainty calculated after…</p></li>
 <li><p>Bayesian = <span class="math inline">\(w_i\)</span> is a random quantity which varies within the constraints of our <em>prior</em>. Uncertainty built into the estimation process.</p></li>
