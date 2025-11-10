@@ -84,6 +84,104 @@
     "text": "Footnotes\n\n\nSo seriously, just don’t cheat or plagiarize!↩︎"
   },
   {
+    "objectID": "slides/23-slides.html#objectives",
+    "href": "slides/23-slides.html#objectives",
+    "title": "Statistical Modeling I",
+    "section": "Objectives",
+    "text": "Objectives\nBy the end of today you should be able to:\n\nDefine the likelihood function and its relationship to statistical infrerence.\nRecognize key assumptions of statistical models and how spatial data may challenge those assumptions.\nSimulate fake data with known relationships\nFit simple linear and generalized linear models to spatial data"
+  },
+  {
+    "objectID": "slides/23-slides.html#inference-for-first-order-properties",
+    "href": "slides/23-slides.html#inference-for-first-order-properties",
+    "title": "Statistical Modeling I",
+    "section": "Inference for First Order Properties",
+    "text": "Inference for First Order Properties\n\\[\n\\begin{equation}\nz(\\mathbf{x}) = \\mu(\\mathbf{x}) + \\epsilon(\\mathbf{x})\n\\end{equation}\n\\]\n\nOften we actually care about the “drivers” of \\(\\mu(x)\\)\nInference not prediction\n“Which spatial attributes drive \\(z(\\mathbf{x})\\) ?”\nDoes \\(\\mu(x)\\) increase or decrease with changes in a particular variable?”"
+  },
+  {
+    "objectID": "slides/23-slides.html#using-regression-to-estimate-mu",
+    "href": "slides/23-slides.html#using-regression-to-estimate-mu",
+    "title": "Statistical Modeling I",
+    "section": "Using regression to estimate mu",
+    "text": "Using regression to estimate mu\n\\[\n\\begin{equation}\nz(\\mathbf{s}) \\sim Distr(\\mu, \\sigma)\\\\\n\\mu = w_0 + \\sum_{i=1}^{m}w_iX_i(\\mathbf{s}) + \\epsilon\n\\end{equation}\n\\]\n\nWhen \\(z(s)\\) is binary → logistic regression\nWhen \\(z(s)\\) is continuous → linear (gamma) regression\nWhen \\(z(s)\\) is discrete → Poisson regression\nAssumptions about \\(\\epsilon\\) matter!!"
+  },
+  {
+    "objectID": "slides/23-slides.html#common-regression-forms",
+    "href": "slides/23-slides.html#common-regression-forms",
+    "title": "Statistical Modeling I",
+    "section": "Common Regression Forms",
+    "text": "Common Regression Forms\n\\[\n\\begin{equation}\ny \\sim N(\\bar{y}, \\bar{sigma})\\\\\ny = w_0 + \\sum_{i=1}^{m}w_iX_i(\\mathbf{s}) + \\epsilon\\\\\n\\newline\ny \\sim Bern(p)\\\\\nlogit(y) = w_0 + \\sum_{i=1}^{m}w_iX_i(\\mathbf{s}) + \\epsilon\\\\\n\\newline\n\\end{equation}\ny \\sim Poisson(\\lambda)\\\\\nlog(\\lambda) = w_0 + \\sum_{i=1}^{m}w_iX_i(\\mathbf{s}) + \\epsilon\\\\\n\\]"
+  },
+  {
+    "objectID": "slides/23-slides.html#key-components",
+    "href": "slides/23-slides.html#key-components",
+    "title": "Statistical Modeling I",
+    "section": "Key components",
+    "text": "Key components\n\nDistributional assumptions - the likelihood\n\\(w_i\\) is ‘spatial weight’, equivalent to \\(\\beta\\) in typical regression\nlink function scales linear model to appropriate support"
+  },
+  {
+    "objectID": "slides/23-slides.html#estimating-parameters",
+    "href": "slides/23-slides.html#estimating-parameters",
+    "title": "Statistical Modeling I",
+    "section": "Estimating parameters",
+    "text": "Estimating parameters\n\nYou measure \\(y\\)\nYour model expresses your hypothesis about the rules governing \\(y\\)\nWe need estimates of \\(w_i\\) to complete our rule"
+  },
+  {
+    "objectID": "slides/23-slides.html#estimating-parameters-via-the-likelihood-function",
+    "href": "slides/23-slides.html#estimating-parameters-via-the-likelihood-function",
+    "title": "Statistical Modeling I",
+    "section": "Estimating parameters via the Likelihood Function",
+    "text": "Estimating parameters via the Likelihood Function\n\\[\np(y_i \\mid \\beta, \\sigma)\n= \\frac{1}{\\sqrt{2\\pi\\sigma^2}}\n\\exp\\!\\left(-\\frac{(y_i - w_iX_i(\\mathbf{s}))^2}{2\\sigma^2}\\right)\\\\\np(\\mathbf{y}\\mid \\beta, \\sigma)\n= \\prod_{i=1}^n\n\\frac{1}{\\sqrt{2\\pi\\sigma^2}}\n\\exp\\!\\left(-\\frac{(y_i - w_iX_i(\\mathbf{s}))^2}{2\\sigma^2}\\right)\n\\] ## Estimating parameters via the likelihood function\n\nMaximum Likelihood: treats \\(w_i\\) as fixed, unknown constants. Uncertainty calculated after…\nBayesian = \\(w_i\\) is a random quantity which varies within the constraints of our prior. Uncertainty built into the estimation process."
+  },
+  {
+    "objectID": "slides/23-slides.html#section",
+    "href": "slides/23-slides.html#section",
+    "title": "Statistical Modeling I",
+    "section": "",
+    "text": "MLE: “What’s the best dart throw?”\nBayesian: “Given where darts tend to land, what is the distribution of possible aiming points?”"
+  },
+  {
+    "objectID": "slides/23-slides.html#deriving-model-assumptions-from-the-likelihood",
+    "href": "slides/23-slides.html#deriving-model-assumptions-from-the-likelihood",
+    "title": "Statistical Modeling I",
+    "section": "Deriving model assumptions from the likelihood",
+    "text": "Deriving model assumptions from the likelihood\n\nShape of likelihood function gives an indication of residual behavior\n\\(\\prod\\) signals independent observations\nMoments of the distribution add assumptions (i.e. Poisson mean = variance)"
+  },
+  {
+    "objectID": "slides/23-slides.html#why-do-we-create-distribution-models",
+    "href": "slides/23-slides.html#why-do-we-create-distribution-models",
+    "title": "Statistical Modeling I",
+    "section": "Why do we create distribution models?",
+    "text": "Why do we create distribution models?\n\n\n\n\nTo identify important correlations between predictors and the occurrence of an event\nGenerate maps of the ‘range’ or ‘niche’ of events\nUnderstand spatial patterns of event co-occurrence\nForecast changes in event distributions\n\n\n\n\n\n\nFrom Wiens et al. 2009"
+  },
+  {
+    "objectID": "slides/23-slides.html#general-analysis-situation",
+    "href": "slides/23-slides.html#general-analysis-situation",
+    "title": "Statistical Modeling I",
+    "section": "General analysis situation",
+    "text": "General analysis situation\n\nFrom Long\n\nSpatially referenced locations of events \\((\\mathbf{y})\\) sampled from the study extent\nA matrix of predictors \\((\\mathbf{X})\\) that can be assigned to each event based on spatial location\n\n\nGoal: Estimate the probability of occurrence of events across unsampled regions of the study area based on correlations with predictors"
+  },
+  {
+    "objectID": "slides/23-slides.html#modeling-presence-absence-data",
+    "href": "slides/23-slides.html#modeling-presence-absence-data",
+    "title": "Statistical Modeling I",
+    "section": "Modeling Presence-Absence Data",
+    "text": "Modeling Presence-Absence Data\n\n\n\nRandom or systematic sample of the study region\nThe presence (or absence) of the event is recorded for each point\nHypothesized predictors of occurrence are measured (or extracted) at each point\n\n\n\n\n\nFrom By Ragnvald - Own work, CC BY-SA 3.0"
+  },
+  {
+    "objectID": "slides/23-slides.html#logistic-regression",
+    "href": "slides/23-slides.html#logistic-regression",
+    "title": "Statistical Modeling I",
+    "section": "Logistic regression",
+    "text": "Logistic regression\n\n\n\n\nWe can model favorability as the probability of occurrence using a logistic regression\nA link function maps the linear predictor \\((\\mathbf{x_i}'\\beta + \\alpha)\\) onto the support (0-1) for probabilities\nEstimates of \\(\\beta\\) can then be used to generate ‘wall-to-wall’ spatial predictions\n\n\n\n\\[\n\\begin{equation}\ny_{i} \\sim \\text{Bern}(p_i)\\\\\n\\text{link}(p_i) = \\mathbf{x_i}'\\beta + \\alpha\n\\end{equation}\n\\]\n\n\n\nFrom Mendoza"
+  },
+  {
+    "objectID": "slides/23-slides.html#comparison-with-machine-learning",
+    "href": "slides/23-slides.html#comparison-with-machine-learning",
+    "title": "Statistical Modeling I",
+    "section": "Comparison with Machine Learning",
+    "text": "Comparison with Machine Learning\n\nStatistical models describe a generative process: how’d the data get here\nMachine learning models ask something different\nUnderlying modes of prediction"
+  },
+  {
     "objectID": "slides/21-slides.html#updates",
     "href": "slides/21-slides.html#updates",
     "title": "Machine Learning I: Trees",
@@ -2711,23 +2809,23 @@
   {
     "objectID": "content/23-content.html",
     "href": "content/23-content.html",
-    "title": "Statistical Modelling II",
+    "title": "Statistical Modelling I",
     "section": "",
-    "text": "Last class we spent some time extending the idea of Favorability to build a foundation for treating overlay analysis as a logistic regression. Although logistic regression has a number of properties that make it desirable for inference, a number of recently developed statistical learning approaches have greatly improved our ability to take advantage a wide variety of available data and generate spatially explicit predictions. These methods may make interpretation and inference more challenging, but can improve the predictive ability of your models. We’ll explore some of those today."
+    "text": "Last class we looked at tree-based machine-learning models for classifying data (i.e., presence/abscence, categorization) or estimating the pseudo-regression relationships between variables and measured outcomes. Those approaches rely on learning the distributions necessary for the likelihood from the data themselves (rather than from a theoretical probability distribution). Today we’ll look at alternative approaches using tradititional statistical models."
   },
   {
     "objectID": "content/23-content.html#resources",
     "href": "content/23-content.html#resources",
-    "title": "Statistical Modelling II",
+    "title": "Statistical Modelling I",
     "section": "Resources",
-    "text": "Resources\n\n An Introduction to Statistical Learning by (James et al. 2021) is a comprehensive introduction to a number of statistical learning techniques with examples in R. Although these examples are not necessarily spatial, the chapters provide a lot of the background necessary for understanding what the models are doing.\n A statistical explanation of MaxEnt for ecologists by (Elith et al. 2011) provides a relatively accessible description of the details of MaxEnt species distribution modeling.\n Random forests for Classification in Ecology by (Cutler et al. 2007) provides an introduction to the utility of Random Forests for ecologists."
+    "text": "Resources\n\nBigger Picture\n\n Logistic regression: a brief primer by (Stoltzfus 2011) is a nice introduction to logistic regression.\n Is my species distribution model fit for purpose? Matching data and models to applications by (Guillera-Arroita et al. 2015) is an excellent, concise description of the relations between data collection, statistical models, and inference.\n Predicting species distributions for conservation decisions by (Guisan et al. 2013) is a foundational paper describing some of the challenges with making conservation decisions based on the outcomes of species distribution models.\n\n\n\nTechincal details\n\n Statistical Models from the terra package documentation has some step-by-step examples of using terra with base R to fit statistical modles.\n Statistical Learning from (Lovelace et al. 2019) has an extended example of fitting a variety of modeling approaches to data and evaluating their performance."
   },
   {
     "objectID": "content/23-content.html#objectives",
     "href": "content/23-content.html#objectives",
-    "title": "Statistical Modelling II",
+    "title": "Statistical Modelling I",
     "section": "Objectives",
-    "text": "Objectives\nBy the end of today you should be able to:\n\nArticulate the differences between statistical learning classifiers and logistic regression\nDescribe several classification trees and their relationship to Random Forests\nDescribe MaxEnt models for presence-only data\n\n\n View all slides in new window  Download PDF of all slides\n\n\n\n\nPanopto Video"
+    "text": "Objectives\nBy the end of today you should be able to:\n\nDefine the likelihood function and its relationship to statistical infrerence.\nRecognize key assumptions of statistical models and how spatial data may challenge those assumptions.\nSimulate fake data with known relationships\nFit simple linear and generalized linear models to spatial data\n\n\n View all slides in new window  Download PDF of all slides"
   },
   {
     "objectID": "content/25-content.html",
@@ -2847,6 +2945,13 @@
     "title": "Surface Metrics",
     "section": "",
     "text": "Calculate 3 different patch metrics from those in the example. Paste a map of one of them in the Slack Channel.\nCalculate 3 different class metrics from those in the example. Paste a histogram for one of the metrics in the Slack Channel.\nCombine your 3 patchmetrics into a single matrix and estimate the correlation between them (use show_correlation) and paste them in the slack channel."
+  },
+  {
+    "objectID": "example/23-example.html",
+    "href": "example/23-example.html",
+    "title": "Exploring logistic regression with your simulation",
+    "section": "",
+    "text": "Run the lesson for this unit and then:\n\nWhat happens to your ability to recover the values when you cut your sample size in half? Double it?\nInclude another predictor from the bioclim data in your model (but not in the presence/absence process). What happens when you add a variable that doesn’t really have an effect on the process?\nNow omit a predictor that you specified to have an effect on presence/absence from your statistical model? What happens when your model is missing a variable that contributes to the data-generating process.\n\nPut your answers in the slack channel!!"
   },
   {
     "objectID": "example/getting-setup.html",
@@ -3246,6 +3351,41 @@
     "title": "Random Forests for Spatial Data",
     "section": "",
     "text": "Rather than create an entirely new lesson, I’d like you to work through the caret portion of Jakub Nowosad’s intro to ML in R. This should give you the hang of the core concepts without getting you too bogged down in all the details of the different packages."
+  },
+  {
+    "objectID": "lesson/23-lesson.html",
+    "href": "lesson/23-lesson.html",
+    "title": "Statistical Modeling with Logistic Regression",
+    "section": "",
+    "text": "This exercise is going to rely on simulated data so you don’t need to join a repository. You’ll just need to get our credentials and login to a new RStudio session. I’m using simulation because one of the best ways to test out whether you’ve specified your model correctly is to simulate the process with known coefficients. If your statistical model returns those values, then, assuming you’ve simulated a reasonable generating process, you should be able to trust that the model you fit is actually doing what you want it to.\n\n\nCode\nlibrary(tidyverse)\n\n\n── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──\n✔ dplyr     1.1.4     ✔ readr     2.1.5\n✔ forcats   1.0.1     ✔ stringr   1.5.2\n✔ ggplot2   4.0.0     ✔ tibble    3.3.0\n✔ lubridate 1.9.4     ✔ tidyr     1.3.1\n✔ purrr     1.1.0     \n── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──\n✖ dplyr::filter() masks stats::filter()\n✖ dplyr::lag()    masks stats::lag()\nℹ Use the conflicted package (&lt;http://conflicted.r-lib.org/&gt;) to force all conflicts to become errors\n\n\nCode\nlibrary(terra)\n\n\nterra 1.8.70\n\nAttaching package: 'terra'\n\nThe following object is masked from 'package:tidyr':\n\n    extract\n\n\nCode\nlibrary(geodata)\nlibrary(tidyterra)\n\n\n\nAttaching package: 'tidyterra'\n\nThe following object is masked from 'package:stats':\n\n    filter"
+  },
+  {
+    "objectID": "lesson/23-lesson.html#getting-started",
+    "href": "lesson/23-lesson.html#getting-started",
+    "title": "Statistical Modeling with Logistic Regression",
+    "section": "",
+    "text": "This exercise is going to rely on simulated data so you don’t need to join a repository. You’ll just need to get our credentials and login to a new RStudio session. I’m using simulation because one of the best ways to test out whether you’ve specified your model correctly is to simulate the process with known coefficients. If your statistical model returns those values, then, assuming you’ve simulated a reasonable generating process, you should be able to trust that the model you fit is actually doing what you want it to.\n\n\nCode\nlibrary(tidyverse)\n\n\n── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──\n✔ dplyr     1.1.4     ✔ readr     2.1.5\n✔ forcats   1.0.1     ✔ stringr   1.5.2\n✔ ggplot2   4.0.0     ✔ tibble    3.3.0\n✔ lubridate 1.9.4     ✔ tidyr     1.3.1\n✔ purrr     1.1.0     \n── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──\n✖ dplyr::filter() masks stats::filter()\n✖ dplyr::lag()    masks stats::lag()\nℹ Use the conflicted package (&lt;http://conflicted.r-lib.org/&gt;) to force all conflicts to become errors\n\n\nCode\nlibrary(terra)\n\n\nterra 1.8.70\n\nAttaching package: 'terra'\n\nThe following object is masked from 'package:tidyr':\n\n    extract\n\n\nCode\nlibrary(geodata)\nlibrary(tidyterra)\n\n\n\nAttaching package: 'tidyterra'\n\nThe following object is masked from 'package:stats':\n\n    filter"
+  },
+  {
+    "objectID": "lesson/23-lesson.html#simulating-data",
+    "href": "lesson/23-lesson.html#simulating-data",
+    "title": "Statistical Modeling with Logistic Regression",
+    "section": "Simulating data",
+    "text": "Simulating data\nLet’s imagine we’re developing a species distribution model for a species in Costa Rica. We’ll use the elevation data and bioclim variables from the geodata package to give us some spatial predictors. To keep this tractable (for now), we’ll just use the annual mean temp and precip from bioclim. We subset them using the [[]] notation, then resample them to make sure we’ve got everything aligned (you might remember that the elevation data is higher resolution than the climate data). We also use raster math to convert the temperature to Celsius (see the geodata help for why this is). Finally, we combine the data into one stack and plot each dataset to make sure we’ve got what we expected.\n\n\nCode\nelevation &lt;- geodata::elevation_30s(country = \"CRI\", \n                                    path = tempdir())\nclimate &lt;- geodata::worldclim_country(country = \"CRI\", \n                                      var = \"bio\", \n                                      res = 0.5, \n                                      path = tempdir())\n\n\n# bio1 = Annual Mean Temperature\n# bio12 = Annual Precipitation\ntemp &lt;- climate[[1]]      # bio1\nprecip &lt;- climate[[12]]   # bio12\n\ntemp_aligned &lt;- resample(temp, elevation)\nprecip_aligned &lt;- resample(precip, elevation)\n\n# Stack the predictors\npredictors &lt;- c(elevation, temp_aligned, precip_aligned)\nnames(predictors) &lt;- c(\"elevation\", \"temperature\", \"precipitation\")\n\n# Scale the temperature (divide by 10 to get actual °C)\npredictors$temperature &lt;- predictors$temperature / 10\n\n# Visualize\nplot(predictors)\n\n\n\n\n\nNow that we’ve got our predictors, it’s time to generate some random observations!! We start by using set.seed to ensure we’re all starting from the same place. We then use spatSample create a random sample of points within our study area and extract the predictor values to our points. Finally, we set up a nice tibble each observation and the relevant predictor values and drop any NAs that may have arisen from our random sample.\n\n\nCode\nset.seed(123)\nn_points &lt;- 500\n\n# Sample random locations from the study area\nsample_points &lt;- spatSample(elevation, size = n_points, \n                           method = \"random\", na.rm = TRUE, \n                           xy = TRUE, values = FALSE)\n\n# Extract environmental values at these points\nenv_values &lt;- terra::extract(predictors, sample_points)\n\nspecies_data &lt;- tibble(\n  x = sample_points[,1],\n  y = sample_points[,2],\n  elevation = env_values$elevation,\n  temperature = env_values$temperature,\n  precipitation = env_values$precipitation\n) %&gt;%\n  drop_na()  # Remove any NA values\n\n\nNow comes the fun part - specifying the TRUE regression coefficient values. These are arbitrary and you can/should change them to explore how correlations in the values and in the data might effect your fit. We first calculate the linear predictor (the model without the link function; logit_p) by multiplying each variable by its approrpiate beta and adding them together. Then we convert this to the logit scale by using plogis to convert our linear predictor to the probability scale (remember the logit link!). Finally, we use the rbinom function to pull a random draw for each location with a probability = to our prob estimate. You can see some summary statistics of how many presences, absences, and the proportion of points that are occupied by using summarize.\n\n\nCode\n# DEFINE THE TRUE COEFFICIENTS (these are what you should recover!)\ntrue_beta0 &lt;- -5        # intercept\ntrue_beta1 &lt;- 0.002     # elevation effect\ntrue_beta2 &lt;- 0.15      # temperature effect  \ntrue_beta3 &lt;- 0.0005    # precipitation effect\n\n# Calculate the linear predictor (log-odds) and probability\nspecies_data &lt;- species_data %&gt;%\n  mutate(\n    logit_p = true_beta0 + \n              true_beta1 * elevation + \n              true_beta2 * temperature + \n              true_beta3 * precipitation,\n    prob = plogis(logit_p),\n    presence = rbinom(n(), size = 1, prob = prob)\n  )\n\n# Check the prevalence\nspecies_data %&gt;%\n  summarize(\n    prevalence = mean(presence),\n    n_present = sum(presence),\n    n_absent = sum(presence == 0)\n  )\n\n\n# A tibble: 1 × 3\n  prevalence n_present n_absent\n       &lt;dbl&gt;     &lt;int&gt;    &lt;int&gt;\n1      0.176        88      412\n\n\nWe can take a look at these laid over the elevation raster to get a sense for where they are. We can also reshape the data using pivot_longer to look at the distributions of each variable within the presence and absence category.\n\n\nCode\nggplot() +\n  geom_spatraster(data = elevation) +\n  scale_fill_viridis_c(name = \"Elevation (m)\", alpha = 0.7) +\n  geom_point(data = species_data, \n             aes(x = x, y = y, color = factor(presence)),\n             size = 1, alpha = 0.6) +\n  scale_color_manual(values = c(\"0\" = \"blue\", \"1\" = \"red\"),\n                     labels = c(\"Absent\", \"Present\"),\n                     name = \"Species\") +\n  labs(title = \"Species Distribution\") +\n  theme_minimal() +\n  theme(legend.position = \"right\")\n\n\n\n\n\nCode\n# Compare environmental values between presence and absence\n# Reshape data for easier plotting\nplot_data &lt;- species_data %&gt;%\n  select(presence, elevation, temperature, precipitation) %&gt;%\n  pivot_longer(cols = c(elevation, temperature, precipitation),\n               names_to = \"variable\",\n               values_to = \"value\") %&gt;%\n  mutate(\n    presence = factor(presence, labels = c(\"Absent\", \"Present\")),\n    variable = factor(variable, \n                     levels = c(\"elevation\", \"temperature\", \"precipitation\"),\n                     labels = c(\"Elevation (m)\", \"Temperature (°C)\", \"Precipitation (mm)\"))\n  )\n\nggplot(plot_data, aes(x = presence, y = value, fill = presence)) +\n  geom_boxplot(alpha = 0.7) +\n  facet_wrap(~variable, scales = \"free_y\", ncol = 3) +\n  scale_fill_manual(values = c(\"Absent\" = \"blue\", \"Present\" = \"red\")) +\n  labs(title = \"Environmental Conditions by Presence/Absence\",\n       x = \"Species Presence\",\n       y = \"Value\") +\n  theme_minimal() +\n  theme(legend.position = \"none\")"
+  },
+  {
+    "objectID": "lesson/23-lesson.html#fit-the-model",
+    "href": "lesson/23-lesson.html#fit-the-model",
+    "title": "Statistical Modeling with Logistic Regression",
+    "section": "Fit the Model",
+    "text": "Fit the Model\nNow that we’ve got some observations with data and presence/absence assigned according to our known betas, we can test how well our model does using a simple call to glm. The first argument specifies the model formula and can be read as “Presence is a function of elevation + temperature + precipitation”. The second argument, data is just the dataframe where all of these variables exist. The final, family argument tells R what likelihood to use to estimate the parameters (and which link function to use). Once we’ve got the model, I just make a little summary to compare the estimated values to our true specified values.\n\n\nCode\nmodel &lt;- glm(presence ~ elevation + temperature + precipitation,\n             data = species_data,\n             family = binomial(link = \"logit\"))\n\n# Model summary\nsummary(model)\n\n\n\nCall:\nglm(formula = presence ~ elevation + temperature + precipitation, \n    family = binomial(link = \"logit\"), data = species_data)\n\nCoefficients:\n                Estimate Std. Error z value Pr(&gt;|z|)\n(Intercept)   11.3927247 11.2600485   1.012    0.312\nelevation     -0.0013694  0.0022711  -0.603    0.547\ntemperature   -5.5589898  4.0816069  -1.362    0.173\nprecipitation  0.0001829  0.0002774   0.659    0.510\n\n(Dispersion parameter for binomial family taken to be 1)\n\n    Null deviance: 465.27  on 499  degrees of freedom\nResidual deviance: 351.08  on 496  degrees of freedom\nAIC: 359.08\n\nNumber of Fisher Scoring iterations: 5\n\n\nCode\n# Compare estimated coefficients to true values\ntibble(\n  Parameter = c(\"Intercept\", \"Elevation\", \"Temperature\", \"Precipitation\"),\n  True_Value = c(true_beta0, true_beta1, true_beta2, true_beta3),\n  Estimated = coef(model),\n  Difference = Estimated - True_Value,\n  Pct_Error = (Difference / True_Value) * 100\n)\n\n\n# A tibble: 4 × 5\n  Parameter     True_Value Estimated Difference Pct_Error\n  &lt;chr&gt;              &lt;dbl&gt;     &lt;dbl&gt;      &lt;dbl&gt;     &lt;dbl&gt;\n1 Intercept        -5      11.4       16.4         -328. \n2 Elevation         0.002  -0.00137   -0.00337     -168. \n3 Temperature       0.15   -5.56      -5.71       -3806. \n4 Precipitation     0.0005  0.000183  -0.000317     -63.4"
+  },
+  {
+    "objectID": "lesson/23-lesson.html#parting-thoughts",
+    "href": "lesson/23-lesson.html#parting-thoughts",
+    "title": "Statistical Modeling with Logistic Regression",
+    "section": "Parting Thoughts",
+    "text": "Parting Thoughts\nThis is (obviously) a simple example, but you can use it to explore how sample size, correlations between data, and correlations between parameters affect your ability to recover parameters. This is important info to have because it can help you gauge how realistic your expectations of your own data might be. If the model never returns the correct values unless you have 10x more observations, you’ll know something about your sampling needs. If correlated data always causes the model to fail, you’ll have to think about ways to eliminate that correlation (maybe a PCA?). Simulation is a valuable and (in my opinion) underutilized tool. Now you’ve got the template to begin doing it!!"
   },
   {
     "objectID": "lesson/getting-setup.html",

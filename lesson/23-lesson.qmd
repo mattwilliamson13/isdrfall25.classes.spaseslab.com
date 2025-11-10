@@ -1,4 +1,174 @@
 ---
-title: "Generic Lesson"
+title: "Statistical Modeling with Logistic Regression"
 ---
 
+## Getting Started 
+This exercise is going to rely on simulated data so you don't need to join a repository. You'll just need to  [get our credentials](https://rstudio.aws.boisestate.edu/) and login to a [new RStudio session](https://rstudio.apps.aws.boisestate.edu/). I'm using simulation because one of the best ways to test out whether you've specified your model correctly is to simulate the process with _known coefficients_. If your statistical model returns those values, then, assuming you've simulated a reasonable generating process, you should be able to trust that the model you fit is actually doing what you want it to. 
+
+```{r}
+library(tidyverse)
+library(terra)
+library(geodata)
+library(tidyterra)
+```
+
+
+
+## Simulating data
+
+Let's imagine we're developing a species distribution model for a species in Costa Rica. We'll use the elevation data and bioclim variables from the `geodata` package to give us some spatial predictors. To keep this tractable (for now), we'll just use the annual mean temp and precip from bioclim. We subset them using the `[[]]` notation, then `resample` them to make sure we've got everything aligned (you might remember that the elevation data is higher resolution than the climate data). We also use raster math to convert the temperature to Celsius (see the `geodata` help for why this is). Finally, we combine the data into one stack and plot each dataset to make sure we've got what we expected. 
+
+```{r}
+elevation <- geodata::elevation_30s(country = "CRI", 
+                                    path = tempdir())
+climate <- geodata::worldclim_country(country = "CRI", 
+                                      var = "bio", 
+                                      res = 0.5, 
+                                      path = tempdir())
+
+
+# bio1 = Annual Mean Temperature
+# bio12 = Annual Precipitation
+temp <- climate[[1]]      # bio1
+precip <- climate[[12]]   # bio12
+
+temp_aligned <- resample(temp, elevation)
+precip_aligned <- resample(precip, elevation)
+
+# Stack the predictors
+predictors <- c(elevation, temp_aligned, precip_aligned)
+names(predictors) <- c("elevation", "temperature", "precipitation")
+
+# Scale the temperature (divide by 10 to get actual °C)
+predictors$temperature <- predictors$temperature / 10
+
+# Visualize
+plot(predictors)
+
+```
+
+Now that we've got our predictors, it's time to generate some random observations!! We start by using `set.seed` to ensure we're all starting from the same place. We then use `spatSample` create a random sample of points within our study area and `extract` the predictor values to our points. Finally, we set up a nice `tibble` each observation and the relevant predictor values and drop any NAs that may have arisen from our random sample.
+
+```{r}
+set.seed(123)
+n_points <- 500
+
+# Sample random locations from the study area
+sample_points <- spatSample(elevation, size = n_points, 
+                           method = "random", na.rm = TRUE, 
+                           xy = TRUE, values = FALSE)
+
+# Extract environmental values at these points
+env_values <- terra::extract(predictors, sample_points)
+
+species_data <- tibble(
+  x = sample_points[,1],
+  y = sample_points[,2],
+  elevation = env_values$elevation,
+  temperature = env_values$temperature,
+  precipitation = env_values$precipitation
+) %>%
+  drop_na()  # Remove any NA values
+```
+
+Now comes the fun part - specifying the TRUE regression coefficient values. These are arbitrary and you can/should change them to explore how correlations in the values and in the data might effect your fit. We first calculate the _linear predictor_ (the model without the link function; `logit_p`) by multiplying each variable by its approrpiate beta and adding them together. Then we convert this to the logit scale by using `plogis` to convert our linear predictor to the probability scale (remember the logit link!). Finally, we use the `rbinom` function to pull a random draw for each location with a probability = to our `prob` estimate. You can see some summary statistics of how many presences, absences, and the proportion of points that are occupied by using `summarize`.
+
+```{r}
+# DEFINE THE TRUE COEFFICIENTS (these are what you should recover!)
+true_beta0 <- -5        # intercept
+true_beta1 <- 0.002     # elevation effect
+true_beta2 <- 0.15      # temperature effect  
+true_beta3 <- 0.0005    # precipitation effect
+
+# Calculate the linear predictor (log-odds) and probability
+species_data <- species_data %>%
+  mutate(
+    logit_p = true_beta0 + 
+              true_beta1 * elevation + 
+              true_beta2 * temperature + 
+              true_beta3 * precipitation,
+    prob = plogis(logit_p),
+    presence = rbinom(n(), size = 1, prob = prob)
+  )
+
+# Check the prevalence
+species_data %>%
+  summarize(
+    prevalence = mean(presence),
+    n_present = sum(presence),
+    n_absent = sum(presence == 0)
+  )
+
+
+
+```
+
+We can take a look at these laid over the elevation raster to get a sense for where they are. We can also reshape the data using `pivot_longer` to look at the distributions of each variable within the presence and absence category.
+
+```{r}
+ggplot() +
+  geom_spatraster(data = elevation) +
+  scale_fill_viridis_c(name = "Elevation (m)", alpha = 0.7) +
+  geom_point(data = species_data, 
+             aes(x = x, y = y, color = factor(presence)),
+             size = 1, alpha = 0.6) +
+  scale_color_manual(values = c("0" = "blue", "1" = "red"),
+                     labels = c("Absent", "Present"),
+                     name = "Species") +
+  labs(title = "Species Distribution") +
+  theme_minimal() +
+  theme(legend.position = "right")
+
+# Compare environmental values between presence and absence
+# Reshape data for easier plotting
+plot_data <- species_data %>%
+  select(presence, elevation, temperature, precipitation) %>%
+  pivot_longer(cols = c(elevation, temperature, precipitation),
+               names_to = "variable",
+               values_to = "value") %>%
+  mutate(
+    presence = factor(presence, labels = c("Absent", "Present")),
+    variable = factor(variable, 
+                     levels = c("elevation", "temperature", "precipitation"),
+                     labels = c("Elevation (m)", "Temperature (°C)", "Precipitation (mm)"))
+  )
+
+ggplot(plot_data, aes(x = presence, y = value, fill = presence)) +
+  geom_boxplot(alpha = 0.7) +
+  facet_wrap(~variable, scales = "free_y", ncol = 3) +
+  scale_fill_manual(values = c("Absent" = "blue", "Present" = "red")) +
+  labs(title = "Environmental Conditions by Presence/Absence",
+       x = "Species Presence",
+       y = "Value") +
+  theme_minimal() +
+  theme(legend.position = "none")
+
+```
+## Fit the Model
+
+Now that we've got some observations with data and presence/absence assigned according to our known betas, we can test how well our model does using a simple call to `glm`. The first argument specifies the model formula and can be read as "Presence is a function of elevation + temperature + precipitation". The second argument, `data` is just the dataframe where all of these variables exist. The final, `family` argument tells `R` what likelihood to use to estimate the parameters (and which link function to use). Once we've got the model, I just make a little summary to compare the estimated values to our true specified values.
+
+```{r}
+model <- glm(presence ~ elevation + temperature + precipitation,
+             data = species_data,
+             family = binomial(link = "logit"))
+
+# Model summary
+summary(model)
+
+# Compare estimated coefficients to true values
+tibble(
+  Parameter = c("Intercept", "Elevation", "Temperature", "Precipitation"),
+  True_Value = c(true_beta0, true_beta1, true_beta2, true_beta3),
+  Estimated = coef(model),
+  Difference = Estimated - True_Value,
+  Pct_Error = (Difference / True_Value) * 100
+)
+
+
+
+```
+
+## Parting Thoughts
+
+This is (obviously) a simple example, but you can use it to explore how sample size, correlations between data, and correlations between parameters affect your ability to recover parameters. This is important info to have because it can help you gauge how realistic your expectations of your own data might be. If the model never returns the correct values unless you have 10x more observations, you'll know something about your sampling needs. If correlated data always causes the model to fail, you'll have to think about ways to eliminate that correlation (maybe a PCA?). Simulation is a valuable and (in my opinion) underutilized tool. Now you've got the template to begin doing it!!

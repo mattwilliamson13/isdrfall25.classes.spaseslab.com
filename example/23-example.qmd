@@ -1,4 +1,14 @@
 ---
-title: "Generic"
+title: "Exploring logistic regression with your simulation"
 ---
 
+Run the lesson for this unit and then:
+
+1. What happens to your ability to recover the values when you cut your sample size in half? Double it?
+
+2. Include another predictor from the bioclim data in your model (but not in the presence/absence process). What happens when you add a variable that doesn't really have an effect on the process?
+
+3. Now omit a predictor that you specified to have an effect on presence/absence from your statistical model? What happens when your model is missing a variable that contributes to the data-generating process.
+
+
+Put your answers in the slack channel!!

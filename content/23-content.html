@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Intro to Spatial Data in R - Statistical Modelling II</title>
+<title>Intro to Spatial Data in R - Statistical Modelling I</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -81,7 +81,7 @@ div.csl-indent {
 }</script>
 
 
-<meta property="og:title" content="Intro to Spatial Data in R - Statistical Modelling II">
+<meta property="og:title" content="Intro to Spatial Data in R - Statistical Modelling I">
 <meta property="og:description" content="">
 <meta property="og:image" content="https://isdrfall25.classes.spaseslab.com/files/social-image-f22.png">
 <meta property="og:site-name" content="Intro to Spatial Data in R">
@@ -383,7 +383,11 @@ div.csl-indent {
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#resources" id="toc-resources" class="nav-link active" data-scroll-target="#resources">Resources</a></li>
+  <li><a href="#resources" id="toc-resources" class="nav-link active" data-scroll-target="#resources">Resources</a>
+  <ul class="collapse">
+  <li><a href="#bigger-picture" id="toc-bigger-picture" class="nav-link" data-scroll-target="#bigger-picture">Bigger Picture</a></li>
+  <li><a href="#techincal-details" id="toc-techincal-details" class="nav-link" data-scroll-target="#techincal-details">Techincal details</a></li>
+  </ul></li>
   <li><a href="#objectives" id="toc-objectives" class="nav-link" data-scroll-target="#objectives">Objectives</a></li>
   </ul>
 </nav>
@@ -392,29 +396,40 @@ div.csl-indent {
 <main class="content" id="quarto-document-content">
 
 <header id="title-block-header">
-<h1 class="title display-7">Statistical Modelling II</h1>
+<h1 class="title display-7">Statistical Modelling I</h1>
 
 <div class="date-block bg-content text-white p-2">
-  <p class="date">Content for Monday, November 6, 2023</p>
+  <p class="date">Content for Monday, November 10, 2025</p>
 </div>
 </header>
 
-<p>Last class we spent some time extending the idea of Favorability to build a foundation for treating overlay analysis as a logistic regression. Although logistic regression has a number of properties that make it desirable for inference, a number of recently developed statistical learning approaches have greatly improved our ability to take advantage a wide variety of available data and generate spatially explicit predictions. These methods may make interpretation and inference more challenging, but can improve the predictive ability of your models. We’ll explore some of those today.</p>
+<p>Last class we looked at tree-based machine-learning models for classifying data (i.e., presence/abscence, categorization) or estimating the pseudo-regression relationships between variables and measured outcomes. Those approaches rely on learning the distributions necessary for the likelihood from the data themselves (rather than from a theoretical probability distribution). Today we’ll look at alternative approaches using tradititional statistical models.</p>
 <section id="resources" class="level2">
 <h2 class="anchored" data-anchor-id="resources">Resources</h2>
+<section id="bigger-picture" class="level3">
+<h3 class="anchored" data-anchor-id="bigger-picture">Bigger Picture</h3>
 <ul>
-<li><p><i class="fas fa-external-link-square-alt"></i> <a href="file:///Users/mattwilliamson/Downloads/ISLRv2_corrected_June_2023.pdf">An Introduction to Statistical Learning</a> by <span class="citation" data-cites="James2021">(<a href="#ref-James2021" role="doc-biblioref">James et al. 2021</a>)</span> is a comprehensive introduction to a number of statistical learning techniques with examples in <code>R</code>. Although these examples are not necessarily spatial, the chapters provide a lot of the background necessary for understanding what the models are doing.</p></li>
-<li><p><i class="fas fa-external-link-square-alt"></i> <a href="https://hastie.su.domains/Papers/maxent_explained.pdf">A statistical explanation of MaxEnt for ecologists</a> by <span class="citation" data-cites="elith2011statistical">(<a href="#ref-elith2011statistical" role="doc-biblioref">Elith et al. 2011</a>)</span> provides a relatively accessible description of the details of MaxEnt species distribution modeling.</p></li>
-<li><p><i class="fas fa-external-link-square-alt"></i> <a href="https://esajournals.onlinelibrary.wiley.com/doi/full/10.1890/07-0539.1">Random forests for Classification in Ecology</a> by <span class="citation" data-cites="cutler2007">(<a href="#ref-cutler2007" role="doc-biblioref">Cutler et al. 2007</a>)</span> provides an introduction to the utility of Random Forests for ecologists.</p></li>
+<li><p><i class="fas fa-external-link-square-alt"></i> <a href="https://onlinelibrary.wiley.com/doi/10.1111/j.1553-2712.2011.01185.x">Logistic regression: a brief primer</a> by <span class="citation" data-cites="Stoltzfus2011">(<a href="#ref-Stoltzfus2011" role="doc-biblioref">Stoltzfus 2011</a>)</span> is a nice introduction to logistic regression.</p></li>
+<li><p><i class="fas fa-external-link-square-alt"></i> <a href="https://onlinelibrary.wiley.com/doi/full/10.1111/geb.12268">Is my species distribution model fit for purpose? Matching data and models to applications</a> by <span class="citation" data-cites="Guillera-Arroita2015">(<a href="#ref-Guillera-Arroita2015" role="doc-biblioref">Guillera-Arroita et al. 2015</a>)</span> is an excellent, concise description of the relations between data collection, statistical models, and inference.</p></li>
+<li><p><i class="fas fa-external-link-square-alt"></i> <a href="https://onlinelibrary.wiley.com/doi/full/10.1111/ele.12189">Predicting species distributions for conservation decisions</a> by <span class="citation" data-cites="Guisan2013">(<a href="#ref-Guisan2013" role="doc-biblioref">Guisan et al. 2013</a>)</span> is a foundational paper describing some of the challenges with making conservation decisions based on the outcomes of species distribution models.</p></li>
 </ul>
+</section>
+<section id="techincal-details" class="level3">
+<h3 class="anchored" data-anchor-id="techincal-details">Techincal details</h3>
+<ul>
+<li><p><i class="fas fa-external-link-square-alt"></i> <a href="https://rspatial.org/intr/13-statmodels.html">Statistical Models</a> from the <code>terra</code> package documentation has some step-by-step examples of using <code>terra</code> with base <code>R</code> to fit statistical modles.</p></li>
+<li><p><i class="fas fa-external-link-square-alt"></i> <a href="https://r.geocompx.org/spatial-cv">Statistical Learning</a> from <span class="citation" data-cites="lovelace_geocomputation_2019">(<a href="#ref-lovelace_geocomputation_2019" role="doc-biblioref">Lovelace et al. 2019</a>)</span> has an extended example of fitting a variety of modeling approaches to data and evaluating their performance.</p></li>
+</ul>
+</section>
 </section>
 <section id="objectives" class="level2">
 <h2 class="anchored" data-anchor-id="objectives">Objectives</h2>
 <p>By the end of today you should be able to:</p>
 <ul>
-<li><p>Articulate the differences between statistical learning classifiers and logistic regression</p></li>
-<li><p>Describe several classification trees and their relationship to Random Forests</p></li>
-<li><p>Describe MaxEnt models for presence-only data</p></li>
+<li><p><strong>Define</strong> the likelihood function and its relationship to statistical infrerence.</p></li>
+<li><p><strong>Recognize</strong> key assumptions of statistical models and how spatial data may challenge those assumptions.</p></li>
+<li><p><strong>Simulate</strong> fake data with known relationships</p></li>
+<li><p><strong>Fit</strong> simple linear and generalized linear models to spatial data</p></li>
 </ul>
 <p class="text-center buttons">
 <a class="btn btn-danger" target="_blank" href="../slides/23-slides.html"><i class="fa-solid fa-arrow-up-right-from-square"></i> View all slides in new window</a> <a class="btn btn-danger" target="_blank" href="../slides/23-slides.pdf" role="button"><i class="fa-solid fa-file-pdf"></i> Download PDF of all slides</a>
@@ -422,21 +437,23 @@ div.csl-indent {
 <div>
 <iframe class="slide-deck" src="../slides/23-slides.html"></iframe>
 </div>
-<p><a href="https://boisestate.hosted.panopto.com/Panopto/Pages/Viewer.aspx?id=4490849b-8188-40a6-b657-b0b201521f29&amp;start=0">Panopto Video</a></p>
 
 
 
 </section>
 
 <div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" role="doc-bibliography"><h2 class="anchored quarto-appendix-heading">References</h2><div id="refs" class="references csl-bib-body hanging-indent" data-line-spacing="2" role="list">
-<div id="ref-cutler2007" class="csl-entry" role="listitem">
-Cutler, D. R., T. C. Edwards Jr., K. H. Beard, A. Cutler, K. T. Hess, J. Gibson, and J. J. Lawler. 2007. <a href="https://doi.org/10.1890/07-0539.1">RANDOM FORESTS FOR CLASSIFICATION IN ECOLOGY</a>. Ecology 88:2783–2792.
+<div id="ref-Guillera-Arroita2015" class="csl-entry" role="listitem">
+Guillera-Arroita, G., J. J. Lahoz-Monfort, J. Elith, A. Gordon, H. Kujala, P. E. Lentini, M. A. McCarthy, R. Tingley, and B. A. Wintle. 2015. Is my species distribution model fit for purpose? Matching data and models to applications. Glob. Ecol. Biogeogr. 24:276–292.
 </div>
-<div id="ref-elith2011statistical" class="csl-entry" role="listitem">
-Elith, J., S. J. Phillips, T. Hastie, M. Dudı́k, Y. E. Chee, and C. J. Yates. 2011. A statistical explanation of MaxEnt for ecologists. Diversity and distributions 17:43–57.
+<div id="ref-Guisan2013" class="csl-entry" role="listitem">
+Guisan, A., R. Tingley, J. B. Baumgartner, I. Naujokaitis-Lewis, P. R. Sutcliffe, A. I. T. Tulloch, T. J. Regan, L. Brotons, E. McDonald-Madden, C. Mantyka-Pringle, T. G. Martin, J. R. Rhodes, R. Maggini, S. A. Setterfield, J. Elith, M. W. Schwartz, B. A. Wintle, O. Broennimann, M. Austin, S. Ferrier, M. R. Kearney, H. P. Possingham, and Y. M. Buckley. 2013. Predicting species distributions for conservation decisions. Ecol. Lett. 16:1424–1435.
 </div>
-<div id="ref-James2021" class="csl-entry" role="listitem">
-James, G., D. Witten, T. Hastie, and R. Tibshirani. 2021. <a href="https://doi.org/10.1007/978-1-0716-1418-1_4">Classification</a>. Pages 129–195 An introduction to statistical learning: With applications in r. Springer US, New York, NY.
+<div id="ref-lovelace_geocomputation_2019" class="csl-entry" role="listitem">
+Lovelace, R., J. Nowosad, and J. Muenchow. 2019. Geocomputation with <span>R</span>. <span>CRC Press</span>.
+</div>
+<div id="ref-Stoltzfus2011" class="csl-entry" role="listitem">
+Stoltzfus, J. C. 2011. Logistic regression: A brief primer. Acad. Emerg. Med. 18:1099–1104.
 </div>
 </div></section></div></main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
