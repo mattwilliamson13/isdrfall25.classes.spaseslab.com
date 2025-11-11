@@ -39,15 +39,15 @@ precip_aligned <- resample(precip, elevation)
 predictors <- c(elevation, temp_aligned, precip_aligned)
 names(predictors) <- c("elevation", "temperature", "precipitation")
 
-# Scale the temperature (divide by 10 to get actual °C)
 predictors$temperature <- predictors$temperature / 10
 
-# Visualize
 plot(predictors)
 
 ```
 
+
 Now that we've got our predictors, it's time to generate some random observations!! We start by using `set.seed` to ensure we're all starting from the same place. We then use `spatSample` create a random sample of points within our study area and `extract` the predictor values to our points. Finally, we set up a nice `tibble` each observation and the relevant predictor values and drop any NAs that may have arisen from our random sample.
+
 
 ```{r}
 set.seed(123)
@@ -106,6 +106,7 @@ species_data %>%
 We can take a look at these laid over the elevation raster to get a sense for where they are. We can also reshape the data using `pivot_longer` to look at the distributions of each variable within the presence and absence category.
 
 ```{r}
+
 ggplot() +
   geom_spatraster(data = elevation) +
   scale_fill_viridis_c(name = "Elevation (m)", alpha = 0.7) +

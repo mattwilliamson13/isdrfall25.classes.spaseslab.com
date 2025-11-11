@@ -280,11 +280,9 @@ The following object is masked from 'package:stats':
 <span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a>predictors <span class="ot">&lt;-</span> <span class="fu">c</span>(elevation, temp_aligned, precip_aligned)</span>
 <span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(predictors) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"elevation"</span>, <span class="st">"temperature"</span>, <span class="st">"precipitation"</span>)</span>
 <span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a><span class="co"># Scale the temperature (divide by 10 to get actual °C)</span></span>
-<span id="cb7-22"><a href="#cb7-22" aria-hidden="true" tabindex="-1"></a>predictors<span class="sc">$</span>temperature <span class="ot">&lt;-</span> predictors<span class="sc">$</span>temperature <span class="sc">/</span> <span class="dv">10</span></span>
-<span id="cb7-23"><a href="#cb7-23" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-24"><a href="#cb7-24" aria-hidden="true" tabindex="-1"></a><span class="co"># Visualize</span></span>
-<span id="cb7-25"><a href="#cb7-25" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(predictors)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a>predictors<span class="sc">$</span>temperature <span class="ot">&lt;-</span> predictors<span class="sc">$</span>temperature <span class="sc">/</span> <span class="dv">10</span></span>
+<span id="cb7-22"><a href="#cb7-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-23"><a href="#cb7-23" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(predictors)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
 <p><img src="23-lesson_files/figure-html/unnamed-chunk-2-1.png" class="img-fluid" width="672"></p>
@@ -793,15 +791,15 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb17-43"><a href="#cb17-43" aria-hidden="true" tabindex="-1"></a>predictors <span class="ot">&lt;-</span> <span class="fu">c</span>(elevation, temp_aligned, precip_aligned)</span>
 <span id="cb17-44"><a href="#cb17-44" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(predictors) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"elevation"</span>, <span class="st">"temperature"</span>, <span class="st">"precipitation"</span>)</span>
 <span id="cb17-45"><a href="#cb17-45" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-46"><a href="#cb17-46" aria-hidden="true" tabindex="-1"></a><span class="co"># Scale the temperature (divide by 10 to get actual °C)</span></span>
-<span id="cb17-47"><a href="#cb17-47" aria-hidden="true" tabindex="-1"></a>predictors<span class="sc">$</span>temperature <span class="ot">&lt;-</span> predictors<span class="sc">$</span>temperature <span class="sc">/</span> <span class="dv">10</span></span>
-<span id="cb17-48"><a href="#cb17-48" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-49"><a href="#cb17-49" aria-hidden="true" tabindex="-1"></a><span class="co"># Visualize</span></span>
-<span id="cb17-50"><a href="#cb17-50" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(predictors)</span>
+<span id="cb17-46"><a href="#cb17-46" aria-hidden="true" tabindex="-1"></a>predictors<span class="sc">$</span>temperature <span class="ot">&lt;-</span> predictors<span class="sc">$</span>temperature <span class="sc">/</span> <span class="dv">10</span></span>
+<span id="cb17-47"><a href="#cb17-47" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-48"><a href="#cb17-48" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(predictors)</span>
+<span id="cb17-49"><a href="#cb17-49" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-50"><a href="#cb17-50" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb17-51"><a href="#cb17-51" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-52"><a href="#cb17-52" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb17-53"><a href="#cb17-53" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-54"><a href="#cb17-54" aria-hidden="true" tabindex="-1"></a>Now that we've got our predictors, it's time to generate some random observations!! We start by using <span class="in">`set.seed`</span> to ensure we're all starting from the same place. We then use <span class="in">`spatSample`</span> create a random sample of points within our study area and <span class="in">`extract`</span> the predictor values to our points. Finally, we set up a nice <span class="in">`tibble`</span> each observation and the relevant predictor values and drop any NAs that may have arisen from our random sample.</span>
+<span id="cb17-52"><a href="#cb17-52" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-53"><a href="#cb17-53" aria-hidden="true" tabindex="-1"></a>Now that we've got our predictors, it's time to generate some random observations!! We start by using <span class="in">`set.seed`</span> to ensure we're all starting from the same place. We then use <span class="in">`spatSample`</span> create a random sample of points within our study area and <span class="in">`extract`</span> the predictor values to our points. Finally, we set up a nice <span class="in">`tibble`</span> each observation and the relevant predictor values and drop any NAs that may have arisen from our random sample.</span>
+<span id="cb17-54"><a href="#cb17-54" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb17-55"><a href="#cb17-55" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb17-58"><a href="#cb17-58" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
 <span id="cb17-59"><a href="#cb17-59" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">123</span>)</span>
