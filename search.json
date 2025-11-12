@@ -1253,6 +1253,76 @@
     "text": "This section has some worked examples demonstrating the use of different packages and giving some ‘roadmaps’ for completing different spatial operations. These are mostly my opinions, your mileage may vary, but I’ll try to justify why I do things the way that I do so that you can make an informed choice when you decide to deviate from that path."
   },
   {
+    "objectID": "lesson/24-lesson.html",
+    "href": "lesson/24-lesson.html",
+    "title": "Comparing Statistical Models",
+    "section": "",
+    "text": "Code\nlibrary(tidyverse)\n\n\n── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──\n✔ dplyr     1.1.4     ✔ readr     2.1.5\n✔ forcats   1.0.1     ✔ stringr   1.5.2\n✔ ggplot2   4.0.0     ✔ tibble    3.3.0\n✔ lubridate 1.9.4     ✔ tidyr     1.3.1\n✔ purrr     1.1.0     \n── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──\n✖ dplyr::filter() masks stats::filter()\n✖ dplyr::lag()    masks stats::lag()\nℹ Use the conflicted package (&lt;http://conflicted.r-lib.org/&gt;) to force all conflicts to become errors\n\n\nCode\nlibrary(terra)\n\n\nterra 1.8.70\n\nAttaching package: 'terra'\n\nThe following object is masked from 'package:tidyr':\n\n    extract\n\n\nCode\nlibrary(geodata)\nlibrary(tidyterra)\n\n\n\nAttaching package: 'tidyterra'\n\nThe following object is masked from 'package:stats':\n\n    filter\n\n\nCode\nlibrary(caret)\n\n\nLoading required package: lattice\n\nAttaching package: 'caret'\n\nThe following object is masked from 'package:purrr':\n\n    lift"
+  },
+  {
+    "objectID": "lesson/24-lesson.html#getting-started",
+    "href": "lesson/24-lesson.html#getting-started",
+    "title": "Comparing Statistical Models",
+    "section": "Getting Started",
+    "text": "Getting Started\nThis exercise is going to rely on simulated data so you don’t need to join a repository. You’ll just need to get our credentials and login to a new RStudio session. I’m using simulation because one of the best ways to test out whether you’ve specified your model correctly is to simulate the process with known coefficients. If your statistical model returns those values, then, assuming you’ve simulated a reasonable generating process, you should be able to trust that the model you fit is actually doing what you want it to."
+  },
+  {
+    "objectID": "lesson/24-lesson.html#get-the-data",
+    "href": "lesson/24-lesson.html#get-the-data",
+    "title": "Comparing Statistical Models",
+    "section": "Get the Data",
+    "text": "Get the Data\n\n\nCode\nelevation &lt;- geodata::elevation_30s(country = \"CRI\", \n                                    path = tempdir())\nclimate &lt;- geodata::worldclim_country(country = \"CRI\", \n                                      var = \"bio\", \n                                      res = 0.5, \n                                      path = tempdir())\nnames(climate) &lt;- str_extract(names(climate), \"bio_\\\\d+\")\nnames(elevation) &lt;- \"elev\"\n\nclimate_df &lt;- as.data.frame(climate, na.rm=TRUE)\n\nclimate_subset &lt;- climate[[sample(1:nlyr(climate),size = 8)]]\nclimate_aligned &lt;- resample(climate_subset, elevation)\n\n# Stack the predictors\npredictors &lt;- c(elevation, climate_aligned)\n\n\nplot(predictors)"
+  },
+  {
+    "objectID": "lesson/24-lesson.html#generate-a-sample",
+    "href": "lesson/24-lesson.html#generate-a-sample",
+    "title": "Comparing Statistical Models",
+    "section": "Generate a sample",
+    "text": "Generate a sample\n\n\nCode\nset.seed(123)\nn_points &lt;- 750\n\n# Sample random locations from the study area\nsample_points &lt;- spatSample(elevation, size = n_points, \n                           method = \"random\", na.rm = TRUE, \n                           xy = TRUE, values = FALSE)\n\n# Extract environmental values at these points\nenv_values &lt;- terra::extract(predictors, sample_points)\n\nspecies_data &lt;- tibble(\n  x = sample_points[,1],\n  y = sample_points[,2]) %&gt;% \n  bind_cols(env_values) %&gt;% \n  drop_na()  # Remove any NA values\n\nspecies_data_scl &lt;- species_data %&gt;% \n  mutate(across(colnames(env_values), ~ as.numeric(scale(.x))))"
+  },
+  {
+    "objectID": "lesson/24-lesson.html#specify-predictors",
+    "href": "lesson/24-lesson.html#specify-predictors",
+    "title": "Comparing Statistical Models",
+    "section": "Specify predictors",
+    "text": "Specify predictors\n\n\nCode\nK &lt;- nlyr(predictors)\n\ngen_predictors &lt;- function(K, style = c(\"random\", \"correlated\"), K_corr = NULL, rho = NULL){\n  if(style == \"random\"){\n    preds &lt;- runif(n=K, min = -3, max = 3)\n  }else{\n    if (is.null(K_corr) | is.null(rho)) {\n      stop(\"You selected method = 'correlated', so you must supply values for K_corr and rho\")\n    }\n    # build correlation matrix for correlated block\n  Sigma &lt;- matrix(rho, nrow = K_corr, ncol = K_corr)\n  diag(Sigma) &lt;- 1\n  # generate correlated variables\n  corr_preds &lt;- MASS::mvrnorm(n = 1, mu = rep(0, K_corr), Sigma = Sigma)\n  random_preds &lt;- runif(n=(K-K_corr), min = -3, max = 3)\n  preds &lt;- sample(c(corr_preds, random_preds))\n  }\nreturn(preds)\n} \n\nknown_betas &lt;- gen_predictors(K=9, style = \"correlated\", K_corr = 4, rho=0.7)"
+  },
+  {
+    "objectID": "lesson/24-lesson.html#simulate-outcomes",
+    "href": "lesson/24-lesson.html#simulate-outcomes",
+    "title": "Comparing Statistical Models",
+    "section": "Simulate Outcomes",
+    "text": "Simulate Outcomes\n\n\nCode\nspecies_data_preds &lt;- species_data_scl %&gt;%\n  mutate(\n    across(\n      all_of(colnames(env_values)),\n      ~ .x * known_betas[which(colnames(env_values) == cur_column())]\n    )\n  ) %&gt;% \n  mutate(. , linpred = rowSums(across(all_of(colnames(env_values)))),\n         prob = plogis(linpred),\n         presence = rbinom(n(), size = 1, prob = prob)) \n\n\n# Check the prevalence\nspecies_data_preds %&gt;%\n  summarize(\n    prevalence = mean(presence),\n    n_present = sum(presence),\n    n_absent = sum(presence == 0)\n  )  \n\n\n# A tibble: 1 × 3\n  prevalence n_present n_absent\n       &lt;dbl&gt;     &lt;int&gt;    &lt;int&gt;\n1      0.432       324      426"
+  },
+  {
+    "objectID": "lesson/24-lesson.html#check-out-values",
+    "href": "lesson/24-lesson.html#check-out-values",
+    "title": "Comparing Statistical Models",
+    "section": "Check Out Values",
+    "text": "Check Out Values\n\n\nCode\nggplot() +\n  geom_spatraster(data = elevation) +\n  scale_fill_viridis_c(name = \"Elevation (m)\", alpha = 0.7) +\n  geom_point(data = species_data_preds, \n             aes(x = x, y = y, color = factor(presence)),\n             size = 1, alpha = 0.6) +\n  scale_color_manual(values = c(\"0\" = \"blue\", \"1\" = \"red\"),\n                     labels = c(\"Absent\", \"Present\"),\n                     name = \"Species\") +\n  labs(title = \"Species Distribution\") +\n  theme_minimal() +\n  theme(legend.position = \"right\")\n\n\n\n\n\nCode\n# Compare environmental values between presence and absence\n# Reshape data for easier plotting\nplot_data &lt;- species_data_preds %&gt;%\n  select(all_of(c(colnames(env_values), \"presence\"))) %&gt;%\n  pivot_longer(cols = all_of(colnames(env_values)),\n               names_to = \"variable\",\n               values_to = \"value\") %&gt;%\n  mutate(\n    presence = factor(presence, labels = c(\"Absent\", \"Present\")),\n    variable = factor(variable, \n                     levels = c(colnames(env_values)),\n                     labels = c(colnames(env_values)))\n  )\n\nggplot(plot_data, aes(x = presence, y = value, fill = presence)) +\n  geom_boxplot(alpha = 0.7) +\n  facet_wrap(~variable, scales = \"free_y\", ncol = 3) +\n  scale_fill_manual(values = c(\"Absent\" = \"blue\", \"Present\" = \"red\")) +\n  labs(title = \"Environmental Conditions by Presence/Absence\",\n       x = \"Species Presence\",\n       y = \"Value\") +\n  theme_minimal() +\n  theme(legend.position = \"none\")"
+  },
+  {
+    "objectID": "lesson/24-lesson.html#fit-logistic-regression",
+    "href": "lesson/24-lesson.html#fit-logistic-regression",
+    "title": "Comparing Statistical Models",
+    "section": "Fit Logistic Regression",
+    "text": "Fit Logistic Regression\n\n\nCode\nvars &lt;- species_data_preds %&gt;%\n  select(colnames(env_values)) %&gt;%\n  names()\n\nform &lt;- reformulate(vars, response = \"presence\")\nform\n\n\npresence ~ elev + bio_10 + bio_4 + bio_3 + bio_9 + bio_16 + bio_5 + \n    bio_7 + bio_2\n\n\nCode\nmodel &lt;- glm(form ,\n             data = species_data_preds,\n             family = binomial(link = \"logit\"))\n\n# Model summary\nsummary(model)\n\n\n\nCall:\nglm(formula = form, family = binomial(link = \"logit\"), data = species_data_preds)\n\nCoefficients:\n             Estimate Std. Error z value Pr(&gt;|z|)    \n(Intercept)   0.11314    0.18723   0.604   0.5456    \nelev          1.00215    1.64427   0.609   0.5422    \nbio_10      -21.50649   23.56378  -0.913   0.3614    \nbio_4         0.62860    0.26381   2.383   0.0172 *  \nbio_3         0.12165    0.84280   0.144   0.8852    \nbio_9         1.49107    1.17168   1.273   0.2032    \nbio_16        0.96479    0.09614  10.035   &lt;2e-16 ***\nbio_5        -9.55024    8.24760  -1.158   0.2469    \nbio_7       -53.15347   61.89442  -0.859   0.3905    \nbio_2        -2.16200    3.01797  -0.716   0.4738    \n---\nSignif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1\n\n(Dispersion parameter for binomial family taken to be 1)\n\n    Null deviance: 1025.81  on 749  degrees of freedom\nResidual deviance:  351.03  on 740  degrees of freedom\nAIC: 371.03\n\nNumber of Fisher Scoring iterations: 7\n\n\nCode\n# Compare estimated coefficients to true values\ntibble(\n  Parameter = c(\"Intercept\", colnames(env_values)),\n  True_Value = c(0, known_betas),\n  Estimated = coef(model),\n  Difference = Estimated - True_Value,\n  Pct_Error = (Difference / True_Value) * 100\n)\n\n\n# A tibble: 10 × 5\n   Parameter True_Value Estimated Difference Pct_Error\n   &lt;chr&gt;          &lt;dbl&gt;     &lt;dbl&gt;      &lt;dbl&gt;     &lt;dbl&gt;\n 1 Intercept      0         0.113      0.113     Inf  \n 2 elev          -1.12      1.00       2.12     -190. \n 3 bio_10         0.295   -21.5      -21.8     -7394. \n 4 bio_4          1.46      0.629     -0.834     -57.0\n 5 bio_3         -2.72      0.122      2.84     -104. \n 6 bio_9         -2.10      1.49       3.59     -171. \n 7 bio_16        -2.64      0.965      3.61     -137. \n 8 bio_5         -0.802    -9.55      -8.75     1090. \n 9 bio_7         -0.131   -53.2      -53.0     40592. \n10 bio_2          2.63     -2.16      -4.79     -182."
+  },
+  {
+    "objectID": "lesson/24-lesson.html#fit-random-forest",
+    "href": "lesson/24-lesson.html#fit-random-forest",
+    "title": "Comparing Statistical Models",
+    "section": "Fit Random Forest",
+    "text": "Fit Random Forest\n\n\nCode\nspecies_data_preds_rf &lt;- species_data_preds %&gt;% \n  mutate(presence = as.factor(presence))\n\nrf_model &lt;- caret::train(\n    form,\n    data = species_data_preds_rf,\n    method = \"ranger\",\n    importance = \"impurity\",\n    tuneGrid = expand.grid(\n        \"mtry\" = 4,\n        \"splitrule\" = \"gini\",\n        \"min.node.size\" = 5\n    ),\n    num.trees = 100\n)\n\nvarimp_tbl &lt;- rf_model$finalModel$variable.importance %&gt;%\n  enframe(name = \"variable\", value = \"importance\") %&gt;%\n  mutate(importance_scaled = importance / max(importance)) %&gt;%\n  arrange(desc(importance_scaled))\n\n# View top variables\nhead(varimp_tbl, 10)\n\n\n# A tibble: 9 × 3\n  variable importance importance_scaled\n  &lt;chr&gt;         &lt;dbl&gt;             &lt;dbl&gt;\n1 bio_16         98.2             1    \n2 bio_7          77.5             0.790\n3 bio_3          53.4             0.544\n4 bio_5          37.1             0.378\n5 bio_2          27.2             0.277\n6 bio_4          20.7             0.211\n7 elev           14.5             0.148\n8 bio_10         13.4             0.137\n9 bio_9          11.6             0.118\n\n\nCode\n# Plot\nggplot(varimp_tbl, aes(x = reorder(variable, importance_scaled),\n                       y = importance_scaled)) +\n  geom_col(fill = \"steelblue\") +\n  coord_flip() +\n  labs(x = \"Variable\", y = \"Scaled importance (0–1)\",\n       title = \"Random Forest Variable Importance (Ranger)\") +\n  theme_minimal()"
+  },
+  {
+    "objectID": "lesson/24-lesson.html#compare-model-implications",
+    "href": "lesson/24-lesson.html#compare-model-implications",
+    "title": "Comparing Statistical Models",
+    "section": "Compare Model Implications",
+    "text": "Compare Model Implications\n\n\nCode\nscale_stack &lt;- scale(predictors)\npred_map &lt;- terra::predict(\n  object = scale_stack,\n  model = model,\n  type = \"response\"\n)\n\n\npred_map_rf &lt;- terra::predict(\n  object = scale_stack,\n  model = rf_model$finalModel$forest,\n  type = \"response\"\n)"
+  },
+  {
     "objectID": "lesson/18-lesson.html",
     "href": "lesson/18-lesson.html",
     "title": "Multivariate Spatial Patterns",

@@ -1,4 +1,251 @@
 ---
-title: "Generic Lesson"
+title: "Comparing Statistical Models"
 ---
 
+```{r}
+library(tidyverse)
+library(terra)
+library(geodata)
+library(tidyterra)
+library(caret)
+```
+
+## Getting Started 
+This exercise is going to rely on simulated data so you don't need to join a repository. You'll just need to  [get our credentials](https://rstudio.aws.boisestate.edu/) and login to a [new RStudio session](https://rstudio.apps.aws.boisestate.edu/). I'm using simulation because one of the best ways to test out whether you've specified your model correctly is to simulate the process with _known coefficients_. If your statistical model returns those values, then, assuming you've simulated a reasonable generating process, you should be able to trust that the model you fit is actually doing what you want it to. 
+
+
+## Get the Data
+
+```{r}
+elevation <- geodata::elevation_30s(country = "CRI", 
+                                    path = tempdir())
+climate <- geodata::worldclim_country(country = "CRI", 
+                                      var = "bio", 
+                                      res = 0.5, 
+                                      path = tempdir())
+names(climate) <- str_extract(names(climate), "bio_\\d+")
+names(elevation) <- "elev"
+
+climate_df <- as.data.frame(climate, na.rm=TRUE)
+
+climate_subset <- climate[[sample(1:nlyr(climate),size = 8)]]
+climate_aligned <- resample(climate_subset, elevation)
+
+# Stack the predictors
+predictors <- c(elevation, climate_aligned)
+
+
+plot(predictors)
+
+```
+## Generate a sample
+
+```{r}
+set.seed(123)
+n_points <- 750
+
+# Sample random locations from the study area
+sample_points <- spatSample(elevation, size = n_points, 
+                           method = "random", na.rm = TRUE, 
+                           xy = TRUE, values = FALSE)
+
+# Extract environmental values at these points
+env_values <- terra::extract(predictors, sample_points)
+
+species_data <- tibble(
+  x = sample_points[,1],
+  y = sample_points[,2]) %>% 
+  bind_cols(env_values) %>% 
+  drop_na()  # Remove any NA values
+
+species_data_scl <- species_data %>% 
+  mutate(across(colnames(env_values), ~ as.numeric(scale(.x))))
+
+```
+
+## Specify predictors
+
+```{r}
+K <- nlyr(predictors)
+
+gen_predictors <- function(K, style = c("random", "correlated"), K_corr = NULL, rho = NULL){
+  if(style == "random"){
+    preds <- runif(n=K, min = -3, max = 3)
+  }else{
+    if (is.null(K_corr) | is.null(rho)) {
+      stop("You selected method = 'correlated', so you must supply values for K_corr and rho")
+    }
+    # build correlation matrix for correlated block
+  Sigma <- matrix(rho, nrow = K_corr, ncol = K_corr)
+  diag(Sigma) <- 1
+  # generate correlated variables
+  corr_preds <- MASS::mvrnorm(n = 1, mu = rep(0, K_corr), Sigma = Sigma)
+  random_preds <- runif(n=(K-K_corr), min = -3, max = 3)
+  preds <- sample(c(corr_preds, random_preds))
+  }
+return(preds)
+} 
+
+known_betas <- gen_predictors(K=9, style = "correlated", K_corr = 4, rho=0.7)
+
+```
+
+## Simulate Outcomes
+
+```{r}
+
+species_data_preds <- species_data_scl %>%
+  mutate(
+    across(
+      all_of(colnames(env_values)),
+      ~ .x * known_betas[which(colnames(env_values) == cur_column())]
+    )
+  ) %>% 
+  mutate(. , linpred = rowSums(across(all_of(colnames(env_values)))),
+         prob = plogis(linpred),
+         presence = rbinom(n(), size = 1, prob = prob)) 
+
+
+# Check the prevalence
+species_data_preds %>%
+  summarize(
+    prevalence = mean(presence),
+    n_present = sum(presence),
+    n_absent = sum(presence == 0)
+  )  
+```
+
+## Check Out Values
+
+```{r}
+
+ggplot() +
+  geom_spatraster(data = elevation) +
+  scale_fill_viridis_c(name = "Elevation (m)", alpha = 0.7) +
+  geom_point(data = species_data_preds, 
+             aes(x = x, y = y, color = factor(presence)),
+             size = 1, alpha = 0.6) +
+  scale_color_manual(values = c("0" = "blue", "1" = "red"),
+                     labels = c("Absent", "Present"),
+                     name = "Species") +
+  labs(title = "Species Distribution") +
+  theme_minimal() +
+  theme(legend.position = "right")
+
+# Compare environmental values between presence and absence
+# Reshape data for easier plotting
+plot_data <- species_data_preds %>%
+  select(all_of(c(colnames(env_values), "presence"))) %>%
+  pivot_longer(cols = all_of(colnames(env_values)),
+               names_to = "variable",
+               values_to = "value") %>%
+  mutate(
+    presence = factor(presence, labels = c("Absent", "Present")),
+    variable = factor(variable, 
+                     levels = c(colnames(env_values)),
+                     labels = c(colnames(env_values)))
+  )
+
+ggplot(plot_data, aes(x = presence, y = value, fill = presence)) +
+  geom_boxplot(alpha = 0.7) +
+  facet_wrap(~variable, scales = "free_y", ncol = 3) +
+  scale_fill_manual(values = c("Absent" = "blue", "Present" = "red")) +
+  labs(title = "Environmental Conditions by Presence/Absence",
+       x = "Species Presence",
+       y = "Value") +
+  theme_minimal() +
+  theme(legend.position = "none")
+
+```
+
+## Fit Logistic Regression
+
+```{r}
+
+vars <- species_data_preds %>%
+  select(colnames(env_values)) %>%
+  names()
+
+form <- reformulate(vars, response = "presence")
+form
+
+
+
+model <- glm(form ,
+             data = species_data_preds,
+             family = binomial(link = "logit"))
+
+# Model summary
+summary(model)
+
+# Compare estimated coefficients to true values
+tibble(
+  Parameter = c("Intercept", colnames(env_values)),
+  True_Value = c(0, known_betas),
+  Estimated = coef(model),
+  Difference = Estimated - True_Value,
+  Pct_Error = (Difference / True_Value) * 100
+)
+
+
+
+```
+
+## Fit Random Forest
+
+```{r}
+
+species_data_preds_rf <- species_data_preds %>% 
+  mutate(presence = as.factor(presence))
+
+rf_model <- caret::train(
+    form,
+    data = species_data_preds_rf,
+    method = "ranger",
+    importance = "impurity",
+    tuneGrid = expand.grid(
+        "mtry" = 4,
+        "splitrule" = "gini",
+        "min.node.size" = 5
+    ),
+    num.trees = 100
+)
+
+varimp_tbl <- rf_model$finalModel$variable.importance %>%
+  enframe(name = "variable", value = "importance") %>%
+  mutate(importance_scaled = importance / max(importance)) %>%
+  arrange(desc(importance_scaled))
+
+# View top variables
+head(varimp_tbl, 10)
+
+# Plot
+ggplot(varimp_tbl, aes(x = reorder(variable, importance_scaled),
+                       y = importance_scaled)) +
+  geom_col(fill = "steelblue") +
+  coord_flip() +
+  labs(x = "Variable", y = "Scaled importance (0–1)",
+       title = "Random Forest Variable Importance (Ranger)") +
+  theme_minimal()
+
+```
+
+## Compare Model Implications
+
+```{r}
+
+scale_stack <- scale(predictors)
+pred_map <- terra::predict(
+  object = scale_stack,
+  model = model,
+  type = "response"
+)
+
+
+pred_map_rf <- terra::predict(
+  object = scale_stack,
+  model = rf_model$finalModel$forest,
+  type = "response"
+)
+
+```
