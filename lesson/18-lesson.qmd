@@ -203,7 +203,6 @@ mean(sil[, "sil_width"])
 In order to use our raster data, we need to first `scale` it and convert it to a dataframe. You'll notice that by supplying the `cell=TRUE` argument we add a column with the cell ID along with all of the values of the actual data. We supply this dataframe (dropping the ID column `[,-1]`) to `kmeans` and let it run. Because this is a large dataset, I'm asking for more random starts and allowing the algorithm to run longer to try and converge. I've also made sure to use `set.seed` to ensure that the random starts are replicable.
 
 ```{r}
-#| cache: true
 
 set.seed(99)
 vars_scl <- scale(vars)

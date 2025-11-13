@@ -536,41 +536,41 @@ Cumulative Proportion  0.99977 0.99990 0.99995 0.99999 1.00000 1.000e+00</code><
 <span id="cb32-6"><a href="#cb32-6" aria-hidden="true" tabindex="-1"></a>demo_clust</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>K-means clustering with 6 clusters of sizes 7, 10, 4, 8, 11, 10
+<pre><code>K-means clustering with 6 clusters of sizes 11, 4, 10, 7, 10, 8
 
 Cluster means:
       Murder    Assault   UrbanPop        Rape
-1  1.5803956  0.9662584 -0.7775109  0.04844071
-2 -0.6286291 -0.4086988  0.9506200 -0.38883734
-3  0.4562038  0.9358314  0.6190084  2.26533514
-4  0.8666035  1.2103171  0.8262657  0.84936722
-5 -0.1642225 -0.3658283 -0.2822467 -0.11697538
-6 -1.1727674 -1.2078573 -1.0045069 -1.10202608
+1 -0.1642225 -0.3658283 -0.2822467 -0.11697538
+2  0.4562038  0.9358314  0.6190084  2.26533514
+3 -1.1727674 -1.2078573 -1.0045069 -1.10202608
+4  1.5803956  0.9662584 -0.7775109  0.04844071
+5 -0.6286291 -0.4086988  0.9506200 -0.38883734
+6  0.8666035  1.2103171  0.8262657  0.84936722
 
 Clustering vector:
        Alabama         Alaska        Arizona       Arkansas     California 
-             1              3              4              5              3 
+             4              2              6              1              2 
       Colorado    Connecticut       Delaware        Florida        Georgia 
-             3              2              2              4              1 
+             2              5              5              6              4 
         Hawaii          Idaho       Illinois        Indiana           Iowa 
-             2              6              4              5              6 
+             5              3              6              1              3 
         Kansas       Kentucky      Louisiana          Maine       Maryland 
-             5              5              1              6              4 
+             1              1              4              3              6 
  Massachusetts       Michigan      Minnesota    Mississippi       Missouri 
-             2              4              6              1              5 
+             5              6              3              4              1 
        Montana       Nebraska         Nevada  New Hampshire     New Jersey 
-             5              5              3              6              2 
+             1              1              2              3              5 
     New Mexico       New York North Carolina   North Dakota           Ohio 
-             4              4              1              6              2 
+             6              6              4              3              5 
       Oklahoma         Oregon   Pennsylvania   Rhode Island South Carolina 
-             5              5              2              2              1 
+             1              1              5              5              4 
   South Dakota      Tennessee          Texas           Utah        Vermont 
-             6              1              4              2              6 
+             3              4              6              5              3 
       Virginia     Washington  West Virginia      Wisconsin        Wyoming 
-             5              2              6              6              5 
+             1              5              3              3              1 
 
 Within cluster sum of squares by cluster:
-[1] 6.128432 9.326266 6.257771 5.888384 7.788275 7.443899
+[1] 7.788275 6.257771 7.443899 6.128432 9.326266 5.888384
  (between_SS / total_SS =  78.1 %)
 
 Available components:
@@ -584,18 +584,18 @@ Available components:
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>List of 9
- $ cluster     : Named int [1:50] 1 3 4 5 3 3 2 2 4 1 ...
+ $ cluster     : Named int [1:50] 4 2 6 1 2 2 5 5 6 4 ...
   ..- attr(*, "names")= chr [1:50] "Alabama" "Alaska" "Arizona" "Arkansas" ...
- $ centers     : num [1:6, 1:4] 1.58 -0.629 0.456 0.867 -0.164 ...
+ $ centers     : num [1:6, 1:4] -0.164 0.456 -1.173 1.58 -0.629 ...
   ..- attr(*, "dimnames")=List of 2
   .. ..$ : chr [1:6] "1" "2" "3" "4" ...
   .. ..$ : chr [1:4] "Murder" "Assault" "UrbanPop" "Rape"
  $ totss       : num 196
- $ withinss    : num [1:6] 6.13 9.33 6.26 5.89 7.79 ...
+ $ withinss    : num [1:6] 7.79 6.26 7.44 6.13 9.33 ...
  $ tot.withinss: num 42.8
  $ betweenss   : num 153
- $ size        : int [1:6] 7 10 4 8 11 10
- $ iter        : int 4
+ $ size        : int [1:6] 11 4 10 7 10 8
+ $ iter        : int 3
  $ ifault      : int 0
  - attr(*, "class")= chr "kmeans"</code></pre>
 </div>
@@ -639,7 +639,7 @@ Important
 <section id="clustering-with-raster-data" class="level2">
 <h2 class="anchored" data-anchor-id="clustering-with-raster-data">Clustering with raster data</h2>
 <p>In order to use our raster data, we need to first <code>scale</code> it and convert it to a dataframe. You’ll notice that by supplying the <code>cell=TRUE</code> argument we add a column with the cell ID along with all of the values of the actual data. We supply this dataframe (dropping the ID column <code>[,-1]</code>) to <code>kmeans</code> and let it run. Because this is a large dataset, I’m asking for more random starts and allowing the algorithm to run longer to try and converge. I’ve also made sure to use <code>set.seed</code> to ensure that the random starts are replicable.</p>
-<div class="cell" data-hash="18-lesson_cache/html/unnamed-chunk-7_4010485399cb18ce3ef124412c6e3ccd">
+<div class="cell">
 <details open="">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">99</span>)</span>
@@ -16647,54 +16647,52 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb52-212"><a href="#cb52-212" aria-hidden="true" tabindex="-1"></a>In order to use our raster data, we need to first <span class="in">`scale`</span> it and convert it to a dataframe. You'll notice that by supplying the <span class="in">`cell=TRUE`</span> argument we add a column with the cell ID along with all of the values of the actual data. We supply this dataframe (dropping the ID column <span class="in">`[,-1]`</span>) to <span class="in">`kmeans`</span> and let it run. Because this is a large dataset, I'm asking for more random starts and allowing the algorithm to run longer to try and converge. I've also made sure to use <span class="in">`set.seed`</span> to ensure that the random starts are replicable.</span>
 <span id="cb52-213"><a href="#cb52-213" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb52-216"><a href="#cb52-216" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb52-217"><a href="#cb52-217" aria-hidden="true" tabindex="-1"></a><span class="co">#| cache: true</span></span>
-<span id="cb52-218"><a href="#cb52-218" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb52-219"><a href="#cb52-219" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">99</span>)</span>
-<span id="cb52-220"><a href="#cb52-220" aria-hidden="true" tabindex="-1"></a>vars_scl <span class="ot">&lt;-</span> <span class="fu">scale</span>(vars)</span>
-<span id="cb52-221"><a href="#cb52-221" aria-hidden="true" tabindex="-1"></a>vars_df <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(vars_scl, <span class="at">cell=</span><span class="cn">TRUE</span>)</span>
-<span id="cb52-222"><a href="#cb52-222" aria-hidden="true" tabindex="-1"></a>kmncluster5 <span class="ot">&lt;-</span> <span class="fu">kmeans</span>(vars_df[,<span class="sc">-</span><span class="dv">1</span>], <span class="at">centers=</span><span class="dv">5</span>, <span class="at">iter.max =</span> <span class="dv">500</span>, <span class="at">nstart =</span> <span class="dv">200</span>, <span class="at">algorithm=</span><span class="st">"Lloyd"</span>)</span>
-<span id="cb52-223"><a href="#cb52-223" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb52-217"><a href="#cb52-217" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">99</span>)</span>
+<span id="cb52-218"><a href="#cb52-218" aria-hidden="true" tabindex="-1"></a>vars_scl <span class="ot">&lt;-</span> <span class="fu">scale</span>(vars)</span>
+<span id="cb52-219"><a href="#cb52-219" aria-hidden="true" tabindex="-1"></a>vars_df <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(vars_scl, <span class="at">cell=</span><span class="cn">TRUE</span>)</span>
+<span id="cb52-220"><a href="#cb52-220" aria-hidden="true" tabindex="-1"></a>kmncluster5 <span class="ot">&lt;-</span> <span class="fu">kmeans</span>(vars_df[,<span class="sc">-</span><span class="dv">1</span>], <span class="at">centers=</span><span class="dv">5</span>, <span class="at">iter.max =</span> <span class="dv">500</span>, <span class="at">nstart =</span> <span class="dv">200</span>, <span class="at">algorithm=</span><span class="st">"Lloyd"</span>)</span>
+<span id="cb52-221"><a href="#cb52-221" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb52-222"><a href="#cb52-222" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-223"><a href="#cb52-223" aria-hidden="true" tabindex="-1"></a>Let's see how we did. As I mentioned, calculating distance matrices is computationally expensive so here, I sample (the <span class="in">`sub_idx`</span>) a series of ID's from the data and calculate the distance matrix on that subset.</span>
 <span id="cb52-224"><a href="#cb52-224" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb52-225"><a href="#cb52-225" aria-hidden="true" tabindex="-1"></a>Let's see how we did. As I mentioned, calculating distance matrices is computationally expensive so here, I sample (the <span class="in">`sub_idx`</span>) a series of ID's from the data and calculate the distance matrix on that subset.</span>
-<span id="cb52-226"><a href="#cb52-226" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb52-229"><a href="#cb52-229" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb52-230"><a href="#cb52-230" aria-hidden="true" tabindex="-1"></a>(explained_inertia5 <span class="ot">&lt;-</span> kmncluster5<span class="sc">$</span>betweenss <span class="sc">/</span> kmncluster5<span class="sc">$</span>totss)</span>
-<span id="cb52-231"><a href="#cb52-231" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb52-232"><a href="#cb52-232" aria-hidden="true" tabindex="-1"></a>sub_idx <span class="ot">&lt;-</span> <span class="fu">sample</span>(<span class="fu">seq_len</span>(<span class="fu">nrow</span>(vars_df)), <span class="dv">60000</span>)</span>
-<span id="cb52-233"><a href="#cb52-233" aria-hidden="true" tabindex="-1"></a>sil5 <span class="ot">&lt;-</span> <span class="fu">silhouette</span>(kmncluster5<span class="sc">$</span>cluster[sub_idx], <span class="fu">dist</span>(vars_df[sub_idx, ]))</span>
-<span id="cb52-234"><a href="#cb52-234" aria-hidden="true" tabindex="-1"></a><span class="fu">mean</span>(sil5[, <span class="st">"sil_width"</span>])</span>
+<span id="cb52-227"><a href="#cb52-227" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb52-228"><a href="#cb52-228" aria-hidden="true" tabindex="-1"></a>(explained_inertia5 <span class="ot">&lt;-</span> kmncluster5<span class="sc">$</span>betweenss <span class="sc">/</span> kmncluster5<span class="sc">$</span>totss)</span>
+<span id="cb52-229"><a href="#cb52-229" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-230"><a href="#cb52-230" aria-hidden="true" tabindex="-1"></a>sub_idx <span class="ot">&lt;-</span> <span class="fu">sample</span>(<span class="fu">seq_len</span>(<span class="fu">nrow</span>(vars_df)), <span class="dv">60000</span>)</span>
+<span id="cb52-231"><a href="#cb52-231" aria-hidden="true" tabindex="-1"></a>sil5 <span class="ot">&lt;-</span> <span class="fu">silhouette</span>(kmncluster5<span class="sc">$</span>cluster[sub_idx], <span class="fu">dist</span>(vars_df[sub_idx, ]))</span>
+<span id="cb52-232"><a href="#cb52-232" aria-hidden="true" tabindex="-1"></a><span class="fu">mean</span>(sil5[, <span class="st">"sil_width"</span>])</span>
+<span id="cb52-233"><a href="#cb52-233" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-234"><a href="#cb52-234" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb52-235"><a href="#cb52-235" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb52-236"><a href="#cb52-236" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb52-236"><a href="#cb52-236" aria-hidden="true" tabindex="-1"></a>You'll notice that we have considerably less explained inertia and our silhouette index suggests that there may not be much difference between the clusters. Let's see if adding more clusters improves things.</span>
 <span id="cb52-237"><a href="#cb52-237" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb52-238"><a href="#cb52-238" aria-hidden="true" tabindex="-1"></a>You'll notice that we have considerably less explained inertia and our silhouette index suggests that there may not be much difference between the clusters. Let's see if adding more clusters improves things.</span>
-<span id="cb52-239"><a href="#cb52-239" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb52-242"><a href="#cb52-242" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb52-243"><a href="#cb52-243" aria-hidden="true" tabindex="-1"></a><span class="co">#| cache: true</span></span>
-<span id="cb52-244"><a href="#cb52-244" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb52-245"><a href="#cb52-245" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb52-246"><a href="#cb52-246" aria-hidden="true" tabindex="-1"></a>kmncluster10 <span class="ot">&lt;-</span> <span class="fu">kmeans</span>(vars_df[,<span class="sc">-</span><span class="dv">1</span>], <span class="at">centers=</span><span class="dv">10</span>, <span class="at">iter.max =</span> <span class="dv">500</span>, <span class="at">nstart =</span> <span class="dv">200</span>, <span class="at">algorithm=</span><span class="st">"Lloyd"</span>)</span>
-<span id="cb52-247"><a href="#cb52-247" aria-hidden="true" tabindex="-1"></a>kmncluster10</span>
+<span id="cb52-240"><a href="#cb52-240" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb52-241"><a href="#cb52-241" aria-hidden="true" tabindex="-1"></a><span class="co">#| cache: true</span></span>
+<span id="cb52-242"><a href="#cb52-242" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-243"><a href="#cb52-243" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-244"><a href="#cb52-244" aria-hidden="true" tabindex="-1"></a>kmncluster10 <span class="ot">&lt;-</span> <span class="fu">kmeans</span>(vars_df[,<span class="sc">-</span><span class="dv">1</span>], <span class="at">centers=</span><span class="dv">10</span>, <span class="at">iter.max =</span> <span class="dv">500</span>, <span class="at">nstart =</span> <span class="dv">200</span>, <span class="at">algorithm=</span><span class="st">"Lloyd"</span>)</span>
+<span id="cb52-245"><a href="#cb52-245" aria-hidden="true" tabindex="-1"></a>kmncluster10</span>
+<span id="cb52-246"><a href="#cb52-246" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-247"><a href="#cb52-247" aria-hidden="true" tabindex="-1"></a>(explained_inertia10 <span class="ot">&lt;-</span> kmncluster10<span class="sc">$</span>betweenss <span class="sc">/</span> kmncluster10<span class="sc">$</span>totss)</span>
 <span id="cb52-248"><a href="#cb52-248" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb52-249"><a href="#cb52-249" aria-hidden="true" tabindex="-1"></a>(explained_inertia10 <span class="ot">&lt;-</span> kmncluster10<span class="sc">$</span>betweenss <span class="sc">/</span> kmncluster10<span class="sc">$</span>totss)</span>
-<span id="cb52-250"><a href="#cb52-250" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb52-251"><a href="#cb52-251" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb52-252"><a href="#cb52-252" aria-hidden="true" tabindex="-1"></a>sil10 <span class="ot">&lt;-</span> <span class="fu">silhouette</span>(kmncluster10<span class="sc">$</span>cluster[sub_idx], <span class="fu">dist</span>(vars_df[sub_idx, ]))</span>
-<span id="cb52-253"><a href="#cb52-253" aria-hidden="true" tabindex="-1"></a><span class="fu">mean</span>(sil10[, <span class="st">"sil_width"</span>])</span>
+<span id="cb52-249"><a href="#cb52-249" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-250"><a href="#cb52-250" aria-hidden="true" tabindex="-1"></a>sil10 <span class="ot">&lt;-</span> <span class="fu">silhouette</span>(kmncluster10<span class="sc">$</span>cluster[sub_idx], <span class="fu">dist</span>(vars_df[sub_idx, ]))</span>
+<span id="cb52-251"><a href="#cb52-251" aria-hidden="true" tabindex="-1"></a><span class="fu">mean</span>(sil10[, <span class="st">"sil_width"</span>])</span>
+<span id="cb52-252"><a href="#cb52-252" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-253"><a href="#cb52-253" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb52-254"><a href="#cb52-254" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb52-255"><a href="#cb52-255" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb52-255"><a href="#cb52-255" aria-hidden="true" tabindex="-1"></a>Well, we get a bit better at explaining the variation in the data, but our silhouette index suggests that many of these clusters might not be particularly far from each other. This is, perhaps, not entirely unexpected as we are looking at climate variables in a relatively small region. We'll use the five cluster solution as it carries less risk of misclassification, though neither of these are particularly great.</span>
 <span id="cb52-256"><a href="#cb52-256" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb52-257"><a href="#cb52-257" aria-hidden="true" tabindex="-1"></a>Well, we get a bit better at explaining the variation in the data, but our silhouette index suggests that many of these clusters might not be particularly far from each other. This is, perhaps, not entirely unexpected as we are looking at climate variables in a relatively small region. We'll use the five cluster solution as it carries less risk of misclassification, though neither of these are particularly great.</span>
-<span id="cb52-258"><a href="#cb52-258" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-257"><a href="#cb52-257" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-258"><a href="#cb52-258" aria-hidden="true" tabindex="-1"></a><span class="fu">### Plotting cluster results</span></span>
 <span id="cb52-259"><a href="#cb52-259" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb52-260"><a href="#cb52-260" aria-hidden="true" tabindex="-1"></a><span class="fu">### Plotting cluster results</span></span>
+<span id="cb52-260"><a href="#cb52-260" aria-hidden="true" tabindex="-1"></a>The last step is to spatialize our cluster results. This is where the cell ID comes in handy. We create a template raster from the first of our scaled data. We then assign the cell values based on the <span class="in">`cluster`</span> object in our kmeans result. Passing the cell column in our assignment ensures that the raster and our cluster results are lined up. After that, we plot!</span>
 <span id="cb52-261"><a href="#cb52-261" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb52-262"><a href="#cb52-262" aria-hidden="true" tabindex="-1"></a>The last step is to spatialize our cluster results. This is where the cell ID comes in handy. We create a template raster from the first of our scaled data. We then assign the cell values based on the <span class="in">`cluster`</span> object in our kmeans result. Passing the cell column in our assignment ensures that the raster and our cluster results are lined up. After that, we plot!</span>
-<span id="cb52-263"><a href="#cb52-263" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb52-266"><a href="#cb52-266" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb52-267"><a href="#cb52-267" aria-hidden="true" tabindex="-1"></a>kmeans_rast <span class="ot">&lt;-</span> <span class="fu">rast</span>(vars_scl, <span class="at">nlyr=</span><span class="dv">1</span>)</span>
-<span id="cb52-268"><a href="#cb52-268" aria-hidden="true" tabindex="-1"></a>kmeans_rast[vars_df<span class="sc">$</span>cell] <span class="ot">&lt;-</span> kmncluster5<span class="sc">$</span>cluster</span>
-<span id="cb52-269"><a href="#cb52-269" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(kmeans_rast)</span>
-<span id="cb52-270"><a href="#cb52-270" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb52-264"><a href="#cb52-264" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb52-265"><a href="#cb52-265" aria-hidden="true" tabindex="-1"></a>kmeans_rast <span class="ot">&lt;-</span> <span class="fu">rast</span>(vars_scl, <span class="at">nlyr=</span><span class="dv">1</span>)</span>
+<span id="cb52-266"><a href="#cb52-266" aria-hidden="true" tabindex="-1"></a>kmeans_rast[vars_df<span class="sc">$</span>cell] <span class="ot">&lt;-</span> kmncluster5<span class="sc">$</span>cluster</span>
+<span id="cb52-267"><a href="#cb52-267" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(kmeans_rast)</span>
+<span id="cb52-268"><a href="#cb52-268" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 </code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div></div></div></div></div>
 </div> <!-- /content -->

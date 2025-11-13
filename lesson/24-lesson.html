@@ -387,7 +387,7 @@ The following object is masked from 'package:purrr':
 <pre><code># A tibble: 1 × 3
   prevalence n_present n_absent
        &lt;dbl&gt;     &lt;int&gt;    &lt;int&gt;
-1      0.432       324      426</code></pre>
+1      0.501       376      374</code></pre>
 </div>
 </div>
 </section>
@@ -456,8 +456,8 @@ The following object is masked from 'package:purrr':
 <span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>form</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>presence ~ elev + bio_10 + bio_4 + bio_3 + bio_9 + bio_16 + bio_5 + 
-    bio_7 + bio_2</code></pre>
+<pre><code>presence ~ elev + bio_18 + bio_13 + bio_14 + bio_4 + bio_1 + 
+    bio_12 + bio_10 + bio_6</code></pre>
 </div>
 <details open="">
 <summary>Code</summary>
@@ -474,27 +474,27 @@ Call:
 glm(formula = form, family = binomial(link = "logit"), data = species_data_preds)
 
 Coefficients:
-             Estimate Std. Error z value Pr(&gt;|z|)    
-(Intercept)   0.11314    0.18723   0.604   0.5456    
-elev          1.00215    1.64427   0.609   0.5422    
-bio_10      -21.50649   23.56378  -0.913   0.3614    
-bio_4         0.62860    0.26381   2.383   0.0172 *  
-bio_3         0.12165    0.84280   0.144   0.8852    
-bio_9         1.49107    1.17168   1.273   0.2032    
-bio_16        0.96479    0.09614  10.035   &lt;2e-16 ***
-bio_5        -9.55024    8.24760  -1.158   0.2469    
-bio_7       -53.15347   61.89442  -0.859   0.3905    
-bio_2        -2.16200    3.01797  -0.716   0.4738    
+            Estimate Std. Error z value Pr(&gt;|z|)    
+(Intercept)  -0.0599     0.1370  -0.437 0.662000    
+elev         -0.1117     1.4446  -0.077 0.938351    
+bio_18        3.2527     0.8440   3.854 0.000116 ***
+bio_13        0.9740     0.1623   6.003 1.94e-09 ***
+bio_14        1.2394     0.1385   8.952  &lt; 2e-16 ***
+bio_4         1.2373     0.2518   4.914 8.93e-07 ***
+bio_1         1.3859     5.9439   0.233 0.815640    
+bio_12        1.1884     0.4542   2.616 0.008886 ** 
+bio_10       -1.7922   118.9681  -0.015 0.987981    
+bio_6         1.9436     0.5715   3.401 0.000672 ***
 ---
 Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 
 (Dispersion parameter for binomial family taken to be 1)
 
-    Null deviance: 1025.81  on 749  degrees of freedom
-Residual deviance:  351.03  on 740  degrees of freedom
-AIC: 371.03
+    Null deviance: 1039.72  on 749  degrees of freedom
+Residual deviance:  463.04  on 740  degrees of freedom
+AIC: 483.04
 
-Number of Fisher Scoring iterations: 7</code></pre>
+Number of Fisher Scoring iterations: 6</code></pre>
 </div>
 <details open="">
 <summary>Code</summary>
@@ -511,16 +511,16 @@ Number of Fisher Scoring iterations: 7</code></pre>
 <pre><code># A tibble: 10 × 5
    Parameter True_Value Estimated Difference Pct_Error
    &lt;chr&gt;          &lt;dbl&gt;     &lt;dbl&gt;      &lt;dbl&gt;     &lt;dbl&gt;
- 1 Intercept      0         0.113      0.113     Inf  
- 2 elev          -1.12      1.00       2.12     -190. 
- 3 bio_10         0.295   -21.5      -21.8     -7394. 
- 4 bio_4          1.46      0.629     -0.834     -57.0
- 5 bio_3         -2.72      0.122      2.84     -104. 
- 6 bio_9         -2.10      1.49       3.59     -171. 
- 7 bio_16        -2.64      0.965      3.61     -137. 
- 8 bio_5         -0.802    -9.55      -8.75     1090. 
- 9 bio_7         -0.131   -53.2      -53.0     40592. 
-10 bio_2          2.63     -2.16      -4.79     -182. </code></pre>
+ 1 Intercept      0       -0.0599    -0.0599    -Inf  
+ 2 elev          -1.12    -0.112      1.01       -90.0
+ 3 bio_18         0.295    3.25       2.96      1003. 
+ 4 bio_13         1.46     0.974     -0.488      -33.4
+ 5 bio_14        -2.72     1.24       3.96      -146. 
+ 6 bio_4         -2.10     1.24       3.34      -159. 
+ 7 bio_1         -2.64     1.39       4.03      -152. 
+ 8 bio_12        -0.802    1.19       1.99      -248. 
+ 9 bio_10        -0.131   -1.79      -1.66      1272. 
+10 bio_6          2.63     1.94      -0.688      -26.1</code></pre>
 </div>
 </div>
 </section>
@@ -557,15 +557,15 @@ Number of Fisher Scoring iterations: 7</code></pre>
 <pre><code># A tibble: 9 × 3
   variable importance importance_scaled
   &lt;chr&gt;         &lt;dbl&gt;             &lt;dbl&gt;
-1 bio_16         98.2             1    
-2 bio_7          77.5             0.790
-3 bio_3          53.4             0.544
-4 bio_5          37.1             0.378
-5 bio_2          27.2             0.277
-6 bio_4          20.7             0.211
-7 elev           14.5             0.148
-8 bio_10         13.4             0.137
-9 bio_9          11.6             0.118</code></pre>
+1 bio_14        131.              1    
+2 bio_4          52.9             0.404
+3 bio_12         43.9             0.335
+4 bio_13         41.4             0.316
+5 bio_18         24.2             0.185
+6 bio_10         17.0             0.130
+7 elev           16.4             0.125
+8 bio_1          15.4             0.118
+9 bio_6          14.0             0.107</code></pre>
 </div>
 <details open="">
 <summary>Code</summary>
