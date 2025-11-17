@@ -1,4 +1,5 @@
 ---
-title: "Generic Lesson"
+title: "Spatial Autocorrelation and Moran's I"
 ---
 
+Check out [Paula Moraga's tutorial on Moran's I](https://www.paulamoraga.com/book-spatial/spatial-autocorrelation.html). You'll need to install the `mapview` and `spData` packages

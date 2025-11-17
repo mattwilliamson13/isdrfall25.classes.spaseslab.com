@@ -84,6 +84,111 @@
     "text": "Footnotes\n\n\nSo seriously, just don’t cheat or plagiarize!↩︎"
   },
   {
+    "objectID": "slides/25-slides.html#the-world-is-not-random",
+    "href": "slides/25-slides.html#the-world-is-not-random",
+    "title": "Spatial Autocorrelation I",
+    "section": "The World Is Not Random",
+    "text": "The World Is Not Random\n\nFrom Manuel Gimond"
+  },
+  {
+    "objectID": "slides/25-slides.html#kriging-revisited",
+    "href": "slides/25-slides.html#kriging-revisited",
+    "title": "Spatial Autocorrelation I",
+    "section": "Kriging Revisited",
+    "text": "Kriging Revisited"
+  },
+  {
+    "objectID": "slides/25-slides.html#kriging-revisited-1",
+    "href": "slides/25-slides.html#kriging-revisited-1",
+    "title": "Spatial Autocorrelation I",
+    "section": "Kriging Revisited",
+    "text": "Kriging Revisited\n\nAssumes autocorrelation to facilitate prediction\nSemivariogram decribes how autocorrelation changes with distance\nBut what about statistical inference?"
+  },
+  {
+    "objectID": "slides/25-slides.html#spatial-autocorrelation-and-inference",
+    "href": "slides/25-slides.html#spatial-autocorrelation-and-inference",
+    "title": "Spatial Autocorrelation I",
+    "section": "Spatial Autocorrelation and Inference",
+    "text": "Spatial Autocorrelation and Inference\n\nAttributes (features) are often non-randomly distributed\nEspecially true with aggregated data\nAffects estimates of precision (and significance)"
+  },
+  {
+    "objectID": "slides/25-slides.html#global-morans-i",
+    "href": "slides/25-slides.html#global-morans-i",
+    "title": "Spatial Autocorrelation I",
+    "section": "Global Moran’s I",
+    "text": "Global Moran’s I\n\\[\nI = \\frac{n}{W} \\cdot \\frac{\\sum_{i=1}^{n}\\sum_{j=1}^{n} w_{ij}(x_i - \\bar{x})(x_j - \\bar{x})}{\\sum_{i=1}^{n}(x_i - \\bar{x})^2}\n\\]\nwhere \\(W = \\sum_{i=1}^{n}\\sum_{j=1}^{n} w_{ij}\\)\n\nA first-order estimate of spatial autocorrelation"
+  },
+  {
+    "objectID": "slides/25-slides.html#morans-i",
+    "href": "slides/25-slides.html#morans-i",
+    "title": "Spatial Autocorrelation I",
+    "section": "Moran’s I",
+    "text": "Moran’s I"
+  },
+  {
+    "objectID": "slides/25-slides.html#but-how-do-we-calculate-w_i",
+    "href": "slides/25-slides.html#but-how-do-we-calculate-w_i",
+    "title": "Spatial Autocorrelation I",
+    "section": "…but How Do We Calculate \\(w_{i}\\)",
+    "text": "…but How Do We Calculate \\(w_{i}\\)\n\nHow do we define \\(I(d)\\) for areal data?\nWhat about \\(w_{ij}\\)?\nWe can use spdep for that!!"
+  },
+  {
+    "objectID": "slides/25-slides.html#finding-neighbors",
+    "href": "slides/25-slides.html#finding-neighbors",
+    "title": "Spatial Autocorrelation I",
+    "section": "Finding Neighbors",
+    "text": "Finding Neighbors\n\nQueen, rook, (and bishop) cases impose neighbors by contiguity\nWeights calculated as a \\(1/ num. of neighbors\\)"
+  },
+  {
+    "objectID": "slides/25-slides.html#more-formally",
+    "href": "slides/25-slides.html#more-formally",
+    "title": "Spatial Autocorrelation I",
+    "section": "More Formally",
+    "text": "More Formally\n\\[\nE[I] = \\frac{-1}{n-1}\n\\]\n\nWhen \\(n\\) is large, E[I] approaches 0\nBut large relative to what?"
+  },
+  {
+    "objectID": "slides/25-slides.html#testing-for-spatial-autocorrelation",
+    "href": "slides/25-slides.html#testing-for-spatial-autocorrelation",
+    "title": "Spatial Autocorrelation I",
+    "section": "Testing for Spatial Autocorrelation",
+    "text": "Testing for Spatial Autocorrelation\n\n\\(I\\) can be estimated by fitting a model of the lagged average as a function of the measurement\n\n\\[\n\\mu_{lag} = \\beta \\times measurement\n\\]\nwhere \\(\\beta = I\\)"
+  },
+  {
+    "objectID": "slides/25-slides.html#comparing-observed-to-expected",
+    "href": "slides/25-slides.html#comparing-observed-to-expected",
+    "title": "Spatial Autocorrelation I",
+    "section": "Comparing observed to expected",
+    "text": "Comparing observed to expected\n\nWe can generate the expected distribution of Moran’s I coefficients under a Null hypothesis of no spatial autocorrelation\nUsing permutation and a loop to generate simulations of Moran’s I"
+  },
+  {
+    "objectID": "slides/25-slides.html#significance-testing",
+    "href": "slides/25-slides.html#significance-testing",
+    "title": "Spatial Autocorrelation I",
+    "section": "Significance testing",
+    "text": "Significance testing\n\nPseudo p-value (based on permutations)\nAnalytically (sensitive to deviations from assumptions)\nUsing Monte Carlo"
+  },
+  {
+    "objectID": "slides/25-slides.html#local-indicators-of-spatial-autocorrelation",
+    "href": "slides/25-slides.html#local-indicators-of-spatial-autocorrelation",
+    "title": "Spatial Autocorrelation I",
+    "section": "Local Indicators of Spatial Autocorrelation",
+    "text": "Local Indicators of Spatial Autocorrelation\n\nSometimes we want to know about second-order autocorrelation\nIs there clustering around different locations (but maybe not everywhere)?"
+  },
+  {
+    "objectID": "slides/25-slides.html#local-morans-i",
+    "href": "slides/25-slides.html#local-morans-i",
+    "title": "Spatial Autocorrelation I",
+    "section": "Local Moran’s I",
+    "text": "Local Moran’s I\n\\[\nI_i = \\frac{(x_i - \\bar{x})}{\\sum_{k=1}^{n}(x_k - \\bar{x})^2/n} \\sum_{j=1}^{n} w_{ij}(x_j - \\bar{x})\n\\]\n\nCan identify areas where clustering is great than expected\nProportional to Global Moran’s I"
+  },
+  {
+    "objectID": "slides/25-slides.html#autocorrelation-and-inference",
+    "href": "slides/25-slides.html#autocorrelation-and-inference",
+    "title": "Spatial Autocorrelation I",
+    "section": "Autocorrelation and Inference",
+    "text": "Autocorrelation and Inference\n\nInterpolation assumes autocorrelation\nInference is interested in mechanisms\nTests for mechanisms get confused by autocorrelation\nDiagnosing autocorrelation helps plan next steps (Weds)"
+  },
+  {
     "objectID": "slides/23-slides.html#objectives",
     "href": "slides/23-slides.html#objectives",
     "title": "Statistical Modeling I",
@@ -2907,23 +3012,23 @@
   {
     "objectID": "content/25-content.html",
     "href": "content/25-content.html",
-    "title": "Movement and Networks I",
+    "title": "Spatial Autocorrelation I",
     "section": "",
-    "text": "Today we’re going to finish up some of the model evaluation and prediction pieces from last week and then take a brief detour into the use of spatial information in networks. To do that, we’ll need to introduce some basic concepts of networks before getting too far down the road of the syntax."
+    "text": "Now that we’ve learned about the power of spatial autocorrelation for interpolation from point data, it’s time to explore methods for spatial autocorrelation with areal data. We’ll have to define neighbors because distance is a little more ambiguous here and then look at some global and local measures of autocorrelation."
   },
   {
     "objectID": "content/25-content.html#resources",
     "href": "content/25-content.html#resources",
-    "title": "Movement and Networks I",
+    "title": "Spatial Autocorrelation I",
     "section": "Resources",
-    "text": "Resources\n\n Landscape connectivity: A graph-theoretic perspective by (Urban and Keitt 2001) introduces the notion of using networks and graphs to understand ecological connectivity.\n Connectivity for conservation: a framework to classify network measures by (Rayfield et al. 2011) helps simplify the (often overwhelming nature) of terminology and network metrics.\n Graphs and network science: and introduction provides a little simpler, but less spatially informed introduction to the tasks of network analysis."
+    "text": "Resources\n\n Ch. 7: Spatial Neighborhood Matrices in from Paula Moraga’s new book Spatial Statistics for Data Science: Theory and Practice with R gives a little gentler introduction to spatial neighbors specifically in the context of statistical models.\n Chapter 14 Proximity and Areal Data in Spatial Data Science by Edzer Pebesma and Roger Bivand provides explanations of how the spdep package can be used to construct neighborhood weights.\n Spatial Autocorrelation in R provides some easy code for working through neighbors with areal data and calculating spatial autocorrelation measures."
   },
   {
     "objectID": "content/25-content.html#objectives",
     "href": "content/25-content.html#objectives",
-    "title": "Movement and Networks I",
+    "title": "Spatial Autocorrelation I",
     "section": "Objectives",
-    "text": "Objectives\nBy the end of today you should be able to:\n\nUse cross-validation to evaluate your models\nDefine a network and it’s key components\nIdentify major questions that we can address with networks\n\n\n View all slides in new window  Download PDF of all slides\n\n\n\n\nPanopto Video"
+    "text": "Objectives\nBy the end of today you should be able to:\n\nUse the spdep package to identify the neighbors of a given polygon based on proximity, distance, and minimum number\nUnderstand the underlying mechanics of Moran’s I and calculate it for various neighbors\nDistinguish between global and local measures of spatial autocorrelation\nVisualize neighbors and clusters\n\n\n View all slides in new window  Download PDF of all slides"
   },
   {
     "objectID": "content/29-content.html",
@@ -3463,6 +3568,13 @@
     "title": "Statistical Modeling with Logistic Regression",
     "section": "Parting Thoughts",
     "text": "Parting Thoughts\nThis is (obviously) a simple example, but you can use it to explore how sample size, correlations between data, and correlations between parameters affect your ability to recover parameters. This is important info to have because it can help you gauge how realistic your expectations of your own data might be. If the model never returns the correct values unless you have 10x more observations, you’ll know something about your sampling needs. If correlated data always causes the model to fail, you’ll have to think about ways to eliminate that correlation (maybe a PCA?). Simulation is a valuable and (in my opinion) underutilized tool. Now you’ve got the template to begin doing it!!"
+  },
+  {
+    "objectID": "lesson/25-lesson.html",
+    "href": "lesson/25-lesson.html",
+    "title": "Spatial Autocorrelation and Moran’s I",
+    "section": "",
+    "text": "Check out Paula Moraga’s tutorial on Moran’s I. You’ll need to install the mapview and spData packages"
   },
   {
     "objectID": "lesson/getting-setup.html",

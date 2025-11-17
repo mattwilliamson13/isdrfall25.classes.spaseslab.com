@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Intro to Spatial Data in R - Movement and Networks I</title>
+<title>Intro to Spatial Data in R - Spatial Autocorrelation I</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -20,26 +20,7 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
-/* CSS for citations */
-div.csl-bib-body { }
-div.csl-entry {
-  clear: both;
-}
-.hanging-indent div.csl-entry {
-  margin-left:2em;
-  text-indent:-2em;
-}
-div.csl-left-margin {
-  min-width:2em;
-  float:left;
-}
-div.csl-right-inline {
-  margin-left:2em;
-  padding-left:1em;
-}
-div.csl-indent {
-  margin-left: 2em;
-}</style>
+</style>
 
 
 <script src="../site_libs/quarto-nav/quarto-nav.js"></script>
@@ -81,7 +62,7 @@ div.csl-indent {
 }</script>
 
 
-<meta property="og:title" content="Intro to Spatial Data in R - Movement and Networks I">
+<meta property="og:title" content="Intro to Spatial Data in R - Spatial Autocorrelation I">
 <meta property="og:description" content="">
 <meta property="og:image" content="https://isdrfall25.classes.spaseslab.com/files/social-image-f22.png">
 <meta property="og:site-name" content="Intro to Spatial Data in R">
@@ -392,29 +373,30 @@ div.csl-indent {
 <main class="content" id="quarto-document-content">
 
 <header id="title-block-header">
-<h1 class="title display-7">Movement and Networks I</h1>
+<h1 class="title display-7">Spatial Autocorrelation I</h1>
 
 <div class="date-block bg-content text-white p-2">
-  <p class="date">Content for Monday, November 13, 2023</p>
+  <p class="date">Content for Monday, November 17, 2025</p>
 </div>
 </header>
 
-<p>Today we’re going to finish up some of the model evaluation and prediction pieces from last week and then take a brief detour into the use of spatial information in networks. To do that, we’ll need to introduce some basic concepts of networks before getting too far down the road of the syntax.</p>
+<p>Now that we’ve learned about the power of spatial autocorrelation for interpolation from point data, it’s time to explore methods for spatial autocorrelation with areal data. We’ll have to define neighbors because distance is a little more ambiguous here and then look at some global and local measures of autocorrelation.</p>
 <section id="resources" class="level2">
 <h2 class="anchored" data-anchor-id="resources">Resources</h2>
 <ul>
-<li><p><i class="fas fa-external-link-square-alt"></i> <a href="https://esajournals.onlinelibrary.wiley.com/doi/full/10.1890/0012-9658%282001%29082%5B1205%3ALCAGTP%5D2.0.CO%3B2">Landscape connectivity: A graph-theoretic perspective</a> by <span class="citation" data-cites="urban">(<a href="#ref-urban" role="doc-biblioref">Urban and Keitt 2001</a>)</span> introduces the notion of using networks and graphs to understand ecological connectivity.</p></li>
-<li><p><i class="fas fa-external-link-square-alt"></i> <a href="https://esajournals.onlinelibrary.wiley.com/doi/full/10.1890/09-2190.1">Connectivity for conservation: a framework to classify network measures</a> by <span class="citation" data-cites="rayfield">(<a href="#ref-rayfield" role="doc-biblioref">Rayfield et al. 2011</a>)</span> helps simplify the (often overwhelming nature) of terminology and network metrics.</p></li>
-<li><p><i class="fas fa-external-link-square-alt"></i> <a href="https://livebook.manning.com/book/graphs-and-network-science-an-introduction/chapter-1/">Graphs and network science: and introduction</a> provides a little simpler, but less spatially informed introduction to the tasks of network analysis.</p></li>
+<li><p><i class="fas fa-external-link-square-alt"></i> <a href="https://www.paulamoraga.com/book-spatial/spatial-neighborhood-matrices.html">Ch. 7: Spatial Neighborhood Matrices</a> in from Paula Moraga’s new book Spatial Statistics for Data Science: Theory and Practice with <code>R</code> gives a little gentler introduction to spatial neighbors specifically in the context of statistical models.</p></li>
+<li><p><i class="fas fa-book"></i> <a href="https://r-spatial.org/book/14-Areal.html">Chapter 14 Proximity and Areal Data</a> in Spatial Data Science by Edzer Pebesma and Roger Bivand provides explanations of how the <code>spdep</code> package can be used to construct neighborhood weights.</p></li>
+<li><p><i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i> <a href="https://mgimond.github.io/Spatial/spatial-autocorrelation-in-r.html">Spatial Autocorrelation in R</a> provides some easy code for working through neighbors with areal data and calculating spatial autocorrelation measures.</p></li>
 </ul>
 </section>
 <section id="objectives" class="level2">
 <h2 class="anchored" data-anchor-id="objectives">Objectives</h2>
 <p>By the end of today you should be able to:</p>
 <ul>
-<li><p>Use cross-validation to evaluate your models</p></li>
-<li><p>Define a network and it’s key components</p></li>
-<li><p>Identify major questions that we can address with networks</p></li>
+<li><p>Use the <code>spdep</code> package to identify the neighbors of a given polygon based on proximity, distance, and minimum number</p></li>
+<li><p>Understand the underlying mechanics of Moran’s I and calculate it for various neighbors</p></li>
+<li><p>Distinguish between global and local measures of spatial autocorrelation</p></li>
+<li><p>Visualize neighbors and clusters</p></li>
 </ul>
 <p class="text-center buttons">
 <a class="btn btn-danger" target="_blank" href="../slides/25-slides.html"><i class="fa-solid fa-arrow-up-right-from-square"></i> View all slides in new window</a> <a class="btn btn-danger" target="_blank" href="../slides/25-slides.pdf" role="button"><i class="fa-solid fa-file-pdf"></i> Download PDF of all slides</a>
@@ -422,20 +404,11 @@ div.csl-indent {
 <div>
 <iframe class="slide-deck" src="../slides/25-slides.html"></iframe>
 </div>
-<p><a href="https://boisestate.hosted.panopto.com/Panopto/Pages/Viewer.aspx?id=abc2638d-a228-42a8-b585-b0b9015323a0">Panopto Video</a></p>
-
 
 
 </section>
 
-<div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" role="doc-bibliography"><h2 class="anchored quarto-appendix-heading">References</h2><div id="refs" class="references csl-bib-body hanging-indent" data-line-spacing="2" role="list">
-<div id="ref-rayfield" class="csl-entry" role="listitem">
-Rayfield, B., M.-J. Fortin, and A. Fall. 2011. <a href="https://doi.org/10.1890/09-2190.1">Connectivity for conservation: A framework to classify network measures</a>. Ecology 92:847–858.
-</div>
-<div id="ref-urban" class="csl-entry" role="listitem">
-Urban, D., and T. Keitt. 2001. <a href="https://doi.org/10.1890/0012-9658(2001)082[1205:LCAGTP]2.0.CO;2">LANDSCAPE CONNECTIVITY: A GRAPH-THEORETIC PERSPECTIVE</a>. Ecology 82:1205–1218.
-</div>
-</div></section></div></main> <!-- /main -->
+</main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
 window.document.addEventListener("DOMContentLoaded", function (event) {
   const toggleBodyColorMode = (bsSheetEl) => {
