@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Intro to Spatial Data in R - Movement and Networks II</title>
+<title>Intro to Spatial Data in R - Spatial Autocorrelation II</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -81,7 +81,7 @@ div.csl-indent {
 }</script>
 
 
-<meta property="og:title" content="Intro to Spatial Data in R - Movement and Networks II">
+<meta property="og:title" content="Intro to Spatial Data in R - Spatial Autocorrelation II">
 <meta property="og:description" content="">
 <meta property="og:image" content="https://isdrfall25.classes.spaseslab.com/files/social-image-f22.png">
 <meta property="og:site-name" content="Intro to Spatial Data in R">
@@ -383,7 +383,11 @@ div.csl-indent {
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#resources" id="toc-resources" class="nav-link active" data-scroll-target="#resources">Resources</a></li>
+  <li><a href="#resources" id="toc-resources" class="nav-link active" data-scroll-target="#resources">Resources</a>
+  <ul class="collapse">
+  <li><a href="#big-picture" id="toc-big-picture" class="nav-link" data-scroll-target="#big-picture">Big Picture</a></li>
+  <li><a href="#technical-details" id="toc-technical-details" class="nav-link" data-scroll-target="#technical-details">Technical Details</a></li>
+  </ul></li>
   <li><a href="#objectives" id="toc-objectives" class="nav-link" data-scroll-target="#objectives">Objectives</a></li>
   </ul>
 </nav>
@@ -392,29 +396,38 @@ div.csl-indent {
 <main class="content" id="quarto-document-content">
 
 <header id="title-block-header">
-<h1 class="title display-7">Movement and Networks II</h1>
+<h1 class="title display-7">Spatial Autocorrelation II</h1>
 
 <div class="date-block bg-content text-white p-2">
-  <p class="date">Content for Wednesday, November 15, 2023</p>
+  <p class="date">Content for Tuesday, November 18, 2025</p>
 </div>
 </header>
 
-<p>Now that we’ve chatted briefly about what a network is and how we represent it for analysis, it’s time to take some first steps toward building spatial networks in <code>R</code>. The backbone of most network analysis is <code>igraph</code>, a package that is available for a number of programming languages. There are also a growing number of spatial network packages being developed for <code>R</code>. We’ll introduce a few of those today.</p>
+<p>Throughout this class, we’ve talked about the tendency for things that are closer together to be more similar (i.e., spatial autocorrelation). As a starting assumption, this can be really useful for improving our ability to interpolate missing values and to describe spatial trends in our data. Often times, however, our goal is to identify some effect(s) that explain why an outcome is what it is. Identifying causal connections between independent and dependent variables is often the task of statistical models. Unfortunately, many of our statistical models assume that the residuals (i.e., the difference between the modeled output and the measured output) are independent and normally distributed. When the process we’re interested in is autocorrelated <strong>AND</strong> we’ve failed to capture the independent variables that explain that spatial trend, we end up with spatial autocorrelation <em>in the residuals</em> which violates the assumptions of traditional statistcal models. Today, we’ll talk about methods for incorporating the potential for spatial autocorrelation into your statistical models explicitly.</p>
 <section id="resources" class="level2">
 <h2 class="anchored" data-anchor-id="resources">Resources</h2>
+<section id="big-picture" class="level3">
+<h3 class="anchored" data-anchor-id="big-picture">Big Picture</h3>
 <ul>
-<li><p><i class="fas fa-external-link-square-alt"></i> <a href="https://book.archnetworks.net/networkdata">Network Data in R</a> and <a href="https://book.archnetworks.net/spatialnetworks">Spatial Networks</a> from the Online Companion to <em>Network Science in Archaelogy</em> introduces a variety of approaches for handling and visualizing network data with <code>R</code> using examples from archaeology.</p></li>
-<li><p><i class="fas fa-external-link-square-alt"></i> <a href="https://besjournals.onlinelibrary.wiley.com/doi/full/10.1111/2041-210X.13502">CMRnet: An R package to derive networks of social interactions and movement from mark-recapture data</a> by <span class="citation" data-cites="Silk">(<a href="#ref-Silk" role="doc-biblioref">Silk et al. 2021</a>)</span> describes a package for developing networks from common wildlife sampling techniques.</p></li>
-<li><p><i class="fas fa-external-link-square-alt"></i> <a href="https://luukvdmeer.github.io/sfnetworks/index.html">The <code>sfnetworks</code> package github page</a> provides a variety of vignettes for manipulating spatial network data within the <code>sf</code> framework for spatial objects.</p></li>
+<li><p><i class="fas fa-external-link-square-alt"></i> <a href="https://esajournals.onlinelibrary.wiley.com/doi/full/10.1002/ecm.1283">Spatial autoregressive models for statistical inference from ecological data</a> by <span class="citation" data-cites="verhoef2018">(<a href="#ref-verhoef2018" role="doc-biblioref">Ver Hoef et al. 2018</a>)</span> contains the justification for and derivation of autoregressive models for spatial data. It’s a dense read, but one that’s worth sticking with. I learn something new each time I read this paper.</p></li>
+<li><p><i class="fas fa-external-link-square-alt"></i> <a href="https://conbio.onlinelibrary.wiley.com/doi/10.1111/cobi.13673">Improving inferences about private land conservation by accounting for incomplete reporting</a> by <span class="citation" data-cites="williamson2021">(<a href="#ref-williamson2021" role="doc-biblioref">Williamson et al. 2021</a>)</span> uses CAR models with occupancy models to explore how inference changes when including different elements of the data generating process. It’s got a more approachable description of CAR models than that of Ver Hoef and was based on a simulation study that I did during my PhD.</p></li>
 </ul>
+</section>
+<section id="technical-details" class="level3">
+<h3 class="anchored" data-anchor-id="technical-details">Technical Details</h3>
+<ul>
+<li><p><i class="fas fa-external-link-square-alt"></i> <a href="https://maczokni.github.io/crime_mapping_textbook/spatial-regression-models.html">Spatial regression models</a> provides a nice overview of using simultaneous autoregressive models using the <code>spatialreg</code> package.</p></li>
+<li><p><i class="fas fa-external-link-square-alt"></i> <a href="https://r-spatial.org/book/16-SpatialRegression.html">Spatial Regression</a> in <span class="citation" data-cites="sds">(<a href="#ref-sds" role="doc-biblioref">Pebesma and Bivand 2023</a>)</span> gives examples of spatial regression using a variety of Bayesian packages. We won’t be using these (we’ll use <code>brms</code>) pacakages, but the data prep is largely the same and this demonstrates a bit of the underlying logic behind the different models.</p></li>
+</ul>
+</section>
 </section>
 <section id="objectives" class="level2">
 <h2 class="anchored" data-anchor-id="objectives">Objectives</h2>
 <p>By the end of today you should be able to:</p>
 <ul>
-<li><p>Generate an adjacency matrix for network analysis</p></li>
-<li><p>Calculate network density, centrality, and other common measures</p></li>
-<li><p>Generate landscape connectivity models using <code>terra</code> and <code>gDistance</code></p></li>
+<li><p><strong>Explain</strong> the importance of explicitly incorporating autocorrelation into statistical models</p></li>
+<li><p><strong>Describe</strong> autoregressive approaches for including spatial correlation in statistical models</p></li>
+<li><p><strong>Explore</strong> ways to define adjacency matrices based on areal and continuous data.</p></li>
 </ul>
 <p class="text-center buttons">
 <a class="btn btn-danger" target="_blank" href="../slides/26-slides.html"><i class="fa-solid fa-arrow-up-right-from-square"></i> View all slides in new window</a> <a class="btn btn-danger" target="_blank" href="../slides/26-slides.pdf" role="button"><i class="fa-solid fa-file-pdf"></i> Download PDF of all slides</a>
@@ -422,15 +435,20 @@ div.csl-indent {
 <div>
 <iframe class="slide-deck" src="../slides/26-slides.html"></iframe>
 </div>
-<p><a href="https://boisestate.hosted.panopto.com/Panopto/Pages/Viewer.aspx?id=d01a8b31-5d5c-446f-a18a-b0bb0152b345">Panopto Video</a></p>
 
 
 
 </section>
 
 <div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" role="doc-bibliography"><h2 class="anchored quarto-appendix-heading">References</h2><div id="refs" class="references csl-bib-body hanging-indent" data-line-spacing="2" role="list">
-<div id="ref-Silk" class="csl-entry" role="listitem">
-Silk, M. J., R. A. McDonald, R. J. Delahay, D. Padfield, and D. J. Hodgson. 2021. <a href="https://doi.org/10.1111/2041-210X.13502">CMRnet: An r package to derive networks of social interactions and movement from mark–recapture data</a>. Methods in Ecology and Evolution 12:70–75.
+<div id="ref-sds" class="csl-entry" role="listitem">
+Pebesma, E., and R. Bivand. 2023. <a href="https://doi.org/10.1201/9780429459016">Spatial data science: With applications in <span>R</span></a>. Chapman; Hall/CRC, Boca Raton.
+</div>
+<div id="ref-verhoef2018" class="csl-entry" role="listitem">
+Ver Hoef, J. M., E. E. Peterson, M. B. Hooten, E. M. Hanks, and M.-J. Fortin. 2018. <a href="https://doi.org/10.1002/ecm.1283">Spatial autoregressive models for statistical inference from ecological data</a>. Ecological Monographs 88:36–59.
+</div>
+<div id="ref-williamson2021" class="csl-entry" role="listitem">
+Williamson, M. A., B. G. Dickson, M. B. Hooten, R. A. Graves, M. N. Lubell, and M. W. Schwartz. 2021. <a href="https://doi.org/10.1111/cobi.13673">Improving inferences about private land conservation by accounting for incomplete reporting</a>. Conservation Biology 35:1174–1185.
 </div>
 </div></section></div></main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">

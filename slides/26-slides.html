@@ -445,7 +445,7 @@
   <meta name="generator" content="quarto-1.3.450">
 
   <meta name="author" content="Matt Williamson">
-  <title>Intro to Spatial Data in R - Generic</title>
+  <title>Intro to Spatial Data in R - Spatial Regression</title>
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
@@ -1137,7 +1137,7 @@ display: block;
 margin-left: auto;
 margin-right: 0; }
 </style>
-<meta property="og:title" content="Intro to Spatial Data in R - Generic">
+<meta property="og:title" content="Intro to Spatial Data in R - Spatial Regression">
 <meta property="og:description" content="HES 505 Fall 2025: Session 26">
 <meta property="og:image" content="https://isdrfall25.classes.spaseslab.com/files/social-image-f22.png">
 <meta property="og:site-name" content="Intro to Spatial Data in R">
@@ -1148,7 +1148,7 @@ margin-right: 0; }
     <div class="slides">
 
 <section id="title-slide" class="quarto-title-block center">
-  <h1 class="title">Generic</h1>
+  <h1 class="title">Spatial Regression</h1>
   <p class="subtitle">HES 505 Fall 2025: Session 26</p>
 
 <div class="quarto-title-authors">
@@ -1159,6 +1159,68 @@ Matt Williamson
 </div>
 </div>
 
+</section>
+<section id="motivation" class="slide level2">
+<h2>Motivation</h2>
+<ul>
+<li>Last class: <strong>Moran’s I</strong> showed evidence of spatial autocorrelation</li>
+<li>Ordinary linear models assume <strong>independent</strong> residuals</li>
+<li>But in spatial data, nearby units often influence one another</li>
+<li>Today: What happens when we <strong>don’t</strong> account for spatial structure, and what SAR/SEM models do instead</li>
+</ul>
+</section>
+<section id="when-lm-fails" class="slide level2">
+<h2>When LM Fails</h2>
+<h3 id="linear-model-lm">Linear model (LM):</h3>
+<p><span class="math display">\[ y = X\beta + \varepsilon, \qquad \varepsilon \sim N(0, \sigma^2 I) \]</span></p>
+<ul>
+<li>Coefficient estimates remain <strong>unbiased</strong> (if X is exogenous)</li>
+<li><strong>Standard errors are wrong</strong> → misleading p-values</li>
+<li><strong>Residuals remain autocorrelated</strong> → violates assumptions</li>
+</ul>
+</section>
+<section id="two-types-of-spatial-dependence" class="slide level2">
+<h2>Two Types of Spatial Dependence</h2>
+<ol type="1">
+<li><strong>Spatial Lag (SAR/LAG)</strong> — outcomes spill over</li>
+<li><strong>Spatial Error (SEM)</strong> — unobserved spatial process</li>
+</ol>
+</section>
+<section id="sar-spatial-lag-model" class="slide level2">
+<h2>SAR (Spatial Lag) Model</h2>
+<p><span class="math display">\[ y = \rho W y + X\beta + \varepsilon \]</span></p>
+<ul>
+<li>( ): strength of spillover/interaction</li>
+<li>Direct effect: X → y</li>
+<li>Indirect effect: neighbors’ X → y</li>
+</ul>
+</section>
+<section id="sem-spatial-error-model" class="slide level2">
+<h2>SEM (Spatial Error) Model</h2>
+<p><span class="math display">\[ y = X\beta + u, \qquad u = \lambda W u + \varepsilon \]</span></p>
+<ul>
+<li>Spatial structure is in the <strong>errors</strong>, not y</li>
+<li>( ) describes strength of spatial autocorrelation in the <strong>unobserved</strong> process</li>
+<li>Coefficients ( ) retain their LM meaning</li>
+</ul>
+</section>
+<section id="sar-vs-sem-how-to-tell-them-apart" class="slide level2">
+<h2>SAR vs SEM: How to Tell Them Apart?</h2>
+<ul>
+<li>SAR: outcomes influence neighbors (spillover)</li>
+<li>SEM: residuals autocorrelated due to unobserved spatial process</li>
+<li>Use theory + residual diagnostics (Moran’s I)</li>
+</ul>
+</section>
+<section id="what-students-should-learn" class="slide level2">
+<h2>What Students Should Learn</h2>
+<ul>
+<li>LM ignores spatial dependence → unreliable inference</li>
+<li>SAR: interactive spillover model → interpret effects, not raw ()</li>
+<li>SEM: correlated errors → () interpretation same as LM</li>
+<li>Both help resolve residual autocorrelation</li>
+<li>Model selection guided by theory + diagnostics</li>
+</ul>
 </section>
 <section class="slide level2">
 

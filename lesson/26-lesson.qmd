@@ -1,4 +1,148 @@
 ---
-title: "Generic Lesson"
+title: "Models for Spatial Autocorrelation"
 ---
 
+```{r}
+library(tigris)
+library(sf)
+library(spdep)
+library(spatialreg)
+library(dplyr)
+library(ggplot2)
+
+options(tigris_use_cache = TRUE)
+
+```
+
+
+```{r}
+cnty <- tigris::counties(state = "ID", year = 2020, class = "sf") %>%
+  st_transform(5070)  # Albers projection for distance calculations
+```
+
+
+```{r}
+
+# Contiguity neighbors (queen)
+nb_contig <- poly2nb(cnty, queen = TRUE)
+plot(cnty$geometry)
+plot(nb_contig, st_coordinates(
+  st_centroid(cnty)), add=TRUE, col='red')
+
+lw_contig <- nb2listw(nb_contig, style = "W")
+
+# Distance neighbors: threshold = 100 km
+coords <- st_centroid(cnty) |> st_coordinates()
+nb_dist <- dnearneigh(coords, 0, 100000)   # 60 km
+
+plot(cnty$geometry)
+plot(nb_dist, st_coordinates(
+  st_centroid(cnty)), add=TRUE, col='blue')
+
+lw_dist <- nb2listw(nb_dist, style = "W", zero.policy = TRUE)
+
+```
+
+
+```{r}
+
+# Simulate SAR-Lag: y = (I - rho W)^(-1)(beta*X + eps)
+sim_sar <- function(X, W, rho, sigma=1){
+  I <- diag(length(X))
+  eps <- rnorm(length(X), 0, sigma)
+  as.numeric(solve(I - rho * W) %*% (X + eps))
+}
+
+# Simulate SEM (CAR-like): y = X + u, where u = (I - lambda W)^(-1) eps
+sim_sem <- function(X, W, lambda, sigma=1){
+  I <- diag(length(X))
+  eps <- rnorm(length(X), 0, sigma)
+  u <- solve(I - lambda * W) %*% eps
+  as.numeric(X + u)
+}
+
+
+
+```
+
+
+```{r}
+
+# Choose adjacency:
+lw <- lw_contig          # contiguity (swap to lw_dist for distance)
+
+Wmat <- listw2mat(lw)
+n <- length(lw$neighbours)
+
+# Covariate
+X <- rnorm(n)
+beta <- 1
+rho  <- 0.6   # spatial lag strength
+lam  <- 0.6   # spatial error strength
+
+y <- sim_sem(X, beta, lambda = lam, W = Wmat)
+data <- cnty  %>%  mutate(y = y, X = X)
+
+
+
+
+```
+
+
+
+```{r}
+fit_lm  <- lm(y ~ X, data = data)
+fit_sar <- lagsarlm(y ~ X, data = data, listw = lw)
+fit_sem <- errorsarlm(y ~ X, data = data, listw = lw)
+
+summary(fit_lm)
+summary(fit_sar)
+summary(fit_sem)
+
+
+```
+
+
+```{r}
+
+coef_tbl <- tibble(
+  model = c("OLS","SAR","SEM"),
+  beta  = c(coef(fit_lm)["X"], 
+            coef(fit_sar)["X"], 
+            coef(fit_sem)["X"])
+)
+
+ggplot(coef_tbl, aes(model, beta)) +
+  geom_col(fill = "steelblue") +
+  geom_hline(yintercept = 1, linetype="dashed") +
+  labs(title = "Estimated β under different models",
+       subtitle = "Dashed line = true β = 1")
+
+
+```
+
+
+```{r}
+#| eval: false
+# Storage
+results <- data.frame(param=numeric(), beta_hat=numeric(), model=character())
+
+# LM on SAR-generated data
+for(r in rho_vals){
+  y <- gen_SAR(r)
+  fit <- lm(y ~ a)
+  results <- rbind(results,
+                   data.frame(param=r, beta_hat=coef(fit)[2], model="LM_on_SAR"))
+}
+
+# LM on SEM-generated data
+for(l in lam_vals){
+  y <- gen_SEM(l)
+  fit <- lm(y ~ a)
+  results <- rbind(results,
+                   data.frame(param=l, beta_hat=coef(fit)[2], model="LM_on_SEM"))
+}
+
+# Print results
+print(results)
+```
