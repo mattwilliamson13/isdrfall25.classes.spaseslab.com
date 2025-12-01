@@ -84,6 +84,223 @@
     "text": "Footnotes\n\n\nSo seriously, just don’t cheat or plagiarize!↩︎"
   },
   {
+    "objectID": "slides/29-slides.html#reminders",
+    "href": "slides/29-slides.html#reminders",
+    "title": "Spatial Predictions and Model Assesment",
+    "section": "Reminders",
+    "text": "Reminders\n\nDraft Final Project due Dec. 8\nNo Assignment 4\nFeedback on Code by EoW"
+  },
+  {
+    "objectID": "slides/29-slides.html#best-model-for-what",
+    "href": "slides/29-slides.html#best-model-for-what",
+    "title": "Spatial Predictions and Model Assesment",
+    "section": "Best Model for What?",
+    "text": "Best Model for What?\n\n\n\n\n\nfrom Tradennick et al. 2021\n\n\n\n\n\nExploration: describe patterns in the data and generate hypotheses\nInference: evaluate the strength of evidence for some statement about the process\nPrediction: forecast outcomes at unsampled locations based on covariates"
+  },
+  {
+    "objectID": "slides/29-slides.html#the-importance-of-model-fit",
+    "href": "slides/29-slides.html#the-importance-of-model-fit",
+    "title": "Spatial Predictions and Model Assesment",
+    "section": "The Importance of Model Fit",
+    "text": "The Importance of Model Fit\n\nThe general regression context:\n\n\\[\n\\begin{equation}\n\\hat{y} = \\mathbf{X}\\hat{\\beta}\n\\end{equation}\n\\]\n\nInference is focused on robust estimates of \\(\\hat{\\beta}\\) given the data we have\nPrediction is focused on accurate forecasts of \\(\\hat{y}\\) at locations where we have yet to collect the data"
+  },
+  {
+    "objectID": "slides/29-slides.html#inference-and-presenceabsence-data",
+    "href": "slides/29-slides.html#inference-and-presenceabsence-data",
+    "title": "Spatial Predictions and Model Assesment",
+    "section": "Inference and Presence/Absence Data",
+    "text": "Inference and Presence/Absence Data\n\n\\(\\hat{\\beta}\\) is conditional on variables in the model and those not in the model\n\n\nnsamp &lt;- 1000\ndf &lt;- data.frame(x1 = rnorm(nsamp,0,1),\n                 x2 = rnorm(nsamp,0,1),\n                 x3 = rnorm(nsamp,0,1))\n\nlinpred &lt;- 1 + 2*df$x1 -0.18*df$x2 -3.5*df$x3\ny &lt;- rbinom(nsamp, 1, plogis(linpred))\ndf &lt;- cbind(df, y)\n\nmod1 &lt;- glm(y~x1 +x2, data=df, family=\"binomial\")\nmod2 &lt;- glm(y~x1 +x2 + x3, data=df, family=\"binomial\")"
+  },
+  {
+    "objectID": "slides/29-slides.html#inference-presenceabsence-data",
+    "href": "slides/29-slides.html#inference-presenceabsence-data",
+    "title": "Spatial Predictions and Model Assesment",
+    "section": "Inference & Presence/Absence Data",
+    "text": "Inference & Presence/Absence Data\n\n\n\ncoef(mod1)\n\n  (Intercept)            x1            x2 \n 0.4202437784  0.8989501472 -0.0007623703 \n\ncoef(mod2)\n\n(Intercept)          x1          x2          x3 \n 0.92286788  1.86464860 -0.02121702 -3.10475414 \n\n\n\n\nprd1 &lt;- predict(mod1, df, \"response\")\ndif1 &lt;- plogis(linpred) - prd1\nprd2 &lt;- predict(mod2, df, \"response\")\ndif2 &lt;- plogis(linpred) - prd2\n\n\n\n\n\n\n\n\n\nInferring coefficient effects requires that your model fit the data well"
+  },
+  {
+    "objectID": "slides/29-slides.html#using-test-statistics",
+    "href": "slides/29-slides.html#using-test-statistics",
+    "title": "Spatial Predictions and Model Assesment",
+    "section": "Using Test Statistics",
+    "text": "Using Test Statistics\n\n\n\n\\(R^2\\) for linear regression:\n\n\\[\n\\begin{equation}\nR^2 = 1- \\frac{SS_{res}}{SS_{tot}}\\\\\nSS_{res} = \\sum_{i}(y_i- f_i)^2\\\\\nSS_{tot} = \\sum_{i}(y_i-\\bar{y})^2\n\\end{equation}\n\\]\n\n\nPerfect prediction (\\(f_i = y_i\\)); \\(SS_{res} = 0\\); and \\(R^2 = 1\\)\nNull prediction (Intercept only) (\\(f_i = \\bar{y}\\)); \\(SS_{res} = SS_{tot}\\); and \\(R^2 = 0\\)\nNo direct way of implementing for logistic regression"
+  },
+  {
+    "objectID": "slides/29-slides.html#pseudo--r2",
+    "href": "slides/29-slides.html#pseudo--r2",
+    "title": "Spatial Predictions and Model Assesment",
+    "section": "Pseudo- \\(R^2\\)",
+    "text": "Pseudo- \\(R^2\\)\n\n\n\\[\n\\begin{equation}\nR^2_L = \\frac{D_{null} - D_{fitted}}{D_{null}}\n\\end{equation}\n\\]\n\n\nCohen’s Likelihood Ratio\nDeviance (\\(D\\)), the difference between the model and some hypothetical perfect model (lower is better)\nChallenge: Not monotonically related to \\(p\\)\nChallenge: How high is too high?"
+  },
+  {
+    "objectID": "slides/29-slides.html#cohens-likelihood-ratio",
+    "href": "slides/29-slides.html#cohens-likelihood-ratio",
+    "title": "Spatial Predictions and Model Assesment",
+    "section": "Cohen’s Likelihood Ratio",
+    "text": "Cohen’s Likelihood Ratio\n\nlogistic.rich &lt;- glm(y ~ MeanAnnTemp + PrecipWetQuarter + \n                       PrecipDryQuarter, \n                     family=binomial(link=\"logit\"),\n                     data=pts.df[,2:8])\n\nwith(logistic.rich, \n     null.deviance - deviance)/with(logistic.rich,\n                                    null.deviance)\n\n[1] 0.4495966"
+  },
+  {
+    "objectID": "slides/29-slides.html#pseudo--r2-1",
+    "href": "slides/29-slides.html#pseudo--r2-1",
+    "title": "Spatial Predictions and Model Assesment",
+    "section": "Pseudo- \\(R^2\\)",
+    "text": "Pseudo- \\(R^2\\)\n\n\n\\[\n\\begin{equation}\n\\begin{aligned}\nR^2_{CS} &= 1 - \\left( \\frac{L_0}{L_M} \\right)^{(2/n)}\\\\\n&= 1 - \\exp^{2(ln(L_0)-ln(L_M))/n}\n\\end{aligned}\n\\end{equation}\n\\]\n\n\n\nCox and Snell \\(R^2\\)\nLikelihood (\\(L\\)), the probability of observing the sample given an assumed distribution\nChallenge: Maximum value is less than 1 and changes with \\(n\\)\nCorrection by Nagelkerke so that maximum is 1"
+  },
+  {
+    "objectID": "slides/29-slides.html#cox-and-snell-r2",
+    "href": "slides/29-slides.html#cox-and-snell-r2",
+    "title": "Spatial Predictions and Model Assesment",
+    "section": "Cox and Snell \\(R^2\\)",
+    "text": "Cox and Snell \\(R^2\\)\n\nlogistic.null &lt;- glm(y ~ 1, \n                     family=binomial(link=\"logit\"),\n                     data=pts.df[,2:8])\n\n1 - exp(2*(logLik(logistic.null)[1] - logLik(logistic.rich)[1])/nobs(logistic.rich))\n\n[1] 0.4308873"
+  },
+  {
+    "objectID": "slides/29-slides.html#using-test-statistics-1",
+    "href": "slides/29-slides.html#using-test-statistics-1",
+    "title": "Spatial Predictions and Model Assesment",
+    "section": "Using Test Statistics",
+    "text": "Using Test Statistics\n\nBased on the data used in the model (i.e., not prediction)\nLikelihood Ratio behaves most similarly to \\(R^2\\)\nCox and Snell (and Nagelkerke) increases with more presences\nOngoing debate over which is “best”\nDon’t defer to a single statistic"
+  },
+  {
+    "objectID": "slides/29-slides.html#predictive-performance-and-fit",
+    "href": "slides/29-slides.html#predictive-performance-and-fit",
+    "title": "Spatial Predictions and Model Assesment",
+    "section": "Predictive Performance and Fit",
+    "text": "Predictive Performance and Fit\n\nPredictive performance can be an estimate of fit\nComparisons are often relative (better \\(\\neq\\) good)\nTheoretical and subsampling methods"
+  },
+  {
+    "objectID": "slides/29-slides.html#theoretical-assessment-of-predictive-performance",
+    "href": "slides/29-slides.html#theoretical-assessment-of-predictive-performance",
+    "title": "Spatial Predictions and Model Assesment",
+    "section": "Theoretical Assessment of Predictive Performance",
+    "text": "Theoretical Assessment of Predictive Performance\n\n\n\n\n\nHirotugu Akaike of AIC\n\n\n\n\n\nInformation Criterion Methods\nMinimize the amount of information lost by using model to approximate true process\nTrade-off between fit and overfitting\nCan’t know the true process (so comparisons are relative) \\[\n\\begin{equation}\nAIC = -2ln(\\hat{L}) +2k\n\\end{equation}\n\\]"
+  },
+  {
+    "objectID": "slides/29-slides.html#aic-comparison",
+    "href": "slides/29-slides.html#aic-comparison",
+    "title": "Spatial Predictions and Model Assesment",
+    "section": "AIC Comparison",
+    "text": "AIC Comparison\n\nlogistic.null &lt;- glm(y ~ 1, \n                     family=binomial(link=\"logit\"),\n                     data=pts.df[,2:8])\n\nlogistic.rich &lt;- glm(y ~ MeanAnnTemp + PrecipWetQuarter + \n                       PrecipDryQuarter, \n                     family=binomial(link=\"logit\"),\n                     data=pts.df[,2:8])\n\nAIC(logistic.null, logistic.rich)\n\n              df       AIC\nlogistic.null  1 127.37389\nlogistic.rich  4  77.00622"
+  },
+  {
+    "objectID": "slides/29-slides.html#sub-sampling-methods",
+    "href": "slides/29-slides.html#sub-sampling-methods",
+    "title": "Spatial Predictions and Model Assesment",
+    "section": "Sub-sampling Methods",
+    "text": "Sub-sampling Methods\n\n\n\nSplit data into training and testing\nTesting set needs to be large enough for results to be statistically meaningful\nTest set should be representative of the data as a whole\nValidation data used to tune parameters (not always)"
+  },
+  {
+    "objectID": "slides/29-slides.html#subsampling-your-data-with-caret",
+    "href": "slides/29-slides.html#subsampling-your-data-with-caret",
+    "title": "Spatial Predictions and Model Assesment",
+    "section": "Subsampling your data with caret",
+    "text": "Subsampling your data with caret\n\npts.df$y &lt;- as.factor(ifelse(pts.df$y == 1, \"Yes\", \"No\"))\nlibrary(caret)\nTrain &lt;- createDataPartition(pts.df$y, p=0.6, list=FALSE)\n\ntraining &lt;- pts.df[ Train, ]\ntesting &lt;- pts.df[ -Train, ]"
+  },
+  {
+    "objectID": "slides/29-slides.html#misclassification",
+    "href": "slides/29-slides.html#misclassification",
+    "title": "Spatial Predictions and Model Assesment",
+    "section": "Misclassification",
+    "text": "Misclassification\n\n\n\nConfusion matrices compare actual values to predictions\n\n\n\nTrue Positive (TN) - This is correctly classified as the class if interest / target.\nTrue Negative (TN) - This is correctly classified as not a class of interest / target.\nFalse Positive (FP) - This is wrongly classified as the class of interest / target.\nFalse Negative (FN) - This is wrongly classified as not a class of interest / target."
+  },
+  {
+    "objectID": "slides/29-slides.html#confusion-matrices-in-r",
+    "href": "slides/29-slides.html#confusion-matrices-in-r",
+    "title": "Spatial Predictions and Model Assesment",
+    "section": "Confusion Matrices in R",
+    "text": "Confusion Matrices in R\n\n\n\ntrain.log &lt;- glm(y ~ ., \n                 family=\"binomial\", \n                 data=training[,2:8])\n\npredicted.log &lt;- predict(train.log, \n                         newdata=testing[,2:8], \n                         type=\"response\")\n\npred &lt;- as.factor(\n  ifelse(predicted.log &gt; 0.5, \n                         \"Yes\",\n                         \"No\"))\n\n\n\n\nconfusionMatrix(testing$y, pred)\n\nConfusion Matrix and Statistics\n\n          Reference\nPrediction No Yes\n       No  24   3\n       Yes  2  10\n                                         \n               Accuracy : 0.8718         \n                 95% CI : (0.7257, 0.957)\n    No Information Rate : 0.6667         \n    P-Value [Acc &gt; NIR] : 0.003321       \n                                         \n                  Kappa : 0.7059         \n                                         \n Mcnemar's Test P-Value : 1.000000       \n                                         \n            Sensitivity : 0.9231         \n            Specificity : 0.7692         \n         Pos Pred Value : 0.8889         \n         Neg Pred Value : 0.8333         \n             Prevalence : 0.6667         \n         Detection Rate : 0.6154         \n   Detection Prevalence : 0.6923         \n      Balanced Accuracy : 0.8462         \n                                         \n       'Positive' Class : No"
+  },
+  {
+    "objectID": "slides/29-slides.html#confusion-matrices",
+    "href": "slides/29-slides.html#confusion-matrices",
+    "title": "Spatial Predictions and Model Assesment",
+    "section": "Confusion Matrices",
+    "text": "Confusion Matrices\n\n\n\\[\n\\begin{equation}\n\\begin{aligned}\nAccuracy &= \\frac{TP + TN}{TP + TN + FP + FN}\\\\\nSensitivity &= \\frac{TP}{TP + FN}\\\\\nSpecificity &= \\frac{TN}{FP + TN}\\\\\nPrecision &= \\frac{TP}{TP + FP}\\\\\nRecall &= \\frac{TP}{TP + FN}\n\\end{aligned}\n\\end{equation}\n\\]\n\n\nDepends upon threshold!!"
+  },
+  {
+    "objectID": "slides/29-slides.html#confusion-matrices-in-r-1",
+    "href": "slides/29-slides.html#confusion-matrices-in-r-1",
+    "title": "Spatial Predictions and Model Assesment",
+    "section": "Confusion Matrices in R",
+    "text": "Confusion Matrices in R\n\n\n\nlibrary(tree)\ntree.model &lt;- tree(y ~ . , training[,2:8])\npredict.tree &lt;- predict(tree.model, \n                        newdata=testing[,2:8], \n                        type=\"class\")\n\n\n\n\n\nConfusion Matrix and Statistics\n\n          Reference\nPrediction No Yes\n       No  21   6\n       Yes  3   9\n                                          \n               Accuracy : 0.7692          \n                 95% CI : (0.6067, 0.8887)\n    No Information Rate : 0.6154          \n    P-Value [Acc &gt; NIR] : 0.03202         \n                                          \n                  Kappa : 0.4935          \n                                          \n Mcnemar's Test P-Value : 0.50499         \n                                          \n            Sensitivity : 0.8750          \n            Specificity : 0.6000          \n         Pos Pred Value : 0.7778          \n         Neg Pred Value : 0.7500          \n             Prevalence : 0.6154          \n         Detection Rate : 0.5385          \n   Detection Prevalence : 0.6923          \n      Balanced Accuracy : 0.7375          \n                                          \n       'Positive' Class : No"
+  },
+  {
+    "objectID": "slides/29-slides.html#confusion-matrices-in-r-2",
+    "href": "slides/29-slides.html#confusion-matrices-in-r-2",
+    "title": "Spatial Predictions and Model Assesment",
+    "section": "Confusion Matrices in R",
+    "text": "Confusion Matrices in R\n\n\n\nlibrary(randomForest)\nclass.model &lt;- y ~ .\nrf &lt;- randomForest(class.model, \n                   data=training[,2:8])\npredict.rf &lt;- predict(rf, \n                      newdata=testing[,2:8], \n                      type=\"class\")\n\n\n\n\n\nConfusion Matrix and Statistics\n\n          Reference\nPrediction No Yes\n       No  24   3\n       Yes  4   8\n                                          \n               Accuracy : 0.8205          \n                 95% CI : (0.6647, 0.9246)\n    No Information Rate : 0.7179          \n    P-Value [Acc &gt; NIR] : 0.1031          \n                                          \n                  Kappa : 0.5687          \n                                          \n Mcnemar's Test P-Value : 1.0000          \n                                          \n            Sensitivity : 0.8571          \n            Specificity : 0.7273          \n         Pos Pred Value : 0.8889          \n         Neg Pred Value : 0.6667          \n             Prevalence : 0.7179          \n         Detection Rate : 0.6154          \n   Detection Prevalence : 0.6923          \n      Balanced Accuracy : 0.7922          \n                                          \n       'Positive' Class : No"
+  },
+  {
+    "objectID": "slides/29-slides.html#threshold-free-methods",
+    "href": "slides/29-slides.html#threshold-free-methods",
+    "title": "Spatial Predictions and Model Assesment",
+    "section": "Threshold-Free Methods",
+    "text": "Threshold-Free Methods\n\n\n\n\n\nReceiver Operating Characteristic Curves\nIllustrates discrimination of binary classifier as the threshold is varied\nArea Under the Curve (AUC) provides an estimate of classification ability"
+  },
+  {
+    "objectID": "slides/29-slides.html#criticisms-of-rocauc",
+    "href": "slides/29-slides.html#criticisms-of-rocauc",
+    "title": "Spatial Predictions and Model Assesment",
+    "section": "Criticisms of ROC/AUC",
+    "text": "Criticisms of ROC/AUC\n\nTreats false positives and false negatives equally\nUndervalues models that predict across smaller geographies\nFocus on discrimination and not calibration\nNew methods for presence-only data"
+  },
+  {
+    "objectID": "slides/29-slides.html#roc-in-r-using-proc",
+    "href": "slides/29-slides.html#roc-in-r-using-proc",
+    "title": "Spatial Predictions and Model Assesment",
+    "section": "ROC in R (using pROC)",
+    "text": "ROC in R (using pROC)\n\nGenerate predictions (note the difference for tree and rf)\n\n\nlibrary(pROC)\ntrain.log &lt;- glm(y ~ ., \n                 family=\"binomial\", \n                 data=training[,2:8])\n\npredicted.log &lt;- predict(train.log, \n                         newdata=testing[,2:8], \n                         type=\"response\")\n\npredict.tree &lt;- predict(tree.model, \n                        newdata=testing[,2:8], \n                        type=\"vector\")[,2]\n\npredict.rf &lt;- predict(rf, \n                      newdata=testing[,2:8], \n                      type=\"prob\")[,2]"
+  },
+  {
+    "objectID": "slides/29-slides.html#roc-in-r-using-proc-1",
+    "href": "slides/29-slides.html#roc-in-r-using-proc-1",
+    "title": "Spatial Predictions and Model Assesment",
+    "section": "ROC in R (using pROC)",
+    "text": "ROC in R (using pROC)"
+  },
+  {
+    "objectID": "slides/29-slides.html#cross-validation",
+    "href": "slides/29-slides.html#cross-validation",
+    "title": "Spatial Predictions and Model Assesment",
+    "section": "Cross-validation",
+    "text": "Cross-validation\n\nOften want to make sure that fit/accuracy not a function of partition choice\nCross-validation allows resampling of data (multiple times)\nK-fold - Data are split into K datasets of ~ equal size, model fit to \\((K-1)(\\frac{n}{K})\\) observations to predict heldout set\nLeave One Out (LOO) - Model fit to n-1 observations to predict the held out observation"
+  },
+  {
+    "objectID": "slides/29-slides.html#crossvalidation-in-r-using-caret",
+    "href": "slides/29-slides.html#crossvalidation-in-r-using-caret",
+    "title": "Spatial Predictions and Model Assesment",
+    "section": "Crossvalidation in R using caret",
+    "text": "Crossvalidation in R using caret\n\nfitControl &lt;- trainControl(method = \"repeatedcv\",\n                           number = 10,\n                           repeats = 10,\n                           classProbs = TRUE,\n                           summaryFunction = twoClassSummary)\n\nlog.model &lt;- train(y ~., data = pts.df[,2:8],\n               method = \"glm\",\n               trControl = fitControl)\npred.log &lt;- predict(log.model, \n                    newdata = testing[,2:8], \n                    type=\"prob\")[,2]\n\ntree.model &lt;- train(y ~., data = pts.df[,2:8],\n               method = \"rpart\",\n               trControl = fitControl)\n\npred.tree &lt;- predict(tree.model, \n                     newdata=testing[,2:8], \n                     type=\"prob\")[,2]\n\nrf.model &lt;- train(y ~., data = pts.df[,2:8],\n               method = \"rf\",\n               trControl = fitControl)\npred.rf &lt;- predict(rf.model, \n                   newdata=testing[,2:8], \n                   type=\"prob\")[,2]"
+  },
+  {
+    "objectID": "slides/29-slides.html#crossvalidation-in-r-using-caret-1",
+    "href": "slides/29-slides.html#crossvalidation-in-r-using-caret-1",
+    "title": "Spatial Predictions and Model Assesment",
+    "section": "Crossvalidation in R using caret",
+    "text": "Crossvalidation in R using caret"
+  },
+  {
+    "objectID": "slides/29-slides.html#crossvalidation-in-r-using-caret-2",
+    "href": "slides/29-slides.html#crossvalidation-in-r-using-caret-2",
+    "title": "Spatial Predictions and Model Assesment",
+    "section": "Crossvalidation in R using caret",
+    "text": "Crossvalidation in R using caret"
+  },
+  {
+    "objectID": "slides/29-slides.html#spatial-predictions",
+    "href": "slides/29-slides.html#spatial-predictions",
+    "title": "Spatial Predictions and Model Assesment",
+    "section": "Spatial predictions",
+    "text": "Spatial predictions\n\nbest.rf &lt;- rf.model$finalModel\nbest.glm &lt;- log.model$finalModel\n\nrf.spatial &lt;- terra::predict(pred.stack.scl, \n                             best.rf, \n                             type=\"prob\")\n\n\nglm.spatial &lt;- terra::predict(pred.stack.scl, \n                              best.glm,\n                              type=\"response\" )"
+  },
+  {
+    "objectID": "slides/29-slides.html#spatial-predictions-1",
+    "href": "slides/29-slides.html#spatial-predictions-1",
+    "title": "Spatial Predictions and Model Assesment",
+    "section": "Spatial predictions",
+    "text": "Spatial predictions"
+  },
+  {
     "objectID": "slides/25-slides.html#the-world-is-not-random",
     "href": "slides/25-slides.html#the-world-is-not-random",
     "title": "Spatial Autocorrelation I",
@@ -3040,23 +3257,23 @@
   {
     "objectID": "content/29-content.html",
     "href": "content/29-content.html",
-    "title": "Data Visualization and Maps I",
+    "title": "Spatial Predictions and Model Assesment",
     "section": "",
-    "text": "We’ve spent the last few weeks learning about operations to compile geographic information into databases for visualization and analysis. Because analysis requires you to know something about your data and because visualization is a great way to explore your data (especially when there’s a lot of it), we’ll turn to that next. For the next few weeks, we’ll be looking at different ways to visualize spatial data and the associated approaches in R. Note that this could be an entire course by itself, but hopefully you’ll get enough to get started making publication quality maps by the time we’re done"
+    "text": "We’ve spent much of the last few weeks developing different statistical models for explaining spatial patterns. We’ve moved from naive models os spatial covariance (based on semi-variance), to regression models attempting to identify the “weights” (i.e., slopes or \\(\\beta\\)s) associated with different spatial predictors, to spatial models that account for violations of regression assumptions due to autocorrelation. While we’ve explored how each of these models can be sensitive to different challenges with spatial data and how that can effect your interpretation of variables in the models, we haven’t said much about how to know whether or not your model is any good in the first place. We’ll do that today and begin to introduce spatial predictions along the way!"
   },
   {
     "objectID": "content/29-content.html#resources",
     "href": "content/29-content.html#resources",
-    "title": "Data Visualization and Maps I",
+    "title": "Spatial Predictions and Model Assesment",
     "section": "Resources",
-    "text": "Resources\n\n The Introduction and Visualizing Geospatial Data chapters Principles of Figure Design section in (Wilke 2019) provide a useful set of general introductions to data visualization principles and practce that is “platform agnostic” (though much of Wilke’s work is done in R).\n The Look at Data and Draw Maps chapters in (Healy 2018) revisits many of the same ideas, but focuses specifically on R and ggplot2.\n This post on making maps people want to look at from ESRI is a nice, concise depiction of some core principles for planning a cartographic project.\n Making maps with R by (Lovelace et al. 2019) introduces the tmap package for making nice maps with relatively minimal syntax."
+    "text": "Resources\n\n A practical guide to selecting models for exploration, inference, and prediction in ecology by (Tredennick et al. 2021) highlights the importance of understanding model performance before making inference on predictor effects.\n Model selection using information criteria, but is the “best” model any good? by (Mac Nally et al. 2018) highlights the importance of understanding model performance before making inference on predictor effects.\n Standards for distribution models in biodiversity assessments by (Araújo et al. 2019) highlights the importance of understanding model performance before making inference on predictor effects."
   },
   {
     "objectID": "content/29-content.html#objectives",
     "href": "content/29-content.html#objectives",
-    "title": "Data Visualization and Maps I",
+    "title": "Spatial Predictions and Model Assesment",
     "section": "Objectives",
-    "text": "Objectives\nBy the end of today you should be able to:\n\nDescribe some basic principles of data visualization\nExtend principles of data visualization to the development of maps\nDistinguish between several common types of spatial data visualization\n\n\n View all slides in new window  Download PDF of all slides\n\n\n\n\nPanopto Video"
+    "text": "Objectives\nBy the end of today you should be able to:\n\nArticulate three different reasons for modeling and how they link to assessments of fit\nDescribe and implement several test statistics for assessing model fit\nDescribe and implement several assessments of classification\nDescribe and implement resampling techniques to estimate predictive performance\n\n\n View all slides in new window  Download PDF of all slides"
   },
   {
     "objectID": "content/31-content.html",
