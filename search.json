@@ -3801,6 +3801,104 @@
     "text": "Check out Paula Moraga’s tutorial on Moran’s I. You’ll need to install the mapview and spData packages"
   },
   {
+    "objectID": "lesson/29-lesson.html",
+    "href": "lesson/29-lesson.html",
+    "title": "Spatial Predictions and Model Assesment",
+    "section": "",
+    "text": "Code\nlibrary(tidyverse)\n\n\n── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──\n✔ dplyr     1.1.4     ✔ readr     2.1.5\n✔ forcats   1.0.1     ✔ stringr   1.5.2\n✔ ggplot2   4.0.0     ✔ tibble    3.3.0\n✔ lubridate 1.9.4     ✔ tidyr     1.3.1\n✔ purrr     1.1.0     \n── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──\n✖ dplyr::filter() masks stats::filter()\n✖ dplyr::lag()    masks stats::lag()\nℹ Use the conflicted package (&lt;http://conflicted.r-lib.org/&gt;) to force all conflicts to become errors\n\n\nCode\nlibrary(terra)\n\n\nterra 1.8.70\n\nAttaching package: 'terra'\n\nThe following object is masked from 'package:tidyr':\n\n    extract\n\n\nCode\nlibrary(geodata)\nlibrary(tidyterra)\n\n\n\nAttaching package: 'tidyterra'\n\nThe following object is masked from 'package:stats':\n\n    filter\n\n\nCode\nlibrary(caret)\n\n\nLoading required package: lattice\n\nAttaching package: 'caret'\n\nThe following object is masked from 'package:purrr':\n\n    lift"
+  },
+  {
+    "objectID": "lesson/29-lesson.html#getting-started",
+    "href": "lesson/29-lesson.html#getting-started",
+    "title": "Spatial Predictions and Model Assesment",
+    "section": "Getting Started",
+    "text": "Getting Started\nThis exercise is going to rely on simulated data so you don’t need to join a repository. You’ll just need to get our credentials and login to a new RStudio session. We’re going to keep using the simulation so that you know what the true values are and so you can explore some of the different ways of assessing model fit."
+  },
+  {
+    "objectID": "lesson/29-lesson.html#get-the-data",
+    "href": "lesson/29-lesson.html#get-the-data",
+    "title": "Spatial Predictions and Model Assesment",
+    "section": "Get the Data",
+    "text": "Get the Data\nWe’ll use the same approache we used before to download data for Costa Rica using the geodata package. This should (hopefully) look familiar to you.\n\n\nCode\nset.seed(123)\nn_points &lt;- 1000\n\nelevation &lt;- geodata::elevation_30s(country = \"CRI\", \n                                    path = tempdir())\nclimate &lt;- geodata::worldclim_country(country = \"CRI\", \n                                      var = \"bio\", \n                                      res = 0.5, \n                                      path = tempdir())\nnames(climate) &lt;- str_extract(names(climate), \"bio_\\\\d+\")\nnames(elevation) &lt;- \"elev\"\n\nclimate_df &lt;- as.data.frame(climate, na.rm=TRUE)\n\nclimate_subset &lt;- climate[[sample(1:nlyr(climate),size = 8)]]\nclimate_aligned &lt;- resample(climate_subset, elevation)\n\n# Stack the predictors\npredictors &lt;- c(elevation, climate_aligned)\n\n\nplot(predictors)"
+  },
+  {
+    "objectID": "lesson/29-lesson.html#generate-a-sample",
+    "href": "lesson/29-lesson.html#generate-a-sample",
+    "title": "Spatial Predictions and Model Assesment",
+    "section": "Generate a sample",
+    "text": "Generate a sample\nNext we generate a sample of observations, build our dataframe (using spatSample and extract). You’ve done this before too.\n\n\nCode\n# Sample random locations from the study area\nsample_points &lt;- spatSample(elevation, size = n_points, \n                           method = \"random\", na.rm = TRUE, \n                           xy = TRUE, values = FALSE)\n\n# Extract environmental values at these points\nenv_values &lt;- terra::extract(predictors, sample_points)\n\nspecies_data &lt;- tibble(\n  x = sample_points[,1],\n  y = sample_points[,2]) %&gt;% \n  bind_cols(env_values) %&gt;% \n  drop_na()  # Remove any NA values\n\nspecies_data_scl &lt;- species_data %&gt;% \n  mutate(across(colnames(env_values), ~ as.numeric(scale(.x))))"
+  },
+  {
+    "objectID": "lesson/29-lesson.html#specify-predictors",
+    "href": "lesson/29-lesson.html#specify-predictors",
+    "title": "Spatial Predictions and Model Assesment",
+    "section": "Specify predictors",
+    "text": "Specify predictors\nHere we’re going to simplify things a little from before. Rather than allowing for correlations between predictors, we’ll just draw a handful of \\(\\beta\\)s from a uniform distribution. Things are already tough enough for the logistic regression given that so many of these variables are likely to be correlated (we’ll return that shortly).\n\n\nCode\nK &lt;- nlyr(predictors)\n\n\nknown_betas &lt;- runif(n = K, min = -3, max = 3)"
+  },
+  {
+    "objectID": "lesson/29-lesson.html#simulate-outcomes",
+    "href": "lesson/29-lesson.html#simulate-outcomes",
+    "title": "Spatial Predictions and Model Assesment",
+    "section": "Simulate Outcomes",
+    "text": "Simulate Outcomes\nNow we simulate outcomes and check to make sure we don’t end up with too many 1’s or 0’s. We use the plogis as means of converting the linear predictor to the probability scale. If you wanted to simulate different outcomes, you’d need to think through the appropriate link function.\n\n\nCode\nspecies_data_preds &lt;- species_data_scl %&gt;%\n  mutate(\n    across(\n      all_of(colnames(env_values)),\n      ~ .x * known_betas[which(colnames(env_values) == cur_column())]\n    )\n  ) %&gt;% \n  mutate(. , linpred = rowSums(across(all_of(colnames(env_values)))),\n         prob = plogis(1 + linpred),\n         presence = rbinom(n(), size = 1, prob = prob)) \n\n\n# Check the prevalence\nspecies_data_preds %&gt;%\n  summarize(\n    prevalence = mean(presence),\n    n_present = sum(presence),\n    n_absent = sum(presence == 0)\n  )  \n\n\n# A tibble: 1 × 3\n  prevalence n_present n_absent\n       &lt;dbl&gt;     &lt;int&gt;    &lt;int&gt;\n1      0.525       525      475"
+  },
+  {
+    "objectID": "lesson/29-lesson.html#fit-logistic-regression",
+    "href": "lesson/29-lesson.html#fit-logistic-regression",
+    "title": "Spatial Predictions and Model Assesment",
+    "section": "Fit Logistic Regression",
+    "text": "Fit Logistic Regression\nWe use the vars and form objects as a way to make this as flexible as possible (in case you end up with different predictors). In this case, it will help us later when we go to fit competing models to our initial “saturated” model.\n\n\nCode\nvars &lt;- species_data_preds %&gt;%\n  select(colnames(env_values)) %&gt;%\n  names()\n\nform &lt;- reformulate(vars, response = \"presence\")\nform\n\n\npresence ~ elev + bio_15 + bio_14 + bio_3 + bio_10 + bio_2 + \n    bio_6 + bio_11 + bio_5\n\n\nCode\nmodel &lt;- glm(form ,\n             data = species_data_preds,\n             family = binomial(link = \"logit\"))\n\n# Model summary\nsummary(model)\n\n\n\nCall:\nglm(formula = form, family = binomial(link = \"logit\"), data = species_data_preds)\n\nCoefficients:\n            Estimate Std. Error z value Pr(&gt;|z|)    \n(Intercept)   1.0729     0.2243   4.783 1.73e-06 ***\nelev          2.4877     1.9792   1.257 0.208790    \nbio_15        0.7154     0.1896   3.773 0.000162 ***\nbio_14       11.5890     6.9602   1.665 0.095902 .  \nbio_3         0.6806     1.0870   0.626 0.531235    \nbio_10       -4.8985     4.5918  -1.067 0.286064    \nbio_2         1.5170     3.7487   0.405 0.685713    \nbio_6        -0.5996    13.1232  -0.046 0.963557    \nbio_11       -5.4615     7.8298  -0.698 0.485477    \nbio_5         0.6402    12.1687   0.053 0.958044    \n---\nSignif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1\n\n(Dispersion parameter for binomial family taken to be 1)\n\n    Null deviance: 1383.79  on 999  degrees of freedom\nResidual deviance:  252.21  on 990  degrees of freedom\nAIC: 272.21\n\nNumber of Fisher Scoring iterations: 8\n\n\nCode\n# Compare estimated coefficients to true values\ntibble(\n  Parameter = c(\"Intercept\", colnames(env_values)),\n  True_Value = c(0, known_betas),\n  Estimated = coef(model),\n  Difference = Estimated - True_Value,\n  Pct_Error = (Difference / True_Value) * 100\n)\n\n\n# A tibble: 10 × 5\n   Parameter True_Value Estimated Difference Pct_Error\n   &lt;chr&gt;          &lt;dbl&gt;     &lt;dbl&gt;      &lt;dbl&gt;     &lt;dbl&gt;\n 1 Intercept     0          1.07        1.07     Inf  \n 2 elev         -1.10       2.49        3.58    -327. \n 3 bio_15        2.69       0.715      -1.97     -73.4\n 4 bio_14       -0.0585    11.6        11.6   -19922. \n 5 bio_3         2.84       0.681      -2.16     -76.0\n 6 bio_10        2.08      -4.90       -6.97    -336. \n 7 bio_2         2.88       1.52       -1.36     -47.3\n 8 bio_6        -2.32      -0.600       1.72     -74.1\n 9 bio_11       -1.12      -5.46       -4.35     389. \n10 bio_5         2.67       0.640      -2.03     -76.0\n\n\nYou can see from the results that we didn’t do a particularly good job of recovering the true values. Maybe more importantly, it would appear that the model didn’t do a particularly good job of converging (given the size of several of the coefficients). Remember that for logisitc regression values outside \\(|\\neg5, 5|\\) translate to log-odds that are essentially 0 or 1, respectively."
+  },
+  {
+    "objectID": "lesson/29-lesson.html#cohens-likelihood-ratio",
+    "href": "lesson/29-lesson.html#cohens-likelihood-ratio",
+    "title": "Spatial Predictions and Model Assesment",
+    "section": "Cohen’s Likelihood Ratio",
+    "text": "Cohen’s Likelihood Ratio\nWhile we can see that there are some pathologies with our model, the goal here is to decide how well this model fits the data. Because this is a logistic regression, we can’t use the standard \\(R^2\\) statistic. Instead we’ll look at two different Pseudo-\\(R^2\\) values.\nTo calculate Cohen’s Likelihood Ratio, we can just use elements provided to us with the model object. Namely the null.deviance and the deviance. Remember that lower values are better here (i.e., the model deviance is roughly equal that of a hypothetical perfect model). Here, we see that the value is less than 1, but larger than 0. It’s hard to know whether this is too high or not, so we’ll take a look at the Cox and Snell.\n\n\nCode\n(model$null.deviance - model$deviance)/model$null.deviance\n\n\n[1] 0.8177366"
+  },
+  {
+    "objectID": "lesson/29-lesson.html#cox-and-snell",
+    "href": "lesson/29-lesson.html#cox-and-snell",
+    "title": "Spatial Predictions and Model Assesment",
+    "section": "Cox and Snell",
+    "text": "Cox and Snell\nTo calculate the Cox and Snell estimate, we need another model. In this case, instead of a hypotetically perfect model, we want a null model. This model tells us what we can learn without including any predictors. If our predictors have information, then the logLik of our model should be higher than that of the null. If you’re uncertain of this, experiment with running exp() for both positive and negative numbers. The larger the negative number, the smaller the decimal produced by exp and the larger the result of the equation (because we’re subtracting from 1). Here, we can see that the model isn’t terrible, but it’s not particularly good either (because we’re a ways a way from 1).\n\n\nCode\nmodel_null &lt;-  glm(presence ~ 1, \n                     family=binomial(link=\"logit\"),\n                     data=species_data_preds)\n\n1 - exp(2*(logLik(model_null)[1] - logLik(model)[1])/nobs(model))\n\n\n[1] 0.6774762"
+  },
+  {
+    "objectID": "lesson/29-lesson.html#but-theres-a-problem",
+    "href": "lesson/29-lesson.html#but-theres-a-problem",
+    "title": "Spatial Predictions and Model Assesment",
+    "section": "…But There’s a Problem",
+    "text": "…But There’s a Problem\nOur assessments of fit suggest the model isn’t great, but it’s not terrible either. That said, we know (from the magnitude of some of the effects and their comparison to the true values) that the model doesn’t seem to have converged particularly well. This is probably because there’s a lot of underlying correlation between the values in our predictors. We can verify that quickly using cor\n\n\nCode\ncor(env_values)\n\n\n              elev     bio_15       bio_14      bio_3       bio_10        bio_2\nelev    1.00000000 -0.1201272  0.027257116  0.6529647 -0.992729314  0.059331843\nbio_15 -0.12012717  1.0000000 -0.890350092 -0.3843959  0.204882300  0.614834848\nbio_14  0.02725712 -0.8903501  1.000000000  0.3041069 -0.099955394 -0.589917227\nbio_3   0.65296468 -0.3843959  0.304106944  1.0000000 -0.685935715  0.145746938\nbio_10 -0.99272931  0.2048823 -0.099955394 -0.6859357  1.000000000  0.008952614\nbio_2   0.05933184  0.6148348 -0.589917227  0.1457469  0.008952614  1.000000000\nbio_6  -0.99103441  0.1022025 -0.003175772 -0.6805260  0.987166682 -0.145459137\nbio_11 -0.99391043  0.1946638 -0.093459285 -0.6728810  0.999432952  0.002568271\nbio_5  -0.95985646  0.3384505 -0.229050227 -0.6787117  0.982646015  0.186577246\n              bio_6       bio_11      bio_5\nelev   -0.991034411 -0.993910426 -0.9598565\nbio_15  0.102202506  0.194663770  0.3384505\nbio_14 -0.003175772 -0.093459285 -0.2290502\nbio_3  -0.680526032 -0.672880982 -0.6787117\nbio_10  0.987166682  0.999432952  0.9826460\nbio_2  -0.145459137  0.002568271  0.1865772\nbio_6   1.000000000  0.988496605  0.9421546\nbio_11  0.988496605  1.000000000  0.9803267\nbio_5   0.942154645  0.980326739  1.0000000\n\n\n\nRemoving correlated variables\nThe caret package gives us an easy way to identify (and potentially get rid of) correlated variables using the findCorrelation function. You’ll see that we’ve got at least 5 variables that could be dropped if we don’t want correlations to create challenges for our model. We subset our predictor vector (env_values) to remove the variables in our high_corr vector (using subset with !). Then we can fit this new subset model.\n\n\nCode\ncormat &lt;- cor(species_data_preds[,colnames(env_values)], use = \"pairwise.complete.obs\")\nhigh_corr &lt;- findCorrelation(cormat, cutoff = 0.7, names=TRUE)\n\nsub_vars &lt;- subset(colnames(env_values), !(colnames(env_values) %in% high_corr))\n\nvars_sub &lt;- species_data_preds %&gt;%\n  select(all_of(sub_vars)) %&gt;%\n  names()\n\nform_sub &lt;- reformulate(vars_sub, response = \"presence\")\nform_sub\n\n\npresence ~ elev + bio_14 + bio_3 + bio_2\n\n\nCode\nmodel_sub &lt;- glm(form_sub ,\n             data = species_data_preds,\n             family = binomial(link = \"logit\"))\n\n# Model summary\nsummary(model_sub)\n\n\n\nCall:\nglm(formula = form_sub, family = binomial(link = \"logit\"), data = species_data_preds)\n\nCoefficients:\n            Estimate Std. Error z value Pr(&gt;|z|)    \n(Intercept)   0.9049     0.2060   4.394 1.12e-05 ***\nelev          1.2245     0.2228   5.495 3.91e-08 ***\nbio_14       33.0633     4.9865   6.631 3.34e-11 ***\nbio_3         0.4280     0.1088   3.935 8.31e-05 ***\nbio_2         1.6344     0.1645   9.936  &lt; 2e-16 ***\n---\nSignif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1\n\n(Dispersion parameter for binomial family taken to be 1)\n\n    Null deviance: 1383.79  on 999  degrees of freedom\nResidual deviance:  274.03  on 995  degrees of freedom\nAIC: 284.03\n\nNumber of Fisher Scoring iterations: 8\n\n\nCode\n# Compare estimated coefficients to true values\nresults_sub &lt;- tibble(\n  Parameter = c(\"(Intercept)\", colnames(env_values)),\n  True_Value = c(0, known_betas)) \nresults_sub$Estimated &lt;- coef(model_sub)[results_sub$Parameter]  \n\nresults_sub %&gt;% \n  mutate(\n  Difference = Estimated - True_Value,\n  Pct_Error = (Difference / True_Value) * 100\n)\n\n\n# A tibble: 10 × 5\n   Parameter   True_Value Estimated Difference Pct_Error\n   &lt;chr&gt;            &lt;dbl&gt;     &lt;dbl&gt;      &lt;dbl&gt;     &lt;dbl&gt;\n 1 (Intercept)     0          0.905      0.905     Inf  \n 2 elev           -1.10       1.22       2.32     -212. \n 3 bio_15          2.69      NA         NA          NA  \n 4 bio_14         -0.0585    33.1       33.1    -56652. \n 5 bio_3           2.84       0.428     -2.41      -84.9\n 6 bio_10          2.08      NA         NA          NA  \n 7 bio_2           2.88       1.63      -1.24      -43.2\n 8 bio_6          -2.32      NA         NA          NA  \n 9 bio_11         -1.12      NA         NA          NA  \n10 bio_5           2.67      NA         NA          NA"
+  },
+  {
+    "objectID": "lesson/29-lesson.html#assessing-fit",
+    "href": "lesson/29-lesson.html#assessing-fit",
+    "title": "Spatial Predictions and Model Assesment",
+    "section": "Assessing Fit",
+    "text": "Assessing Fit\nNow, we know this model is not properly specified (because our simulation used all the variables), but maybe the fit statistics will help us figure out which model we might want to use (if any). We’ll calculate the Likelihood Ratio and the Cox and Snell statistic.\n\n\nCode\n(model_sub$null.deviance - model_sub$deviance)/model_sub$null.deviance\n\n\n[1] 0.8019731\n\n\nCode\n1 - exp(2*(logLik(model_null)[1] - logLik(model_sub)[1])/nobs(model_sub))\n\n\n[1] 0.6703636\n\n\nUnfortunately, this doesn’t help us much as the Likelihood Ratio is lower (so better than the full model), but so is the Cox and Snell (so worse than the full model)."
+  },
+  {
+    "objectID": "lesson/29-lesson.html#comparing-our-models",
+    "href": "lesson/29-lesson.html#comparing-our-models",
+    "title": "Spatial Predictions and Model Assesment",
+    "section": "Comparing Our Models",
+    "text": "Comparing Our Models\nWe can tell from this quick run through, that none of the models fit the data particularly well. But maybe we’d like to know which one does the best job. We can do that using the AIC function and providing all of the models we’d like to compare.\n\n\nCode\nAIC(model, model_sub, model_null)\n\n\n           df       AIC\nmodel      10  272.2149\nmodel_sub   5  284.0284\nmodel_null  1 1385.7933\n\n\nBased on this, it would appear that the full model has the best theoretical predictive qualities. That is the log likelihood for the full model is substantially larger than the other two models. Moreover, it’s large enough to overcome the penalty for having twice as many predictors. That said, the model didn’t converge so we might interpret these results cautiously."
+  },
+  {
+    "objectID": "lesson/29-lesson.html#compare-model-implications",
+    "href": "lesson/29-lesson.html#compare-model-implications",
+    "title": "Spatial Predictions and Model Assesment",
+    "section": "Compare Model Implications",
+    "text": "Compare Model Implications\nOur various tests have been pretty ambiguous - there’s no clear “best choice” for which we might use. One last check we might do, is to examine the implications of predictions from the models (as this where instability will become the most obvious). We can do that easily using the predict functions included with terra.\n\n\nCode\nscale_stack &lt;- scale(predictors)\npred_model &lt;- terra::predict(\n  object = scale_stack,\n  model = model,\n  type = \"response\"\n)\n\npred_sub &lt;- terra::predict(\n  object = scale_stack,\n  model = model_sub,\n  type = \"response\"\n)\n\npred_null &lt;- terra::predict(\n  object = scale_stack,\n  model = model_null,\n  type = \"response\"\n)\n\npred_stacks &lt;- c(pred_model, pred_sub, pred_null)\n\nnames(pred_stacks) &lt;- c(\"Full\", \"Subset\", \"Null\")\n\nggplot() +\n  geom_spatraster(data = pred_stacks) +\n  facet_wrap(~lyr) +\n  scale_fill_viridis_c(na.value = \"transparent\") +\n  labs(title = \"Faceted SpatRaster Layers\", fill = \"Value\") +\n  theme_bw()\n\n\n\n\n\nThe plots help clarify two important things: 1) the predictions from the intercept-only model are (as expected) constant and relatively high (considering there’s no extra info in the model) and 2) the saturated model imposes a complete separation between presences and absences which indicates that we’ve perfectly separated the data generating process (unlikely). The results from the subset model seem the most plausible despite some of the diagnostics suggesting it was worse than the full model."
+  },
+  {
+    "objectID": "lesson/29-lesson.html#take-aways",
+    "href": "lesson/29-lesson.html#take-aways",
+    "title": "Spatial Predictions and Model Assesment",
+    "section": "Take Aways",
+    "text": "Take Aways\nThe key things I want you to remember are: 1) single tests or diagnostics are (almost) never enough 2) Each step of this process is (differently) sensitive to violations of assumptions 3) Fully interogating a model is an interative process"
+  },
+  {
     "objectID": "lesson/getting-setup.html",
     "href": "lesson/getting-setup.html",
     "title": "Get(git)ting Setup",
